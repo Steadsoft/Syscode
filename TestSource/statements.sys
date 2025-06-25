@@ -1,0 +1,88 @@
+/* Unit test input to ensure error free parse testing        */
+/* and pushing the grammar's limits with respect             */
+/* keyword identifiers, statement splittig and termination.  */
+
+/* declarations */
+
+dcl variable bin8;
+dcl array(10) bin(22)
+dcl counters(100) dec(10)
+dcl 
+
+twodarray(10,10) 
+
+string(128)
+
+scope systems.support
+
+end /* scope */
+
+@i_am_a_place
+
+struct control_block   (10),
+       header string (32),
+       list_length 
+       
+              bin (16),
+       end /* struct */
+
+procedure startup (arg1,arg2,arg3)
+
+    return
+
+end   /* proc  */
+
+/* some procedures */
+
+procedure shutdown 
+
+    if a = b then
+       return
+    end
+
+end /* proc */
+
+/* another sope block */
+
+scope utilities
+
+proc reset_page_table (table_ptr)
+
+    if 
+    then
+     >= 
+     proc 
+     
+     then
+       call = return
+    else
+       elif = call (if)
+    end
+
+    call startup (1,2,3)
+
+    return doomsday
+
+end /* proc */
+
+struct struct,
+       bin8 bin8,
+       if   string(16),
+       then dec(10),
+       else bit(24),
+       dcl  bin32
+end /* struct */
+
+
+
+name.other(1,2,3)(a,b,c) = 123 
+
+name(1,2,3).other(a,b,c) = 123
+
+return speed * scale + length
+
+
+
+end /* scope */
+
+

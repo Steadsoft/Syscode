@@ -1,0 +1,225 @@
+
+;;
+
+
+
+scope 
+
+scopea end
+
+scope 
+
+scopeb end ;
+
+scope scopec 
+
+
+end
+
+scope lastscope 
+
+
+end
+
+scope path.scope end
+
+
+
+;
+
+  if then = struct then
+    scope my_test_scope end;
+    scope my_test_scope end
+    ;;;;
+    scope my_test_scope
+
+    end
+
+  end
+
+scope main_code.system
+
+  if then = cluct then
+    scope my_test_scope
+
+    end
+    scope my_test_scope end
+    
+    scope my_test_scope end
+    else
+        
+  end
+
+
+end
+
+@restart
+
+
+
+enum error_codes bin16,
+     code_0,
+     code_1,
+     code_2
+end     
+
+struct mapping_1,
+    counter bin(16),    
+    message string(1024),
+    status bin(20),
+    end   ; 
+   
+struct mapping_2,
+    counter bin16,
+    message string(32),
+    status bin16,
+    message string(16),
+    end
+
+    proc entry_point (input, output)
+
+        dcl counter bin8;
+        
+        struct outermost(32,32),
+            f0 bin32,
+            f1 bin16,
+            f2 string(32),
+            
+            inner_1(16),
+               f4 bin(14,8),
+               f9 bin(27)
+            end,
+            inner_2(16),
+               f4 bin16,
+               f4 bin64,
+               f5 bin(11),
+               inner_2_inner_1,
+                  f10 bin16,
+                  f70 bin32,
+                  price dec(8,2)
+               end
+            end
+        end
+
+        if else = then then
+           counter = monkey
+        elif z = g then
+           z = b
+           r = e
+        elif z = g then
+           cow = dog
+           elif = woolly
+        else
+            z = b
+            x = g
+        end
+
+        
+
+
+        struct second,
+           age bin32,
+           range(25) bin8,
+           rate dec(7),
+           mask bit(123)
+        end
+    
+
+
+        if 
+        a = b 
+        then
+            x = 1:K
+            b = c
+            large = small
+        end
+        
+        if a = b 
+        then
+            x = y
+            b = c
+            large = small  ;
+        else
+
+            count = five
+            label = yes;
+
+
+            main.tab_ptr->table.subset.f3 = 100 / 10          
+
+            dcl dBm unit 
+
+            lit 245.5:nf as 245.5
+            lit -18:dBm as 0  /* the dBm must be declared somewhere as a unit type */
+            lit -12:dBm as 1
+            lit -6:dBm as 2
+            lit -0:dBm as 3
+
+            lit +6:dBm as 4   
+
+            call entry_point(123.456)
+
+            return (call)
+
+
+/* an emum is, in essence, a set of literal names */
+
+/*
+
+    literal dBm  /* not an enum !!! */
+        -18 as 0,
+        -12 as 1
+
+    end
+
+
+
+*/
+
+
+            if then = else then 
+               else = 1:st
+            else 
+               then = 245.5:nF /* or nf(245.5)   ?  */
+               rate = 123.456
+               fail = 100.5:dcl
+            end
+
+            power = -18:dBm
+            
+           
+        end
+            
+        
+
+    end 
+
+
+
+
+
+struct heap_header,
+   free_space bin16,
+   used_space bin16,
+   map,
+      type bin8,
+      age  bin8
+   end
+end
+
+dcl control bin(22); 
+
+control.free_space = 0;
+
+control.map.type = 12;
+
+
+
+
+
+dcl register string(128)
+
+dcl control_block sys_regmap 
+
+dcl control_block dcl
+
