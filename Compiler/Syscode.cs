@@ -8,7 +8,7 @@ namespace Syscode
         {
             var compiler = new SyscodeCompiler();
 
-            var cst = compiler.CompileSourceFile(@"..\..\..\..\statements.sys");
+            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\statements.sys");
 
             //compiler.PrintConcreteSyntaxTree(cst);
 
