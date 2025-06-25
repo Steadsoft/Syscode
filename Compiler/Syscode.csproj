@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\SyscodeLexer.cs" Link="SyscodeLexer.cs" />
-    <Compile Include="..\SyscodeParser.cs" Link="SyscodeParser.cs" />
+    <Compile Include="..\Grammar\SyscodeLexer.cs" Link="SyscodeLexer.cs" />
+    <Compile Include="..\Grammar\SyscodeParser.cs" Link="SyscodeParser.cs" />
   </ItemGroup>
 
 	<ItemGroup>
