@@ -404,3 +404,16 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Temp/recreatable stuff generated  by Antlr
+*.java
+*.class
+**/*/*BaseListener.cs
+**/*/*BaseVisitor.cs
+**/*/*Lexer.cs
+**/*/*Listener.cs
+**/*/*Parser.cs
+**/*/*Visitor.cs
+
+*.bc
+
