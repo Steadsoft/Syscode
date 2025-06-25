@@ -1,0 +1,35 @@
+﻿namespace Syscode
+{
+    public enum Operator
+    {
+        UNDEFINED,
+        POWER = SyscodeParser.POWER,
+        TIMES = SyscodeParser.TIMES,
+        DIVIDE = SyscodeParser.DIVIDE,
+        PLUS = SyscodeParser.PLUS,
+        MINUS = SyscodeParser.MINUS,
+        L_ROTATE = SyscodeParser.L_ROTATE,
+        R_ROTATE = SyscodeParser.R_ROTATE,
+        L_LOG_SHIFT = SyscodeParser.L_LOG_SHIFT,
+        R_LOG_SHIFT= SyscodeParser.R_LOG_SHIFT,
+        R_ART_SHIFT = SyscodeParser.R_ART_SHIFT,
+        CONC = SyscodeParser.CONC,
+        GT = SyscodeParser.GT,
+        GTE = SyscodeParser.GTE,
+        EQUALS = SyscodeParser.EQUALS,
+        LT = SyscodeParser.LT,
+        LTE = SyscodeParser.LTE,
+        NGT = SyscodeParser.NGT,
+        NE = SyscodeParser.NE,
+        NLT = SyscodeParser.NLT,
+        AND = SyscodeParser.AND,
+        NAND = SyscodeParser.NAND,          
+        XOR = SyscodeParser.XOR,
+        XNOR = SyscodeParser.XNOR,
+        OR = SyscodeParser.OR,
+        NOR = SyscodeParser.NOR,
+        NOT = SyscodeParser.NOT,
+        LOGAND = SyscodeParser.LOGAND,
+        LOGOR  = SyscodeParser.LOGOR
+    }
+}
