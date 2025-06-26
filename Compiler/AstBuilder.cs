@@ -177,8 +177,9 @@ namespace Syscode
 
                         qualifier.Arguments = new Arguments(subs) { ExpressionList = expressions };
 
-                        basic.qualifier.Add(qualifier);
                     }
+                        
+                    basic.qualifier.Add(qualifier);
 
                 }
                 //basic.qualifier = qualification.GetExactNodes<StructureQualificationContext>().Select(q => new Qualification(q)).ToList();

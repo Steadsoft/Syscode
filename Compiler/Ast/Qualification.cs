@@ -15,7 +15,7 @@ namespace Syscode
 
         public override string ToString()
         {
-            return Spelling + Arguments.ToString();
+            return Spelling + Arguments?.ToString();
         }
     }
 }
