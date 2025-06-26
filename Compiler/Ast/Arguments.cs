@@ -23,10 +23,10 @@ namespace Syscode
             foreach (Expression e in ExpressionList)
             {
                 stringBuilder.Append(e.ToString());
-                stringBuilder.Append(", ");
+                stringBuilder.Append(",");
             }
 
-            stringBuilder.Length = stringBuilder.Length - 2;
+            stringBuilder.Length = stringBuilder.Length - 1;
 
             stringBuilder.Append(")");
 
