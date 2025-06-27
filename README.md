@@ -20,9 +20,9 @@ A prominent feature of the language is the complete absence of reserved words. T
 - Every statememnt except assignments, begins with a keyword
 - The `elif` keyword can be used within `if` statements
 - Loops can be `for` or `while` or `until` and these can be be combined
-- Operators for bit rotate `<@` aand `@>`
+- Bit rotate operators `<@` and `@>`
 - Arbitrary precision integers
-- Bit reduction operators
+- Bit reduction operators `&>` and `|>` and `^>`
 - Aligned and unaligned bit strings of arbitrary length
 - Nested procedures and functions
 - Fixed or varying length strings
