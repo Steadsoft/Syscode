@@ -11,7 +11,7 @@ namespace Syscode
             AstNode ast = null;
             var compiler = new SyscodeCompiler();
 
-            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\bulktest.sys");
+            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\statements.sys");
 
             //compiler.PrintConcreteSyntaxTree(cst);
 

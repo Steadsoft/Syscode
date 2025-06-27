@@ -4,6 +4,10 @@
 
 /* declarations */
 
+
+/*
+
+
 dcl variable bin8;
 dcl array(10) bin(22)
 dcl counters(100) dec(10)
@@ -77,12 +81,59 @@ end /* struct */
 
 name.other(1,2,3)(a,b,c) = 123 
 
+
+
 name(1,2,3).other(a,b,c) = 123
 
 return speed * scale + length
+
+*/
+
+
+while (expression) 
+
+end
+
+until (expression) 
+
+end 
+
+
+
+for x = a to b by c  
+
+end
+
+for x = 100 to 100 
+ while (size < 100)
+
+end
+
+for x = 100 to 100 
+ until (size < 100)
+
+end
+
+for x = 100 to 100 
+ while (running) 
+ until (size < 100)
+
+end
+for x = 100 to 100 
+ until (running) 
+ while size < 100
+
+end
+
+
+/*
+
+
+ 
+
 
 
 
 end /* scope */
 
-
+*/
