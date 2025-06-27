@@ -25,4 +25,4 @@ A prominent feature of the language is the complete absence of reserved words. T
 - Bit reduction operators
 - Aligned and unaligned bit strings of arbitrary length
 - Nested procedures and functions
-  
+- Fixed or varying length strings
