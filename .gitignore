@@ -414,6 +414,8 @@ FodyWeavers.xsd
 **/*Listener.cs
 **/*Parser.cs
 **/*Visitor.cs
+**/*.interp
+**/*.tokens
 
 *.bc
 
