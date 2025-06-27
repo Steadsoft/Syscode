@@ -145,12 +145,6 @@ customLiteral // Used to allow stuff like 23.5MHz to represent 23.5 (or whatever
 
 parenthesizedExpression
   : LPAR expression RPAR
-  | REDAND expression RPAR
-  | REDOR expression RPAR
-  | REDXOR expression RPAR
-  | REDNAND expression RPAR
-  | REDNOR expression RPAR
-  | REDXNOR expression RPAR
   ;
 
 prefixExpression
@@ -224,6 +218,9 @@ prefixOperator
   : PLUS
   | MINUS
   | NOT
+  | REDAND
+  | REDOR
+  | REDXOR
   ;
 
 structDefinition: structName emptyLines? memberSeparator emptyLines? Members=structMembers emptyLines? END;
@@ -369,12 +366,9 @@ TIMES:          '*';
 DIVIDE:         '/' | '÷';    // U+00F7
 PCNT:           '%';
 QUOTE:          '"';
-REDAND:         '&(';
-REDOR:          '|(';
-REDNOR:         '~|(';
-REDXOR:         '^('|'⊕(';   // U+2295
-REDXNOR:        '~^('|'~⊕('; // U+2295
-REDNAND:        '~&(';
+REDAND:         '<&';
+REDOR:          '<|';
+REDXOR:         '<^';   // U+2295
 L_LOG_SHIFT:    '<<';         // logical: left bit lost rite bit becomes zero
 R_LOG_SHIFT:    '>>';         // logical: rite bit lost left bit becomes zero
 R_ART_SHIFT:    '>>>';        // arithmetic: rite bit lost left bit is copy of sign bit
