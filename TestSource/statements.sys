@@ -130,6 +130,27 @@ while (still_time) until no_space_left
 
 end
 
+until (still_time) while no_space_left  // In the AST a while loop with an until condition should be treated as indistinguishable from a until loop with a while condition
+
+end
+
+while (still_time) 
+   until no_space_left
+      fast = slow
+   end
+end
+
+for a = 10 to 1000
+    while (c < x)
+       count = effoff(s)
+    end
+end   
+
+for a = 10 to 1000
+    while (c < x)
+       count = effoff(s)
+end    
+
 a = <& G        // and all the bits in G
 b = <| b
 v = <^ Julia
