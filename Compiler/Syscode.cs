@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Metrics;
+﻿using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace Syscode
 {
@@ -6,13 +7,24 @@ namespace Syscode
     {
         public static void Main()
         {
+
+            AstNode ast = null;
             var compiler = new SyscodeCompiler();
 
-            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\statements.sys");
+            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\bulktest.sys");
 
             //compiler.PrintConcreteSyntaxTree(cst);
 
-            var ast = compiler.GenerateAbstractSyntaxTree(cst);
+            var clock = new Stopwatch();
+
+            clock.Restart();
+
+            for (int I=0; I < 100; I++)
+            {
+                ast = compiler.GenerateAbstractSyntaxTree(cst);
+            }
+
+            clock.Stop();
 
             compiler.PrintAbstractSyntaxTree(ast);
 

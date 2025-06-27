@@ -115,11 +115,11 @@ namespace Syscode
         private Assignment CreateAssignment(AssignmentContext context)
         {
             var refContext = context.GetExactNode<ReferenceContext>();
-            var reference = CreateReference(refContext);
+            var referenceTask = /* Task.Run(() => */ CreateReference(refContext);
             var exprContext = context.GetDerivedNode<ExpressionContext>();
-            var expression = CreateExpression(exprContext);
+            var expressionTask = /* Task.Run(() => */ CreateExpression(exprContext);
 
-            return new Assignment(context) { Referenece = reference, Expression = expression };
+            return new Assignment(context) { Referenece = referenceTask/* .Result */, Expression = expressionTask /* .Result */ };
         }
         private Reference CreateReference(ReferenceContext context)
         {
