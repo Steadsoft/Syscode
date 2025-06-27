@@ -22,7 +22,7 @@ A prominent feature of the language is the complete absence of reserved words. T
 - Loops can be `for` or `while` or `until` and these can be be combined
 - Bit rotate operators `<@` and `@>`
 - Arbitrary precision integers
-- Bit reduction operators `&>` and `|>` and `^>`
+- Bit reduce operators `&>` and `|>` and `^>`
 - Aligned and unaligned bit strings of arbitrary length
 - Nested procedures and functions
 - Fixed or varying length strings
