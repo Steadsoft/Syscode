@@ -272,6 +272,7 @@ keyword: AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|DCL|DEC|DEF|ELIF|ELSE|ENUM|FO
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
 COMMENT: (BCOM (COMMENT | .)*? ECOM) -> skip; //channel(HIDDEN);
+LINECOM: (LCOM ~[\r\n]*) -> skip;
 
 fragment BINARY:  [0-1];
 fragment OCT:     [0-7];
@@ -363,6 +364,7 @@ STR_LITERAL:    (QUOTE (.)*? QUOTE);
 PLUS:           '+';
 MINUS:          '-';
 TIMES:          '*';
+LCOM:           '//';
 DIVIDE:         '/' | '÷';    // U+00F7
 PCNT:           '%';
 QUOTE:          '"';

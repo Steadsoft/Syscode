@@ -130,7 +130,7 @@ while (still_time) until no_space_left
 
 end
 
-a = <& G
+a = <& G        // and all the bits in G
 b = <| b
 v = <^ Julia
 
