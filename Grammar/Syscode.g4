@@ -21,7 +21,7 @@ emptyLines: NEWLINE+;
 
 
 compilation: (statement* endOfFile); 
-statement:  preamble?  (assignment | call | return | label | scope | enum | struct | if | declare | literal | procedure );
+statement:  preamble?  (assignment | call | return | label | scope | enum | struct | if | declare | literal | procedure | forLoop | whileLoop | untilLoop);
 //realStatement : (assignment | label | scope | enum | struct | if | declare | literal | procedure );
 
 //statements: (statement)*;
@@ -36,6 +36,13 @@ call: CALL emptyLines? reference statementSeparator;
 return: (RETURN (emptyLines? LPAR expression RPAR)?) | (RETURN (emptyLines? expression)?) statementSeparator;
 declare: DCL emptyLines? Spelling=identifier emptyLines?  Bounds=dimensionSuffix? emptyLines? typename statementSeparator ;
 literal: LIT customLiteral AS decLiteral statementSeparator ;
+loop: forLoop | whileLoop | untilLoop ;
+forLoop : FOR reference EQUALS expression TO expression (BY expression)? emptyLines? (whileCondition emptyLines? untilCondition? | untilCondition emptyLines? whileCondition? | whileCondition | untilCondition)? statement* emptyLines? END ;
+whileLoop: whileCondition statement* emptyLines? END;
+untilLoop: untilCondition statement* emptyLines? END;
+
+whileCondition: WHILE expression ;
+untilCondition: UNTIL expression ;
 
 if:             IF emptyLines? exprThenBlock emptyLines? elifBlock? emptyLines? elseBlock? emptyLines? END;
 exprThenBlock:  emptyLines? expression emptyLines? THEN emptyLines? thenBlock;
@@ -263,7 +270,7 @@ memberSeparator : COMMA;
 // Utility rules
 endOfFile: emptyLines? EOF;
 
-keyword: AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|CALL|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNIT|UNTIL|WHILE ;
+keyword: AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNIT|UNTIL|WHILE ;
 
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
@@ -299,6 +306,7 @@ BIN64:          'bin64';
 BIN8:           'bin8';
 BIN:            'bin';
 BIT:            'bit';
+BY:             'by';
 CALL:           'call';
 DCL:            'dcl' ;
 DEC:            'dec';
@@ -320,6 +328,7 @@ SCOPE:          'scope';
 STRING:         'string';
 STRUCT:         'struct';
 THEN:           'then';
+TO:             'to';
 UBIN16:         'ubin16';
 UBIN32:         'ubin32';
 UBIN64:         'ubin64';
