@@ -23,4 +23,5 @@ A prominent feature of the language is the complete absence of reserved words. T
 - Operators for bit rotate `<@` aand `@>`
 - Arbitrary precision integers
 - Bit reduction operators
-
+- Aligned and unaligned bit strings of arbitrary length
+  
