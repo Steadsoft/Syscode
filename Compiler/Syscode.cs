@@ -19,10 +19,7 @@ namespace Syscode
 
             clock.Restart();
 
-            for (int I=0; I < 100; I++)
-            {
-                ast = compiler.GenerateAbstractSyntaxTree(cst);
-            }
+            ast = compiler.GenerateAbstractSyntaxTree(cst);
 
             clock.Stop();
 
