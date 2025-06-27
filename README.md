@@ -24,4 +24,5 @@ A prominent feature of the language is the complete absence of reserved words. T
 - Arbitrary precision integers
 - Bit reduction operators
 - Aligned and unaligned bit strings of arbitrary length
+- Nested procedures and functions
   
