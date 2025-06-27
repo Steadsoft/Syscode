@@ -9,3 +9,9 @@ A prominent feature of the language is the complete absence of reserved words. T
 
 ### Summary of key syntax features
 - No reserved words
+- Statements can be separated by either newlines or semicolons
+- Most statements can be split across multiple lines
+- All block type statements are delimited by `keyword` and `end` pairings
+- Comment blocks  `/*...*/` may be safely nested
+- Numeric literal may contain embedded spaces or underscores
+- 
