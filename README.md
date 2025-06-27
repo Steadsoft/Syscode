@@ -13,5 +13,14 @@ A prominent feature of the language is the complete absence of reserved words. T
 - Most statements can be split across multiple lines
 - All block type statements are delimited by `keyword` and `end` pairings
 - Comment blocks  `/*...*/` may be safely nested
-- Numeric literal may contain embedded spaces or underscores
-- 
+- Numeric literals may contain embedded spaces or underscores
+
+### Language Elements
+- Namespaces all code to be lexically encapsulated
+- Every statememnt except assignments, begins with a keyword
+- The `elif` keyword can be used within `if` statements
+- Loops can be `for` or `while` or `until` and these can be be combined
+- Operators for bit rotate `<@` aand `@>`
+- Arbitrary precision integers
+- Bit reduce operators
+
