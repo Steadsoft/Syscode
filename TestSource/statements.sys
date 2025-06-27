@@ -125,6 +125,11 @@ for x = 100 to 100
 
 end
 
+while (still_time) until no_space_left
+
+end
+
+
 
 /*
 

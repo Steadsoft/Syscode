@@ -38,8 +38,8 @@ declare: DCL emptyLines? Spelling=identifier emptyLines?  Bounds=dimensionSuffix
 literal: LIT customLiteral AS decLiteral statementSeparator ;
 loop: forLoop | whileLoop | untilLoop ;
 forLoop : FOR reference EQUALS expression TO expression (BY expression)? emptyLines? (whileCondition emptyLines? untilCondition? | untilCondition emptyLines? whileCondition? | whileCondition | untilCondition)? statement* emptyLines? END ;
-whileLoop: whileCondition statement* emptyLines? END;
-untilLoop: untilCondition statement* emptyLines? END;
+whileLoop: whileCondition untilCondition? statement* emptyLines? END;
+untilLoop: untilCondition whileCondition? statement* emptyLines? END;
 
 whileCondition: WHILE expression ;
 untilCondition: UNTIL expression ;
