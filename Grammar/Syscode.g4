@@ -13,6 +13,8 @@
 
 grammar Syscode;
 
+// reference: data alignment = http://bitsavers.informatik.uni-stuttgart.de/pdf/ibm/370/pli/SC26-3114-01_PLI_for_MVS_and_VM_Release_1.1_Language_Reference_199506.pdf
+
 // Parser rules
 
 preamble: (NEWLINE | SEMICOLON)+;
@@ -34,7 +36,7 @@ struct: STRUCT structDefinition ;
 enum: ENUM emptyLines? Name=identifier emptyLines? typename? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? reference statementSeparator;
 return: (RETURN (emptyLines? LPAR expression RPAR)?) | (RETURN (emptyLines? expression)?) statementSeparator;
-declare: DCL emptyLines? Spelling=identifier emptyLines?  Bounds=dimensionSuffix? emptyLines? typename statementSeparator ;
+declare: DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? typename memberAttributes* statementSeparator ;
 literal: LIT customLiteral AS decLiteral statementSeparator ;
 loop: forLoop | whileLoop | untilLoop ;
 forLoop : FOR reference EQUALS expression TO expression (BY expression)? emptyLines? (whileCondition emptyLines? untilCondition? | untilCondition emptyLines? whileCondition? | whileCondition | untilCondition)? statement* emptyLines? END ;
@@ -223,7 +225,7 @@ prefixOperator
   | REDXOR
   ;
 
-structDefinition: structName emptyLines? memberSeparator emptyLines? Members=structMembers emptyLines? END;
+structDefinition: structName emptyLines? structAttributes* emptyLines? memberSeparator emptyLines? Members=structMembers emptyLines? END;
  
 qualifiedName: identifier (DOT identifier)*;
 paramList: LPAR identifier (COMMA identifier)* RPAR;
@@ -239,7 +241,7 @@ structMember
     : structField
     | structDefinition;
 
-structField:   (Spelling=identifier emptyLines? Bounds=dimensionSuffix? Type=typename );
+structField:   (Spelling=identifier emptyLines? Bounds=dimensionSuffix? Type=typename memberAttributes*);
 structStruct:  structDefinition; 
 
 enumMember: (Name=identifier);
@@ -252,6 +254,15 @@ typename
     | identifier
     | unitType
     ;
+
+structAttributes 
+    : ALIGNED 
+    | UNALIGNED ;
+
+memberAttributes
+    : CONST
+    | ALIGNED 
+    | UNALIGNED ;
 
 unitType: UNIT;
 
@@ -267,13 +278,13 @@ memberSeparator : COMMA;
 // Utility rules
 endOfFile: emptyLines? EOF;
 
-keyword: AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNIT|UNTIL|WHILE ;
+keyword: AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|CONST|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNIT|UNTIL|WHILE ;
 
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
 COMMENT: (BCOM (COMMENT | .)*? ECOM) -> skip; //channel(HIDDEN);
 LINECOM: (LCOM ~[\r\n]*) -> skip;
-
+HYPERCOMMENT: ('/#' (.)*? '#/') -> skip;
 fragment BINARY:  [0-1];
 fragment OCT:     [0-7];
 fragment DECIMAL: [0-9];
@@ -297,6 +308,7 @@ INTEGER:      ([1-9] [0-9]*);
 
 // Keyword Tokens
 
+ALIGNED:        'aligned';
 AS:             'as';
 BIN16:          'bin16';
 BIN32:          'bin32';
@@ -306,6 +318,7 @@ BIN:            'bin';
 BIT:            'bit';
 BY:             'by';
 CALL:           'call';
+CONST:          'const';
 DCL:            'dcl' ;
 DEC:            'dec';
 DEF:            'def';
@@ -333,6 +346,7 @@ UBIN64:         'ubin64';
 UBIN8:          'ubin8';
 UBIN:           'ubin';
 UDEC:           'udec';
+UNALIGNED:      'unaligned';
 UNIT:           'unit';
 UNTIL:          'until';
 WHILE:          'while';

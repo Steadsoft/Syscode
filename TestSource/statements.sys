@@ -4,13 +4,15 @@
 
 /* declarations */
 
+/* alignment */
+/* when applied to a struct the attributes is applied to every contained member that does not have an explicit */
+/* alignment */
 
-/*
 
 
-dcl variable bin8;
+dcl variable bin8; 
 dcl array(10) bin(22)
-dcl counters(100) dec(10)
+dcl counters(100) dec(10) unaligned
 dcl 
 
 twodarray(10,10) 
@@ -23,12 +25,14 @@ end /* scope */
 
 @i_am_a_place
 
-struct control_block   (10),
+
+
+struct control_block(10) aligned,
        header string (32),
-       list_length 
-       
-              bin (16),
+       list_length bin (16) unaligned,
        end /* struct */
+
+dcl overlay control_block const;
 
 procedure startup (arg1,arg2,arg3)
 
@@ -85,7 +89,7 @@ name(1,2,3).other(a,b,c) = 123
 
 return speed * scale + length
 
-*/
+
 
 
 while (expression) 
