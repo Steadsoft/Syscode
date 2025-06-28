@@ -16,7 +16,7 @@ grammar Syscode;
 // Parser rules
 
 preamble: (NEWLINE | SEMICOLON)+;
-statementSeparator : (SEMICOLON | NEWLINE);
+statementSeparator : (SEMICOLON | NEWLINE | EOF);
 emptyLines: NEWLINE+;
 
 
@@ -50,7 +50,7 @@ thenBlock :     statement*;
 elseBlock :     (ELSE emptyLines? thenBlock);
 elifBlock :     (ELIF emptyLines? exprThenBlock)+;
 
-assignment : Target=reference (EQUALS) Source=expression statementSeparator;
+assignment : Target=reference (EQUALS | COMPASSIGN) Source=expression statementSeparator;
 
 
 reference
@@ -378,7 +378,10 @@ L_ROTATE:       '<@'|'⧀';    // U+29C0 rotate: left bit rotated out rite bit b
 R_ROTATE:       '@>'|'⧁';    // U+29C1 rotate: rite bit rotated out left bit becomes that rotated rite bit
 EQUALS:         '=' ;
 ASSIGN:         '<-';
-COMPASSIGN:     '+=' | '-=' | '*=' | '/=';
+
+// comppund assignment
+
+COMPASSIGN:     '+=' | '-=' | '*=' | '/='|'%='|'&='|'|='|'^='|'<<='|'>>='|'<@='|'@>=';
 DOT:            '.';
 AT:             '@';
 SEMICOLON:      ';'; 
@@ -386,6 +389,10 @@ COMMA:          ',';
 LPAR:           '(';
 RPAR:           ')';
 RARROW:         '->';
+
+
+
+
 
 IDENTIFIER:     ([a-zA-Z_] [a-zA-Z0-9_]*);
 CUSTOM_LITERAL: ('-' | '+')? ((DECIMAL (' ' DECIMAL)*)+ FRAC_D?) COLON IDENTIFIER;
