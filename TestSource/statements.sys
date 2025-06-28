@@ -38,6 +38,8 @@ end   /* proc  */
 
 /* some procedures */
 
+@this_is_another_label
+
 procedure shutdown 
 
     if a = b then
@@ -52,12 +54,7 @@ scope utilities
 
 proc reset_page_table (table_ptr)
 
-    if 
-    then
-     >= 
-     proc 
-     
-     then
+    if then >= proc then
        call = return
     else
        elif = call (if)

@@ -12,6 +12,14 @@
                 "*.sys"
             ],
             "rules": [
+
+                {
+                    "patterns": [
+                        "\\/\\*.*?\\*\/", "\/\/[^\r\n]*"
+                    ],
+                    "color":"Yellow"
+                },
+
                 {
                     "patterns": [
                         "if", "then","elif","else"
@@ -34,7 +42,7 @@
                     "patterns": [
                         "for", "to","by"
                     ],
-                    "color":"Yellow"
+                    "color":"Blue"
                 },
                 {
                     "patterns": [
