@@ -17,7 +17,7 @@
                     "patterns": [
                         "\\/\\*.*?\\*\/", "\/\/[^\r\n]*"
                     ],
-                    "color":"Yellow"
+                    "color":"Magenta"
                 },
 
                 {
@@ -28,7 +28,7 @@
                 },
                 {
                     "patterns": [
-                        "struct", "dcl","proc", "procedure", "func","function"
+                        "struct", "dcl","proc", "procedure", "func","function","scope"
                     ],
                     "color":"BrightCyan"
                 },
@@ -60,7 +60,7 @@
                     "patterns": [
                         "@[a-zA-Z_]+"
                     ],
-                    "color":"Magenta"
+                    "color":"Green"
                 },
                 {
                     "patterns": [
@@ -72,7 +72,20 @@
                         "<\\^",
                         "\\(",
                         "\\)",
-                        ">="
+                        ">=",
+                        "<=",
+                        ">",
+                        "<",
+                        "/",
+                        "-",
+                        "+=",
+                        "-=",
+                        "*=",
+                        "/=",
+                        "&=",
+                        "|=",
+                        "^="
+
                     ],
                     "color":"BrightCyan"
                 },
