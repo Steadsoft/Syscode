@@ -8,7 +8,7 @@
 /* when applied to a struct the attributes is applied to every contained member that does not have an explicit */
 /* alignment */
 
-
+/#
 
 dcl variable bin8; 
 dcl array(10) bin(22)
@@ -24,9 +24,19 @@ scope systems.support
 end /* scope */
 
 @i_am_a_place
+#/
 
 
+struct A,
+        B,
+            counter bin8,
+            lister  bin8
+        end , 
+       printer bin8
+       end
 
+
+/#
 struct control_block(10) aligned,
        header string (32),
        list_length bin (16) unaligned,
@@ -179,3 +189,5 @@ end /* scope */
 
 */
 a = 4
+
+#/
