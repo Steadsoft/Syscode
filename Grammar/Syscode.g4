@@ -16,7 +16,7 @@ grammar Syscode;
 // Parser rules
 
 preamble: (NEWLINE | SEMICOLON)+;
-statementSeparator : (SEMICOLON | NEWLINE | EOF);
+statementSeparator : (SEMICOLON | NEWLINE | EOF); // EOF lets us end a source file with a line statement without needing a newline/semicolon
 emptyLines: NEWLINE+;
 
 
