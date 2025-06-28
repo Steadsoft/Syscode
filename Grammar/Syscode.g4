@@ -225,10 +225,7 @@ prefixOperator
   | REDXOR
   ;
 
-//structDefinition: structName emptyLines? structAttributes* emptyLines? memberSeparator emptyLines? Members=structMembers emptyLines? END;
-
-
-structDefinition: structName emptyLines? structAttributes* emptyLines? (memberSeparator structMembers+)? emptyLines? END;
+structDefinition: structName emptyLines? structAttributes* emptyLines? memberSeparator emptyLines? Members=structMembers emptyLines? END;
  
 qualifiedName: identifier (DOT identifier)*;
 paramList: LPAR identifier (COMMA identifier)* RPAR;
