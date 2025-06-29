@@ -78,7 +78,29 @@ type process_table
        end
 end
 ```
-The above serves as a kind of template, instance of `process_table` can be declared just as any predefned type like `bin8` or `string`. 
+The above serves as a kind of template, instances of `process_table` can be declared just as any predefned type like `bin8` or `string`. The alternative syntax using `dcl` like this
+```
+dcl process_table
+       timestamp ubin(32)
+       bitmap
+          initialized   bit(1)
+          init_mode     bit(3)
+          reset_count   bit(5)
+       end
+end
+```
+does not define a structure "template" but rather an instance of a variable named `process_table` this declaration is instantiated at runtime and can therefore have runtime defined array bounds:
+```
+dcl process_table
+       timestamp ubin(32)
+       bitmap(x)
+          initialized   bit(1)
+          init_mode     bit(3)
+          reset_count   bit(5)
+       end
+end
+```
+Unlike a `type` which must have compile time constants used for array bounds, the declaration form can use expression and the entire structure's size is computed at runtime.
 
 ### Computed Goto
 The language supports the subscripting of label constants with a literal decimal integer, this can then be coupled with a flexible form of the `goto` statement. Labels, because they denote a "place" are defined with the `@` symbol.
