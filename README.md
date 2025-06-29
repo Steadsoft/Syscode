@@ -49,7 +49,7 @@ for (I = 100 to 40 by -4)
 end
 ```
 ```
-for (X = start to stop by increment)
+for (X = start to stop by increment) // using variables
 end
 ```
 
