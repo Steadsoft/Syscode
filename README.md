@@ -45,11 +45,19 @@ for (index = 1 to 100 by 2)
 end
 ```
 ```
-for (I = 100 to 40 by -4)
+for I = 100 to 40 by -4
 end
 ```
 ```
-for (X = start to stop by increment) // using variables
+for (X = A to B by I) 
+end
+```
+```
+while (limit < 100)
+end
+```
+```
+until count > max
 end
 ```
 
