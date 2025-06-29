@@ -22,13 +22,18 @@ statementSeparator : (SEMICOLON | NEWLINE | EOF); // EOF lets us end a source fi
 emptyLines: NEWLINE+;
 
 compilation: (statement* endOfFile); 
-statement:  preamble?  (struct | call | return | label | scope | enum | if | declare | literal | procedure | forLoop | whileLoop | untilLoop |assignment );
+statement:  preamble?  (struct | call | return | label | scope | enum | if | declare | literal | procedure | forLoop | whileLoop | untilLoop | goto| assignment );
 
 struct: STRUCT structBody ;
 structBody: Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
 structField: Spelling=identifier dimensionSuffix? Type=typename memberAttributes? statementSeparator;
 
-label: AT identifier statementSeparator;
+label: AT identifier labelSubscript? statementSeparator;
+labelSubscript: LPAR decLiteral RPAR;
+
+goto: GOTO identifier gotoSubscript? statementSeparator;
+gotoSubscript: LPAR expression RPAR;
+
 scope:  blockScope;
 blockScope: (SCOPE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
 procedure: PROC emptyLines? Spelling=identifier paramList? statement* emptyLines? END;
@@ -260,7 +265,51 @@ memberSeparator : COMMA;
 // Utility rules
 endOfFile: emptyLines? EOF;
 
-keyword: ALIGNED|AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|CONST|DCL|DEC|DEF|ELIF|ELSE|END|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNALIGNED|UNIT|UNTIL|WHILE ;
+keyword
+    : ALIGNED
+    | AS
+    | BIN16
+    | BIN32
+    | BIN64
+    | BIN8
+    | BIN
+    | BIT
+    | BY
+    | CALL
+    | CONST
+    | DCL
+    | DEC
+    | DEF
+    | ELIF
+    | ELSE
+    | END
+    | ENUM
+    | FOR
+    | FOREVER
+    | FUNC
+    | GOTO
+    | IF
+    | IS
+    | LIT
+    | PATH
+    | PROC
+    | RETURN
+    | SCOPE
+    | STRING
+    | STRUCT
+    | THEN
+    | TO
+    | UBIN16
+    | UBIN32
+    | UBIN64
+    | UBIN8
+    | UBIN
+    | UDEC
+    | UNALIGNED
+    | UNIT
+    | UNTIL
+    | WHILE 
+    ;
 
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
@@ -306,11 +355,12 @@ DEC:            'dec';
 DEF:            'def';
 ELIF:           'elif';
 ELSE:           'else';
-ENUM:           'enum';
 END:            'end';
+ENUM:           'enum';
 FOR:            'for';
 FOREVER:        'forever';
 FUNC:           'func' | 'function';
+GOTO:           'goto';
 IF:             'if';
 IS:             'is';
 LIT:            'lit' | 'literal';
