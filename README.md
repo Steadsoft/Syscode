@@ -44,3 +44,12 @@ There are three kinds of loops, the `for` loop the `while` loop and the `until` 
 for (index = 1 to 100 by 2)
 end
 ```
+```
+for (I = 100 to 40 by -4)
+end
+```
+```
+for (X = start to stop by increment)
+end
+```
+
