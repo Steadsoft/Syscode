@@ -100,7 +100,7 @@ dcl process_table
        end
 end
 ```
-Unlike a `type` which must have compile time constants used for array bounds, the declaration form can use expression and the entire structure's size is computed at runtime.
+Unlike a `type` which must have compile time constants used for array bounds, the declaration form can use expressions like `bitmap(x)` and the entire structure's size is computed at runtime.
 
 ### Computed Goto
 The language supports the subscripting of label constants with a literal decimal integer, this can then be coupled with a flexible form of the `goto` statement. Labels, because they denote a "place" are defined with the `@` symbol.
