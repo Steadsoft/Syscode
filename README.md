@@ -27,7 +27,7 @@ A prominent feature of the language is the complete absence of reserved words. T
 - Nested procedures and functions
 - Fixed or varying length strings
 
-## Synatx Highlights
+## Syntax Highlights
 The language syntax is based on PL/I and takes the positive features of that syntax while removing some of the out dated or idiosyncratic features.
 
 ### Declarations
