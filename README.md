@@ -26,3 +26,91 @@ A prominent feature of the language is the complete absence of reserved words. T
 - Aligned and unaligned bit strings of arbitrary length
 - Nested procedures and functions
 - Fixed or varying length strings
+
+## Syntax Highlights
+The language syntax borrows a lot from PL/I and takes the positive features of that syntax while removing some of the out dated or idiosyncratic features.
+
+### Declarations
+Begin with the `dcl` keyword followed an `identifier` and obligator and optional attributes, examples
+- `dcl counter bin8` an 8 bit signed integer
+- `dcl rate bin(44)` a 44 bit signed integer
+- `dcl name string(32)` a 32 character fixed length string
+- `dcl message string(128) var` 123 character max length varying length string
+- `dcl map descriptor unaligned` a variable `map` of `struct` type `descriptor` with all members unaligned for compactness
+
+### Loops
+There are three kinds of loops, the `for` loop the `while` loop and the `until` loop. These loops types can be combined, parentheses around expressions are optional, examples (contained statements omitted for brevity)
+```
+for (index = 1 to 100 by 2)
+end
+```
+```
+for I = 100 to 40 by -4
+end
+```
+```
+for (X = A to B by I) 
+end
+```
+```
+while (limit < 100)
+end
+```
+```
+until count > max
+end
+```
+#### These can be combined in several ways, giving a rich set of potential loop constructs
+```
+for J = 1 to 128 while flag = true until storage_used > MAX
+end
+```
+### Structures
+Data structures are defined using either the `dcl` keyword or the `type` keyword, in essence `type` defines a structure of a particular shape in a similar manner to C's typedef. Structures can containa mix of other structures and member fields and these can be nested to an arbitrary level. Note how the `dcl`/`type` keyword is required only at the outermost level. This example defines a struct type named `process_table` that contains another struct named `bitmap`:
+
+```
+type process_table
+       timestamp ubin(32)
+       bitmap
+          initialized   bit(1)
+          init_mode     bit(3)
+          reset_count   bit(5)
+       end
+end
+```
+The above serves as a kind of template, instances of `process_table` can be declared just as any predefned type like `bin8` or `string`. The alternative syntax using `dcl` like this
+```
+dcl process_table
+       timestamp ubin(32)
+       bitmap
+          initialized   bit(1)
+          init_mode     bit(3)
+          reset_count   bit(5)
+       end
+end
+```
+does not define a structure "template" but rather a runtime created instance of a variable named `process_table` this declaration is instantiated at runtime and can therefore have runtime defined array bounds:
+```
+dcl process_table
+       timestamp ubin(32)
+       bitmap(x)
+          initialized   bit(1)
+          init_mode     bit(3)
+          reset_count   bit(5)
+       end
+end
+```
+Unlike a `type` which must have compile time constants used for array bounds, the declaration form can use expressions like `bitmap(x)` and the entire structure's size is computed at runtime.
+
+### Computed Goto
+The language supports the subscripting of label constants with a literal decimal integer, this can then be coupled with a flexible form of the `goto` statement. Labels, because they denote a "place" are defined with the `@` symbol.
+```
+@state(0)
+...
+@state(1)
+...
+...
+@state(8)
+
+goto state(x)
+```
