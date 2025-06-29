@@ -8,7 +8,7 @@
 /* when applied to a struct the attributes is applied to every contained member that does not have an explicit */
 /* alignment */
 
-/#
+
 
 dcl variable bin8; 
 dcl array(10) bin(22)
@@ -24,14 +24,14 @@ scope systems.support
 end /* scope */
 
 @i_am_a_place
-#/
+
 
 
 struct test(100,100) aligned 
-    bulk
-        charlie bin8
-        aligned bin8 
-    end
+        bulk
+            charlie bin8
+            aligned bin8 
+        end
     block (a,b) 
        inner
 
@@ -42,7 +42,7 @@ struct test(100,100) aligned
     end
 
     
-    charlie(x,y) bin8 aligned
+    charlie(x,y) bin8 aligned // comment     
     charlie bin8
     charlie bin8
     aligned bin16
@@ -55,22 +55,22 @@ struct test(100,100) aligned
 end
 
 
-/#
 
-struct A,
-        B,
-            counter bin8,
+
+struct A
+        B
+            counter bin8
             lister  bin8
-        end , 
+        end 
        printer bin8
        end
 
   
 
-struct control_block(10) aligned,
-       header string (32),
-       list_length bin (16) unaligned,
-       end /* struct */
+struct control_block(10) aligned
+       header string (32)
+       list_length bin (16) unaligned
+end /* struct */
 
 dcl overlay control_block const;
 
@@ -110,11 +110,11 @@ proc reset_page_table (table_ptr)
 
 end /* proc */
 
-struct struct,
-       bin8 bin8,
-       if   string(16),
-       then dec(10),
-       else bit(24),
+struct struct
+       bin8 bin8
+       if   string(16)
+       then dec(10)
+       else bit(24)
        dcl  bin32
 end /* struct */
 
@@ -220,4 +220,3 @@ end /* scope */
 */
 a = 4
 
-#/

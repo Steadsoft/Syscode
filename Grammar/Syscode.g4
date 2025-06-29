@@ -21,18 +21,17 @@ preamble: (NEWLINE | SEMICOLON)+;
 statementSeparator : (SEMICOLON | NEWLINE | EOF); // EOF lets us end a source file with a line statement without needing a newline/semicolon
 emptyLines: NEWLINE+;
 
-
 compilation: (statement* endOfFile); 
-statement:  preamble?  (type | call | return | label | scope | enum | if | declare | literal | procedure | forLoop | whileLoop | untilLoop |assignment );
-//realStatement : (assignment | label | scope | enum | struct | if | declare | literal | procedure );
+statement:  preamble?  (struct | call | return | label | scope | enum | if | declare | literal | procedure | forLoop | whileLoop | untilLoop |assignment );
 
-//statements: (statement)*;
+struct: STRUCT structBody ;
+structBody: identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structBody|structField) emptyLines?)* END statementSeparator;
+structField: identifier dimensionSuffix? typename memberAttributes? statementSeparator;
+
 label: AT identifier statementSeparator;
 scope:  blockScope;
-//lineScope:  (SCOPE emptyLines? Name=qualifiedName emptyLines? statementSeparator);
 blockScope: (SCOPE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
 procedure: PROC emptyLines? Spelling=identifier paramList? statement* emptyLines? END;
-//struct: STRUCT structDefinition ;
 enum: ENUM emptyLines? Name=identifier emptyLines? typename? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? reference statementSeparator;
 return: (RETURN (emptyLines? LPAR expression RPAR)?) | (RETURN (emptyLines? expression)?) statementSeparator;
@@ -83,10 +82,6 @@ arguments
 subscriptCommalist
   : expression (COMMA expression)*
   ;
-
-// subscript
-//   : expression
-//   ;
 
 expression
   : primitiveExpression                         # ExprPrimitive
@@ -225,39 +220,11 @@ prefixOperator
   | REDOR
   | REDXOR
   ;
-
-
-type: STRUCT typebody ;
-
-typebody: identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((typebody|field) emptyLines?)* END statementSeparator;
-
-//typeList: (type_body emptyLines?)+;
-
-//fieldList: field (COMMA field)* ;
-
-field: identifier dimensionSuffix? typename memberAttributes? statementSeparator;
-
-
-
-
-//structDefinition: structName emptyLines? structAttributes* emptyLines? memberSeparator emptyLines? Members=structMembers emptyLines? END;
  
 qualifiedName: identifier (DOT identifier)*;
 paramList: LPAR identifier (COMMA identifier)* RPAR;
 constArrayList: (LPAR INTEGER (COMMA INTEGER)* RPAR);
-//numericConstant: INTEGER;
-// struct
-//structMemberList: structMember+ ;
-//structName: Spelling=identifier Bounds=dimensionSuffix?;
-//structMembers
- //   :  emptyLines? structMember emptyLines? (memberSeparator emptyLines? structMember emptyLines?)*  memberSeparator? emptyLines?;
 enumMembers: emptyLines? enumMember emptyLines? (memberSeparator emptyLines? enumMember emptyLines?)* memberSeparator? emptyLines?;
-// structMember
-//     : structField
-//     | structDefinition;
-
-// structField:   (Spelling=identifier emptyLines? Bounds=dimensionSuffix? Type=typename memberAttributes*);
-// structStruct:  structDefinition; 
 
 enumMember: (Name=identifier);
 identifier: keyword | IDENTIFIER;
@@ -293,7 +260,7 @@ memberSeparator : COMMA;
 // Utility rules
 endOfFile: emptyLines? EOF;
 
-keyword: ALIGNED|AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|CONST|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|TYPE|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNALIGNED|UNIT|UNTIL|WHILE ;
+keyword: ALIGNED|AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|CONST|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNALIGNED|UNIT|UNTIL|WHILE ;
 
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
@@ -355,7 +322,6 @@ STRING:         'string';
 STRUCT:         'struct';
 THEN:           'then';
 TO:             'to';
-TYPE:           'type';
 UBIN16:         'ubin16';
 UBIN32:         'ubin32';
 UBIN64:         'ubin64';
