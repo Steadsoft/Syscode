@@ -2,18 +2,18 @@
 
 namespace Syscode
 {
-    public class Field : StructureMember
+    public class StructField   : AstNode
     {
-
+        public string Spelling;
         public string TypeName;
         public List<BoundsPair> Bounds = new();
         public int Length;
-        public Field(SyscodeParser.StructFieldContext context) : base(context)
+        public StructField(SyscodeParser.StructFieldContext context) : base(context)
         {
             var bounds = new List<BoundsPair>();
 
             Spelling = context.GetLabelText(nameof(SyscodeParser.StructFieldContext.Spelling));
-            var type = context.Type.GetText();
+            var type = context.GetLabelText(nameof(SyscodeParser.StructFieldContext.Type));
 
             if (type.Contains(',') ==  false )
             {
@@ -52,7 +52,7 @@ namespace Syscode
 
         public override string ToString()
         {
-            return $"{nameof(Field)}: {Spelling}";
+            return $"{nameof(StructField)}: {Spelling}";
         }
     }
 }

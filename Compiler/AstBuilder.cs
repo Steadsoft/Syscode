@@ -21,7 +21,7 @@ namespace Syscode
                 CompilationContext compilation => CreateCompilation(compilation),
                 ScopeContext scope => CreateScope(scope),
                 ProcedureContext procedure => CreateProcedure(procedure),
-                StructContext structure => CreateStructure(structure),
+                StructContext structure => CreateStructure(structure.GetExactNode<StructBodyContext>()),
                 IfContext ifContext => CreateIf(ifContext),
                 AssignmentContext assignment => CreateAssignment(assignment),
                 DeclareContext declare => new Dcl(declare),
@@ -115,9 +115,9 @@ namespace Syscode
         private Assignment CreateAssignment(AssignmentContext context)
         {
             var refContext = context.GetExactNode<ReferenceContext>();
-            var referenceTask = /* Task.Run(() => */ CreateReference(refContext);
+            var referenceTask = CreateReference(refContext);
             var exprContext = context.GetDerivedNode<ExpressionContext>();
-            var expressionTask = /* Task.Run(() => */ CreateExpression(exprContext);
+            var expressionTask = CreateExpression(exprContext);
 
             return new Assignment(context) { Referenece = referenceTask/* .Result */, Expression = expressionTask /* .Result */ };
         }
@@ -180,10 +180,7 @@ namespace Syscode
                     }
                         
                     basic.qualifier.Add(qualifier);
-
                 }
-                //basic.qualifier = qualification.GetExactNodes<StructureQualificationContext>().Select(q => new Qualification(q)).ToList();
-                //var argumentsList = qualification.GetExactNodes<ArgumentsContext>().ToList(); /* one or more 'arguments' always present */
             }
 
             return basic;
@@ -205,32 +202,22 @@ namespace Syscode
 
             throw new InvalidOperationException();
         }
-        private Structure CreateStructure(StructContext context)
+        private StructBody CreateStructure(StructBodyContext context)
         {
-            return CreateStructure(context.GetExactNode<StructDefinitionContext>());
-        }
-        private Structure CreateStructure(StructDefinitionContext context)
-        {
-            var elements = new List<StructureMember>();
             var bounds = new List<BoundsPair>();
-            var struct_name = context.GetExactNode<StructNameContext>();
-            var spelling = struct_name.GetLabelText(nameof(StructNameContext.Spelling));
+            var spelling = context.GetLabelText(nameof(StructBodyContext.Spelling));
 
             if (context.TryGetExactNode<DimensionSuffixContext>(out var dimensions))
             {
                 bounds = CreateBounds(dimensions);
             }
 
-            var members = context.GetExactNode<StructMembersContext>();
-            var fields = members.GetExactNodes<StructMemberContext>().SelectMany(m => m.GetExactNodes<StructFieldContext>()).Select(d => CreateField(d)).ToList();
-            var structs = members.GetExactNodes<StructMemberContext>().SelectMany(m => m.GetExactNodes<StructDefinitionContext>()).Select(s => CreateStructure(s)).ToList();
+            var structs = context.GetExactNodes<StructBodyContext>().Select(s => CreateStructure(s)).ToList();
+            var fields = context.GetExactNodes<StructFieldContext>().Select(f => CreateField(f)).ToList(); ;
 
-            elements.AddRange(fields);
-            elements.AddRange(structs);
-
-            return new Structure(context) { Spelling = spelling, Bounds = bounds, Members = elements };
+            return new StructBody(context) { Spelling = spelling, Bounds = bounds, Structs = structs, Fields = fields };
         }
-        private Field CreateField(StructFieldContext context)
+        private StructField CreateField(StructFieldContext context)
         {
             var bounds = new List<BoundsPair>();
 
@@ -239,7 +226,7 @@ namespace Syscode
                 bounds = CreateBounds(dimensions);
             }
 
-            return new Field(context) { Bounds = bounds };
+            return new StructField(context) { Bounds = bounds };
         }
         private List<BoundsPair> CreateBounds(DimensionSuffixContext context)
         {

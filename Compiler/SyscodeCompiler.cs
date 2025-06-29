@@ -61,16 +61,16 @@ namespace Syscode
                         break;
                     }
 
-                case Structure structure:
+                case StructBody structure:
                     {
                         var txt = GetLLVMStructType(structure);
                         types.Add(($"%{structure.Spelling}", txt));
 
-                        foreach (var m in structure.Members)
+                        foreach (var m in structure.Structs)
                         {
-                            if (m is Structure)
+                            if (m is StructBody)
                             {
-                                var mmm = GetLLVMStructTypes((Structure)m);
+                                var mmm = GetLLVMStructTypes((StructBody)m);
                                 types.AddRange(mmm);
                             }
                         }
@@ -83,35 +83,35 @@ namespace Syscode
 
             return types;
         }
-        public string GetLLVMStructType(Structure structure)
+        public string GetLLVMStructType(StructBody structure)
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (var member in structure.Members.OrderBy(m => m.Ordinal))
-            {
-                switch (member)
-                {
-                    case Field f:
-                        {
-                            sb.Append($"{GetLLVMFieldType(f)}, ");
-                            break;
-                        }
-                    case Structure s:
-                        {
-                            sb.Append($"%{s.Spelling}, ");
-                            break;
-                        }
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
+            //foreach (var member in structure.Members.OrderBy(m => m.Ordinal))
+            //{
+            //    switch (member)
+            //    {
+            //        case StructField f:
+            //            {
+            //                sb.Append($"{GetLLVMFieldType(f)}, ");
+            //                break;
+            //            }
+            //        case Structure s:
+            //            {
+            //                sb.Append($"%{s.Spelling}, ");
+            //                break;
+            //            }
+            //        default:
+            //            throw new NotImplementedException();
+            //    }
+            //}
 
             var txt = $"{{ {sb.ToString().TrimEnd(' ', ',')} }}";
 
             return txt;
 
         }
-        public string GetLLVMFieldType(Field type)
+        public string GetLLVMFieldType(StructField type)
         {
             int bytes = 0;
 
@@ -231,10 +231,10 @@ namespace Syscode
                         Console.WriteLine($"{LineDepthEnd(depth, ifstmt)} End");
                         break;
                     }
-                case Structure structure:
+                case StructBody structure:
                     {
                         Console.WriteLine($"{LineDepth(depth, structure)} {node.GetType().Name} '{structure.Spelling}'");
-                        var children = structure.Members;
+                        var children = structure.Structs;
 
                         if (children.Any())
                         {
@@ -248,9 +248,9 @@ namespace Syscode
                         Console.WriteLine($"{LineDepthEnd(depth, structure)} End");
                         break;
                     }
-                case Field field:
+                case StructField field:
                     {
-                        Console.WriteLine($"{LineDepth(depth, node)} {node.GetType().Name} '{((Field)(node)).Spelling}' {((Field)(node)).TypeName} {((Field)(node)).Length}");
+                        Console.WriteLine($"{LineDepth(depth, node)} {node.GetType().Name} '{((StructField)(node)).Spelling}' {((StructField)(node)).TypeName} {((StructField)(node)).Length}");
                         break;
                     }
 
