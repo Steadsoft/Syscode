@@ -66,10 +66,10 @@ for J = 1 to 128 while flag = true until storage_used > MAX
 end
 ```
 ### Structures
-Data structures are defined using the `struct` keyword, in essece this defines a new type name in a similar manner to C's typedef. Structures can containa mix of other structures and member fields and these can be nested to an arbitrary level. Note how the `struct` keyword is required only at the outermost level.This example defines a struct type named `process_table` that contains another struct named `bitmap`:
+Data structures are defined using either the `dcl` keyword or the `type` keyword, in essence `type` defines a structure of a particular shape in a similar manner to C's typedef. Structures can containa mix of other structures and member fields and these can be nested to an arbitrary level. Note how the `dcl`/`type` keyword is required only at the outermost level. This example defines a struct type named `process_table` that contains another struct named `bitmap`:
 
 ```
-struct process_table
+type process_table
        timestamp ubin(32)
        bitmap
           initialized   bit(1)
@@ -78,6 +78,8 @@ struct process_table
        end
 end
 ```
+The above serves as a kind of template, instance of `process_table` can be declared just as any predefned type like `bin8` or `string`. 
+
 ### Computed Goto
 The language supports the subscripting of label constants with a literal decimal integer, this can then be coupled with a flexible form of the `goto` statement. Labels, because they denote a "place" are defined with the `@` symbol.
 ```
