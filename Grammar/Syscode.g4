@@ -22,9 +22,9 @@ statementSeparator : (SEMICOLON | NEWLINE | EOF); // EOF lets us end a source fi
 emptyLines: NEWLINE+;
 
 compilation: (statement* endOfFile); 
-statement:  preamble?  (struct | call | return | label | scope | enum | if | declare | literal | procedure | forLoop | whileLoop | untilLoop | goto| assignment );
+statement:  preamble?  (call | return | label | scope | enum | if | declare | literal | procedure | forLoop | whileLoop | untilLoop | goto| assignment );
 
-struct: STRUCT structBody ;
+//struct: STRUCT structBody ;
 structBody: Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
 structField: Spelling=identifier dimensionSuffix? Type=typename memberAttributes? statementSeparator;
 
@@ -40,7 +40,12 @@ procedure: PROC emptyLines? Spelling=identifier paramList? statement* emptyLines
 enum: ENUM emptyLines? Name=identifier emptyLines? typename? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? reference statementSeparator;
 return: (RETURN (emptyLines? LPAR expression RPAR)?) | (RETURN (emptyLines? expression)?) statementSeparator;
-declare: DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? typename memberAttributes* statementSeparator ;
+
+declare
+    : DCL structBody
+    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? typename memberAttributes* statementSeparator 
+    ;
+
 literal: LIT customLiteral AS decLiteral statementSeparator ;
 loop: forLoop | whileLoop | untilLoop ;
 forLoop : FOR reference EQUALS expression TO expression (BY expression)? emptyLines? (whileCondition emptyLines? untilCondition? | untilCondition emptyLines? whileCondition? | whileCondition | untilCondition)? statement* emptyLines? END ;
