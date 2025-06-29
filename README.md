@@ -66,7 +66,7 @@ for J = 1 to 128 while flag = true until storage_used > MAX
 end
 ```
 ### Structures
-Data structures are defined using the `struct` keyword, in essece this defines a new type name in a similar manner to C's typedef. Structures can containa mix of other structures and member fields and these can be nested to an arbitrary level. Note how the `struct` keyword is required only at the outermost level.This example defines a struct type named `process_table`:
+Data structures are defined using the `struct` keyword, in essece this defines a new type name in a similar manner to C's typedef. Structures can containa mix of other structures and member fields and these can be nested to an arbitrary level. Note how the `struct` keyword is required only at the outermost level.This example defines a struct type named `process_table` that contains another struct named `bitmap`:
 
 ```
 struct process_table
