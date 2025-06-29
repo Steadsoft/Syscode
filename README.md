@@ -88,5 +88,5 @@ The language supports the subscripting of label constants with a literal decimal
 ...
 @state(8)
 
-goto (x)
+goto state(x)
 ```
