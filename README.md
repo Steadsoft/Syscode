@@ -34,7 +34,7 @@ The language syntax borrows a lot from PL/I and takes the positive features of t
 Begin with the `dcl` keyword followed an `identifier` and obligator and optional attributes, examples
 - `dcl counter bin8` an 8 bit signed integer
 - `dcl rate bin(44)` a 44 bit signed integer
-- `dcl name string(32)` a 32 character fixed lenght string
+- `dcl name string(32)` a 32 character fixed length string
 - `dcl message string(128) var` 123 character max length varying length string
 - `dcl map descriptor unaligned` a variable `map` of `struct` type `descriptor` with all members unaligned for compactness
 
