@@ -60,7 +60,7 @@ end
 until count > max
 end
 ```
-#### These can be mixed in several ways, giving a rich set of potential loop constructs
+#### These can be combined in several ways, giving a rich set of potential loop constructs
 ```
 for J = 1 to 128 while flag = true until storage_used > MAX
 end
