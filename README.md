@@ -70,3 +70,11 @@ Data structures are defined using the `struct` keyword, in essece this defines a
 
 ```
 struct process_table
+       timestamp ubin(32)
+       bitmap
+          initialized   bit(1)
+          init_mode     bit(3)
+          reset_count   bit(5)
+       end
+end
+```
