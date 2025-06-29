@@ -79,7 +79,7 @@ struct process_table
 end
 ```
 ### Computed Goto
-The language supports the subscripting of label constants with a literal decimal integer, this can then be coupled with a flexible form of the `goto` statement:
+The language supports the subscripting of label constants with a literal decimal integer, this can then be coupled with a flexible form of the `goto` statement. Labels, because they denote a "place" are defined with the `@` symbol.
 ```
 @state(0)
 ...
