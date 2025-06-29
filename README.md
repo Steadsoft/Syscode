@@ -89,7 +89,7 @@ dcl process_table
        end
 end
 ```
-does not define a structure "template" but rather an instance of a variable named `process_table` this declaration is instantiated at runtime and can therefore have runtime defined array bounds:
+does not define a structure "template" but rather a runtime created instance of a variable named `process_table` this declaration is instantiated at runtime and can therefore have runtime defined array bounds:
 ```
 dcl process_table
        timestamp ubin(32)
