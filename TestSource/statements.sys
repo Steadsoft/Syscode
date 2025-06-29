@@ -27,6 +27,31 @@ end /* scope */
 #/
 
 
+type test
+    bulk
+
+    charlie bin8
+
+    end
+    block  
+
+
+
+       inner
+       end
+    end
+    collect
+    end
+        charlie bin8
+    charlie bin8
+    charlie bin8
+    charlie bin8
+
+end
+
+
+/#
+
 struct A,
         B,
             counter bin8,
@@ -35,8 +60,8 @@ struct A,
        printer bin8
        end
 
+  
 
-/#
 struct control_block(10) aligned,
        header string (32),
        list_length bin (16) unaligned,
@@ -46,7 +71,7 @@ dcl overlay control_block const;
 
 procedure startup (arg1,arg2,arg3)
 
-    return
+    return 
 
 end   /* proc  */
 

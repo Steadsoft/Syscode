@@ -23,7 +23,7 @@ emptyLines: NEWLINE+;
 
 
 compilation: (statement* endOfFile); 
-statement:  preamble?  (assignment | call | return | label | scope | enum | struct | if | declare | literal | procedure | forLoop | whileLoop | untilLoop);
+statement:  preamble?  (type | assignment | call | return | label | scope | enum | struct | if | declare | literal | procedure | forLoop | whileLoop | untilLoop);
 //realStatement : (assignment | label | scope | enum | struct | if | declare | literal | procedure );
 
 //statements: (statement)*;
@@ -225,6 +225,20 @@ prefixOperator
   | REDXOR
   ;
 
+
+type: TYPE typebody ;
+
+typebody: IDENTIFIER statementSeparator emptyLines? (typebody | field)* emptyLines? END statementSeparator;
+
+//typeList: (type_body emptyLines?)+;
+
+//fieldList: field (COMMA field)* ;
+
+field: IDENTIFIER typename statementSeparator;
+
+
+
+
 structDefinition: structName emptyLines? structAttributes* emptyLines? memberSeparator emptyLines? Members=structMembers emptyLines? END;
  
 qualifiedName: identifier (DOT identifier)*;
@@ -278,7 +292,7 @@ memberSeparator : COMMA;
 // Utility rules
 endOfFile: emptyLines? EOF;
 
-keyword: AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|CONST|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNIT|UNTIL|WHILE ;
+keyword: AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|CONST|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|TYPE|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNIT|UNTIL|WHILE ;
 
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
@@ -340,6 +354,7 @@ STRING:         'string';
 STRUCT:         'struct';
 THEN:           'then';
 TO:             'to';
+TYPE:           'type';
 UBIN16:         'ubin16';
 UBIN32:         'ubin32';
 UBIN64:         'ubin64';
