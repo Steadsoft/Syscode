@@ -27,24 +27,29 @@ end /* scope */
 #/
 
 
-type test
+struct test(100,100) aligned // aligned struct named 'test'
     bulk
-
-    charlie bin8
-
+        charlie bin8
+        aligned bin8 // member field of struct 'bulk' named 'aligned'
     end
-    block  
-
-
-
+    block (a,b) // 2D array of structs named 'block'
        inner
+
        end
     end
-    collect
+    collect // a struct named 'collect'
+
     end
-        charlie bin8
+
+    // three fields
+    charlie(x,y) bin8 
     charlie bin8
     charlie bin8
+
+    aligned aligned // an aligned struct named 'aligned'
+
+    end
+
     charlie bin8
 
 end

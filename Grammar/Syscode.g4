@@ -23,7 +23,7 @@ emptyLines: NEWLINE+;
 
 
 compilation: (statement* endOfFile); 
-statement:  preamble?  (type | assignment | call | return | label | scope | enum | struct | if | declare | literal | procedure | forLoop | whileLoop | untilLoop);
+statement:  preamble?  (type | call | return | label | scope | enum | if | declare | literal | procedure | forLoop | whileLoop | untilLoop |assignment );
 //realStatement : (assignment | label | scope | enum | struct | if | declare | literal | procedure );
 
 //statements: (statement)*;
@@ -32,7 +32,7 @@ scope:  blockScope;
 //lineScope:  (SCOPE emptyLines? Name=qualifiedName emptyLines? statementSeparator);
 blockScope: (SCOPE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
 procedure: PROC emptyLines? Spelling=identifier paramList? statement* emptyLines? END;
-struct: STRUCT structDefinition ;
+//struct: STRUCT structDefinition ;
 enum: ENUM emptyLines? Name=identifier emptyLines? typename? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? reference statementSeparator;
 return: (RETURN (emptyLines? LPAR expression RPAR)?) | (RETURN (emptyLines? expression)?) statementSeparator;
@@ -52,8 +52,9 @@ thenBlock :     statement*;
 elseBlock :     (ELSE emptyLines? thenBlock);
 elifBlock :     (ELIF emptyLines? exprThenBlock)+;
 
-assignment : Target=reference (EQUALS | COMPASSIGN) Source=expression statementSeparator;
+assignment : reference comparer expression statementSeparator;
 
+comparer: EQUALS | COMPASSIGN;
 
 reference
   : reference RARROW basicReference argumentsList?  
@@ -226,20 +227,20 @@ prefixOperator
   ;
 
 
-type: TYPE typebody ;
+type: STRUCT typebody ;
 
-typebody: IDENTIFIER statementSeparator emptyLines? (typebody | field)* emptyLines? END statementSeparator;
+typebody: identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? (typebody | field)* emptyLines? END statementSeparator;
 
 //typeList: (type_body emptyLines?)+;
 
 //fieldList: field (COMMA field)* ;
 
-field: IDENTIFIER typename statementSeparator;
+field: identifier dimensionSuffix? typename memberAttributes? statementSeparator;
 
 
 
 
-structDefinition: structName emptyLines? structAttributes* emptyLines? memberSeparator emptyLines? Members=structMembers emptyLines? END;
+//structDefinition: structName emptyLines? structAttributes* emptyLines? memberSeparator emptyLines? Members=structMembers emptyLines? END;
  
 qualifiedName: identifier (DOT identifier)*;
 paramList: LPAR identifier (COMMA identifier)* RPAR;
@@ -247,16 +248,16 @@ constArrayList: (LPAR INTEGER (COMMA INTEGER)* RPAR);
 //numericConstant: INTEGER;
 // struct
 //structMemberList: structMember+ ;
-structName: Spelling=identifier Bounds=dimensionSuffix?;
-structMembers
-    :  emptyLines? structMember emptyLines? (memberSeparator emptyLines? structMember emptyLines?)*  memberSeparator? emptyLines?;
+//structName: Spelling=identifier Bounds=dimensionSuffix?;
+//structMembers
+ //   :  emptyLines? structMember emptyLines? (memberSeparator emptyLines? structMember emptyLines?)*  memberSeparator? emptyLines?;
 enumMembers: emptyLines? enumMember emptyLines? (memberSeparator emptyLines? enumMember emptyLines?)* memberSeparator? emptyLines?;
-structMember
-    : structField
-    | structDefinition;
+// structMember
+//     : structField
+//     | structDefinition;
 
-structField:   (Spelling=identifier emptyLines? Bounds=dimensionSuffix? Type=typename memberAttributes*);
-structStruct:  structDefinition; 
+// structField:   (Spelling=identifier emptyLines? Bounds=dimensionSuffix? Type=typename memberAttributes*);
+// structStruct:  structDefinition; 
 
 enumMember: (Name=identifier);
 identifier: keyword | IDENTIFIER;
@@ -292,7 +293,7 @@ memberSeparator : COMMA;
 // Utility rules
 endOfFile: emptyLines? EOF;
 
-keyword: AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|CONST|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|TYPE|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNIT|UNTIL|WHILE ;
+keyword: ALIGNED|AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|CONST|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|TYPE|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNALIGNED|UNIT|UNTIL|WHILE ;
 
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
@@ -410,7 +411,7 @@ ASSIGN:         '<-';
 
 // comppund assignment
 
-COMPASSIGN:     '+=' | '-=' | '*=' | '/='|'%='|'&='|'|='|'^='|'<<='|'>>='|'<@='|'@>=';
+COMPASSIGN:     '+='|'-='|'*='|'/='|'%='|'&='|'|='|'^='|'<<='|'>>='|'<@='|'@>=';
 DOT:            '.';
 AT:             '@';
 SEMICOLON:      ';'; 
