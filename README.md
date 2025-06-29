@@ -26,3 +26,13 @@ A prominent feature of the language is the complete absence of reserved words. T
 - Aligned and unaligned bit strings of arbitrary length
 - Nested procedures and functions
 - Fixed or varying length strings
+
+## Synatx Highlights
+The language syntax is based on PL/I and takes the positive features of that syntax while removing some of the out dated or idiosyncratic features.
+
+### Declarations
+Begin with the `dcl` keyword followed an `identifier` and obligator and optional attributes, examples
+- `dcl counter bin8` an 8 bit signed integer
+- `dcl rate bin(44)` a 44 bit signed integer
+- `dcl name string(32)` a 32 character fixed lenght string
+- `dcl message string(128) var` 123 character max length varying length string
