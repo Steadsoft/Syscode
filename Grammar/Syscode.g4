@@ -229,7 +229,7 @@ prefixOperator
 
 type: STRUCT typebody ;
 
-typebody: identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? (typebody | field)* emptyLines? END statementSeparator;
+typebody: identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((typebody|field) emptyLines?)* END statementSeparator;
 
 //typeList: (type_body emptyLines?)+;
 
