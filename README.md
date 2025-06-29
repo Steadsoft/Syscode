@@ -28,7 +28,7 @@ A prominent feature of the language is the complete absence of reserved words. T
 - Fixed or varying length strings
 
 ## Syntax Highlights
-The language syntax is based on PL/I and takes the positive features of that syntax while removing some of the out dated or idiosyncratic features.
+The language syntax borrows a lot from PL/I and takes the positive features of that syntax while removing some of the out dated or idiosyncratic features.
 
 ### Declarations
 Begin with the `dcl` keyword followed an `identifier` and obligator and optional attributes, examples
