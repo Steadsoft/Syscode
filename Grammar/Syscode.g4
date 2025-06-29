@@ -25,8 +25,8 @@ compilation: (statement* endOfFile);
 statement:  preamble?  (struct | call | return | label | scope | enum | if | declare | literal | procedure | forLoop | whileLoop | untilLoop |assignment );
 
 struct: STRUCT structBody ;
-structBody: identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structBody|structField) emptyLines?)* END statementSeparator;
-structField: identifier dimensionSuffix? typename memberAttributes? statementSeparator;
+structBody: Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
+structField: Spelling=identifier dimensionSuffix? Type=typename memberAttributes? statementSeparator;
 
 label: AT identifier statementSeparator;
 scope:  blockScope;
@@ -260,7 +260,7 @@ memberSeparator : COMMA;
 // Utility rules
 endOfFile: emptyLines? EOF;
 
-keyword: ALIGNED|AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|CONST|DCL|DEC|DEF|ELIF|ELSE|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNALIGNED|UNIT|UNTIL|WHILE ;
+keyword: ALIGNED|AS|BIN16|BIN32|BIN64|BIN8|BIN|BIT|BY|CALL|CONST|DCL|DEC|DEF|ELIF|ELSE|END|ENUM|FOR|FOREVER|FUNC|IF|PATH|PROC|RETURN|SCOPE|STRING|STRUCT|THEN|TO|UBIN16|UBIN32|UBIN64|UBIN8|UBIN|UDEC|UNALIGNED|UNIT|UNTIL|WHILE ;
 
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
