@@ -78,3 +78,15 @@ struct process_table
        end
 end
 ```
+### Computed Goto
+The language supports the subscripting of label constants with a literal decimal integer, this can then be coupled with a flexible form of the `goto` statement:
+```
+@state(0)
+...
+@state(1)
+...
+...
+@state(8)
+
+goto (x)
+```
