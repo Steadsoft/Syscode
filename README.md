@@ -114,3 +114,11 @@ The language supports the subscripting of label constants with a literal decimal
 
 goto state(x)
 ```
+In addition to subscripted labels Syscode supports label variables:
+```
+dcl target label
+...
+target = fms_start_label
+goto target
+```
+
