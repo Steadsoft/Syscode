@@ -118,7 +118,7 @@ In addition to subscripted labels Syscode supports label variables:
 ```
 dcl target label
 ...
-target = fms_start_label
+target = fsm_start_label
 goto target
 ```
 
