@@ -105,6 +105,9 @@ namespace Syscode
                     }
                 case ExprPrefixedContext prefixed:
                     {
+                        expr.Right = CreateExpression(prefixed.GetExactNode<PrefixExpressionContext>().GetDerivedNode<ExpressionContext>());
+                        expr.Operator = GetOperator(prefixed);
+                        expr.Type = ExpressionType.Prefix;
                         break;
                     }
                 case ExprBinaryContext binary:
@@ -124,6 +127,12 @@ namespace Syscode
             return expr;
 
         }
+        private Operator GetOperator(ExprPrefixedContext context)
+        {
+            var operation = context.GetExactNode<PrefixExpressionContext>().GetExactNode<PrefixOperatorContext>();
+            var terminal = (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
+            return (Operator)(terminal.Symbol.Type);
+        }
         private Operator GetOperator(ExprBinaryContext context)
         {
             var operation = context.children.Where(c => c is not ExpressionContext).Cast<ParserRuleContext>().Single();
@@ -138,7 +147,7 @@ namespace Syscode
             var exprContext = context.GetDerivedNode<ExpressionContext>();
             var expressionTask = CreateExpression(exprContext);
 
-            return new Assignment(context) { Referenece = referenceTask/* .Result */, Expression = expressionTask /* .Result */ };
+            return new Assignment(context) { Reference = referenceTask/* .Result */, Expression = expressionTask /* .Result */ };
         }
         private Reference CreateReference(ReferenceContext context)
         {

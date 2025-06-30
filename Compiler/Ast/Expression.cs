@@ -27,7 +27,8 @@ namespace Syscode
                 ExpressionType.Primitive => Reference.ToString(),
                 ExpressionType.Parenthesized => $"({Reference.ToString()})",
                 ExpressionType.Binary => $"{Left} {LexerHelper.GetOperatorText(Operator)} {Right}" ,
-                ExpressionType.Literal => Literal.ToString()
+                ExpressionType.Literal => Literal.ToString(),
+                ExpressionType.Prefix => $"{LexerHelper.GetOperatorText(Operator)} {Right}"
             };
         }
 

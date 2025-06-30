@@ -186,7 +186,7 @@ namespace Syscode
                         Console.WriteLine($"{LineDepth(depth, node)} {node.GetType().Name}");
 
                         depth++;
-                        Console.WriteLine($"{LineDepth(depth, node)} {assign.Referenece} = {assign.Expression}");
+                        Console.WriteLine($"{LineDepth(depth, node)} {assign.Reference} = {assign.Expression}");
                         //PrintAbstractSyntaxTree(assign.Referenece, depth);
                         //PrintAbstractSyntaxTree(assign.Expression, depth);
                         depth--;

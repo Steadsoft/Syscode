@@ -11,11 +11,13 @@
 
 /* declarations */
 
+
+
 /* alignment */
 /* when applied to a struct the attributes is applied to every contained member that does not have an explicit */
 /* alignment */
 
-/#
+
 
 dcl variable bin8; 
 dcl array(10) bin(22)
@@ -26,7 +28,7 @@ scope systems.support
 
 end /* scope */
 
-#/
+
 
 dcl array(0:10) bin8 aligned
 
@@ -96,7 +98,7 @@ proc dummy
 
 end
 
-/#
+
 
 
 type A
@@ -152,7 +154,7 @@ proc reset_page_table (table_ptr)
 
 end /* proc */
 
-struct struct
+type struct
        bin8 bin8
        if   string(16)
        then dec(10)
@@ -199,7 +201,7 @@ for x = 100 to 100
 
 end
 
-for x = 100 to 100 
+for x = 100 to 100 by 0
  while (running) 
  until (size < 100)
 
@@ -263,4 +265,4 @@ end /* scope */
 */
 a = 4
 
-#/
+

@@ -30,6 +30,9 @@
         NOR = SyscodeParser.NOR,
         NOT = SyscodeParser.NOT,
         LOGAND = SyscodeParser.LOGAND,
-        LOGOR  = SyscodeParser.LOGOR
+        LOGOR  = SyscodeParser.LOGOR,
+        REDAND = SyscodeParser.REDAND,
+        REDOR = SyscodeParser.REDOR,
+        REDXOR = SyscodeParser.REDXOR,
     }
 }

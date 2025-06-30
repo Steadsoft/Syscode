@@ -8,6 +8,11 @@ namespace Syscode
         public Return(ParserRuleContext context) : base(context)
         {
         }
+
+        public override string ToString()
+        {
+            return $"return ({Expression})";
+        }
     }
 
 }

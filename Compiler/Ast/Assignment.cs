@@ -4,11 +4,16 @@ namespace Syscode
 {
     public class Assignment : AstNode
     {
-        public Reference Referenece;
+        public Reference Reference;
         public Expression Expression;
         public Assignment(ParserRuleContext context) : base(context)
         {
 
+        }
+
+        public override string ToString()
+        {
+            return $"{Reference} = {Expression}";
         }
     }
 }

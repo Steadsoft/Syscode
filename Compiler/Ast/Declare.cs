@@ -16,7 +16,7 @@ namespace Syscode
 
         public override string ToString()
         {
-            return Spelling;
+            return $"dcl {Spelling} {TypeName}"; 
         }
 
     }
