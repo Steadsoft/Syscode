@@ -21,10 +21,10 @@ namespace Syscode
                 CompilationContext compilation => CreateCompilation(compilation),
                 ScopeContext scope => CreateScope(scope),
                 ProcedureContext procedure => CreateProcedure(procedure),
-                StructContext structure => CreateStructure(structure.GetExactNode<StructBodyContext>()),
+                //StructContext structure => CreateStructure(structure.GetExactNode<StructBodyContext>()),
                 IfContext ifContext => CreateIf(ifContext),
                 AssignmentContext assignment => CreateAssignment(assignment),
-                DeclareContext declare => new Dcl(declare),
+                DeclareContext declare => CreateDeclaration(declare),
                 CallContext call => CreateCall(call),
                 ReturnContext ret => CreateReturn(ret),
                 _ => new AstNode(context)
@@ -202,6 +202,44 @@ namespace Syscode
 
             throw new InvalidOperationException();
         }
+        private Declare CreateDeclaration(DeclareContext context)
+        {
+            var dcl = new Declare(context);
+
+            if (context.TryGetExactNode<DimensionSuffixContext>(out var dimensions))
+            {
+                var commalist = dimensions.GetExactNode<BoundPairCommalistContext>(); ;
+                var pairs = commalist.GetExactNodes<BoundPairContext>();
+
+                foreach ( var pair in pairs)
+                {
+                    var bp = new BoundsPair(pair);
+
+                    if (pair.TryGetExactNode<LowerBoundContext>(out var lowerBound))
+                    {
+                        bp.Lower = CreateExpression(lowerBound.GetDerivedNode<ExpressionContext>());
+                    }
+
+                    bp.Upper = CreateExpression(pair.GetExactNode<UpperBoundContext>().GetDerivedNode<ExpressionContext>());
+
+                    dcl.Bounds.Add(bp);
+                }
+            }
+
+            if (context.TryGetExactNode<StructBodyContext>(out var structBody))
+            {
+                dcl.StructBody = CreateStructure(structBody);
+                dcl.Spelling = dcl.StructBody.Spelling;
+            }
+            else
+            {
+                dcl.Spelling = context.GetLabelText(nameof(DeclareContext.Spelling));
+                dcl.TypeName = context.GetLabelText(nameof(DeclareContext.Type));
+            }
+
+            return dcl;
+        }
+        
         private StructBody CreateStructure(StructBodyContext context)
         {
             var bounds = new List<BoundsPair>();

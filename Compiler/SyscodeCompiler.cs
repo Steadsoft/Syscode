@@ -273,7 +273,7 @@ namespace Syscode
                         break;
 
                     }
-                case Dcl dcl:
+                case Declare dcl:
                     {
                         Console.WriteLine($"{LineDepth(depth, dcl)} {node.GetType().Name} '{dcl.Spelling}'");
                         break;

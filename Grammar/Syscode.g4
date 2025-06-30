@@ -43,7 +43,7 @@ return: (RETURN (emptyLines? LPAR expression RPAR)?) | (RETURN (emptyLines? expr
 
 declare
     : DCL structBody
-    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? typename memberAttributes* statementSeparator 
+    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? Type=typename memberAttributes* statementSeparator 
     ;
 
 type: TYPE structBody ;    

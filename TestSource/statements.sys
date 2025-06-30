@@ -28,6 +28,8 @@ end /* scope */
 
 #/
 
+dcl array(10) bin8
+
 @i_am_a_place
 
 @i_am_a_place(3) 
@@ -75,11 +77,12 @@ type isr_register
 end
 
 dcl dcl (10) string(44)
+
 dcl target label
 
-label = this_is_another_label
+target = that_other_label
 
-goto label
+goto target
 
 dcl  handler(32) entry(bin8, string)
 
@@ -88,7 +91,7 @@ call handler(J)(10,"hello")
 /#
 
 
-struct A
+type A
         B
             counter bin8
             lister  bin8
@@ -98,7 +101,7 @@ end
 
   
 
-struct control_block(10) aligned
+type control_block(10) aligned
        header string (32)
        list_length bin (16) unaligned
 end /* struct */
