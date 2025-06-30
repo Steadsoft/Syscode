@@ -22,7 +22,7 @@ statementSeparator : (SEMICOLON | NEWLINE | EOF); // EOF lets us end a source fi
 emptyLines: NEWLINE+;
 
 compilation: (statement* endOfFile); 
-statement:  preamble?  (call | return | label | scope | enum | if | declare | literal | procedure | forLoop | whileLoop | untilLoop | goto| assignment );
+statement:  preamble?  (call | return | label | scope | enum | if | declare | type | literal | procedure | forLoop | whileLoop | untilLoop | goto| assignment );
 
 //struct: STRUCT structBody ;
 structBody: Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
@@ -45,6 +45,8 @@ declare
     : DCL structBody
     | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? typename memberAttributes* statementSeparator 
     ;
+
+type: TYPE structBody ;    
 
 literal: LIT customLiteral AS decLiteral statementSeparator ;
 loop: forLoop | whileLoop | untilLoop ;
@@ -243,9 +245,17 @@ typename
     | decimalType
     | stringType 
     | bitstringType 
-    | identifier
     | unitType
+    | labelType
+    | entryType
+    | identifier
     ;
+
+labelType: LABEL ;
+
+entryType: ENTRY (entryList);
+
+entryList: LPAR typename (COMMA typename)* RPAR ;
 
 structAttributes 
     : ALIGNED 
@@ -288,6 +298,7 @@ keyword
     | ELIF
     | ELSE
     | END
+    | ENTRY
     | ENUM
     | FOR
     | FOREVER
@@ -295,6 +306,7 @@ keyword
     | GOTO
     | IF
     | IS
+    | LABEL
     | LIT
     | PATH
     | PROC
@@ -304,6 +316,7 @@ keyword
     | STRUCT
     | THEN
     | TO
+    | TYPE
     | UBIN16
     | UBIN32
     | UBIN64
@@ -361,6 +374,7 @@ DEF:            'def';
 ELIF:           'elif';
 ELSE:           'else';
 END:            'end';
+ENTRY:          'entry';
 ENUM:           'enum';
 FOR:            'for';
 FOREVER:        'forever';
@@ -368,6 +382,7 @@ FUNC:           'func' | 'function';
 GOTO:           'goto';
 IF:             'if';
 IS:             'is';
+LABEL:          'label';
 LIT:            'lit' | 'literal';
 PATH:           'path';
 PROC:           'proc' | 'procedure';
@@ -377,6 +392,7 @@ STRING:         'string';
 STRUCT:         'struct';
 THEN:           'then';
 TO:             'to';
+TYPE:           'type';
 UBIN16:         'ubin16';
 UBIN32:         'ubin32';
 UBIN64:         'ubin64';

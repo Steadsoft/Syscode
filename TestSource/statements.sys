@@ -1,6 +1,13 @@
+
 /* Unit test input to ensure error free parse testing        */
 /* and pushing the grammar's limits with respect             */
 /* keyword identifiers, statement splittig and termination.  */
+
+/* 
+    block comment with newlines in
+*/
+
+
 
 /* declarations */
 
@@ -13,11 +20,7 @@
 dcl variable bin8; 
 dcl array(10) bin(22)
 dcl counters(100) dec(10) unaligned
-dcl 
-
-twodarray(10,10) 
-
-string(128)
+dcl target label
 
 scope systems.support
 
@@ -65,7 +68,22 @@ dcl test(100,100) aligned
 
 end
 
+type isr_register
+     mode     bit(2)
+     max      bit(3)
+     mas      bit(9)
+end
+
 dcl dcl (10) string(44)
+dcl target label
+
+label = this_is_another_label
+
+goto label
+
+dcl  handler(32) entry(bin8, string)
+
+call handler(J)(10,"hello")
 
 /#
 
