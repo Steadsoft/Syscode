@@ -22,16 +22,16 @@ statementSeparator : (SEMICOLON | NEWLINE | EOF); // EOF lets us end a source fi
 emptyLines: NEWLINE+;
 
 compilation: (statement* endOfFile); 
-statement:  preamble?  (call | return | label | scope | enum | if | declare | type | literal | procedure | forLoop | whileLoop | untilLoop | goto| assignment );
+statement:  preamble?  (call | return | label | scope | enum | if | declare | type | literal | procedure | forLoop | whileLoop | untilLoop | goto | assignment );
 
 //struct: STRUCT structBody ;
 structBody: Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
 structField: Spelling=identifier dimensionSuffix? Type=typename memberAttributes? statementSeparator;
 
-label: AT identifier labelSubscript? statementSeparator;
+label: AT Spelling=identifier labelSubscript? statementSeparator;
 labelSubscript: LPAR decLiteral RPAR;
 
-goto: GOTO identifier gotoSubscript? statementSeparator;
+goto: GOTO reference statementSeparator;
 gotoSubscript: LPAR expression RPAR;
 
 scope:  blockScope;
@@ -349,10 +349,10 @@ fragment BASE_O:  (':o' | ':O');
 fragment FRAC_B:  ('.' [0-1]+);
 fragment BASE_B:  (':b' | ':B');
 
-HEX_LITERAL:  ((HEX (' ' HEX)*)+ | (HEX ('_' HEX)*)+) FRAC_H? BASE_H;
-OCT_LITERAL:  ((OCT (' ' OCT)*)+ | (OCT ('_' OCT)*)+) FRAC_O? BASE_O;
-DEC_LITERAL:  (DECIMAL (' ' DECIMAL)*)+ FRAC_D? BASE_D?;
-BIN_LITERAL:  ((BINARY (' ' BINARY)*)+ | (BINARY ('_' BINARY)*)+) FRAC_B? BASE_B;
+HEX_LITERAL:  ((HEX (' '+ HEX)*)+ | (HEX ('_'+ HEX)*)+) FRAC_H? BASE_H;
+OCT_LITERAL:  ((OCT (' '+ OCT)*)+ | (OCT ('_'+ OCT)*)+) FRAC_O? BASE_O;
+DEC_LITERAL:  (DECIMAL (' '+ DECIMAL)*)+ FRAC_D? BASE_D?;
+BIN_LITERAL:  ((BINARY (' '+ BINARY)*)+ | (BINARY ('_'+ BINARY)*)+) FRAC_B? BASE_B;
 INTEGER:      ([1-9] [0-9]*);
 
 // Keyword Tokens

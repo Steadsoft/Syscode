@@ -28,11 +28,15 @@ end /* scope */
 
 #/
 
-dcl array(10) bin8
+dcl array(0:10) bin8
 
 @i_am_a_place
 
 @i_am_a_place(3) 
+
+hex  = 02e4 983d 88cf:H 
+oct  = 1245 334 22222:o
+bin  = 0110 1001 1101:b
 
 call reboot(9)
 
@@ -87,6 +91,10 @@ goto target
 dcl  handler(32) entry(bin8, string)
 
 call handler(J)(10,"hello")
+
+proc dummy
+
+end
 
 /#
 

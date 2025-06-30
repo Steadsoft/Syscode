@@ -27,8 +27,27 @@ namespace Syscode
                 DeclareContext declare => CreateDeclaration(declare),
                 CallContext call => CreateCall(call),
                 ReturnContext ret => CreateReturn(ret),
+                LabelContext lab => CreateLabel(lab),
+                GotoContext gto => CreateGoto(gto),
                 _ => new AstNode(context)
             };
+        }
+        public Goto CreateGoto(GotoContext context)
+        {
+            return new Goto(context) { target = CreateReference(context.GetExactNode<ReferenceContext>()) };
+        }
+        private Label CreateLabel(LabelContext context)
+        {
+            string sub = string.Empty;
+
+            var name = context.GetLabelText(nameof(DeclareContext.Spelling));
+
+            if (context.TryGetExactNode<LabelSubscriptContext>(out var subscript))
+            {
+                sub = subscript.GetExactNode<DecLiteralContext>().GetText();
+            }
+
+            return new Label(context) { Spelling = name, Subscript = sub };
         }
         private Return CreateReturn(ReturnContext context)
         {
@@ -208,8 +227,7 @@ namespace Syscode
 
             if (context.TryGetExactNode<DimensionSuffixContext>(out var dimensions))
             {
-                var commalist = dimensions.GetExactNode<BoundPairCommalistContext>(); ;
-                var pairs = commalist.GetExactNodes<BoundPairContext>();
+                var pairs = dimensions.GetExactNode<BoundPairCommalistContext>().GetExactNodes<BoundPairContext>(); ;
 
                 foreach ( var pair in pairs)
                 {
@@ -229,7 +247,7 @@ namespace Syscode
             if (context.TryGetExactNode<StructBodyContext>(out var structBody))
             {
                 dcl.StructBody = CreateStructure(structBody);
-                dcl.Spelling = dcl.StructBody.Spelling;
+                dcl.Spelling = dcl.StructBody.Spelling;  // copy the spelling for convenience in debugging.
             }
             else
             {
@@ -239,7 +257,6 @@ namespace Syscode
 
             return dcl;
         }
-        
         private StructBody CreateStructure(StructBodyContext context)
         {
             var bounds = new List<BoundsPair>();

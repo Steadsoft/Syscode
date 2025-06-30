@@ -7,13 +7,16 @@ namespace Syscode
     {
         public string TypeName;
         public List<BoundsPair> Bounds = new();
-        public int Length;
         public string Spelling;
         public StructBody StructBody;
         public Declare(ParserRuleContext context) : base(context)
         {
-
-            //Spelling = context.GetLabelText(nameof(DeclareContext.Spelling));
         }
+
+        public override string ToString()
+        {
+            return Spelling;
+        }
+
     }
 }
