@@ -262,9 +262,14 @@ structAttributes
     | UNALIGNED ;
 
 memberAttributes
-    : CONST
-    | ALIGNED 
-    | UNALIGNED ;
+    : constAttribute         #AttribConst
+    | alignedAttribute       #AttribAligned
+    | unalignedAttribute     #AttribUnaligned
+    ;
+
+constAttribute: CONST;
+alignedAttribute: ALIGNED;
+unalignedAttribute: UNALIGNED;    
 
 unitType: UNIT;
 

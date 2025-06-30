@@ -9,6 +9,7 @@ namespace Syscode
         public List<BoundsPair> Bounds = new();
         public string Spelling;
         public StructBody StructBody;
+        public List<Attribute> Attributes = new();
         public Declare(ParserRuleContext context) : base(context)
         {
         }

@@ -28,7 +28,7 @@ end /* scope */
 
 #/
 
-dcl array(0:10) bin8
+dcl array(0:10) bin8 aligned
 
 @i_am_a_place
 

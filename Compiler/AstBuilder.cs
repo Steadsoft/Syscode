@@ -255,6 +255,27 @@ namespace Syscode
                 dcl.TypeName = context.GetLabelText(nameof(DeclareContext.Type));
             }
 
+            var attribs = context.GetDerivedNodes<MemberAttributesContext>();
+
+            foreach ( var attrib in attribs)
+            {
+                switch (attrib)
+                {
+                    case (AttribAlignedContext):
+                        dcl.Attributes.Add(new Aligned(attrib));
+                        break;
+                    case (AttribUnalignedContext):
+                        dcl.Attributes.Add(new Unaligned(attrib));
+                        break;
+                    case (AttribConstContext):
+                        dcl.Attributes.Add(new Const(attrib));
+                        break;
+                    default:
+                        throw new InvalidOperationException();
+                }
+
+            }
+
             return dcl;
         }
         private StructBody CreateStructure(StructBodyContext context)
