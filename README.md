@@ -124,4 +124,21 @@ goto target
 @fsm_start_label
 ...
 ```
+### Entry Variables
+These are akin to C function pointers, variables that can refer to callable procedures and functions.
+```
+procedure gather (a)
+   dcl a bin(24)
+...
+end
+procedure scatter (a)
+   dcl a bin(24)
+...
+end
 
+dcl accessor entry (bin(24))
+
+accessor = gather
+
+call accessor (3219)
+``` 
