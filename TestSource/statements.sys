@@ -21,10 +21,13 @@
 
 dcl variable bin8; 
 dcl array(10) bin(22)
+dcl msg string
+dcl msg string (1,2)
 dcl frequency bin(32,8)
 dcl rates bin("helllo")
 dcl counters(100) dec(10) unaligned
 dcl target label
+dcl message string(-33)
 
 scope systems.support
 

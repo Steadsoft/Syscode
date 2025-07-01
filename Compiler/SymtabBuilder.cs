@@ -30,22 +30,25 @@ namespace Syscode
 
             symbol.CoreType = declaration.CoreType;
 
-
-            if (IsBinary(symbol.CoreType))
+            if (IsBinary(symbol.CoreType) && ValidateBinary(declaration, out var precision, out var scale, out var signed))
             {
-                if (ValidateBinary(declaration, out var p, out var s, out var signed))
-                {
-                    symbol.Precision = p;
-                    symbol.Scale = s;
-                    symbol.Signed = signed;
-                }
+                symbol.Precision = precision;
+                symbol.Scale = scale;
+                symbol.Signed = signed;
+                symbol.Invalid = false;
+                return symbol;
             }
 
-            if (declaration.TypeName == "entry")
-                symbol.CoreType = CoreType.ENTRY;
-
-            if (declaration.TypeName == "string")
-                symbol.CoreType = CoreType.STRING;
+            if (symbol.CoreType == CoreType.STRING)
+            {
+                if (ValidateString(declaration, out var length, out var varying))
+                {
+                    symbol.Varying = varying;
+                    symbol.Length = length;
+                    symbol.Invalid = false;
+                    return symbol;
+                }
+            }
 
             return symbol;
         }
@@ -58,6 +61,41 @@ namespace Syscode
         private bool IsPrecisionInvalid(Declare declaration)
         {
             return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal.LiteralType == LiteralType.Numeric));
+        }
+
+        private bool IsStringLengthInvalid(Declare declaration)
+        {
+            return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal.LiteralType == LiteralType.Numeric));
+        }
+
+
+        private bool ValidateString (Declare declaration, out int Length, out bool Varying)
+        {
+            Length = 0;
+            Varying = false;
+
+            if (declaration.typeSubscripts.Count == 0)
+            {
+                diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The string variable '{declaration.Spelling}' must have a length specifier."));
+                return false;
+            }
+
+            if (declaration.typeSubscripts.Count > 1)
+            {
+                diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The string variable '{declaration.Spelling}' must have a single valued length specifier."));
+                return false;
+            }
+
+            if (IsStringLengthInvalid(declaration))
+            {
+                diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The length for string '{declaration.Spelling}' must be a positive non-zero integer literal"));
+                return false;
+            }
+
+            Length = Convert.ToInt32(declaration.typeSubscripts[0].Literal.Value);
+
+            return true;
+
         }
 
         private bool ValidateBinary(Declare declaration, out Int32? Precision, out Int32? Scale, out bool Signed)
@@ -80,6 +118,13 @@ namespace Syscode
                 }
 
                 Precision = Convert.ToInt32(declaration.TypeName.Substring(3));
+
+                if (Precision <= 0)
+                {
+                    diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The precision for the variable '{declaration.Spelling}' must be a positive non-zero integer literal"));
+                    return false;
+                }
+
                 Scale = 0;
                 Signed = true;
                 return true;
@@ -113,7 +158,7 @@ namespace Syscode
 
                     if (PrecisionInvalid)
                     {
-                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The precision for '{declaration.Spelling}' must be an integer literal"));
+                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The precision for the variable '{declaration.Spelling}' must be a positive non-zero integer literal"));
                         return true;
                     }
 
@@ -130,13 +175,13 @@ namespace Syscode
 
                     if (PrecisionInvalid)
                     {
-                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The precision for '{declaration.Spelling}' must be an integer literal"));
+                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The precision for the variable '{declaration.Spelling}' must be a positive non-zero integer literal"));
                         return false;
                     }
 
                     if (ScaleInvalid)
                     {
-                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The scale for '{declaration.Spelling}' must be an integer literal"));
+                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The scale for the variable '{declaration.Spelling}' must be an integer literal"));
                         return false;
                     }
 
