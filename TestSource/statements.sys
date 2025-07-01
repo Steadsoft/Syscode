@@ -22,6 +22,7 @@
 dcl variable bin8; 
 dcl array(10) bin(22)
 dcl frequency bin(32,8)
+dcl rates bin("helllo")
 dcl counters(100) dec(10) unaligned
 dcl target label
 
@@ -47,7 +48,7 @@ goto i_am_a_place(5)
 
 goto i_am_a_place(target)
 
-dcl struct bin(99)
+dcl struct bin(99,"p")
 
 dcl test(100,100) aligned 
         bulk

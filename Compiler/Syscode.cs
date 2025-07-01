@@ -11,6 +11,8 @@ namespace Syscode
             AstNode ast = null;
             var compiler = new SyscodeCompiler();
 
+            compiler.diagnostics += onFileFound;
+
             var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\statements.sys");
 
             //compiler.PrintConcreteSyntaxTree(cst);
@@ -25,18 +27,25 @@ namespace Syscode
 
             clock.Stop();
 
-            compiler.PrintAbstractSyntaxTree(ast);
+            //compiler.PrintAbstractSyntaxTree(ast);
 
-            var types = compiler.GetLLVMStructTypes(ast);
+            //var types = compiler.GetLLVMStructTypes(ast);
 
-            Console.WriteLine();
-            Console.WriteLine("LLVM TYPES");
-            Console.WriteLine();
+            //Console.WriteLine();
+            //Console.WriteLine("LLVM TYPES");
+            //Console.WriteLine();
 
-            foreach (var type in types)
-            {
-                Console.WriteLine($"{type.Item1} = type {type.Item2}");
-            }
+            //foreach (var type in types)
+            //{
+            //    Console.WriteLine($"{type.Item1} = type {type.Item2}");
+            //}
         }
+
+        public static EventHandler<DiagnosticEvent> onFileFound = (sender, eventArgs) =>
+        {
+            string message = $"{eventArgs.severity} on line {eventArgs.line} {eventArgs.message}";
+
+            Console.WriteLine(message);
+        };
     }
 }

@@ -8,9 +8,20 @@ namespace Syscode
         public string TypeName;
         public List<BoundsPair> Bounds = new();
         public string Spelling;
-        public StructBody StructBody;
+        private StructBody structBody;
         public List<Attribute> Attributes = new();
         public List<Expression> typeSubscripts = new();
+
+        public StructBody StructBody 
+        { 
+            get => structBody; 
+            set
+            {
+                structBody = value;
+                TypeName = "structure"; // not possible in grammar but helps by avoiding null typename
+            }
+        }
+
         public Declare(ParserRuleContext context) : base(context)
         {
         }

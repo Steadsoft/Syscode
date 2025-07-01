@@ -21,83 +21,15 @@ namespace Syscode.Ast
         {
             this.declaration = declaration;
 
-            if (declaration.TypeName == "label")
-                CoreType = CoreType.Label;
-
-            if (declaration.TypeName.StartsWith("bin"))
-            {
-                CoreType = CoreType.Binary;
-                Signed = false;
-
-                if (declaration.TypeName == "bin8")
-                    precision = 8;
-
-                if (declaration.TypeName == "bin16")
-                    precision = 16;
-
-                if (declaration.TypeName == "bin32")
-                    precision = 32;
-
-                if (declaration.TypeName == "bin64")
-                    precision = 64;
-
-                if (declaration.typeSubscripts.Any())
-                {
-                    if (declaration.typeSubscripts.Count == 1)
-                    {
-                        if (declaration.typeSubscripts[0].Type != ExpressionType.Literal)
-                            ;
-
-                        precision = Convert.ToInt32(declaration.typeSubscripts[0].Literal.Value);
-                    }
-
-                    if (declaration.typeSubscripts.Count == 2)
-                    {
-                        if (declaration.typeSubscripts[0].Type != ExpressionType.Literal)
-                            ;
-                        if (declaration.typeSubscripts[1].Type != ExpressionType.Literal)
-                            ;
-
-                        precision = Convert.ToInt32(declaration.typeSubscripts[0].Literal.Value);
-                        scale = Convert.ToInt32(declaration.typeSubscripts[1].Literal.Value);
-                    }
-
-                }
-
-            }
-
-            if (declaration.TypeName.StartsWith("ubin"))
-            {
-                CoreType = CoreType.Binary;
-                Signed = true;
-
-                if (declaration.TypeName == "ubin8")
-                    precision = 8;
-
-                if (declaration.TypeName == "ubin16")
-                    precision = 16;
-
-                if (declaration.TypeName == "ubin32")
-                    precision = 32;
-                if (declaration.TypeName == "ubin64")
-                    precision = 64;
-            }
-
-
-            if (declaration.TypeName == "entry")
-                CoreType = CoreType.Entry;
-
-            if (declaration.TypeName == "string")
-                CoreType = CoreType.String;
-
-
         }
 
         public List<BoundsPair> Bounds { get => declaration.Bounds; }
         public string Spelling { get => declaration.Spelling; }
         public bool Structure { get => declaration.StructBody != null; }
-        public CoreType CoreType { get => coreType; private set => coreType = value; }
-        public int Precision { get => precision; private set => precision = value; }
-        public bool Signed { get => signed; private set => signed = value; }
+        public CoreType CoreType { get => coreType; internal set => coreType = value; }
+        public int Precision { get => precision; internal set => precision = value; }
+        public bool Signed { get => Signed1; internal set => Signed1 = value; }
+        public int Scale { get => scale; internal set => scale = value; }
+        public bool Signed1 { get => signed; internal set => signed = value; }
     }
 }

@@ -9,7 +9,8 @@ namespace Syscode
         private SyscodeLexer lexer;
         private AstBuilder builder;
         private SymtabBuilder symtabBuilder;
-        public SyscodeCompiler()
+        public event EventHandler<DiagnosticEvent>? diagnostics;
+       public SyscodeCompiler()
         {
         }
 
@@ -21,7 +22,7 @@ namespace Syscode
             var tokens = new CommonTokenStream(lexer);
             var parser = new SyscodeParser(tokens);
             builder = new AstBuilder();
-            symtabBuilder = new SymtabBuilder();
+            symtabBuilder = new SymtabBuilder(diagnostics);
 
             return parser.compilation();
         }
