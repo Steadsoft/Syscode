@@ -11,8 +11,6 @@ namespace Syscode.Ast
     public class Symbol  
     {
         private bool invalid = true;
-        private bool structure = false;
-        private List<BoundsPair> bounds = new();
         private Declare declaration;
         private CoreType coreType;
         private int? precision;
@@ -23,7 +21,6 @@ namespace Syscode.Ast
         public Symbol(Declare declaration) 
         {
             this.declaration = declaration;
-
         }
 
         public List<BoundsPair> Bounds { get => declaration.Bounds; }
@@ -31,9 +28,8 @@ namespace Syscode.Ast
         public bool Structure { get => declaration.StructBody != null; }
         public CoreType CoreType { get => coreType; internal set => coreType = value; }
         public int? Precision { get => precision; internal set => precision = value; }
-        public bool Signed { get => Signed1; internal set => Signed1 = value; }
+        public bool Signed { get => signed; internal set => signed = value; }
         public int? Scale { get => scale; internal set => scale = value; }
-        public bool Signed1 { get => signed; internal set => signed = value; }
         public bool Invalid { get => invalid; internal set => invalid = value; }
         public bool Varying { get => varying; internal set => varying = value; }
         public int Length { get => length; internal set => length = value; }

@@ -24,9 +24,24 @@ namespace Syscode
             root.Symbols = declarations.Select(d => CreateSymbol(d)).ToList();
         }
 
+        //public Symbol CreateSymbol (Procedure proc)
+        //{
+        //    var symbol = new Symbol(proc);
+
+        //    return symbol;
+        //}
+
         public Symbol CreateSymbol(Declare declaration)
         {
             var symbol = new Symbol(declaration);
+
+            if (declaration is Procedure proc)
+            {
+                var sym = new Symbol(declaration);
+                proc.Symbols = proc.Statements.Where(s => s is Declare).Cast<Declare>().Select(d => CreateSymbol(d)).ToList();
+                sym.Invalid = false;
+                return sym;
+            }
 
             symbol.CoreType = declaration.CoreType;
 
@@ -46,6 +61,7 @@ namespace Syscode
                     symbol.Varying = varying;
                     symbol.Length = length;
                     symbol.Invalid = false;
+                    symbol.Varying = declaration.Varying;
                     return symbol;
                 }
             }
@@ -107,6 +123,13 @@ namespace Syscode
             if (!TypeNames.AllBinaryTypes.Contains(declaration.TypeName))
             {
                 return false;
+            }
+
+            if (declaration.Varying)
+            {
+                diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The option 'var' can only be applied to string declarations."));
+                return false;
+
             }
 
             if (TypeNames.BaseBinaryTypes.Contains(declaration.TypeName))

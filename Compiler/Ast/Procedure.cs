@@ -3,9 +3,10 @@ using Syscode.Ast;
 
 namespace Syscode
 {
-    public class Procedure : AstNode, IStatementContainer
+    public class Procedure : Declare, IStatementContainer
     {
         public string Spelling;
+        public bool isFunction;
         public List<string> Parameters = new List<string>();
         private List<AstNode> statements = new List<AstNode>();
         public List<Symbol> Symbols = new List<Symbol>();

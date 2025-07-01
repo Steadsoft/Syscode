@@ -22,7 +22,7 @@ statementSeparator : (SEMICOLON | NEWLINE | EOF); // EOF lets us end a source fi
 emptyLines: NEWLINE+;
 
 compilation: (statement* endOfFile); 
-statement:  preamble?  (call | return | label | scope | enum | if | declare | type | literal | procedure | forLoop | whileLoop | untilLoop | goto | assignment );
+statement:  preamble?  (call | return | label | scope | enum | if | declare | type | literal | procedure | function | forLoop | whileLoop | untilLoop | goto | assignment );
 
 //struct: STRUCT structBody ;
 structBody: Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
@@ -37,9 +37,11 @@ gotoSubscript: LPAR expression RPAR;
 scope:  blockScope;
 blockScope: (SCOPE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
 procedure: PROC emptyLines? Spelling=identifier paramList? statement* emptyLines? END;
+function: FUNC emptyLines? Spelling=identifier paramList? statement* emptyLines? END;
+
 enum: ENUM emptyLines? Name=identifier emptyLines? typename? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? reference statementSeparator;
-return: (RETURN (emptyLines? LPAR expression RPAR)?) | (RETURN (emptyLines? expression)?) statementSeparator;
+return: ((RETURN (emptyLines? LPAR expression RPAR)?) | (RETURN (emptyLines? expression)?)) statementSeparator;
 
 declare
     : DCL structBody
@@ -241,9 +243,11 @@ enumMembers: emptyLines? enumMember emptyLines? (memberSeparator emptyLines? enu
 enumMember: (Name=identifier);
 identifier: keyword | IDENTIFIER;
 typename 
-    : typeCode arguments? 
+    : typeCode arguments? varying?
     | identifier
     ;
+
+varying: VAR ;
 
 labelType: LABEL ;
 
@@ -327,6 +331,7 @@ keyword
     | UNALIGNED
     | UNIT
     | UNTIL
+    | VAR
     | WHILE 
     ;
 
@@ -403,6 +408,7 @@ UDEC:           'udec';
 UNALIGNED:      'unaligned';
 UNIT:           'unit';
 UNTIL:          'until';
+VAR:            'var';
 WHILE:          'while';
 
 // Symbol tokens
