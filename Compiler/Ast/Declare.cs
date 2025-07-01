@@ -30,6 +30,5 @@ namespace Syscode
         {
             return $"dcl {Spelling} {TypeName}"; 
         }
-
     }
 }

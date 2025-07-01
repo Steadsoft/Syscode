@@ -241,13 +241,7 @@ enumMembers: emptyLines? enumMember emptyLines? (memberSeparator emptyLines? enu
 enumMember: (Name=identifier);
 identifier: keyword | IDENTIFIER;
 typename 
-    : binaryType
-    | decimalType
-    | stringType 
-    | bitstringType 
-    | unitType
-    | labelType
-    | entryType
+    : typeCode arguments? 
     | identifier
     ;
 
@@ -273,11 +267,13 @@ unalignedAttribute: UNALIGNED;
 
 unitType: UNIT;
 
-binaryType: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | ((BIN | UBIN) arguments?) ;
-decimalType:  ((DEC | UDEC) arguments) ;
+typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN | DEC | UDEC | STRING | BIT | LABEL | ENTRY ;
 
-stringType: STRING argumentsList? ; //'(' INTEGER ')';
-bitstringType: BIT argumentsList? ;//'(' INTEGER ')';
+// binaryCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN arguments?) ;
+// decimalType:  ((DEC | UDEC) arguments) ;
+
+// stringType: STRING argumentsList? ; //'(' INTEGER ')';
+// bitstringType: BIT argumentsList? ;//'(' INTEGER ')';
 
 // Punctuation rules
 memberSeparator : COMMA;
