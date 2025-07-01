@@ -21,6 +21,7 @@
 
 dcl variable bin8; 
 dcl array(10) bin(22)
+dcl frequency bin(32,8)
 dcl counters(100) dec(10) unaligned
 dcl target label
 

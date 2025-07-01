@@ -273,8 +273,8 @@ unalignedAttribute: UNALIGNED;
 
 unitType: UNIT;
 
-binaryType: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | ((BIN | UBIN) argumentsList?) ;
-decimalType:  ((DEC | UDEC) argumentsList) ;
+binaryType: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | ((BIN | UBIN) arguments?) ;
+decimalType:  ((DEC | UDEC) arguments) ;
 
 stringType: STRING argumentsList? ; //'(' INTEGER ')';
 bitstringType: BIT argumentsList? ;//'(' INTEGER ')';

@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using Syscode.Ast;
 
 namespace Syscode
 {
@@ -7,7 +8,7 @@ namespace Syscode
         public string Spelling;
         public List<string> Parameters = new List<string>();
         private List<AstNode> statements = new List<AstNode>();
-
+        public List<Symbol> Symbols = new List<Symbol>();
         public Procedure(ParserRuleContext context) : base(context)
         {
         }

@@ -21,6 +21,8 @@ namespace Syscode
 
             ast = compiler.GenerateAbstractSyntaxTree(cst);
 
+            compiler.ProcessDeclarations(ast);
+
             clock.Stop();
 
             compiler.PrintAbstractSyntaxTree(ast);

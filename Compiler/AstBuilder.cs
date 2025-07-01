@@ -285,6 +285,18 @@ namespace Syscode
 
             }
 
+            if (context.TryGetExactNode<TypenameContext>(out var tn))
+            {
+                if (tn.TryGetExactNode<BinaryTypeContext>(out var bint))
+                {
+                    if (bint.TryGetExactNode<ArgumentsContext>(out var subs))
+                    {
+                        var expressions = subs.GetExactNode<SubscriptCommalistContext>().GetDerivedNodes<ExpressionContext>().Select(e => CreateExpression(e)).ToList();
+                        dcl.typeSubscripts = expressions;
+                    }
+                }
+            }
+
             return dcl;
         }
         private StructBody CreateStructure(StructBodyContext context)

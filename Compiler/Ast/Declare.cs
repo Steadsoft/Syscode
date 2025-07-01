@@ -10,6 +10,7 @@ namespace Syscode
         public string Spelling;
         public StructBody StructBody;
         public List<Attribute> Attributes = new();
+        public List<Expression> typeSubscripts = new();
         public Declare(ParserRuleContext context) : base(context)
         {
         }

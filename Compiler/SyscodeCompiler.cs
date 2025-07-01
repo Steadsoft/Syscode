@@ -8,6 +8,7 @@ namespace Syscode
     {
         private SyscodeLexer lexer;
         private AstBuilder builder;
+        private SymtabBuilder symtabBuilder;
         public SyscodeCompiler()
         {
         }
@@ -20,6 +21,7 @@ namespace Syscode
             var tokens = new CommonTokenStream(lexer);
             var parser = new SyscodeParser(tokens);
             builder = new AstBuilder();
+            symtabBuilder = new SymtabBuilder();
 
             return parser.compilation();
         }
@@ -29,7 +31,10 @@ namespace Syscode
             return builder.Generate(context);
         }
 
-
+        public void ProcessDeclarations(AstNode root)
+        {
+            symtabBuilder.Generate((Compilation)root);
+        }
         private string RemoveContext(string input)
         {
             return input.Replace("Context", "");
