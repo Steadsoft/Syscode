@@ -124,4 +124,28 @@ goto target
 @fsm_start_label
 ...
 ```
+### Entry Variables
+These are akin to C function pointers, variables that can refer to callable procedures and functions.
+```
+procedure gather (a)
+   dcl a bin(24)
+...
+end
+procedure scatter (a)
+   dcl a bin(24)
+...
+end
 
+dcl accessor entry (bin(24))
+
+accessor = gather
+
+call accessor (3219)
+``` 
+### Numeric Literals
+Numeric literals can include a number base specifier and can contain spaces/underscores to aid readability.
+
+```
+dcl hex = 01F5 33DA 0F02 11B9:H
+dcl bin = 1001 1101 0010 0011:B
+```
