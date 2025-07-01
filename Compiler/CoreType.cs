@@ -9,11 +9,21 @@ namespace Syscode
 {
     public enum CoreType
     {
-        Binary,
-        Decimal,
-        String,
-        Entry,
-        Label
+        BIN = SyscodeParser.BIN,
+        UBIN = SyscodeParser.UBIN,
+        DEC = SyscodeParser.DEC,
+        UDEC = SyscodeParser.UDEC,
+        BIN8 = SyscodeParser.BIN8,
+        BIN16 = SyscodeParser.BIN16,
+        BIN32 = SyscodeParser.BIN32,
+        BIN64 = SyscodeParser.BIN64,
+        UBIN8 = SyscodeParser.UBIN8,
+        UBIN16 = SyscodeParser.UBIN16,
+        UBIN32 = SyscodeParser.UBIN32,
+        UBIN64 = SyscodeParser.UBIN64,
+        STRING = SyscodeParser.STRING,
+        LABEL = SyscodeParser.LABEL,
+        ENTRY = SyscodeParser.ENTRY
     }
 
     public static class TypeNames

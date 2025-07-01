@@ -28,36 +28,24 @@ namespace Syscode
         {
             var symbol = new Symbol(declaration);
 
-            if (declaration.TypeName == "label")
-                symbol.CoreType = CoreType.Label;
+            symbol.CoreType = declaration.CoreType;
 
-            if (declaration.TypeName.StartsWith("bin"))
+
+            if (IsBinary(symbol.CoreType))
             {
-                ValidateBinary(declaration, out var p, out var s, out var signed);
-            }
-
-            if (declaration.TypeName.StartsWith("ubin"))
-            {
-                symbol.CoreType = CoreType.Binary;
-                symbol.Signed = true;
-
-                if (declaration.TypeName == "ubin8")
-                    symbol.Precision = 8;
-
-                if (declaration.TypeName == "ubin16")
-                    symbol.Precision = 16;
-
-                if (declaration.TypeName == "ubin32")
-                    symbol.Precision = 32;
-                if (declaration.TypeName == "ubin64")
-                    symbol.Precision = 64;
+                if (ValidateBinary(declaration, out var p, out var s, out var signed))
+                {
+                    symbol.Precision = p;
+                    symbol.Scale = s;
+                    symbol.Signed = signed;
+                }
             }
 
             if (declaration.TypeName == "entry")
-                symbol.CoreType = CoreType.Entry;
+                symbol.CoreType = CoreType.ENTRY;
 
             if (declaration.TypeName == "string")
-                symbol.CoreType = CoreType.String;
+                symbol.CoreType = CoreType.STRING;
 
             return symbol;
         }
@@ -125,7 +113,7 @@ namespace Syscode
 
                     if (PrecisionInvalid)
                     {
-                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"Precision for '{declaration.Spelling}' must be an integer literal"));
+                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The precision for '{declaration.Spelling}' must be an integer literal"));
                         return true;
                     }
 
@@ -142,13 +130,13 @@ namespace Syscode
 
                     if (PrecisionInvalid)
                     {
-                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"Precision for '{declaration.Spelling}' must be an integer literal"));
+                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The precision for '{declaration.Spelling}' must be an integer literal"));
                         return false;
                     }
 
                     if (ScaleInvalid)
                     {
-                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"Scale for '{declaration.Spelling}' must be an integer literal"));
+                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The scale for '{declaration.Spelling}' must be an integer literal"));
                         return false;
                     }
 
@@ -161,6 +149,27 @@ namespace Syscode
             }
 
             return true;
+        }
+
+        private bool IsBinary(CoreType type)
+        {
+            switch (type)
+            {
+                case CoreType.BIN:
+                case CoreType.BIN8:
+                case CoreType.BIN16:
+                case CoreType.BIN32:
+                case CoreType.BIN64:
+                case CoreType.UBIN:
+                case CoreType.UBIN8:
+                case CoreType.UBIN16:
+                case CoreType.UBIN32:
+                case CoreType.UBIN64:
+                    return true;
+                    default:
+                    return false;
+
+            }
         }
     }
 }

@@ -14,8 +14,8 @@ namespace Syscode.Ast
         private List<BoundsPair> bounds = new();
         private Declare declaration;
         private CoreType coreType;
-        private int precision;
-        private int scale;
+        private int? precision;
+        private int? scale;
         private bool signed;
         public Symbol(Declare declaration) 
         {
@@ -27,9 +27,9 @@ namespace Syscode.Ast
         public string Spelling { get => declaration.Spelling; }
         public bool Structure { get => declaration.StructBody != null; }
         public CoreType CoreType { get => coreType; internal set => coreType = value; }
-        public int Precision { get => precision; internal set => precision = value; }
+        public int? Precision { get => precision; internal set => precision = value; }
         public bool Signed { get => Signed1; internal set => Signed1 = value; }
-        public int Scale { get => scale; internal set => scale = value; }
+        public int? Scale { get => scale; internal set => scale = value; }
         public bool Signed1 { get => signed; internal set => signed = value; }
     }
 }
