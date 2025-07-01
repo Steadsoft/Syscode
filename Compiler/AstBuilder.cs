@@ -21,6 +21,7 @@ namespace Syscode
                 CompilationContext compilation => CreateCompilation(compilation),
                 ScopeContext scope => CreateScope(scope),
                 ProcedureContext procedure => CreateProcedure(procedure),
+                FunctionContext function => CreateFunction(function),
                 //StructContext structure => CreateStructure(structure.GetExactNode<StructBodyContext>()),
                 IfContext ifContext => CreateIf(ifContext),
                 AssignmentContext assignment => CreateAssignment(assignment),
@@ -98,7 +99,7 @@ namespace Syscode
                 case ExprParenthesizedContext paren:
                     {
                         var parenctxt = paren.GetExactNode<ParenthesizedExpressionContext>();
-                        var expression = parenctxt.GetExactNode<ExpressionContext>();
+                        var expression = parenctxt.GetDerivedNode<ExpressionContext>();
                         var result = CreateExpression(expression);
                         result.Type = ExpressionType.Parenthesized;
                         return result;
@@ -356,6 +357,23 @@ namespace Syscode
 
             return node;
         }
+
+        private Procedure CreateFunction(FunctionContext context)
+        {
+            var node = new Procedure(context); // a func is so similar to a proc we use same class to represent them.
+
+            node.Spelling = context.GetLabelText(nameof(ProcedureContext.Spelling));
+
+            if (context.TryGetExactNode<ParamListContext>(out var parameters))
+            {
+                node.Parameters = [.. parameters.GetExactNodes<IdentifierContext>().Select(i => i.GetText())];
+            }
+
+            node.Statements = [.. GetStatements(context).Select(s => Generate(s))];
+            node.isFunction = true;
+            return node;
+        }
+
         private Elif CreateElif(ExprThenBlockContext context)
         {
             return new Elif(context) { Expr = null, ThenStatements = GetStatements(context.GetExactNode<ThenBlockContext>()).Select(s => Generate(s)).ToList() };
