@@ -22,7 +22,7 @@ statementSeparator : (SEMICOLON | NEWLINE | EOF); // EOF lets us end a source fi
 emptyLines: NEWLINE+;
 
 compilation: (statement* endOfFile); 
-statement:  preamble?  (call | return | label | scope | enum | if | declare | type | literal | procedure | function | forLoop | whileLoop | untilLoop | goto | assignment );
+statement:  preamble?  (call | return | label | scope | enum | if | declare | type | literal | procedure | function | loop | goto | assignment );
 
 //struct: STRUCT structBody ;
 structBody: Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
@@ -52,12 +52,12 @@ type: TYPE structBody ;
 
 literal: LIT customLiteral AS decLiteral statementSeparator ;
 loop: forLoop | whileLoop | untilLoop ;
-forLoop : FOR reference EQUALS expression TO expression (BY expression)? emptyLines? (whileCondition emptyLines? untilCondition? | untilCondition emptyLines? whileCondition? | whileCondition | untilCondition)? statement* emptyLines? END ;
-whileLoop: whileCondition untilCondition? statement* emptyLines? END;
-untilLoop: untilCondition whileCondition? statement* emptyLines? END;
+forLoop : FOR For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)? statement* emptyLines? END ;
+whileLoop: While=whileCondition Until=untilCondition? statement* emptyLines? END;
+untilLoop: Until=untilCondition While=whileCondition? statement* emptyLines? END;
 
-whileCondition: WHILE expression ;
-untilCondition: UNTIL expression ;
+whileCondition: WHILE Exp=expression ;
+untilCondition: UNTIL Exp=expression ;
 
 if:             IF emptyLines? exprThenBlock emptyLines? elifBlock? emptyLines? elseBlock? emptyLines? END;
 exprThenBlock:  emptyLines? expression emptyLines? THEN emptyLines? thenBlock;

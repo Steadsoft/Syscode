@@ -30,8 +30,48 @@ namespace Syscode
                 ReturnContext ret => CreateReturn(ret),
                 LabelContext lab => CreateLabel(lab),
                 GotoContext gto => CreateGoto(gto),
+                LoopContext loop => CreateLoop(loop),
                 _ => new AstNode(context)
             };
+        }
+
+        public Loop CreateLoop(LoopContext context)
+        {
+            if (context.TryGetExactNode<ForLoopContext>(out var forloop))
+            {
+                return new For(context) 
+                { 
+                    forRef = CreateReference(forloop.For),
+                    from = CreateExpression(forloop.From),
+                    to = CreateExpression(forloop.To),
+                    by = CreateExpression(forloop.By),
+                    whileExp = CreateExpression(forloop.Until?.Exp),
+                    untilExp = CreateExpression(forloop.While?.Exp),
+                    Statements = GetStatements(forloop).Select(s => Generate(s)).ToList()
+                };
+            }
+
+            if (context.TryGetExactNode<WhileLoopContext>(out var whileloop))
+            {
+                return new While(context)
+                {
+                   whileExp = CreateExpression(whileloop.While.Exp),
+                   untilExp = CreateExpression(whileloop.Until?.Exp),
+                   Statements = GetStatements(whileloop).Select(s => Generate(s)).ToList()
+                };
+            }
+
+            if (context.TryGetExactNode<UntilLoopContext>(out var untilloop))
+            {
+                return new Until(context)
+                {
+                    whileExp = CreateExpression(untilloop.Until.Exp),
+                    untilExp = CreateExpression(untilloop.While?.Exp) ,
+                    Statements = GetStatements(untilloop).Select(s => Generate(s)).ToList()
+                };
+            }
+
+            throw new InvalidOperationException("Unrecignized loop syntax");
         }
         public Goto CreateGoto(GotoContext context)
         {
@@ -63,6 +103,9 @@ namespace Syscode
         }
         private Expression CreateExpression(ExpressionContext context)
         {
+            if (context == null) // allows this to be called for an  optional expression and not fault.
+                return null;
+
             Expression expr = new(context);
 
             switch (context)

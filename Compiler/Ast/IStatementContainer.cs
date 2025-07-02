@@ -2,6 +2,6 @@
 {
     public interface IStatementContainer
     {
-        List<AstNode> Statements { get; set; }
+        List<AstNode> Statements { get; internal set; }
     }
 }
