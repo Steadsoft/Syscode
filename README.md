@@ -65,7 +65,7 @@ end
 do J = 1 to 128 while flag = true until storage_used > MAX
 end
 ```
-The `do` keyword was taken from PL/I because we need to re;iably distinguish between `while`/`until` loops and `while`/`until` as an optional clauses on loops. 
+The `do` keyword was taken from the PL/I language because we need to reliably distinguish between `while`/`until` *loops* and `while`/`until` as "optional clauses* on loops. 
 ### Structures
 Data structures are defined using either the `dcl` keyword or the `type` keyword, in essence `type` defines a structure of a particular shape in a similar manner to C's typedef. Structures can containa mix of other structures and member fields and these can be nested to an arbitrary level. Note how the `dcl`/`type` keyword is required only at the outermost level. This example defines a struct type named `process_table` that contains another struct named `bitmap`:
 
