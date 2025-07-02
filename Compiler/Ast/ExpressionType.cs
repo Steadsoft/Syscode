@@ -5,7 +5,6 @@
         None,
         Literal,
         Primitive,
-        Parenthesized,
         Prefix,
         Binary
     }

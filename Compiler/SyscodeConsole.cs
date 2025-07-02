@@ -3,7 +3,7 @@ using System.Diagnostics.Metrics;
 
 namespace Syscode
 {
-    public class Syscode
+    public class SyscodeConsole
     {
         public static void Main()
         {
@@ -15,7 +15,7 @@ namespace Syscode
 
             var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\statements.sys");
 
-            //compiler.PrintConcreteSyntaxTree(cst);
+            compiler.PrintConcreteSyntaxTree(cst);
 
             var clock = new Stopwatch();
 

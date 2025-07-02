@@ -17,44 +17,45 @@
                     "patterns": [
                         "\\/\\*.*?\\*\/", "\/\/[^\r\n]*"
                     ],
-                    "color":"Magenta"
+                    "color":"Yellow",
+                    "italic": true
                 },
 
                 {
                     "patterns": [
-                        "if", "then","elif","else"
+                        "if", "then", "elif", "else"
                     ],
-                    "color":"BrightRed"
+                    "color":"BrightRed",
+                    "bold": true,
+                    "italic": false
+
                 },
                 {
                     "patterns": [
-                        "struct", "dcl","proc", "procedure", "func","function","scope"
+                        "do","call","type", "struct", "dcl","proc", "procedure", "func","function","scope","aligned","unaligned","end;","goto","return"
                     ],
-                    "color":"BrightCyan"
+                    "color":"BrightCyan",
+                    "bold": true,
+                    "italic": false
+
                 },
                 {
                     "patterns": [
-                        "while","until"
+                        "while","until", "for", "to","by"
                     ],
-                    "color":"BrightGreen"
-                },
-                {
-                    "patterns": [
-                        "for", "to","by"
-                    ],
-                    "color":"Blue"
+                    "color":"BrightGreen",
+                    "bold": true,
+                    "italic": false
+
                 },
                 {
                     "patterns": [
                         "end"
                     ],
-                    "color":"BrightWhite"
-                },
-                {
-                    "patterns": [
-                        "return"
-                    ],
-                    "color":"BrightGreen"
+                    "color":"BrightWhite",
+                    "bold": true,
+                    "italic": false
+
                 },
                 {
                     "patterns": [
@@ -62,6 +63,14 @@
                     ],
                     "color":"Green"
                 },
+                                {
+                    "patterns": [
+                        "[a-zA-Z_]+"
+                    ],
+                    "color":"BrightWhite",
+                    "italic": true
+                },
+
                 {
                     "patterns": [
                         "=",

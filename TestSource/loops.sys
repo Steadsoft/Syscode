@@ -1,0 +1,11 @@
+for a = 10 to 1000
+    while (c < x)
+       count = effoff(s)
+    end;
+end;  
+
+for a = 10 to 1000 while (c < x)
+       count = effoff(s)
+end;   
+
+a = 10

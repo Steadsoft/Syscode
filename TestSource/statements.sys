@@ -19,7 +19,7 @@
 
 procedure main (root)
 
-dcl starter bin8 var; 
+dcl starter bin8 var 
 dcl array(10) bin(22)
 dcl msg string
 dcl msg string (1,2)
@@ -54,39 +54,35 @@ goto i_am_a_place(target)
 
 dcl struct bin(99,"p")
 
-dcl test(100,100) aligned 
-        bulk
+dcl struct test(100,100) aligned 
+        struct bulk
             charlie      bin8
             aligned bin8 
+        end               // struct named end
+        struct block (a,b) 
+            struct inner
+                    // empty struct
+            end
         end
-    block (a,b) 
-       inner
-
-       end
+        struct collect 
+                    // empty struct
+        end
+        charlie(x,y) bin8 aligned // comment     
+        charlie bin8
+        charlie bin8
+        aligned bin16
+        struct aligned aligned
+        
+        end
+        charlie bin8
     end
-    collect 
-
-    end
-
-    
-    charlie(x,y) bin8 aligned // comment     
-    charlie bin8
-    charlie bin8
-    aligned bin16
-
-    aligned aligned
-
-    end
-
-    charlie bin8
-
+type struct    isr_register   // field named 'type'
+    mode     bit(2)
+    max      bit(3)
+    mas      bit(9)
 end
 
-type isr_register
-     mode     bit(2)
-     max      bit(3)
-     mas      bit(9)
-end
+end 
 
 dcl dcl (10) string(44)
 
@@ -109,8 +105,8 @@ end
 
 
 
-type A
-        B
+type struct A
+        struct B
             counter bin8
             lister  bin8
         end 
@@ -119,12 +115,12 @@ end
 
   
 
-type control_block(10) aligned
+type struct control_block(10) aligned
        header string (32)
        list_length bin (16) unaligned
 end /* struct */
 
-dcl overlay control_block const;
+dcl overlay control_block const
 
 procedure startup (arg1,arg2,arg3)
 
@@ -153,145 +149,137 @@ end /* proc */
 
 scope utilities
 
-proc reset_page_table (table_ptr)
+    proc reset_page_table (table_ptr)
 
-    if then >= proc then
-       call = return
-    else
-       elif = call (if)
+        if then >= proc then
+            call = return
+        else
+            elif = call (if)
+        end
+
+        call startup (1,2,3)
+
+        return (doomsday)
+
+    end /* proc */
+
+    type struct metype
+        bin8 bin8
+        if   string(16)
+        then dec(10)
+        else bit(24)
+        dcl  bin32
+        end  bin64 aligned
+    end /* struct */
+
+
+
+
+    name.other(1,2,3)(a,b,c) = 123 
+
+
+
+    name(1,2,3).other(a,b,c) = 123
+
+    return (speed * scale + length)
+
+
+
+
+    do while (expressionw) 
+
     end
 
-    call startup (1,2,3)
+   do until (expressionu) 
 
-    return doomsday
-
-end /* proc */
-
-type struct
-       bin8 bin8
-       if   string(16)
-       then dec(10)
-       else bit(24)
-       dcl  bin32
-       end  bin64 aligned
-end /* struct */
-   
+    end 
 
 
 
-name.other(1,2,3)(a,b,c) = 123 
+    do x = a to b by c  
 
-
-
-name(1,2,3).other(a,b,c) = 123
-
-return speed * scale + length
-
-
-
-
-while (expression) 
-
-end
-
-until (expression) 
-
-end 
-
-
-
-for x = a to b by c  
-
-end
-
-for x = 100 to 100 
- while (size < 100)
-
-end
-
-for x = 100 to 100 
- until (size < 100)
-
-end
-
-for x = 100 to 100 by 0
- while (running) 
- until (size < 100)
-
-end
-for x = 100 to 100 
- until (running) 
- while size < 100
-
-end
-
-while (still_time) until no_space_left
-
-end
-
-until (still_time) while no_space_left  // In the AST a while loop with an until condition should be treated as indistinguishable from a until loop with a while condition
-
-end
-
-while (still_time) 
-   until no_space_left
-      fast = slow
-   end
-end
-
-for a = 10 to 1000
-    while (c < x)
-       count = effoff(s)
     end
-end   
 
-for a = 10 to 1000
+    do x = 1 to 100 while (size < 100)
+
+    end
+
+    do x = 2 to 100  until (size < 100)
+
+    end
+
+    do x = 3 to 100 by 0 while (running) until (size < 100)
+
+    end
+
+    do x = 4 to 100   until (running)   while size < 100
+
+    end
+
+    do while (still_time) until no_space_left
+
+    end
+
+    do until (still_time) while no_space_left  // In the AST a while loop with an until condition should be treated as indistinguishable from a until loop with a while condition
+
+    end
+
+    do while (still_time) 
+        do until no_space_left
+            fast = slow
+        end
+    end
+
+    do a = 10 to 1000
     while (c < x)
-       count = effoff(s)
-end    
+        count = effoff(s)
+    
+    end
 
-a = <& G        // and all the bits in G
-b = <| b
-v = <^ Julia
+    do a = 10 to 1000 while (c < x)
+            count = effoff(s)
+    end    
 
-bits &= 5
-bits |= 10
-bits ^= 100
+    a = <& G        // and all the bits in G
+    b = <| b
+    v = <^ Julia
 
-bits <<= 5
-bits >>= 7
+    bits &= 5
+    bits |= 10
+    bits ^= 100
 
-bite @>= 3  // bits = bits @> 3
-bits <@= 5  // bits = bits <@ 5
+    bits <<= 5
+    bits >>= 7
+
+    bite @>= 3  // bits = bits @> 3
+    bits <@= 5  // bits = bits <@ 5
 
 
-/*
+    /*
 
-// not real 
+    // not real 
 
-jumpto target(i)
+    jumpto target(i)
 
-compute target(x)
+    compute target(x)
 
-target(1)
+    target(1)
 
-   exit
-target(2)
+    exit
+    target(2)
 
-   exit
+    exit
 
-target(3)
+    target(3)
 
+    */
+
+
+
+
+    //end // proc
+
+
+    a = 4
 end
-
-
-
-
-
-end /* scope */
-
-*/
-a = 4
-
-end
-
+//end /* proc main */

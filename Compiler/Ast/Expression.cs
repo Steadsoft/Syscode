@@ -10,6 +10,7 @@ namespace Syscode
         public Expression Right;
         public Operator Operator;
         public ExpressionType Type;
+        public bool Parenthesized;
         public Expression(ParserRuleContext context) : base(context)
         {
             Literal = null;
@@ -22,14 +23,18 @@ namespace Syscode
 
         public override string ToString()
         {
-            return Type switch
+            var text = Type switch
             {
                 ExpressionType.Primitive => Reference.ToString(),
-                ExpressionType.Parenthesized => $"({Reference.ToString()})",
                 ExpressionType.Binary => $"{Left} {LexerHelper.GetOperatorText(Operator)} {Right}" ,
                 ExpressionType.Literal => Literal.ToString(),
                 ExpressionType.Prefix => $"{LexerHelper.GetOperatorText(Operator)} {Right}"
             };
+
+            if (Parenthesized)
+                text = $"({text})";
+
+            return text;
         }
 
     }

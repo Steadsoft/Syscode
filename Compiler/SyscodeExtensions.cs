@@ -6,10 +6,10 @@ namespace Syscode
 {
     public static class SyscodeExtensions
     {
-        private static HashSet<Type> excludedTypes;
+        private static HashSet<System.Type> excludedTypes;
         static SyscodeExtensions()
         {
-            excludedTypes = new HashSet<Type>
+            excludedTypes = new HashSet<System.Type>
             {
                 typeof(EmptyLinesContext),
                 typeof(StatementSeparatorContext),

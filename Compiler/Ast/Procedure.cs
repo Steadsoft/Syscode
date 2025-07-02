@@ -18,7 +18,7 @@ namespace Syscode
 
         public override string ToString()
         {
-            return $"{nameof(Procedure)}: {Spelling}";
+            return $"procedure {Spelling}";
         }
     }
 }

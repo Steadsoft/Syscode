@@ -22,7 +22,7 @@ namespace Syscode
                 ScopeContext scope => CreateScope(scope),
                 ProcedureContext procedure => CreateProcedure(procedure),
                 FunctionContext function => CreateFunction(function),
-                //StructContext structure => CreateStructure(structure.GetExactNode<StructBodyContext>()),
+                TypeContext type => CreateType(type),
                 IfContext ifContext => CreateIf(ifContext),
                 AssignmentContext assignment => CreateAssignment(assignment),
                 DeclareContext declare => CreateDeclaration(declare),
@@ -37,41 +37,43 @@ namespace Syscode
 
         public Loop CreateLoop(LoopContext context)
         {
-            if (context.TryGetExactNode<ForLoopContext>(out var forloop))
+            if (context == null) throw new ArgumentNullException("context");
+
+            if (context.For != null)
             {
                 return new For(context) 
                 { 
-                    forRef = CreateReference(forloop.For),
-                    from = CreateExpression(forloop.From),
-                    to = CreateExpression(forloop.To),
-                    by = CreateExpression(forloop.By),
-                    whileExp = CreateExpression(forloop.Until?.Exp),
-                    untilExp = CreateExpression(forloop.While?.Exp),
-                    Statements = GetStatements(forloop).Select(s => Generate(s)).ToList()
+                    forRef = CreateReference(context.For.For),
+                    from = CreateExpression(context.For.From),
+                    to = CreateExpression(context.For.To),
+                    by = CreateExpression(context.For.By),
+                    whileExp = CreateExpression(context.For.While?.Exp),
+                    untilExp = CreateExpression(context.For.Until?.Exp),
+                    Statements = GetStatements(context.For).Select(s => Generate(s)).ToList()
                 };
             }
 
-            if (context.TryGetExactNode<WhileLoopContext>(out var whileloop))
+            if (context.While != null)
             {
                 return new While(context)
                 {
-                   whileExp = CreateExpression(whileloop.While.Exp),
-                   untilExp = CreateExpression(whileloop.Until?.Exp),
-                   Statements = GetStatements(whileloop).Select(s => Generate(s)).ToList()
+                   whileExp = CreateExpression(context.While.While.Exp),
+                   untilExp = CreateExpression(context.While.Until?.Exp),
+                   Statements = GetStatements(context.While).Select(s => Generate(s)).ToList()
                 };
             }
 
-            if (context.TryGetExactNode<UntilLoopContext>(out var untilloop))
+            if (context.Until != null)
             {
                 return new Until(context)
                 {
-                    whileExp = CreateExpression(untilloop.Until.Exp),
-                    untilExp = CreateExpression(untilloop.While?.Exp) ,
-                    Statements = GetStatements(untilloop).Select(s => Generate(s)).ToList()
+                    untilExp = CreateExpression(context.Until.Until.Exp) ,
+                    whileExp = CreateExpression(context.Until.While?.Exp),
+                    Statements = GetStatements(context.Until).Select(s => Generate(s)).ToList()
                 };
             }
 
-            throw new InvalidOperationException("Unrecignized loop syntax");
+            throw new InternalErrorException($"Unrecognized loop syntax on line {context.Start.Line}");
         }
         public Goto CreateGoto(GotoContext context)
         {
@@ -144,7 +146,7 @@ namespace Syscode
                         var parenctxt = paren.GetExactNode<ParenthesizedExpressionContext>();
                         var expression = parenctxt.GetDerivedNode<ExpressionContext>();
                         var result = CreateExpression(expression);
-                        result.Type = ExpressionType.Parenthesized;
+                        result.Parenthesized = true;
                         return result;
                     }
                 case ExprPrefixedContext prefixed:
@@ -346,6 +348,12 @@ namespace Syscode
 
             return dcl;
         }
+
+        public Type CreateType(TypeContext context)
+        {
+            return new Type(context) { Body = CreateStructure(context.Body) };
+        }
+
         private StructBody CreateStructure(StructBodyContext context)
         {
             var bounds = new List<BoundsPair>();

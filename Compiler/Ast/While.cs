@@ -9,5 +9,13 @@ namespace Syscode
         public While(ParserRuleContext context) : base(context)
         {
         }
+
+        public override string ToString()
+        {
+            if (untilExp != null)
+                return $"while {whileExp} until {untilExp}";
+
+            return $"while {whileExp}";
+        }
     }
 }

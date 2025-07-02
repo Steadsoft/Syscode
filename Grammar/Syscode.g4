@@ -25,7 +25,7 @@ compilation: (statement* endOfFile);
 statement:  preamble?  (call | return | label | scope | enum | if | declare | type | literal | procedure | function | loop | goto | assignment );
 
 //struct: STRUCT structBody ;
-structBody: Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
+structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
 structField: Spelling=identifier dimensionSuffix? Type=typename memberAttributes? statementSeparator;
 
 label: AT Spelling=identifier labelSubscript? statementSeparator;
@@ -41,20 +41,20 @@ function: FUNC emptyLines? Spelling=identifier paramList? statement* emptyLines?
 
 enum: ENUM emptyLines? Name=identifier emptyLines? typename? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? reference statementSeparator;
-return: ((RETURN (emptyLines? LPAR expression RPAR)?) | (RETURN (emptyLines? expression)?)) statementSeparator;
+return: (RETURN (emptyLines? expression)?) statementSeparator ; //| (RETURN (emptyLines? expression)?)) statementSeparator;
 
 declare
     : DCL structBody
     | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? Type=typename memberAttributes* statementSeparator 
     ;
 
-type: TYPE structBody ;    
+type: TYPE Body=structBody ;    
 
 literal: LIT customLiteral AS decLiteral statementSeparator ;
-loop: forLoop | whileLoop | untilLoop ;
-forLoop : FOR For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)? statement* emptyLines? END ;
-whileLoop: While=whileCondition Until=untilCondition? statement* emptyLines? END;
-untilLoop: Until=untilCondition While=whileCondition? statement* emptyLines? END;
+loop: For=forLoop | While=whileLoop | Until=untilLoop ;
+forLoop : DO For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  statement* emptyLines? END ;
+whileLoop: DO While=whileCondition Until=untilCondition?  statement* emptyLines? END;
+untilLoop: DO Until=untilCondition While=whileCondition?  statement* emptyLines? END;
 
 whileCondition: WHILE Exp=expression ;
 untilCondition: UNTIL Exp=expression ;
@@ -304,6 +304,7 @@ keyword
     | DCL
     | DEC
     | DEF
+    | DO
     | ELIF
     | ELSE
     | END
@@ -384,6 +385,7 @@ CONST:          'const';
 DCL:            'dcl' ;
 DEC:            'dec';
 DEF:            'def';
+DO:             'do';         
 ELIF:           'elif';
 ELSE:           'else';
 END:            'end';

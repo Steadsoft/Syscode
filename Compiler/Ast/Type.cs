@@ -4,20 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Label : AstNode
+    public class Type : AstNode
     {
         public string Spelling;
-        public string Subscript;
-        public Label(ParserRuleContext context) : base(context)
+        public StructBody Body;
+        public Type(TypeContext context) : base(context)
         {
+            Spelling = context.Body.Spelling.GetText();
         }
 
         public override string ToString()
         {
-            return "@" + Spelling;
+            return $"type {Spelling}";
         }
     }
 }
