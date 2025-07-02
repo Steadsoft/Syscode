@@ -17,7 +17,7 @@
 /* when applied to a struct the attributes is applied to every contained member that does not have an explicit */
 /* alignment */
 
-
+procedure main (root)
 
 dcl starter bin8 var; 
 dcl array(10) bin(22)
@@ -133,7 +133,7 @@ procedure startup (arg1,arg2,arg3)
     function calculate(a,b,c)
         a = b / (c + a)
         return a
-    end
+    end   
 
 end   /* proc  */
 
@@ -267,8 +267,23 @@ bits <@= 5  // bits = bits <@ 5
 
 /*
 
+// not real 
 
- 
+jumpto target(i)
+
+compute target(x)
+
+target(1)
+
+   exit
+target(2)
+
+   exit
+
+target(3)
+
+end
+
 
 
 
@@ -278,4 +293,5 @@ end /* scope */
 */
 a = 4
 
+end
 

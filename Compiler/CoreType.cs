@@ -23,7 +23,9 @@ namespace Syscode
         UBIN64 = SyscodeParser.UBIN64,
         STRING = SyscodeParser.STRING,
         LABEL = SyscodeParser.LABEL,
-        ENTRY = SyscodeParser.ENTRY
+        ENTRY = SyscodeParser.ENTRY,
+        POINTER = SyscodeParser.POINTER,
+
     }
 
     public static class TypeNames

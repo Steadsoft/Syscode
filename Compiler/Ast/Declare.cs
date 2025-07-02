@@ -41,7 +41,6 @@ namespace Syscode
                 {
                     this.varying = true;
                 }
-
             }
         }
 

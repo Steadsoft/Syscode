@@ -33,5 +33,10 @@ namespace Syscode.Ast
         public bool Invalid { get => invalid; internal set => invalid = value; }
         public bool Varying { get => varying; internal set => varying = value; }
         public int Length { get => length; internal set => length = value; }
+
+        public override string ToString()
+        {
+            return declaration.ToString();
+        }
     }
 }

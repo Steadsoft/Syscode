@@ -263,15 +263,19 @@ memberAttributes
     : constAttribute         #AttribConst
     | alignedAttribute       #AttribAligned
     | unalignedAttribute     #AttribUnaligned
+    | externalAttribute      #AttribExternal
+    | staticAttribute        #AttribStatic
     ;
 
 constAttribute: CONST;
 alignedAttribute: ALIGNED;
 unalignedAttribute: UNALIGNED;    
+externalAttribute: EXTERNAL;
+staticAttribute: STATIC;
 
 unitType: UNIT;
 
-typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN | DEC | UDEC | STRING | BIT | LABEL | ENTRY ;
+typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN | DEC | UDEC | STRING | BIT | LABEL | ENTRY | POINTER ;
 
 // binaryCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN arguments?) ;
 // decimalType:  ((DEC | UDEC) arguments) ;
@@ -305,6 +309,7 @@ keyword
     | END
     | ENTRY
     | ENUM
+    | EXTERNAL
     | FOR
     | FOREVER
     | FUNC
@@ -314,9 +319,11 @@ keyword
     | LABEL
     | LIT
     | PATH
+    | POINTER
     | PROC
     | RETURN
     | SCOPE
+    | STATIC
     | STRING
     | STRUCT
     | THEN
@@ -382,6 +389,7 @@ ELSE:           'else';
 END:            'end';
 ENTRY:          'entry';
 ENUM:           'enum';
+EXTERNAL:       'external';
 FOR:            'for';
 FOREVER:        'forever';
 FUNC:           'func' | 'function';
@@ -391,9 +399,11 @@ IS:             'is';
 LABEL:          'label';
 LIT:            'lit' | 'literal';
 PATH:           'path';
+POINTER:        'ptr' | 'pointer';
 PROC:           'proc' | 'procedure';
 RETURN:         'return';
 SCOPE:          'scope';
+STATIC:         'static';
 STRING:         'string';
 STRUCT:         'struct';
 THEN:           'then';
