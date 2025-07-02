@@ -39,30 +39,30 @@ Begin with the `dcl` keyword followed an `identifier` and obligator and optional
 - `dcl map descriptor unaligned` a variable `map` of `struct` type `descriptor` with all members unaligned for compactness
 
 ### Loops
-There are three kinds of loops, the `for` loop the `while` loop and the `until` loop. These loops types can be combined, parentheses around expressions are optional, examples (contained statements omitted for brevity)
+There are three kinds of loops, the iterative loop the `while` loop and the `until` loop. These loops types can be combined, parentheses around expressions are optional, examples (contained statements omitted for brevity)
 ```
-for (index = 1 to 100 by 2)
+do (index = 1 to 100 by 2)
 end
 ```
 ```
-for I = 100 to 40 by -4
+do I = 100 to 40 by -4
 end
 ```
 ```
-for (X = A to B by I) 
+do (X = A to B by I) 
 end
 ```
 ```
-while (limit < 100)
+do while (limit < 100)
 end
 ```
 ```
-until count > max
+do until count > max
 end
 ```
 #### These can be combined in several ways, giving a rich set of potential loop constructs
 ```
-for J = 1 to 128 while flag = true until storage_used > MAX
+do J = 1 to 128 while flag = true until storage_used > MAX
 end
 ```
 ### Structures
