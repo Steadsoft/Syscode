@@ -42,27 +42,33 @@ Begin with the `dcl` keyword followed an `identifier` and obligator and optional
 There are three kinds of loops, the iterative loop the `while` loop and the `until` loop. These loops types can be combined, parentheses around expressions are optional, examples (contained statements omitted for brevity)
 ```
 do (index = 1 to 100 by 2)
+...
 end
 ```
 ```
 do I = 100 to 40 by -4
+...
 end
 ```
 ```
-do (X = A to B by I) 
+do (X = A to B by I)
+...
 end
 ```
 ```
 do while (limit < 100)
+...
 end
 ```
 ```
 do until count > max
+...
 end
 ```
 #### These can be combined in several ways, giving a rich set of potential loop constructs
 ```
 do J = 1 to 128 while flag = true until storage_used > MAX
+...
 end
 ```
 The `do` keyword was taken from the PL/I language because we need to reliably distinguish between `while`/`until` *loops* and `while`/`until` as *optional clauses* on loops. 
