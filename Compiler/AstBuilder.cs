@@ -331,16 +331,22 @@ namespace Syscode
 
             }
 
-            if (context.TryGetExactNode<TypenameContext>(out var tn))
+            if (context.Type != null)
+            //if (context.TryGetExactNode<TypenameContext>(out var tn))
             {
-                if (tn.TryGetExactNode<TypeCodeContext>(out var bint))
+                if (context.Type.As != null)
+                    dcl.As = context.Type.As.GetText();
+
+                if (context.Type.Code != null)
+                //if (tn.TryGetExactNode<TypeCodeContext>(out var bint))
                 {
-                    dcl.TypeName = bint.GetText();
+                    dcl.TypeName = context.Type.Code.GetText();
                 }
 
-                if (tn.TryGetExactNode<ArgumentsContext>(out var subs))
+                if (context.Type.Args != null)
+                //if (tn.TryGetExactNode<ArgumentsContext>(out var subs))
                 {
-                    var expressions = subs.GetExactNode<SubscriptCommalistContext>().GetDerivedNodes<ExpressionContext>().Select(e => CreateExpression(e)).ToList();
+                    var expressions = context.Type.Args.GetExactNode<SubscriptCommalistContext>().GetDerivedNodes<ExpressionContext>().Select(e => CreateExpression(e)).ToList();
                     dcl.typeSubscripts = expressions;
                 }
 
@@ -413,7 +419,9 @@ namespace Syscode
         {
             var node = new Procedure(context); // a func is so similar to a proc we use same class to represent them.
 
-            node.Spelling = context.GetLabelText(nameof(ProcedureContext.Spelling));
+            node.Spelling = context.Spelling.GetText(); 
+
+            node.As = context.Type.GetText();
 
             if (context.TryGetExactNode<ParamListContext>(out var parameters))
             {

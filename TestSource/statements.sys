@@ -76,7 +76,7 @@ dcl struct test(100,100) aligned
         end
         charlie bin8
     end
-type struct    isr_register   // field named 'type'
+type struct  isr_register   // field named 'type'
     mode     bit(2)
     max      bit(3)
     mas      bit(9)
@@ -111,6 +111,7 @@ type struct A
             lister  bin8
         end 
        printer bin8
+       router as classmap
 end
 
   
@@ -120,13 +121,13 @@ type struct control_block(10) aligned
        list_length bin (16) unaligned
 end /* struct */
 
-dcl overlay control_block const
+dcl overlay as control_block const
 
 procedure startup (arg1,arg2,arg3)
 
     return 
 
-    function calculate(a,b,c)
+    function calculate(a,b,c) as bin(25)
         a = b / (c + a)
         return a
     end   
@@ -190,7 +191,7 @@ scope utilities
 
     end
 
-   do until (expressionu) 
+    do until (expressionu) 
 
     end 
 

@@ -37,7 +37,7 @@ gotoSubscript: LPAR expression RPAR;
 scope:  blockScope;
 blockScope: (SCOPE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
 procedure: PROC emptyLines? Spelling=identifier paramList? statement* emptyLines? END;
-function: FUNC emptyLines? Spelling=identifier paramList? statement* emptyLines? END;
+function: FUNC emptyLines? Spelling=identifier paramList? AS Type=typename statement* emptyLines? END;
 
 enum: ENUM emptyLines? Name=identifier emptyLines? typename? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? reference statementSeparator;
@@ -64,6 +64,11 @@ exprThenBlock:  emptyLines? expression emptyLines? THEN emptyLines? thenBlock;
 thenBlock :     statement*;
 elseBlock :     (ELSE emptyLines? thenBlock);
 elifBlock :     (ELIF emptyLines? exprThenBlock)+;
+
+typename 
+    : Code=typeCode Args=arguments? varying?
+    | AS As=identifier
+    ;
 
 assignment : reference comparer expression statementSeparator;
 
@@ -242,10 +247,6 @@ enumMembers: emptyLines? enumMember emptyLines? (memberSeparator emptyLines? enu
 
 enumMember: (Name=identifier);
 identifier: keyword | IDENTIFIER;
-typename 
-    : typeCode arguments? varying?
-    | identifier
-    ;
 
 varying: VAR ;
 

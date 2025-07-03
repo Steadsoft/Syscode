@@ -7,6 +7,7 @@ namespace Syscode
     public class Declare : AstNode
     {
         public string TypeName;
+        public string As;
         public CoreType CoreType;
         public List<BoundsPair> Bounds = new();
         public string Spelling;

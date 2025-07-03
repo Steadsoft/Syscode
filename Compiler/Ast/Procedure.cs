@@ -7,6 +7,7 @@ namespace Syscode
     {
         public string Spelling;
         public bool isFunction;
+        public string As;
         public List<string> Parameters = new List<string>();
         private List<AstNode> statements = new List<AstNode>();
         public List<Symbol> Symbols = new List<Symbol>();
