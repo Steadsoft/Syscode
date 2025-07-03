@@ -758,6 +758,7 @@ public partial class SyscodeParser : Parser {
 
 	public partial class LabelContext : ParserRuleContext {
 		public IdentifierContext Spelling;
+		public LabelSubscriptContext Subscript;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode AT() { return GetToken(SyscodeParser.AT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
@@ -793,7 +794,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==LPAR) {
 				{
 				State = 261;
-				labelSubscript();
+				_localctx.Subscript = labelSubscript();
 				}
 			}
 
@@ -813,11 +814,12 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class LabelSubscriptContext : ParserRuleContext {
+		public DecLiteralContext Literal;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAR() { return GetToken(SyscodeParser.LPAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public DecLiteralContext decLiteral() {
 			return GetRuleContext<DecLiteralContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
 		public LabelSubscriptContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -835,7 +837,7 @@ public partial class SyscodeParser : Parser {
 			State = 266;
 			Match(LPAR);
 			State = 267;
-			decLiteral();
+			_localctx.Literal = decLiteral();
 			State = 268;
 			Match(RPAR);
 			}

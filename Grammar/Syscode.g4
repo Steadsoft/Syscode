@@ -28,8 +28,8 @@ statement:  preamble?  (call | return | label | scope | enum | if | declare | ty
 structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
 structField: Spelling=identifier dimensionSuffix? Type=typename memberAttributes? statementSeparator;
 
-label: AT Spelling=identifier labelSubscript? statementSeparator;
-labelSubscript: LPAR decLiteral RPAR;
+label: AT Spelling=identifier Subscript=labelSubscript? statementSeparator;
+labelSubscript: LPAR Literal=decLiteral RPAR;
 
 goto: GOTO reference statementSeparator;
 gotoSubscript: LPAR expression RPAR;
