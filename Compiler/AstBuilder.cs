@@ -9,6 +9,7 @@ namespace Syscode
     /// </summary>
     public class AstBuilder
     {
+        private Procedure currentContainer = null;
         public AstBuilder() 
         { 
         
@@ -376,7 +377,9 @@ namespace Syscode
         }
         private Procedure CreateProcedure(ProcedureContext context)
         {
-            var node = new Procedure(context);
+            var node = new Procedure(context, currentContainer);
+
+            currentContainer = node; 
 
             node.Spelling = context.Spelling.GetText();
 
@@ -387,12 +390,16 @@ namespace Syscode
 
             node.Statements = [.. GetStatements(context).Select(s => Generate(s))];
 
+            currentContainer = node.Container;
+
             return node;
         }
 
         private Procedure CreateFunction(FunctionContext context)
         {
-            var node = new Procedure(context); // a func is so similar to a proc we use same class to represent them.
+            var node = new Procedure(context, currentContainer); // a func is so similar to a proc we use same class to represent them.
+
+            currentContainer = node;
 
             node.Spelling = context.Spelling.GetText(); 
 
@@ -405,6 +412,9 @@ namespace Syscode
 
             node.Statements = [.. GetStatements(context).Select(s => Generate(s))];
             node.isFunction = true;
+
+            currentContainer = node.Container;
+
             return node;
         }
 
