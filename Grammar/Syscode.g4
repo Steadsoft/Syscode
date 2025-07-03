@@ -169,16 +169,16 @@ prefixExpression
   ;
 
 dimensionSuffix
-  : LPAR boundPairCommalist RPAR
+  : LPAR Pair=boundPairCommalist RPAR
   ;
 
 boundPair
-  : (lowerBound COLON)? upperBound
+  : (Lower=expression COLON)? Upper=expression
   | TIMES
   ;
 
 boundPairCommalist
-  : boundPair (COMMA boundPair)*
+  : BoundPairs+=boundPair (COMMA BoundPairs+=boundPair)*
   ;
 
 // See page 208 PL/I Subset G standard. Lower bound must be <= upper

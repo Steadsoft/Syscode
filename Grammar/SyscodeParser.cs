@@ -4295,11 +4295,12 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class DimensionSuffixContext : ParserRuleContext {
+		public BoundPairCommalistContext Pair;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAR() { return GetToken(SyscodeParser.LPAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public BoundPairCommalistContext boundPairCommalist() {
 			return GetRuleContext<BoundPairCommalistContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
 		public DimensionSuffixContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -4317,7 +4318,7 @@ public partial class SyscodeParser : Parser {
 			State = 776;
 			Match(LPAR);
 			State = 777;
-			boundPairCommalist();
+			_localctx.Pair = boundPairCommalist();
 			State = 778;
 			Match(RPAR);
 			}
@@ -4334,11 +4335,13 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class BoundPairContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public UpperBoundContext upperBound() {
-			return GetRuleContext<UpperBoundContext>(0);
+		public ExpressionContext Lower;
+		public ExpressionContext Upper;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public LowerBoundContext lowerBound() {
-			return GetRuleContext<LowerBoundContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COLON() { return GetToken(SyscodeParser.COLON, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TIMES() { return GetToken(SyscodeParser.TIMES, 0); }
@@ -4431,14 +4434,14 @@ public partial class SyscodeParser : Parser {
 				case 1:
 					{
 					State = 780;
-					lowerBound();
+					_localctx.Lower = expression(0);
 					State = 781;
 					Match(COLON);
 					}
 					break;
 				}
 				State = 785;
-				upperBound();
+				_localctx.Upper = expression(0);
 				}
 				break;
 			case TIMES:
@@ -4464,6 +4467,8 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class BoundPairCommalistContext : ParserRuleContext {
+		public BoundPairContext _boundPair;
+		public IList<BoundPairContext> _BoundPairs = new List<BoundPairContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public BoundPairContext[] boundPair() {
 			return GetRuleContexts<BoundPairContext>();
 		}
@@ -4490,7 +4495,8 @@ public partial class SyscodeParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 789;
-			boundPair();
+			_localctx._boundPair = boundPair();
+			_localctx._BoundPairs.Add(_localctx._boundPair);
 			State = 794;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
@@ -4500,7 +4506,8 @@ public partial class SyscodeParser : Parser {
 				State = 790;
 				Match(COMMA);
 				State = 791;
-				boundPair();
+				_localctx._boundPair = boundPair();
+				_localctx._BoundPairs.Add(_localctx._boundPair);
 				}
 				}
 				State = 796;
@@ -6509,11 +6516,11 @@ public partial class SyscodeParser : Parser {
 		0,0,765,764,1,0,0,0,766,99,1,0,0,0,767,768,5,106,0,0,768,101,1,0,0,0,769,
 		770,5,102,0,0,770,771,3,84,42,0,771,772,5,103,0,0,772,103,1,0,0,0,773,
 		774,3,138,69,0,774,775,3,84,42,0,775,105,1,0,0,0,776,777,5,102,0,0,777,
-		778,3,110,55,0,778,779,5,103,0,0,779,107,1,0,0,0,780,781,3,112,56,0,781,
+		778,3,110,55,0,778,779,5,103,0,0,779,107,1,0,0,0,780,781,3,84,42,0,781,
 		782,5,60,0,0,782,784,1,0,0,0,783,780,1,0,0,0,783,784,1,0,0,0,784,785,1,
-		0,0,0,785,788,3,114,57,0,786,788,5,82,0,0,787,783,1,0,0,0,787,786,1,0,
-		0,0,788,109,1,0,0,0,789,794,3,108,54,0,790,791,5,101,0,0,791,793,3,108,
-		54,0,792,790,1,0,0,0,793,796,1,0,0,0,794,792,1,0,0,0,794,795,1,0,0,0,795,
+		0,0,0,785,788,3,84,42,0,786,788,5,82,0,0,787,783,1,0,0,0,787,786,1,0,0,
+		0,788,109,1,0,0,0,789,794,3,108,54,0,790,791,5,101,0,0,791,793,3,108,54,
+		0,792,790,1,0,0,0,793,796,1,0,0,0,794,792,1,0,0,0,794,795,1,0,0,0,795,
 		111,1,0,0,0,796,794,1,0,0,0,797,798,3,84,42,0,798,113,1,0,0,0,799,800,
 		3,84,42,0,800,115,1,0,0,0,801,802,5,62,0,0,802,117,1,0,0,0,803,804,5,63,
 		0,0,804,119,1,0,0,0,805,806,5,61,0,0,806,121,1,0,0,0,807,808,5,78,0,0,

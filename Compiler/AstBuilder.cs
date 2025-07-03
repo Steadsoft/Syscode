@@ -271,24 +271,29 @@ namespace Syscode
         {
             var dcl = new Declare(context);
 
-            if (context.TryGetExactNode<DimensionSuffixContext>(out var dimensions))
+            if (context.Bounds !=  null)
             {
-                var pairs = dimensions.GetExactNode<BoundPairCommalistContext>().GetExactNodes<BoundPairContext>(); ;
-
-                foreach ( var pair in pairs)
-                {
-                    var bp = new BoundsPair(pair);
-
-                    if (pair.TryGetExactNode<LowerBoundContext>(out var lowerBound))
-                    {
-                        bp.Lower = CreateExpression(lowerBound.GetDerivedNode<ExpressionContext>());
-                    }
-
-                    bp.Upper = CreateExpression(pair.GetExactNode<UpperBoundContext>().GetDerivedNode<ExpressionContext>());
-
-                    dcl.Bounds.Add(bp);
-                }
+                dcl.Bounds = context.Bounds.Pair._BoundPairs.Select(p => new BoundsPair(p) { Lower = CreateExpression(p.Lower), Upper = CreateExpression(p.Upper) }).ToList();
             }
+
+            //if (context.TryGetExactNode<DimensionSuffixContext>(out var dimensions))
+            //{
+            //    var pairs = dimensions.GetExactNode<BoundPairCommalistContext>().GetExactNodes<BoundPairContext>(); ;
+
+            //    foreach ( var pair in pairs)
+            //    {
+            //        var bp = new BoundsPair(pair);
+
+            //        if (pair.TryGetExactNode<LowerBoundContext>(out var lowerBound))
+            //        {
+            //            bp.Lower = CreateExpression(lowerBound.GetDerivedNode<ExpressionContext>());
+            //        }
+
+            //        bp.Upper = CreateExpression(pair.GetExactNode<UpperBoundContext>().GetDerivedNode<ExpressionContext>());
+
+            //        dcl.Bounds.Add(bp);
+            //    }
+            //}
 
             if (context.TryGetExactNode<StructBodyContext>(out var structBody))
             {
@@ -379,14 +384,8 @@ namespace Syscode
         }
         private List<BoundsPair> CreateBounds(DimensionSuffixContext context)
         {
-            var bounds = new List<BoundsPair>();
-            var commalist = context.GetExactNode<BoundPairCommalistContext>(); ;
-            var pairs = commalist.GetExactNodes<BoundPairContext>();
 
-            var lower = pairs.Select(p => p.GetExactNode<LowerBoundContext>().GetExactNode<ExpressionContext>());
-            var upper = pairs.Select(p => p.GetExactNode<UpperBoundContext>().GetExactNode<ExpressionContext>());
-
-            bounds = pairs.Select(p => new BoundsPair(p) { Lower = null /* lower */ , Upper = null /* upper */}).ToList();
+            var bounds = context.Pair._BoundPairs.Select(p => new BoundsPair(p) { Lower = CreateExpression(p.Lower), Upper = CreateExpression(p.Upper)}).ToList();
 
             return bounds;
         }
