@@ -77,7 +77,7 @@ Data structures are defined using either the `dcl` keyword or the `type` keyword
 
 ```
 type struct process_table
-     timestamp ubin(32)
+     timestamp          ubin(32)
      struct bitmap
           initialized   bit(1)
           init_mode     bit(3)
@@ -88,7 +88,7 @@ end
 The above serves as a kind of template, instances of `process_table` can be declared just as any predefned type like `bin8` or `string`. The alternative syntax using `dcl` like this
 ```
 dcl struct process_table
-    timestamp ubin(32)
+    timestamp         ubin(32)
     struct bitmap
         initialized   bit(1)
         init_mode     bit(3)
@@ -99,7 +99,7 @@ end
 does not define a structure "template" but rather a runtime created instance of a variable named `process_table` this declaration is instantiated at runtime and can therefore have runtime defined array bounds:
 ```
 dcl struct process_table
-    timestamp ubin(32)
+    timestamp        ubin(32)
     struct bitmap(x)
        initialized   bit(1)
        init_mode     bit(3)
