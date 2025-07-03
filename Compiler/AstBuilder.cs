@@ -199,14 +199,16 @@ namespace Syscode
 
             // A Reference might contain another Reference...
 
-            if (context.TryGetExactNode<ReferenceContext>(out var inner))
+            if (context.Ref != null)
+            //if (context.TryGetExactNode<ReferenceContext>(out var inner))
             {
-                reference.reference = CreateReference(inner);
+                reference.reference = CreateReference(context.Ref);
             }
 
-            if (context.TryGetExactNode<ArgumentsListContext>(out var argslist))
+            if (context.ArgsList != null) 
+            //if (context.TryGetExactNode<ArgumentsListContext>(out var argslist))
             {
-                var argumentsList = argslist.GetExactNodes<ArgumentsContext>().ToList(); /* one or more 'arguments' always present */
+                var argumentsList = context.ArgsList._ArgsSet; /* one or more 'arguments' always present */
 
                 foreach (var arguments in argumentsList)
                 {
@@ -225,7 +227,7 @@ namespace Syscode
 
             // TODO: process the optional ArgList list..
 
-            reference.basic = CreateBasicReference(context.GetExactNode<BasicReferenceContext>());
+            reference.basic = CreateBasicReference(context.Basic);
 
             return reference;
         }
@@ -283,33 +285,14 @@ namespace Syscode
                 dcl.Bounds = context.Bounds.Pair._BoundPairs.Select(p => new BoundsPair(p) { Lower = CreateExpression(p.Lower), Upper = CreateExpression(p.Upper) }).ToList();
             }
 
-            //if (context.TryGetExactNode<DimensionSuffixContext>(out var dimensions))
-            //{
-            //    var pairs = dimensions.GetExactNode<BoundPairCommalistContext>().GetExactNodes<BoundPairContext>(); ;
-
-            //    foreach ( var pair in pairs)
-            //    {
-            //        var bp = new BoundsPair(pair);
-
-            //        if (pair.TryGetExactNode<LowerBoundContext>(out var lowerBound))
-            //        {
-            //            bp.Lower = CreateExpression(lowerBound.GetDerivedNode<ExpressionContext>());
-            //        }
-
-            //        bp.Upper = CreateExpression(pair.GetExactNode<UpperBoundContext>().GetDerivedNode<ExpressionContext>());
-
-            //        dcl.Bounds.Add(bp);
-            //    }
-            //}
-
-            if (context.TryGetExactNode<StructBodyContext>(out var structBody))
+            if (context.Struct != null)
             {
-                dcl.StructBody = CreateStructure(structBody);
+                dcl.StructBody = CreateStructure(context.Struct);
                 dcl.Spelling = dcl.StructBody.Spelling;  // copy the spelling for convenience in debugging.
             }
             else
             {
-                dcl.Spelling = context.GetLabelText(nameof(DeclareContext.Spelling));
+                dcl.Spelling = context.Spelling.GetText();
                 dcl.TypeName = context.GetLabelText(nameof(DeclareContext.Type));
             }
 
@@ -331,28 +314,23 @@ namespace Syscode
                     default:
                         throw new InvalidOperationException();
                 }
-
             }
 
             if (context.Type != null)
-            //if (context.TryGetExactNode<TypenameContext>(out var tn))
             {
                 if (context.Type.As != null)
                     dcl.As = context.Type.As.GetText();
 
                 if (context.Type.Code != null)
-                //if (tn.TryGetExactNode<TypeCodeContext>(out var bint))
                 {
                     dcl.TypeName = context.Type.Code.GetText();
                 }
 
                 if (context.Type.Args != null)
-                //if (tn.TryGetExactNode<ArgumentsContext>(out var subs))
                 {
                     var expressions = context.Type.Args.GetExactNode<SubscriptCommalistContext>().GetDerivedNodes<ExpressionContext>().Select(e => CreateExpression(e)).ToList();
                     dcl.typeSubscripts = expressions;
                 }
-
             }
 
             return dcl;
@@ -400,11 +378,11 @@ namespace Syscode
         {
             var node = new Procedure(context);
 
-            node.Spelling = context.GetLabelText(nameof(ProcedureContext.Spelling));
+            node.Spelling = context.Spelling.GetText();
 
-            if (context.TryGetExactNode<ParamListContext>(out var parameters))
+            if (context.Params != null)
             {
-                node.Parameters = [.. parameters.GetExactNodes<IdentifierContext>().Select(i => i.GetText())];
+                node.Parameters = context.Params._Params.Select(i => i.GetText()).ToList();
             }
 
             node.Statements = [.. GetStatements(context).Select(s => Generate(s))];

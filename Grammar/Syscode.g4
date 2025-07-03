@@ -25,7 +25,7 @@ compilation: (statement* endOfFile);
 statement:  preamble?  (call | return | label | scope | enum | if | declare | type | literal | procedure | function | loop | goto | assignment );
 
 //struct: STRUCT structBody ;
-structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((structField|structBody) emptyLines?)* END ;
+structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
 structField: Spelling=identifier dimensionSuffix? Type=typename memberAttributes? statementSeparator;
 
 label: AT Spelling=identifier Subscript=labelSubscript? statementSeparator;
@@ -36,15 +36,15 @@ gotoSubscript: LPAR expression RPAR;
 
 scope:  blockScope;
 blockScope: (SCOPE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
-procedure: PROC emptyLines? Spelling=identifier paramList? statement* emptyLines? END;
-function: FUNC emptyLines? Spelling=identifier paramList? AS Type=typename statement* emptyLines? END;
+procedure: PROC emptyLines? Spelling=identifier Params=paramList? statement* emptyLines? END;
+function: FUNC emptyLines? Spelling=identifier Params=paramList? AS Type=typename statement* emptyLines? END;
 
 enum: ENUM emptyLines? Name=identifier emptyLines? typename? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? reference statementSeparator;
 return: (RETURN (emptyLines? expression)?) statementSeparator ; //| (RETURN (emptyLines? expression)?)) statementSeparator;
 
 declare
-    : DCL structBody
+    : DCL Struct=structBody
     | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? Type=typename memberAttributes* statementSeparator 
     ;
 
@@ -76,8 +76,8 @@ assignment : reference comparer expression statementSeparator;
 comparer: EQUALS | COMPASSIGN;
 
 reference
-  : reference RARROW basicReference argumentsList?  
-  | basicReference argumentsList?                    
+  : Ref=reference RARROW Basic=basicReference ArgsList=argumentsList?  
+  | Basic=basicReference ArgsList=argumentsList?                    
   ;
 
 basicReference
@@ -85,7 +85,7 @@ basicReference
   ;
 
 argumentsList
-  : arguments+;
+  : ArgsSet+=arguments+;
 
 structureQualificationList
   : structureQualification+
@@ -242,7 +242,7 @@ prefixOperator
   ;
  
 qualifiedName: identifier (DOT identifier)*;
-paramList: LPAR identifier (COMMA identifier)* RPAR;
+paramList: LPAR Params+=identifier (COMMA Params+=identifier)* RPAR;
 constArrayList: (LPAR INTEGER (COMMA INTEGER)* RPAR);
 enumMembers: emptyLines? enumMember emptyLines? (memberSeparator emptyLines? enumMember emptyLines?)* memberSeparator? emptyLines?;
 
