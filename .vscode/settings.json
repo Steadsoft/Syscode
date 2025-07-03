@@ -25,14 +25,24 @@
                     "patterns": [
                         "if", "then", "elif", "else"
                     ],
-                    "color":"BrightRed",
+                    "color":"BrightMagenta",
                     "bold": true,
                     "italic": false
 
                 },
+                                {
+                    "patterns": [
+                        "type", "struct", "dcl"
+                    ],
+                    "color":"BrightGreen",
+                    "bold": true,
+                    "italic": false
+
+                },
+
                 {
                     "patterns": [
-                        "do","call","type", "struct", "dcl","proc", "procedure", "func","function","scope","aligned","unaligned","end;","goto","return"
+                        "do","call","type", "struct", "dcl","proc", "procedure", "func","function","scope","aligned","unaligned","end","goto","return"
                     ],
                     "color":"BrightCyan",
                     "bold": true,
@@ -41,9 +51,9 @@
                 },
                 {
                     "patterns": [
-                        "while","until", "for", "to","by"
+                        "while","until", "for", "to","by","loop"
                     ],
-                    "color":"BrightGreen",
+                    "color":"BrightRed",
                     "bold": true,
                     "italic": false
 

@@ -195,7 +195,9 @@ scope utilities
 
     end 
 
-
+    do loop
+       count = count + 1
+    end
 
     do x = a to b by c  
 

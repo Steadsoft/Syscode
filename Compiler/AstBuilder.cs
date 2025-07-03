@@ -39,6 +39,13 @@ namespace Syscode
         {
             if (context == null) throw new ArgumentNullException("context");
 
+            if (context.Loop != null)
+            {
+                return new Loop(context)
+                {
+                    Statements = GetStatements(context.Loop).Select(s => Generate(s)).ToList()
+                };
+            }
             if (context.For != null)
             {
                 return new For(context) 

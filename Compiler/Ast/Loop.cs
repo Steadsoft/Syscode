@@ -11,5 +11,10 @@ namespace Syscode
         }
 
         public List<AstNode> Statements { get => statements;  set => statements = value; }
+
+        public override string ToString()
+        {
+            return "do loop";
+        }
     }
 }

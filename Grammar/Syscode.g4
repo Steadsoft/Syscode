@@ -51,10 +51,11 @@ declare
 type: TYPE Body=structBody ;    
 
 literal: LIT customLiteral AS decLiteral statementSeparator ;
-loop: For=forLoop | While=whileLoop | Until=untilLoop ;
+loop: Loop=loopLoop | For=forLoop | While=whileLoop | Until=untilLoop ;
 forLoop : DO For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  statement* emptyLines? END ;
 whileLoop: DO While=whileCondition Until=untilCondition?  statement* emptyLines? END;
 untilLoop: DO Until=untilCondition While=whileCondition?  statement* emptyLines? END;
+loopLoop: DO LOOP statement* emptyLines? END;
 
 whileCondition: WHILE Exp=expression ;
 untilCondition: UNTIL Exp=expression ;
@@ -320,6 +321,7 @@ keyword
     | IS
     | LABEL
     | LIT
+    | LOOP
     | PATH
     | POINTER
     | PROC
@@ -401,6 +403,7 @@ IF:             'if';
 IS:             'is';
 LABEL:          'label';
 LIT:            'lit' | 'literal';
+LOOP:           'loop';
 PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROC:           'proc' | 'procedure';
