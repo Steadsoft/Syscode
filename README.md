@@ -76,35 +76,35 @@ The `do` keyword was taken from the PL/I language because we need to reliably di
 Data structures are defined using either the `dcl` keyword or the `type` keyword, in essence `type` defines a structure of a particular shape in a similar manner to C's typedef. Structures can containa mix of other structures and member fields and these can be nested to an arbitrary level. Note how the `dcl`/`type` keyword is required only at the outermost level. This example defines a struct type named `process_table` that contains another struct named `bitmap`:
 
 ```
-type process_table
-       timestamp ubin(32)
-       bitmap
+type struct process_table
+     timestamp ubin(32)
+     struct bitmap
           initialized   bit(1)
           init_mode     bit(3)
           reset_count   bit(5)
-       end
+     end
 end
 ```
 The above serves as a kind of template, instances of `process_table` can be declared just as any predefned type like `bin8` or `string`. The alternative syntax using `dcl` like this
 ```
-dcl process_table
-       timestamp ubin(32)
-       bitmap
-          initialized   bit(1)
-          init_mode     bit(3)
-          reset_count   bit(5)
-       end
+dcl struct process_table
+    timestamp ubin(32)
+    struct bitmap
+        initialized   bit(1)
+        init_mode     bit(3)
+        reset_count   bit(5)
+    end
 end
 ```
 does not define a structure "template" but rather a runtime created instance of a variable named `process_table` this declaration is instantiated at runtime and can therefore have runtime defined array bounds:
 ```
-dcl process_table
-       timestamp ubin(32)
-       bitmap(x)
-          initialized   bit(1)
-          init_mode     bit(3)
-          reset_count   bit(5)
-       end
+dcl struct process_table
+    timestamp ubin(32)
+    struct bitmap(x)
+       initialized   bit(1)
+       init_mode     bit(3)
+       reset_count   bit(5)
+    end
 end
 ```
 Unlike a `type` which must have compile time constants used for array bounds, the declaration form can use expressions like `bitmap(x)` and the entire structure's size is computed at runtime.
