@@ -1,10 +1,5 @@
 ﻿using Antlr4.Runtime;
 using Syscode.Ast;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static SyscodeParser;
 
 namespace Syscode

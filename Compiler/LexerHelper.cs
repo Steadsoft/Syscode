@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-
-namespace Syscode
+﻿namespace Syscode
 {
     public static class LexerHelper
     {
