@@ -9,6 +9,7 @@ namespace Syscode
         private SyscodeLexer lexer;
         private AstBuilder builder;
         private SymtabBuilder symtabBuilder;
+        private ReferenceResolver resolver;
         public event EventHandler<DiagnosticEvent>? diagnostics;
        public SyscodeCompiler()
         {
@@ -23,6 +24,7 @@ namespace Syscode
             var parser = new SyscodeParser(tokens);
             builder = new AstBuilder();
             symtabBuilder = new SymtabBuilder(diagnostics);
+            resolver = new ReferenceResolver(diagnostics);
 
             return parser.compilation();
         }
@@ -35,6 +37,11 @@ namespace Syscode
         public void ProcessDeclarations(AstNode root)
         {
             symtabBuilder.Generate((Compilation)root);
+        }
+
+        public void ResolveReferences(AstNode root)
+        {
+            resolver.Resolve((Compilation)root);
         }
         private string RemoveContext(string input)
         {

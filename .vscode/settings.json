@@ -51,7 +51,7 @@
                 },
                 {
                     "patterns": [
-                        "while","until", "for", "to","by","loop"
+                        "while","until", "for ", "to ","by ","loop"
                     ],
                     "color":"BrightRed",
                     "bold": true,

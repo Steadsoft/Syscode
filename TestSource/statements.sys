@@ -90,6 +90,8 @@ dcl target label
 
 target = that_other_label
 
+total = total + 1
+
 goto target
 
 dcl  handler(32) entry(bin8, string)

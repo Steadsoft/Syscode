@@ -10,7 +10,7 @@ namespace Syscode
         public string As;
         public List<string> Parameters = new List<string>();
         private List<AstNode> statements = new List<AstNode>();
-        public List<Symbol> Symbols = new List<Symbol>();
+        private List<Symbol> symbols = new List<Symbol>();
         private Procedure container;
         public Procedure(ParserRuleContext context, Procedure Container) : base(context)
         {
@@ -19,6 +19,7 @@ namespace Syscode
 
         public List<AstNode> Statements { get => statements; set => statements = value; }
         public Procedure Container { get => container; internal set => container = value; }
+        public List<Symbol> Symbols { get => symbols; set => symbols = value; }
 
         public override string ToString()
         {

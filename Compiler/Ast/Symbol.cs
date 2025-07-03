@@ -1,4 +1,4 @@
-﻿namespace Syscode.Ast
+﻿namespace Syscode
 {
     public class Symbol  
     {

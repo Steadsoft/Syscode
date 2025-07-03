@@ -8,6 +8,7 @@ namespace Syscode
         public string Spelling;
         public bool IsBlockScope = false;
         private List<AstNode> statements = new();
+        private List<Symbol> symbols = new();
         public Scope(ParserRuleContext context) : base(context)
         {
             if (context is BlockScopeContext)
@@ -19,5 +20,6 @@ namespace Syscode
         }
 
         public List<AstNode> Statements { get => statements; set => statements = value; }
+        public List<Symbol> Symbols { get => symbols; set => symbols = value; }
     }
 }

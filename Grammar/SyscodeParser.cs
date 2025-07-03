@@ -546,6 +546,8 @@ public partial class SyscodeParser : Parser {
 
 	public partial class StructBodyContext : ParserRuleContext {
 		public IdentifierContext Spelling;
+		public StructFieldContext Field;
+		public StructBodyContext Struct;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRUCT() { return GetToken(SyscodeParser.STRUCT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
@@ -643,13 +645,13 @@ public partial class SyscodeParser : Parser {
 					case 1:
 						{
 						State = 237;
-						structField();
+						_localctx.Field = structField();
 						}
 						break;
 					case 2:
 						{
 						State = 238;
-						structBody();
+						_localctx.Struct = structBody();
 						}
 						break;
 					}
@@ -1071,6 +1073,7 @@ public partial class SyscodeParser : Parser {
 
 	public partial class ProcedureContext : ParserRuleContext {
 		public IdentifierContext Spelling;
+		public ParamListContext Params;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PROC() { return GetToken(SyscodeParser.PROC, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
@@ -1082,14 +1085,14 @@ public partial class SyscodeParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines(int i) {
 			return GetRuleContext<EmptyLinesContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ParamListContext paramList() {
-			return GetRuleContext<ParamListContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
 			return GetRuleContexts<StatementContext>();
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
 			return GetRuleContext<StatementContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ParamListContext paramList() {
+			return GetRuleContext<ParamListContext>(0);
 		}
 		public ProcedureContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1127,7 +1130,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==LPAR) {
 				{
 				State = 306;
-				paramList();
+				_localctx.Params = paramList();
 				}
 			}
 
@@ -1174,6 +1177,7 @@ public partial class SyscodeParser : Parser {
 
 	public partial class FunctionContext : ParserRuleContext {
 		public IdentifierContext Spelling;
+		public ParamListContext Params;
 		public TypenameContext Type;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode FUNC() { return GetToken(SyscodeParser.FUNC, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode AS() { return GetToken(SyscodeParser.AS, 0); }
@@ -1190,14 +1194,14 @@ public partial class SyscodeParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines(int i) {
 			return GetRuleContext<EmptyLinesContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ParamListContext paramList() {
-			return GetRuleContext<ParamListContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
 			return GetRuleContexts<StatementContext>();
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
 			return GetRuleContext<StatementContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ParamListContext paramList() {
+			return GetRuleContext<ParamListContext>(0);
 		}
 		public FunctionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1235,7 +1239,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==LPAR) {
 				{
 				State = 325;
-				paramList();
+				_localctx.Params = paramList();
 				}
 			}
 
@@ -1516,6 +1520,7 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class DeclareContext : ParserRuleContext {
+		public StructBodyContext Struct;
 		public IdentifierContext Spelling;
 		public DimensionSuffixContext Bounds;
 		public TypenameContext Type;
@@ -1569,7 +1574,7 @@ public partial class SyscodeParser : Parser {
 				State = 378;
 				Match(DCL);
 				State = 379;
-				structBody();
+				_localctx.Struct = structBody();
 				}
 				break;
 			case 2:
@@ -2891,16 +2896,19 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class ReferenceContext : ParserRuleContext {
+		public ReferenceContext Ref;
+		public BasicReferenceContext Basic;
+		public ArgumentsListContext ArgsList;
 		[System.Diagnostics.DebuggerNonUserCode] public BasicReferenceContext basicReference() {
 			return GetRuleContext<BasicReferenceContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ArgumentsListContext argumentsList() {
 			return GetRuleContext<ArgumentsListContext>(0);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RARROW() { return GetToken(SyscodeParser.RARROW, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ReferenceContext reference() {
 			return GetRuleContext<ReferenceContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RARROW() { return GetToken(SyscodeParser.RARROW, 0); }
 		public ReferenceContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -2926,14 +2934,14 @@ public partial class SyscodeParser : Parser {
 			{
 			{
 			State = 588;
-			basicReference();
+			_localctx.Basic = basicReference();
 			State = 590;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,74,Context) ) {
 			case 1:
 				{
 				State = 589;
-				argumentsList();
+				_localctx.ArgsList = argumentsList();
 				}
 				break;
 			}
@@ -2950,20 +2958,21 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					_localctx = new ReferenceContext(_parentctx, _parentState);
+					_localctx.Ref = _prevctx;
 					PushNewRecursionContext(_localctx, _startState, RULE_reference);
 					State = 592;
 					if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
 					State = 593;
 					Match(RARROW);
 					State = 594;
-					basicReference();
+					_localctx.Basic = basicReference();
 					State = 596;
 					ErrorHandler.Sync(this);
 					switch ( Interpreter.AdaptivePredict(TokenStream,75,Context) ) {
 					case 1:
 						{
 						State = 595;
-						argumentsList();
+						_localctx.ArgsList = argumentsList();
 						}
 						break;
 					}
@@ -3035,6 +3044,8 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class ArgumentsListContext : ParserRuleContext {
+		public ArgumentsContext _arguments;
+		public IList<ArgumentsContext> _ArgsSet = new List<ArgumentsContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ArgumentsContext[] arguments() {
 			return GetRuleContexts<ArgumentsContext>();
 		}
@@ -3065,7 +3076,8 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					State = 608;
-					arguments();
+					_localctx._arguments = arguments();
+					_localctx._ArgsSet.Add(_localctx._arguments);
 					}
 					}
 					break;
@@ -5199,14 +5211,16 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class ParamListContext : ParserRuleContext {
+		public IdentifierContext _identifier;
+		public IList<IdentifierContext> _Params = new List<IdentifierContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAR() { return GetToken(SyscodeParser.LPAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext[] identifier() {
 			return GetRuleContexts<IdentifierContext>();
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier(int i) {
 			return GetRuleContext<IdentifierContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] COMMA() { return GetTokens(SyscodeParser.COMMA); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COMMA(int i) {
 			return GetToken(SyscodeParser.COMMA, i);
@@ -5229,7 +5243,8 @@ public partial class SyscodeParser : Parser {
 			State = 849;
 			Match(LPAR);
 			State = 850;
-			identifier();
+			_localctx._identifier = identifier();
+			_localctx._Params.Add(_localctx._identifier);
 			State = 855;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
@@ -5239,7 +5254,8 @@ public partial class SyscodeParser : Parser {
 				State = 851;
 				Match(COMMA);
 				State = 852;
-				identifier();
+				_localctx._identifier = identifier();
+				_localctx._Params.Add(_localctx._identifier);
 				}
 				}
 				State = 857;

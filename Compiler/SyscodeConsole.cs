@@ -24,6 +24,8 @@ namespace Syscode
 
             compiler.ProcessDeclarations(ast);
 
+            compiler.ResolveReferences(ast);
+
             clock.Stop();
 
             //compiler.PrintAbstractSyntaxTree(ast);
