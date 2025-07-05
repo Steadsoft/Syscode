@@ -4,10 +4,15 @@ namespace Syscode
 {
     public class If : AstNode
     {
-        public AstNode Expr;
-        public List<AstNode> ThenStatements = new List<AstNode>();
-        public List<AstNode> ElseStatements = new List<AstNode>();   
-        public List<Elif> ElifStatements = new List<Elif>();
+        private AstNode expr;
+        private List<AstNode> thenStatements = new List<AstNode>();
+        private List<AstNode> elseStatements = new List<AstNode>();
+        private List<Elif> elifStatements = new List<Elif>();
+
+        public AstNode Expr { get => expr; set => expr = value; }
+        public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }
+        public List<AstNode> ElseStatements { get => elseStatements; set => elseStatements = value; }
+        public List<Elif> ElifStatements { get => elifStatements; set => elifStatements = value; }
 
         public If(ParserRuleContext context) : base(context)
         {

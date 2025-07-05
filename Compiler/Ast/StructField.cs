@@ -5,9 +5,14 @@ namespace Syscode
     public class StructField   : AstNode
     {
         public string Spelling;
-        public string TypeName;
-        public List<BoundsPair> Bounds = new();
-        public int Length;
+        private string typeName;
+        private List<BoundsPair> bounds = new();
+        private int length;
+
+        public string TypeName { get => typeName; set => typeName = value; }
+        public List<BoundsPair> Bounds { get => bounds; set => bounds = value; }
+        public int Length { get => length; set => length = value; }
+
         public StructField(SyscodeParser.StructFieldContext context) : base(context)
         {
             var bounds = new List<BoundsPair>();

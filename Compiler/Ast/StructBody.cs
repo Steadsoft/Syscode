@@ -5,9 +5,14 @@ namespace Syscode
     public class StructBody : AstNode
     {
         public string Spelling;
-        public List<BoundsPair> Bounds = new();
-        public List<StructBody> Structs = new List<StructBody>();
-        public List<StructField> Fields = new List<StructField>();
+        private List<BoundsPair> bounds = new();
+        private List<StructBody> structs = new List<StructBody>();
+        private List<StructField> fields = new List<StructField>();
+
+        public List<BoundsPair> Bounds { get => bounds; set => bounds = value; }
+        public List<StructBody> Structs { get => structs; set => structs = value; }
+        public List<StructField> Fields { get => fields; set => fields = value; }
+
         public StructBody(ParserRuleContext context) : base(context)
         {
         }

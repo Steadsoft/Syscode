@@ -6,7 +6,7 @@ namespace Syscode
     public class Scope : AstNode, IContainer
     {
         public string Spelling;
-        public bool IsBlockScope = false;
+        private bool isBlockScope = false;
         private List<AstNode> statements = new();
         private List<Symbol> symbols = new();
         private IContainer container;
@@ -22,5 +22,6 @@ namespace Syscode
         public IContainer Container { get { return container; } set { container = value; } }
         public List<AstNode> Statements { get => statements; set => statements = value; }
         public List<Symbol> Symbols { get => symbols; set => symbols = value; }
+        public bool IsBlockScope { get => isBlockScope; set => isBlockScope = value; }
     }
 }

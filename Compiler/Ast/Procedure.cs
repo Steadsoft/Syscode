@@ -6,9 +6,9 @@ namespace Syscode
     public class Procedure : Declare, IContainer
     {
         public string Spelling;
-        public bool isFunction;
-        public string As;
-        public List<string> Parameters = new List<string>();
+        private bool isFunction;
+        private string @as;
+        private List<string> parameters = new List<string>();
         private List<AstNode> statements = new List<AstNode>();
         private List<Symbol> symbols = new List<Symbol>();
         private IContainer container;
@@ -20,6 +20,9 @@ namespace Syscode
         public List<AstNode> Statements { get => statements; set => statements = value; }
         public IContainer Container { get => container;  set => container = value; }
         public List<Symbol> Symbols { get => symbols; set => symbols = value; }
+        public bool IsFunction { get => isFunction; set => isFunction = value; }
+        public string As { get => @as; set => @as = value; }
+        public List<string> Parameters { get => parameters; set => parameters = value; }
 
         public override string ToString()
         {

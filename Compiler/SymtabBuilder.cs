@@ -18,13 +18,6 @@ namespace Syscode
             root.Symbols = declarations.Select(d => CreateSymbol(d)).ToList();
         }
 
-        //public Symbol CreateSymbol (Procedure proc)
-        //{
-        //    var symbol = new Symbol(proc);
-
-        //    return symbol;
-        //}
-
         public Symbol CreateSymbol(Declare declaration)
         {
             var symbol = new Symbol(declaration);

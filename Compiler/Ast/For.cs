@@ -5,12 +5,20 @@ namespace Syscode
 {
     public class For : Loop
     {
-        public Reference forRef;
-        public Expression from;
-        public Expression to;
-        public Expression by;
-        public Expression untilExp;
-        public Expression whileExp;
+        private Reference forRef;
+        private Expression from;
+        private Expression to;
+        private Expression by;
+        private Expression untilExp;
+        private Expression whileExp;
+
+        public Reference ForRef { get => forRef; set => forRef = value; }
+        public Expression From { get => from; set => from = value; }
+        public Expression To { get => to; set => to = value; }
+        public Expression By { get => by; set => by = value; }
+        public Expression UntilExp { get => untilExp; set => untilExp = value; }
+        public Expression WhileExp { get => whileExp; set => whileExp = value; }
+
         public For(ParserRuleContext context) : base(context)
         {
         }
@@ -19,16 +27,16 @@ namespace Syscode
         {
             StringBuilder builder = new StringBuilder();
 
-            if (by == null) 
-                builder.Append($"for {forRef} = {from} to {to}");
+            if (By == null) 
+                builder.Append($"for {ForRef} = {From} to {To}");
             else
-                builder.Append($"for {forRef} = {from} to {to} by {by}");
+                builder.Append($"for {ForRef} = {From} to {To} by {By}");
 
-            if (whileExp != null)
-                builder.Append($" while {whileExp}");
+            if (WhileExp != null)
+                builder.Append($" while {WhileExp}");
             
-            if (untilExp != null)
-                builder.Append($" until {untilExp}");
+            if (UntilExp != null)
+                builder.Append($" until {UntilExp}");
 
             return builder.ToString();
         }

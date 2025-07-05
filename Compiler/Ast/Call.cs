@@ -4,10 +4,12 @@ namespace Syscode
 {
     public class Call : AstNode
     {
-        public Reference Reference;
+        private Reference reference;
         public Call(ParserRuleContext context) : base(context)
         {
         }
+
+        public Reference Reference { get => reference; set => reference = value; }
 
         public override string ToString()
         {

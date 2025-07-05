@@ -4,18 +4,22 @@ namespace Syscode
 {
     public class While : Loop
     {
-        public Expression whileExp;
-        public Expression untilExp;   // optional
+        private Expression whileExp;
+        private Expression untilExp;   // optional
+
+        public Expression WhileExp { get => whileExp; set => whileExp = value; }
+        public Expression UntilExp { get => untilExp; set => untilExp = value; }
+
         public While(ParserRuleContext context) : base(context)
         {
         }
 
         public override string ToString()
         {
-            if (untilExp != null)
-                return $"while {whileExp} until {untilExp}";
+            if (UntilExp != null)
+                return $"while {WhileExp} until {UntilExp}";
 
-            return $"while {whileExp}";
+            return $"while {WhileExp}";
         }
     }
 }

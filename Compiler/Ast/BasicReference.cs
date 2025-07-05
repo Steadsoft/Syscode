@@ -7,7 +7,7 @@ namespace Syscode
     public class BasicReference : AstNode
     {
         public string Spelling;
-        public List<Qualification> qualifier = new();
+        private List<Qualification> qualifier = new();
         private bool resolved = false;
         private Symbol symbol;
         public BasicReference(ParserRuleContext context) : base(context)
@@ -16,15 +16,16 @@ namespace Syscode
         }
 
         public bool Resolved { get => resolved; internal set => resolved = value; }
-        public bool IsQualified { get => qualifier.Any(); }
+        public bool IsQualified { get => Qualifier.Any(); }
         public bool IsntQualiofied { get => !IsQualified; }
         public Symbol Symbol { get => symbol; internal set => symbol = value; }
+        public List<Qualification> Qualifier { get => qualifier; set => qualifier = value; }
 
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
 
-            foreach (var qual in qualifier)
+            foreach (var qual in Qualifier)
             {
                 builder.Append($"{qual.ToString()}.");
             }

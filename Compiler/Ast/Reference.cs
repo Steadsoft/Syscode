@@ -5,8 +5,8 @@ namespace Syscode
 {
     public class Reference : AstNode
     {
-        public Reference reference = null; // only populated if this ref is the left of ref -> ref
-        public List<Arguments> ArgumentsList= new();
+        private Reference innerReference = null; // only populated if this ref is the left of ref -> ref
+        private List<Arguments> argumentsList = new();
         private BasicReference basic = null;
 
         public Reference(ReferenceContext context) : base(context)
@@ -14,20 +14,22 @@ namespace Syscode
         }
         public bool IsBasic
         {
-            get { return reference == null; }
+            get { return InnerReference == null; }
         }
 
         public bool IsntBasic { get => !IsBasic; }
 
         public BasicReference Basic { get => basic; internal set => basic = value; }
+        public Reference InnerReference { get => innerReference; set => innerReference = value; }
+        public List<Arguments> ArgumentsList { get => argumentsList; set => argumentsList = value; }
 
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
 
-            if (reference != null)
+            if (InnerReference != null)
             {
-                builder.Append(reference.ToString());
+                builder.Append(InnerReference.ToString());
                 builder.Append(" -> ");
             }
 

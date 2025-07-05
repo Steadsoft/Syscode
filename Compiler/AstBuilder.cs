@@ -51,12 +51,12 @@ namespace Syscode
             {
                 return new For(context) 
                 { 
-                    forRef = CreateReference(context.For.For),
-                    from = CreateExpression(context.For.From),
-                    to = CreateExpression(context.For.To),
-                    by = CreateExpression(context.For.By),
-                    whileExp = CreateExpression(context.For.While?.Exp),
-                    untilExp = CreateExpression(context.For.Until?.Exp),
+                    ForRef = CreateReference(context.For.For),
+                    From = CreateExpression(context.For.From),
+                    To = CreateExpression(context.For.To),
+                    By = CreateExpression(context.For.By),
+                    WhileExp = CreateExpression(context.For.While?.Exp),
+                    UntilExp = CreateExpression(context.For.Until?.Exp),
                     Statements = GetStatements(context.For).Select(s => Generate(s)).ToList()
                 };
             }
@@ -65,8 +65,8 @@ namespace Syscode
             {
                 return new While(context)
                 {
-                   whileExp = CreateExpression(context.While.While.Exp),
-                   untilExp = CreateExpression(context.While.Until?.Exp),
+                   WhileExp = CreateExpression(context.While.While.Exp),
+                   UntilExp = CreateExpression(context.While.Until?.Exp),
                    Statements = GetStatements(context.While).Select(s => Generate(s)).ToList()
                 };
             }
@@ -75,8 +75,8 @@ namespace Syscode
             {
                 return new Until(context)
                 {
-                    untilExp = CreateExpression(context.Until.Until.Exp) ,
-                    whileExp = CreateExpression(context.Until.While?.Exp),
+                    UntilExp = CreateExpression(context.Until.Until.Exp) ,
+                    WhileExp = CreateExpression(context.Until.While?.Exp),
                     Statements = GetStatements(context.Until).Select(s => Generate(s)).ToList()
                 };
             }
@@ -201,13 +201,11 @@ namespace Syscode
             // A Reference might contain another Reference...
 
             if (context.Ref != null)
-            //if (context.TryGetExactNode<ReferenceContext>(out var inner))
             {
-                reference.reference = CreateReference(context.Ref);
+                reference.InnerReference = CreateReference(context.Ref);
             }
 
             if (context.ArgsList != null) 
-            //if (context.TryGetExactNode<ArgumentsListContext>(out var argslist))
             {
                 var argumentsList = context.ArgsList._ArgsSet; /* one or more 'arguments' always present */
 
@@ -254,7 +252,7 @@ namespace Syscode
 
                     }
                         
-                    basic.qualifier.Add(qualifier);
+                    basic.Qualifier.Add(qualifier);
                 }
             }
 
@@ -411,7 +409,7 @@ namespace Syscode
             }
 
             node.Statements = [.. GetStatements(context).Select(s => Generate(s))];
-            node.isFunction = true;
+            node.IsFunction = true;
 
             currentContainer = node.Container;
 
