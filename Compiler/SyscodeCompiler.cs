@@ -71,7 +71,7 @@ namespace Syscode
         public void ResolveReferences(AstNode root)
         {
             resolver.ResolveReferences((Compilation)root);
-            resolver.ReportUnresolvedReferences((Compilation)root);
+            resolver.ReportUnresolvedReferences(((Compilation)root).Statements);
         }
         private string RemoveContext(string input)
         {

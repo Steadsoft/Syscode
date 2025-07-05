@@ -3,48 +3,48 @@
     {
       "number": 1000,
       "message": "The assignment to '{arg}' could not be resolved to a declaration in this or any containing scope.",
-      "severity": "error"
+      "severity": "Error"
     },
     {
       "number": 1001,
       "message": "The goto target '{arg}' could not be resolved to a label in this or any containing scope.",
-      "severity": "error"
+      "severity": "Error"
     },
     {
       "number": 1002,
       "message": "The string variable '{arg}' must have a length specifier.",
-      "severity": "error"
+      "severity": "Error"
     },
     {
       "number": 1003,
       "message": "The string variable '{arg}' must have a single valued length specifier.",
-      "severity": "error"
+      "severity": "Error"
     },
     {
       "number": 1004,
       "message": "The length for string '{arg}' must be a positive non-zero integer literal.",
-      "severity": "error"
+      "severity": "Error"
     },
     {
       "number": 1005,
       "message": "The option '{arg}' can only be applied to string declarations.",
-      "severity": "error"
+      "severity": "Error"
     },
     {
       "number": 1006,
       "message": "The type of '{arg}' does not support range attributes.",
-      "severity": "error"
+      "severity": "Error"
     },
     {
       "number": 1007,
       "message": "The precision for the variable '{arg}' must be a positive non-zero integer literal.",
-      "severity": "error"
+      "severity": "Error"
     },
 
     {
       "number": 1008,
       "message": "The scale for the variable '{arg}' must be an integer literal.",
-      "severity": "error"
+      "severity": "Error"
     }
 
   ]

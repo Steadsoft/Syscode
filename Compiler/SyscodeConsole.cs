@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Syscode
 {
@@ -44,8 +45,17 @@ namespace Syscode
 
         public static EventHandler<DiagnosticEvent> onFileFound = (sender, eventArgs) =>
         {
-            string message = $"{eventArgs.severity} {eventArgs.code} on line {eventArgs.line} {eventArgs.message}";
+            string message = $"{eventArgs.message}";
 
+            if (eventArgs.severity == "Error")
+               Console.ForegroundColor = ConsoleColor.Red;
+            if (eventArgs.severity == "Warning")
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            if (eventArgs.severity == "Info")
+                Console.ForegroundColor = ConsoleColor.Gray;
+
+            Console.Write($"{eventArgs.severity}  {eventArgs.code} on line {eventArgs.line.ToString().PadRight(5)} ");
+            Console.ResetColor();
             Console.WriteLine(message);
         };
     }

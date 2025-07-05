@@ -15,9 +15,11 @@ namespace Syscode
             Spelling = context.GetLabelText(nameof(BasicReferenceContext.Spelling));
         }
 
-        public bool Resolved { get => resolved; internal set => resolved = value; }
+        public bool IsResolved { get => resolved; internal set => resolved = value; }
+        public bool IsntResolved { get => !resolved; }
+
         public bool IsQualified { get => Qualifier.Any(); }
-        public bool IsntQualiofied { get => !IsQualified; }
+        public bool IsntQualified { get => !IsQualified; }
         public Symbol Symbol { get => symbol; internal set => symbol = value; }
         public List<Qualification> Qualifier { get => qualifier; set => qualifier = value; }
 
