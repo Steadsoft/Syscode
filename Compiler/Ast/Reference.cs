@@ -7,11 +7,19 @@ namespace Syscode
     {
         public Reference reference = null; // only populated if this ref is the left of ref -> ref
         public List<Arguments> ArgumentsList= new();
-        public BasicReference basic = null;
+        private BasicReference basic = null;
 
         public Reference(ReferenceContext context) : base(context)
         {
         }
+        public bool IsBasic
+        {
+            get { return reference == null; }
+        }
+
+        public bool IsntBasic { get => !IsBasic; }
+
+        public BasicReference Basic { get => basic; internal set => basic = value; }
 
         public override string ToString()
         {
@@ -23,7 +31,7 @@ namespace Syscode
                 builder.Append(" -> ");
             }
 
-           builder.Append(basic.ToString());
+           builder.Append(Basic.ToString());
 
            foreach (var arg in ArgumentsList)
             {

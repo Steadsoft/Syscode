@@ -85,7 +85,7 @@ namespace Syscode
         }
         public Goto CreateGoto(GotoContext context)
         {
-            return new Goto(context) { target = CreateReference(context.GetExactNode<ReferenceContext>()) };
+            return new Goto(context) { Target = CreateReference(context.GetExactNode<ReferenceContext>()) };
         }
         private Label CreateLabel(LabelContext context)
         {
@@ -228,7 +228,7 @@ namespace Syscode
 
             // TODO: process the optional ArgList list..
 
-            reference.basic = CreateBasicReference(context.Basic);
+            reference.Basic = CreateBasicReference(context.Basic);
 
             return reference;
         }

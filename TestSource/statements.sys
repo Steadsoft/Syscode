@@ -130,6 +130,9 @@ procedure startup (arg1,arg2,arg3)
     return 
 
     function calculate(a,b,c) as bin(25)
+
+
+
         a = b / (c + a)
         return a
     end   
@@ -145,6 +148,8 @@ procedure shutdown
     if a = b then
        return
     end
+
+    goto restart_system
 
 end /* proc */
 
