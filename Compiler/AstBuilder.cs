@@ -9,7 +9,7 @@ namespace Syscode
     /// </summary>
     public class AstBuilder
     {
-        private Procedure currentContainer = null;
+        private IContainer currentContainer = null;
         public AstBuilder() 
         { 
         

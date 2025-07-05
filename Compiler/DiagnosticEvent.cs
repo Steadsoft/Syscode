@@ -3,11 +3,11 @@
     public class DiagnosticEvent
     {
         public int code;
-        public Severity severity;
+        public string severity;
         public string message;
         public int line;
         public int column;
-        public DiagnosticEvent(AstNode node, int code, Severity severity, string message)
+        public DiagnosticEvent(AstNode node, int code, string severity, string message)
         {
             this.code = code;
             this.severity = severity;

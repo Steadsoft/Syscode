@@ -4,10 +4,11 @@ namespace Syscode
 {
     public class SymtabBuilder
     {
-        private event EventHandler<DiagnosticEvent>? diagnostics;
-        public SymtabBuilder(EventHandler<DiagnosticEvent>? diagnostics)
+        private Action<AstNode, int, string> reporrt;
+
+        public SymtabBuilder(Action<AstNode, int, string> Reporter)
         {
-            this.diagnostics = diagnostics;
+            reporrt = Reporter;
         }
 
         public void Generate(Compilation root)
@@ -85,19 +86,20 @@ namespace Syscode
 
             if (declaration.typeSubscripts.Count == 0)
             {
-                diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The string variable '{declaration.Spelling}' must have a length specifier."));
+                reporrt(declaration, 1002, declaration.Spelling);
                 return false;
             }
 
             if (declaration.typeSubscripts.Count > 1)
             {
-                diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The string variable '{declaration.Spelling}' must have a single valued length specifier."));
+
+                reporrt(declaration, 1003, declaration.Spelling);
                 return false;
             }
 
             if (IsStringLengthInvalid(declaration))
             {
-                diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The length for string '{declaration.Spelling}' must be a positive non-zero integer literal"));
+                reporrt(declaration, 1004, declaration.Spelling);
                 return false;
             }
 
@@ -120,7 +122,7 @@ namespace Syscode
 
             if (declaration.Varying)
             {
-                diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The option 'var' can only be applied to string declarations."));
+                reporrt(declaration, 1005, "var");
                 return false;
 
             }
@@ -129,7 +131,7 @@ namespace Syscode
             {
                 if (declaration.typeSubscripts.Any())
                 {
-                    diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The type of '{declaration.Spelling}' does not support range attributes."));
+                    reporrt(declaration, 1006, declaration.Spelling);
                     return false;
                 }
 
@@ -137,7 +139,7 @@ namespace Syscode
 
                 if (Precision <= 0)
                 {
-                    diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The precision for the variable '{declaration.Spelling}' must be a positive non-zero integer literal"));
+                    reporrt(declaration, 1007, declaration.Spelling);
                     return false;
                 }
 
@@ -150,7 +152,7 @@ namespace Syscode
             {
                 if (declaration.typeSubscripts.Any())
                 {
-                    diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The type of '{declaration.Spelling}' does not support range attributes."));
+                    reporrt(declaration, 1006, declaration.Spelling);
                     return false;
                 }
 
@@ -174,7 +176,7 @@ namespace Syscode
 
                     if (PrecisionInvalid)
                     {
-                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The precision for the variable '{declaration.Spelling}' must be a positive non-zero integer literal"));
+                        reporrt(declaration, 1007, declaration.Spelling);
                         return true;
                     }
 
@@ -191,13 +193,13 @@ namespace Syscode
 
                     if (PrecisionInvalid)
                     {
-                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The precision for the variable '{declaration.Spelling}' must be a positive non-zero integer literal"));
+                        reporrt(declaration, 1007, declaration.Spelling);
                         return false;
                     }
 
                     if (ScaleInvalid)
                     {
-                        diagnostics?.Invoke(this, new DiagnosticEvent(declaration, 1, Severity.Error, $"The scale for the variable '{declaration.Spelling}' must be an integer literal"));
+                        reporrt(declaration, 1008, declaration.Spelling);
                         return false;
                     }
 

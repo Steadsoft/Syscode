@@ -6,14 +6,15 @@ namespace Syscode
 {
     public class ReferenceResolver
     {
-        private event EventHandler<DiagnosticEvent>? diagnostics;
+        private Action<AstNode, int, string> report;
 
-        public ReferenceResolver(EventHandler<DiagnosticEvent>? diagnostics)
+        public ReferenceResolver(Action<AstNode, int, string> Reporter)
         {
-            this.diagnostics = diagnostics;
+            report = Reporter;
         }
 
-        public void ResolveReferences(IStatementContainer root)
+
+        public void ResolveReferences(IContainer root)
         {
             ResolveReferences(root, root.Statements);
 
@@ -21,21 +22,21 @@ namespace Syscode
 
         }
 
-        public void ResolveReferences(IStatementContainer root, IEnumerable<AstNode> statements)
+        public void ResolveReferences(IContainer root, IEnumerable<AstNode> statements)
         {
             statements.OfType<Assignment>().ForEach(a => ResolveAssignment(root, a));
-
             statements.OfType<Goto>().ForEach(a => ResolveGoto(root, a));
 
         }
 
-        private void ResolveGoto(IStatementContainer container, Goto statement)
+        private void ResolveGoto(IContainer container, Goto statement)
         {
             if (statement.Target.IsntBasic || statement.Target.Basic.IsQualified)  // actually an error, but might be better reported in a distinct phase.
                 return;
 
-            if (DeclarationCount(container, statement.Target.Basic.Spelling) == 1)
+            if (DeclarationCount(container, statement.Target.Basic.Spelling, out var symbol) == 1)
             {
+                statement.Target.Basic.Symbol = symbol;
                 statement.Target.Basic.Resolved = true;  // TODO is the resolved declaration a label?
                 return;
             }
@@ -44,10 +45,9 @@ namespace Syscode
             {
                 ResolveGoto(proc.Container, statement);
             }
-
         }
 
-        private void ResolveAssignment(IStatementContainer container, Assignment statement) 
+        private void ResolveAssignment(IContainer container, Assignment statement) 
         {
             // TODO: include qualified and pointer refs too evemtually
 
@@ -56,9 +56,10 @@ namespace Syscode
             if (reference.IsntBasic || reference.Basic.IsQualified)
                 return;
 
-            if (DeclarationCount(container, reference.Basic.Spelling) == 1)
+            if (DeclarationCount(container, reference.Basic.Spelling, out var symbol) == 1)
             {
                 reference.Basic.Resolved = true;
+                reference.Basic.Symbol = symbol;
                 return;
             }
 
@@ -68,9 +69,9 @@ namespace Syscode
             }
         }
 
-        public void ReportUnresolvedReferences(IStatementContainer container)
+        public void ReportUnresolvedReferences(IContainer container)
         {
-            if (container.Empty)
+            if (container.HasNoStatements)
                 return;
 
             foreach (var statement in container.Statements)
@@ -83,7 +84,7 @@ namespace Syscode
                             {
                                 if (assign.Reference.Basic.Resolved == false)
                                 {
-                                    Report(assign, $"The assignment target '{assign.Reference.Basic.Spelling}' could not be resolved to a declaration in this or any containing scope.");
+                                    report(assign, 1000, assign.Reference.Basic.Spelling);
                                 }
                             }
 
@@ -92,7 +93,7 @@ namespace Syscode
 
                     case Goto gotostmt:
                         {
-                            Report(gotostmt, $"The goto target '{gotostmt.Target.Basic.Spelling}' could not be resolved to a label in this or any containing scope.");
+                            report(gotostmt, 1001, gotostmt.Target.Basic.Spelling);
                             break;
                         }
                     default:
@@ -103,14 +104,16 @@ namespace Syscode
             container.Statements.OfType<Procedure>().ForEach(s => ReportUnresolvedReferences(s));
         }
 
-        public static int DeclarationCount(IStatementContainer root, string Spelling)
+        public static int DeclarationCount(IContainer root, string Spelling, out Symbol symbol)
         {
-            return root.Symbols.Where(s => s.Spelling == Spelling).Count();
-        }
+            symbol = null;
+            
+            var count = root.Symbols.Where(s => s.Spelling == Spelling).Count();
 
-        public void Report(AstNode node, string Message)
-        {
-            diagnostics?.Invoke(this, new DiagnosticEvent(node, 1, Severity.Error, Message));
+            if (count == 1)
+                symbol = root.Symbols.Where(s => s.Spelling == Spelling).Single();
+
+            return count;
         }
     }
 

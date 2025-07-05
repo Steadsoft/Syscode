@@ -8,7 +8,7 @@ namespace Syscode
         {
 
             AstNode ast = null;
-            var compiler = new SyscodeCompiler();
+            var compiler = new SyscodeCompiler(@"..\..\..\..\TestSource\messages.json");
 
             compiler.diagnostics += onFileFound;
 
@@ -44,7 +44,7 @@ namespace Syscode
 
         public static EventHandler<DiagnosticEvent> onFileFound = (sender, eventArgs) =>
         {
-            string message = $"{eventArgs.severity} on line {eventArgs.line} {eventArgs.message}";
+            string message = $"{eventArgs.severity} {eventArgs.code} on line {eventArgs.line} {eventArgs.message}";
 
             Console.WriteLine(message);
         };

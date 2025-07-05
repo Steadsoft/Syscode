@@ -1,5 +1,7 @@
 ﻿using Antlr4.Runtime;
+using System;
 using System.Text;
+using System.Text.Json;
 using static SyscodeParser;
 
 namespace Syscode
@@ -11,20 +13,47 @@ namespace Syscode
         private SymtabBuilder symtabBuilder;
         private ReferenceResolver resolver;
         public event EventHandler<DiagnosticEvent>? diagnostics;
-       public SyscodeCompiler()
+        private string errorMesagesPath;
+        private ErrorFile messages;
+        public SyscodeCompiler(string ErrorMessagesPath)
         {
+            errorMesagesPath = ErrorMessagesPath;
         }
 
-        public CompilationContext CompileSourceFile(string File)
+        public void Report(AstNode node, int number, string arg)
         {
-            var source = new StreamReader(File);
+            var errormsg = messages.Errors.Where(e => e.Number == number).Single();
+
+            var message = errormsg.Message.Replace("{arg}", arg);
+
+            diagnostics?.Invoke(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
+        }
+
+        public CompilationContext CompileSourceFile(string SourceFile)
+        {
+            var source = new StreamReader(SourceFile);
             var stream = new AntlrInputStream(source);
             lexer = new SyscodeLexer(stream);
             var tokens = new CommonTokenStream(lexer);
             var parser = new SyscodeParser(tokens);
             builder = new AstBuilder();
-            symtabBuilder = new SymtabBuilder(diagnostics);
-            resolver = new ReferenceResolver(diagnostics);
+            symtabBuilder = new SymtabBuilder(Report);
+            resolver = new ReferenceResolver(Report);
+
+            string json = File.ReadAllText(errorMesagesPath);
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            messages  = JsonSerializer.Deserialize<ErrorFile>(json, options);
+
+            if (messages.Errors.GroupBy(m => m.Number).Where(g => g.Count() > 1).Any())
+                throw new InvalidOperationException("The error file contains a duplicate error number.");
+
+            if (messages.Errors.GroupBy(m => m.Message).Where(g => g.Count() > 1).Any())
+                throw new InvalidOperationException("The error file contains a duplicate error message.");
 
             return parser.compilation();
         }
@@ -272,7 +301,7 @@ namespace Syscode
                     {
                         Console.WriteLine($"{LineDepth(depth, proc)} {proc.GetType().Name} '{proc.Spelling}'");
 
-                        var children = ((IStatementContainer)(proc)).Statements;
+                        var children = ((IContainer)(proc)).Statements;
 
                         if (children.Any())
                         {
@@ -296,7 +325,7 @@ namespace Syscode
                 case Scope scope:
                     {
                         Console.WriteLine($"{LineDepth(depth, scope)} {node.GetType().Name} '{scope.Spelling}'");
-                        var children = ((IStatementContainer)(scope)).Statements;
+                        var children = ((IContainer)(scope)).Statements;
 
                         if (children.Any())
                         {
@@ -312,11 +341,11 @@ namespace Syscode
                             Console.WriteLine($"{LineDepthEnd(depth, scope)} End");
                         break;
                     }
-                case IStatementContainer statement:
+                case IContainer statement:
                     {
                         Console.WriteLine(LineDepth(depth, node) + " " + node.GetType().Name);
 
-                        var children = ((IStatementContainer)(node)).Statements;
+                        var children = ((IContainer)(node)).Statements;
 
                         if (children.Any())
                         {
