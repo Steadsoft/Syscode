@@ -2,7 +2,7 @@
   "errors": [
     {
       "number": 1000,
-      "message": "The assignment to '{arg}' could not be resolved to a declaration in this or any containing scope.",
+      "message": "The reference to '{arg}' could not be resolved to a declaration in this or any containing scope.",
       "severity": "Error"
     },
     {
@@ -44,6 +44,17 @@
     {
       "number": 1008,
       "message": "The scale for the variable '{arg}' must be an integer literal.",
+      "severity": "Error"
+    },
+        {
+      "number": 1009,
+      "message": "XXXXXThe reference to '{arg}' could not be resolved to a declaration in this or any containing scope.",
+      "severity": "Error"
+    },
+
+        {
+      "number": 1010,
+      "message": "The qualified reference '{arg}' could not be resolved to a declaration in this or any containing scope.",
       "severity": "Error"
     }
 

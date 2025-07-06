@@ -1,4 +1,5 @@
 ﻿
+using System.ComponentModel;
 using System.Text;
 using System.Xml.Linq;
 
@@ -31,6 +32,62 @@ namespace Syscode
             statements.OfType<Loop>().ForEach(l => ResolveLoop(root, l));
         }
 
+        private void ResolveReference(IContainer container, Reference reference)
+        {
+            if (reference.IsntBasic)// || reference.Basic.IsQualified)
+                return;
+
+            if (reference.Basic.IsQualified)
+            {
+                if (DeclarationCount(container, reference.Basic.Qualifier.First().Spelling, out var sym) == 1)
+                {
+                    reference.Basic.IsResolved = true;
+                    reference.Basic.Symbol = sym;
+                }
+            }
+            else
+            {
+                if (DeclarationCount(container, reference.Basic.Spelling, out var symbol) == 1)
+                {
+                    reference.Basic.IsResolved = true;
+                    reference.Basic.Symbol = symbol;
+                    return;
+                }
+            }
+
+            if (container is Procedure proc && proc.Container != null)
+            {
+                ResolveReference(proc.Container, reference);
+            }
+        }
+
+        private void ResolveExpression(IContainer container, Expression expression)
+        {
+            switch (expression.Type)
+            {
+                case ExpressionType.Literal:
+                    {
+                        break;
+                    }
+                case ExpressionType.Primitive:
+                    {
+                        ResolveReference(container, expression.Reference);
+                        break;
+                    }
+                case ExpressionType.Prefix:
+                    {
+                        break;
+                    }
+                case ExpressionType.Binary:
+                    {
+                        ResolveExpression(container, expression.Left);
+                        ResolveExpression(container, expression.Right);
+                        break;
+                    }
+
+            }
+        }
+
         public void ResolveLoop (IContainer container, Loop loop)
         {
             ResolveReferences (container, loop.Statements);
@@ -45,42 +102,50 @@ namespace Syscode
 
         private void ResolveGoto(IContainer container, Goto statement)
         {
-            if (statement.Target.IsntBasic || statement.Target.Basic.IsQualified)  // actually an error, but might be better reported in a distinct phase.
-                return;
-
-            if (DeclarationCount(container, statement.Target.Basic.Spelling, out var symbol) == 1)
-            {
-                statement.Target.Basic.Symbol = symbol;
-                statement.Target.Basic.IsResolved = true;  // TODO is the resolved declaration a label?
-                return;
-            }
-
-            if (container is Procedure proc && proc.Container != null)
-            {
-                ResolveGoto(proc.Container, statement);
-            }
+            ResolveReference(container, statement.Target);
         }
 
         private void ResolveAssignment(IContainer container, Assignment statement) 
         {
-            // TODO: include qualified and pointer refs too evemtually
+            ResolveReference(container, statement.Reference);
+            ResolveExpression(container, statement.Expression);
+        }
 
-            var reference = statement.Reference;
-
-            if (reference.IsntBasic || reference.Basic.IsQualified)
-                return;
-
-            if (DeclarationCount(container, reference.Basic.Spelling, out var symbol) == 1)
+        public void ReportUnresolvedReference(AstNode node, Reference reference)
+        {
+            if (reference.IsBasic && reference.Basic.IsQualified)
             {
-                reference.Basic.IsResolved = true;
-                reference.Basic.Symbol = symbol;
-                return;
+                if (reference.Basic.IsntResolved)
+                {
+                    report(node, 1010, reference.Basic.ToString());
+                }
             }
 
-            if (container is Procedure proc && proc.Container != null)
+            if (reference.IsBasic && reference.Basic.IsntQualified)
             {
-                ResolveAssignment(proc.Container, statement);
+                if (reference.Basic.IsntResolved)
+                {
+                    report(node, 1000, reference.Basic.Spelling);
+                }
             }
+
+        }
+
+        public void ReportUnresolvedReferences(AstNode node, Expression expression)
+        {
+            if (expression.Type == ExpressionType.Primitive)
+            {
+                ReportUnresolvedReference(node, expression.Reference);
+            }
+
+            if (expression.Type == ExpressionType.Binary)
+            {
+                if (expression.Left.Type == ExpressionType.Primitive)
+                    ReportUnresolvedReference(node, expression.Left.Reference);
+                if (expression.Right.Type == ExpressionType.Primitive)
+                    ReportUnresolvedReference(node, expression.Right.Reference);
+            }
+
         }
 
         public void ReportUnresolvedReferences(IEnumerable<AstNode> statements)
@@ -94,14 +159,8 @@ namespace Syscode
                 {
                     case Assignment assign: // TODO expand this, for now we're just looking at simple unqualified assignment targets.
                         {
-                            if (assign.Reference.IsBasic && assign.Reference.Basic.IsntQualified)
-                            {
-                                if (assign.Reference.Basic.IsntResolved)
-                                {
-                                    report(assign, 1000, assign.Reference.Basic.Spelling);
-                                }
-                            }
-
+                            ReportUnresolvedReference(assign,assign.Reference);
+                            ReportUnresolvedReferences(assign, assign.Expression);
                             break;
                         }
                     case Loop loop: // this statements contains other statements
@@ -111,8 +170,7 @@ namespace Syscode
                         }
                     case Goto gotostmt:
                         {
-                            if (gotostmt.Target.Basic.IsntResolved)
-                               report(gotostmt, 1001, gotostmt.Target.Basic.Spelling);
+                            ReportUnresolvedReference(gotostmt, gotostmt.Target);
                             break;
                         }
                     case If ifstmt: // this statements contains other statements

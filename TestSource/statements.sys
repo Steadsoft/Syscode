@@ -42,7 +42,7 @@ dcl array(0:10) bin8 aligned
 
 @i_am_a_place(3) 
 
-hex  = 02e4 983d 88cf:H 
+hex  = 02E4 983d 88CF:H 
 oct  = 1245 334 22222:o
 bin  = 0110 1001 1101:b
 
@@ -71,12 +71,12 @@ dcl struct test(100,100) aligned
         charlie bin8
         charlie bin8
         aligned bin16
-        struct aligned aligned
+        struct aligned aligned // a struct named 'aligned' (a keyword)
         
         end
         charlie bin8
     end
-type struct  isr_register   // field named 'type'
+type struct  isr_register   
     mode     bit(2)
     max      bit(3)
     mas      bit(9)
@@ -116,7 +116,12 @@ type struct A
        router as classmap
 end
 
-  
+dcl struct header
+    type bit(3)
+    class bit(2)
+    interrupt_mask bit(10)
+    enabled bit(1)
+end
 
 type struct control_block(10) aligned
        header string (32)
@@ -163,6 +168,7 @@ scope utilities
             call = return
         else
             elif = call (if)
+            result = call + goto * proc
         end
 
         call startup (1,2,3)
@@ -180,8 +186,15 @@ scope utilities
         end  bin64 aligned
     end /* struct */
 
+    dcl struct if
+        then bin8
+        struct else
+           return string(32)
+        end
+ 
+    end
 
-
+    if.else.return = 1000
 
     name.other(1,2,3)(a,b,c) = 123 
 

@@ -5,6 +5,8 @@ namespace Syscode
 {
     public class SyscodeConsole
     {
+        static    int errors; static int warns; static int infos;
+        
         public static void Main()
         {
 
@@ -27,6 +29,9 @@ namespace Syscode
 
             compiler.ResolveReferences(ast);
 
+            Console.WriteLine();
+            Console.WriteLine($"ERRORS {errors}, WARNINGS {warns}, INFOS {infos}");
+
             clock.Stop();
 
             //compiler.PrintAbstractSyntaxTree(ast);
@@ -48,15 +53,31 @@ namespace Syscode
             string message = $"{eventArgs.message}";
 
             if (eventArgs.severity == "Error")
+            {
                Console.ForegroundColor = ConsoleColor.Red;
+                errors++;
+            }
+
+
             if (eventArgs.severity == "Warning")
+            {
                 Console.ForegroundColor = ConsoleColor.Yellow;
+                warns++;
+            }
+
+
             if (eventArgs.severity == "Info")
+            {
                 Console.ForegroundColor = ConsoleColor.Gray;
+                infos++;
+            }
+
+
 
             Console.Write($"{eventArgs.severity}  {eventArgs.code} on line {eventArgs.line.ToString().PadRight(5)} ");
             Console.ResetColor();
             Console.WriteLine(message);
+           
         };
     }
 }
