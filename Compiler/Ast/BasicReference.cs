@@ -8,15 +8,12 @@ namespace Syscode
     {
         public string Spelling;
         private List<Qualification> qualifier = new();
-        private bool resolved = false;
         private Symbol symbol;
         public BasicReference(ParserRuleContext context) : base(context)
         {
             Spelling = context.GetLabelText(nameof(BasicReferenceContext.Spelling));
         }
 
-        public bool IsResolved { get => resolved; internal set => resolved = value; }
-        public bool IsntResolved { get => !resolved; }
 
         public bool IsQualified { get => Qualifier.Any(); }
         public bool IsntQualified { get => !IsQualified; }

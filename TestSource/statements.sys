@@ -7,7 +7,7 @@
     block comment with newlines in
 */
 
-
+procedure master
 
 /* declarations */
 
@@ -119,6 +119,13 @@ end
 dcl struct header
     type bit(3)
     class bit(2)
+    struct inner
+        counter bin8
+        struct bottom
+           base_address = bin16
+        end
+    end
+
     interrupt_mask bit(10)
     enabled bit(1)
 end
@@ -132,7 +139,12 @@ dcl overlay as control_block const
 
 procedure startup (arg1,arg2,arg3)
 
-    return 
+    header.inner.counter = 0; 
+
+    header.inner.bottom.base_address = 1000
+
+    header.inner(yaya).bottom.base_address = 1000
+
 
     function calculate(a,b,c) as bin(25)
 
@@ -306,3 +318,5 @@ scope utilities
     a = 4
 end
 //end /* proc main */
+
+end // master

@@ -68,9 +68,9 @@ namespace Syscode
             symtabBuilder.Generate((Compilation)root);
         }
 
-        public void ResolveReferences(AstNode root)
+        public void ResolveCompilationReferences(AstNode root)
         {
-            resolver.ResolveReferences((Compilation)root);
+            resolver.ResolveContainedReferences((Compilation)root);
             resolver.ReportUnresolvedReferences(((Compilation)root).Statements);
         }
         private string RemoveContext(string input)

@@ -9,13 +9,14 @@ namespace Syscode
         
         public static void Main()
         {
+            Console.Clear();
 
             AstNode ast = null;
             var compiler = new SyscodeCompiler(@"..\..\..\..\TestSource\messages.json");
 
             compiler.diagnostics += onFileFound;
 
-            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\statements.sys");
+            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\resolve.sys");
 
             //compiler.PrintConcreteSyntaxTree(cst);
 
@@ -27,7 +28,7 @@ namespace Syscode
 
             compiler.ProcessDeclarations(ast);
 
-            compiler.ResolveReferences(ast);
+            compiler.ResolveCompilationReferences(ast);
 
             Console.WriteLine();
             Console.WriteLine($"ERRORS {errors}, WARNINGS {warns}, INFOS {infos}");

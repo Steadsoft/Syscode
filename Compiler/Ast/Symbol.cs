@@ -1,4 +1,6 @@
-﻿namespace Syscode
+﻿using System.Xml.Linq;
+
+namespace Syscode
 {
     public class Symbol  
     {
@@ -15,9 +17,11 @@
             this.declaration = declaration;
         }
 
+        public StructBody StructBody { get => declaration.StructBody; }
         public List<BoundsPair> Bounds { get => declaration.Bounds; }
         public string Spelling { get => declaration.Spelling; }
-        public bool Structure { get => declaration.StructBody != null; }
+        public bool IsStructure { get => declaration.StructBody != null; }
+        public bool IsntStructure { get => !IsStructure; }
         public CoreType CoreType { get => coreType; internal set => coreType = value; }
         public int? Precision { get => precision; internal set => precision = value; }
         public bool Signed { get => signed; internal set => signed = value; }

@@ -1,0 +1,24 @@
+proc main
+
+    dcl c bin(32)
+
+    dcl struct outer
+        struct inner1
+            field1_1 bin8
+            field1_2 bin8
+        end
+        struct inner2
+            field2_1 bin8
+            field2_2 bin8
+
+        end
+
+    end
+
+    outer.inner1.field1_2 = 1000
+    outer(a,b,c).inner1.field1_2 = 1000
+
+    none.missing.rate = 1000
+
+
+end

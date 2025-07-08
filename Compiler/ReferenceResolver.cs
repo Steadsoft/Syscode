@@ -15,21 +15,57 @@ namespace Syscode
         }
 
 
-        public void ResolveReferences(IContainer root)
+        public void ResolveContainedReferences(IContainer root)
         {
-            ResolveReferences(root, root.Statements);
+            ResolveStatementReferences(root, root.Statements);
 
-            root.Statements.OfType<Procedure>().ForEach(s => ResolveReferences(s));
-            root.Statements.OfType<Scope>().ForEach(s => ResolveReferences(s));
+            root.Statements.OfType<Procedure>().ForEach(s => ResolveContainedReferences(s));
+            root.Statements.OfType<Scope>().ForEach(s => ResolveContainedReferences(s));
 
         }
 
-        private void ResolveReferences(IContainer root, IEnumerable<AstNode> statements)
+        private void ResolveStatementReferences(IContainer root, IEnumerable<AstNode> statements)
         {
             statements.OfType<Assignment>().ForEach(a => ResolveAssignment(root, a));
             statements.OfType<Goto>().ForEach(a => ResolveGoto(root, a));
             statements.OfType<If>().ForEach(a => ResolveIf(root, a));
             statements.OfType<Loop>().ForEach(l => ResolveLoop(root, l));
+        }
+
+        private void ResolveQualifiedReference(Reference reference, Symbol symbol)
+        {
+            // every Reference contains a single BasicReference and that might or might not be qualified.
+
+            if (symbol.IsntStructure)
+                return; // no way can this be resolved!
+
+            var quals = reference.Basic.Qualifier.Select(q => q.Spelling).ToList();
+            var count = quals.Count;
+            var curr_struct = symbol.StructBody;
+
+            for (int X = 1; X < count; X++)
+            {
+                if (curr_struct.Structs.Where(s => s.Spelling == quals[X]).Any())
+                {
+                    curr_struct = curr_struct.Structs.Where(s => s.Spelling == quals[X]).Single();
+                }
+            }
+
+            // we now have the innermost qualified struct, does that struct contain the referenced name?
+
+            if (curr_struct.Fields.Where(f => f.Spelling == reference.Basic.Spelling).Any())
+            {
+                reference.IsResolved = true;
+                reference.Basic.Symbol = symbol;
+                return;
+            }
+
+            if (curr_struct.Structs.Where(s => s.Spelling == reference.Basic.Spelling).Any())
+            {
+                reference.IsResolved = true;
+                reference.Basic.Symbol = symbol;
+                return;
+            }
         }
 
         private void ResolveReference(IContainer container, Reference reference)
@@ -39,17 +75,32 @@ namespace Syscode
 
             if (reference.Basic.IsQualified)
             {
+                foreach (var qualification in reference.Basic.Qualifier)
+                {
+                    if (qualification.Arguments != null)
+                    {
+                        foreach (var expr in qualification.Arguments.ExpressionList)
+                        {
+                            ResolveExpression(container, expr);
+                        }
+                    }
+                }
+
                 if (DeclarationCount(container, reference.Basic.Qualifier.First().Spelling, out var sym) == 1)
                 {
-                    reference.Basic.IsResolved = true;
-                    reference.Basic.Symbol = sym;
+                    // if not a struct, then exit, because the reference is to a non-struct and can't be qualied, illegal code...
+
+                    if (sym.IsntStructure)
+                        return; // no way this can be resolved.
+
+                    ResolveQualifiedReference(reference, sym);
                 }
             }
             else
             {
                 if (DeclarationCount(container, reference.Basic.Spelling, out var symbol) == 1)
                 {
-                    reference.Basic.IsResolved = true;
+                    reference.IsResolved = true;
                     reference.Basic.Symbol = symbol;
                     return;
                 }
@@ -76,6 +127,7 @@ namespace Syscode
                     }
                 case ExpressionType.Prefix:
                     {
+                        ResolveExpression(container, expression.Right);
                         break;
                     }
                 case ExpressionType.Binary:
@@ -90,14 +142,14 @@ namespace Syscode
 
         public void ResolveLoop (IContainer container, Loop loop)
         {
-            ResolveReferences (container, loop.Statements);
+            ResolveStatementReferences (container, loop.Statements);
         }
 
         private void ResolveIf(IContainer container, If ifstmt)
         {
-            ResolveReferences(container, ifstmt.ThenStatements);
-            ResolveReferences(container, ifstmt.ElseStatements);
-            ResolveReferences(container, ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));
+            ResolveStatementReferences(container, ifstmt.ThenStatements);
+            ResolveStatementReferences(container, ifstmt.ElseStatements);
+            ResolveStatementReferences(container, ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));
         }
 
         private void ResolveGoto(IContainer container, Goto statement)
@@ -115,15 +167,29 @@ namespace Syscode
         {
             if (reference.IsBasic && reference.Basic.IsQualified)
             {
-                if (reference.Basic.IsntResolved)
+                if (reference.IsntResolved)
                 {
                     report(node, 1010, reference.Basic.ToString());
+                }
+
+                if (reference.Basic.Qualifier != null)
+                {
+                    foreach (var q in reference.Basic.Qualifier)
+                    {
+                        if (q.Arguments != null)
+                        {
+                            foreach (var e in q.Arguments.ExpressionList)
+                            {
+                                ReportUnresolvedReferences(node, e);
+                            }
+                        }
+                    }
                 }
             }
 
             if (reference.IsBasic && reference.Basic.IsntQualified)
             {
-                if (reference.Basic.IsntResolved)
+                if (reference.IsntResolved)
                 {
                     report(node, 1000, reference.Basic.Spelling);
                 }

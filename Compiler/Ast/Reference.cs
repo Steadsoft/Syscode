@@ -8,6 +8,7 @@ namespace Syscode
         private Reference innerReference = null; // only populated if this ref is the left of ref -> ref
         private List<Arguments> argumentsList = new();
         private BasicReference basic = null;
+        private bool resolved = false;
 
         public Reference(ReferenceContext context) : base(context)
         {
@@ -16,6 +17,9 @@ namespace Syscode
         {
             get { return InnerReference == null; }
         }
+
+        public bool IsResolved { get => resolved; internal set => resolved = value; }
+        public bool IsntResolved { get => !resolved; }
 
         public bool IsntBasic { get => !IsBasic; }
 
