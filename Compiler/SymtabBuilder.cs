@@ -4,11 +4,11 @@ namespace Syscode
 {
     public class SymtabBuilder
     {
-        private Action<AstNode, int, string> reporrt;
+        private Reporter reporter;
 
-        public SymtabBuilder(Action<AstNode, int, string> Reporter)
+        public SymtabBuilder(Reporter reporter)
         {
-            reporrt = Reporter;
+            this.reporter = reporter;
         }
 
         public void Generate(Compilation root)
@@ -79,20 +79,20 @@ namespace Syscode
 
             if (declaration.typeSubscripts.Count == 0)
             {
-                reporrt(declaration, 1002, declaration.Spelling);
+                reporter.Report(declaration, 1002, declaration.Spelling);
                 return false;
             }
 
             if (declaration.typeSubscripts.Count > 1)
             {
 
-                reporrt(declaration, 1003, declaration.Spelling);
+                reporter.Report(declaration, 1003, declaration.Spelling);
                 return false;
             }
 
             if (IsStringLengthInvalid(declaration))
             {
-                reporrt(declaration, 1004, declaration.Spelling);
+                reporter.Report(declaration, 1004, declaration.Spelling);
                 return false;
             }
 
@@ -115,7 +115,7 @@ namespace Syscode
 
             if (declaration.Varying)
             {
-                reporrt(declaration, 1005, "var");
+                reporter.Report(declaration, 1005, "var");
                 return false;
 
             }
@@ -124,7 +124,7 @@ namespace Syscode
             {
                 if (declaration.typeSubscripts.Any())
                 {
-                    reporrt(declaration, 1006, declaration.Spelling);
+                    reporter.Report(declaration, 1006, declaration.Spelling);
                     return false;
                 }
 
@@ -132,7 +132,7 @@ namespace Syscode
 
                 if (Precision <= 0)
                 {
-                    reporrt(declaration, 1007, declaration.Spelling);
+                    reporter.Report(declaration, 1007, declaration.Spelling);
                     return false;
                 }
 
@@ -145,7 +145,7 @@ namespace Syscode
             {
                 if (declaration.typeSubscripts.Any())
                 {
-                    reporrt(declaration, 1006, declaration.Spelling);
+                    reporter.Report(declaration, 1006, declaration.Spelling);
                     return false;
                 }
 
@@ -169,7 +169,7 @@ namespace Syscode
 
                     if (PrecisionInvalid)
                     {
-                        reporrt(declaration, 1007, declaration.Spelling);
+                        reporter.Report(declaration, 1007, declaration.Spelling);
                         return true;
                     }
 
@@ -186,13 +186,13 @@ namespace Syscode
 
                     if (PrecisionInvalid)
                     {
-                        reporrt(declaration, 1007, declaration.Spelling);
+                        reporter.Report(declaration, 1007, declaration.Spelling);
                         return false;
                     }
 
                     if (ScaleInvalid)
                     {
-                        reporrt(declaration, 1008, declaration.Spelling);
+                        reporter.Report(declaration, 1008, declaration.Spelling);
                         return false;
                     }
 

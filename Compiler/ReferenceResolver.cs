@@ -7,11 +7,11 @@ namespace Syscode
 {
     public class ReferenceResolver
     {
-        private Action<AstNode, int, string> report;
+        private Reporter reporter;
 
-        public ReferenceResolver(Action<AstNode, int, string> Reporter)
+        public ReferenceResolver(Reporter Reporter)
         {
-            report = Reporter;
+            reporter = Reporter;
         }
 
 
@@ -48,6 +48,10 @@ namespace Syscode
                 if (curr_struct.Structs.Where(s => s.Spelling == quals[X]).Any())
                 {
                     curr_struct = curr_struct.Structs.Where(s => s.Spelling == quals[X]).Single();
+                }
+                else
+                {
+                    reporter.Report(reference, 1011, quals[X], symbol.Spelling);
                 }
             }
 
@@ -169,7 +173,7 @@ namespace Syscode
             {
                 if (reference.IsntResolved)
                 {
-                    report(node, 1010, reference.Basic.ToString());
+                    reporter.Report(node, 1010, reference.Basic.ToString());
                 }
 
                 if (reference.Basic.Qualifier != null)
@@ -191,7 +195,7 @@ namespace Syscode
             {
                 if (reference.IsntResolved)
                 {
-                    report(node, 1000, reference.Basic.Spelling);
+                    reporter.Report(node, 1000, reference.Basic.Spelling);
                 }
             }
 

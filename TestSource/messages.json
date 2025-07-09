@@ -2,61 +2,69 @@
   "errors": [
     {
       "number": 1000,
-      "message": "The reference to '{arg}' could not be resolved to a declaration in this or any containing scope.",
+      "message": "The reference to '{arg0}' could not be resolved to a declaration in this or any containing scope.",
       "severity": "Error"
     },
     {
       "number": 1001,
-      "message": "The goto target '{arg}' could not be resolved to a label in this or any containing scope.",
+      "message": "The goto target '{arg0}' could not be resolved to a label in this or any containing scope.",
       "severity": "Error"
     },
     {
       "number": 1002,
-      "message": "The string variable '{arg}' must have a length specifier.",
+      "message": "The string variable '{arg0}' must have a length specifier.",
       "severity": "Error"
     },
     {
       "number": 1003,
-      "message": "The string variable '{arg}' must have a single valued length specifier.",
+      "message": "The string variable '{arg0}' must have a single valued length specifier.",
       "severity": "Error"
     },
     {
       "number": 1004,
-      "message": "The length for string '{arg}' must be a positive non-zero integer literal.",
+      "message": "The length for string '{arg0}' must be a positive non-zero integer literal.",
       "severity": "Error"
     },
     {
       "number": 1005,
-      "message": "The option '{arg}' can only be applied to string declarations.",
+      "message": "The option '{arg0}' can only be applied to string declarations.",
       "severity": "Error"
     },
     {
       "number": 1006,
-      "message": "The type of '{arg}' does not support range attributes.",
+      "message": "The type of '{arg0}' does not support range attributes.",
       "severity": "Error"
     },
     {
       "number": 1007,
-      "message": "The precision for the variable '{arg}' must be a positive non-zero integer literal.",
+      "message": "The precision for the variable '{arg0}' must be a positive non-zero integer literal.",
       "severity": "Error"
     },
 
     {
       "number": 1008,
-      "message": "The scale for the variable '{arg}' must be an integer literal.",
+      "message": "The scale for the variable '{arg0}' must be an integer literal.",
       "severity": "Error"
     },
         {
       "number": 1009,
-      "message": "XXXXXThe reference to '{arg}' could not be resolved to a declaration in this or any containing scope.",
+      "message": "XXXXXThe reference to '{arg0}' could not be resolved to a declaration in this or any containing scope.",
       "severity": "Error"
     },
 
         {
       "number": 1010,
-      "message": "The qualified reference '{arg}' could not be resolved to a declaration in this or any containing scope.",
+      "message": "The qualified reference '{arg0}' could not be resolved to a declaration in this or any containing scope.",
+      "severity": "Error"
+
+    },
+
+        {
+      "number": 1011,
+      "message": "The referenced member '{arg0}' is not a member of the structure '{arg1}'.",
       "severity": "Error"
     }
+
 
   ]
 }

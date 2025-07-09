@@ -12,33 +12,13 @@ namespace Syscode
         private AstBuilder builder;
         private SymtabBuilder symtabBuilder;
         private ReferenceResolver resolver;
-        public event EventHandler<DiagnosticEvent>? diagnostics;
+        public event EventHandler<DiagnosticEvent> diagnostics = delegate { };
         private string errorMesagesPath;
         private ErrorFile messages;
+        private Reporter reporter;
         public SyscodeCompiler(string ErrorMessagesPath)
         {
             errorMesagesPath = ErrorMessagesPath;
-        }
-
-        public void Report(AstNode node, int number, string arg)
-        {
-            var errormsg = messages.Errors.Where(e => e.Number == number).Single();
-
-            var message = errormsg.Message.Replace("{arg}", arg);
-
-            diagnostics?.Invoke(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
-        }
-
-        public CompilationContext CompileSourceFile(string SourceFile)
-        {
-            var source = new StreamReader(SourceFile);
-            var stream = new AntlrInputStream(source);
-            lexer = new SyscodeLexer(stream);
-            var tokens = new CommonTokenStream(lexer);
-            var parser = new SyscodeParser(tokens);
-            builder = new AstBuilder();
-            symtabBuilder = new SymtabBuilder(Report);
-            resolver = new ReferenceResolver(Report);
 
             string json = File.ReadAllText(errorMesagesPath);
 
@@ -47,13 +27,37 @@ namespace Syscode
                 PropertyNameCaseInsensitive = true
             };
 
-            messages  = JsonSerializer.Deserialize<ErrorFile>(json, options);
+            messages = JsonSerializer.Deserialize<ErrorFile>(json, options);
 
             if (messages.Errors.GroupBy(m => m.Number).Where(g => g.Count() > 1).Any())
                 throw new InvalidOperationException("The error file contains a duplicate error number.");
 
             if (messages.Errors.GroupBy(m => m.Message).Where(g => g.Count() > 1).Any())
                 throw new InvalidOperationException("The error file contains a duplicate error message.");
+
+        }
+
+        public void Report(AstNode node, int number, string arg)
+        {
+            var errormsg = messages.Errors.Where(e => e.Number == number).Single();
+
+            var message = errormsg.Message.Replace("{arg}", arg);
+
+            diagnostics(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
+        }
+
+        public CompilationContext CompileSourceFile(string SourceFile)
+        {
+            reporter = new Reporter(messages, diagnostics);
+            var source = new StreamReader(SourceFile);
+            var stream = new AntlrInputStream(source);
+            lexer = new SyscodeLexer(stream);
+            var tokens = new CommonTokenStream(lexer);
+            var parser = new SyscodeParser(tokens);
+            builder = new AstBuilder();
+            symtabBuilder = new SymtabBuilder(reporter);
+            resolver = new ReferenceResolver(reporter);
+
 
             return parser.compilation();
         }

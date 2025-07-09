@@ -20,5 +20,6 @@ proc main
 
     none.missing.rate = 1000
 
+    outer.inner3.field2_1 = 500
 
 end
