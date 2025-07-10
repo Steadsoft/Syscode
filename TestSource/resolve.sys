@@ -22,4 +22,8 @@ proc main
 
     outer.inner3.field2_1 = 500
 
+    call reset_database(x,y,z)
+
+    return junk.trash(x)
+
 end

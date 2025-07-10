@@ -85,7 +85,7 @@ namespace Syscode
         }
         public Goto CreateGoto(GotoContext context)
         {
-            return new Goto(context) { Target = CreateReference(context.GetExactNode<ReferenceContext>()) };
+            return new Goto(context) { Reference = CreateReference(context.GetExactNode<ReferenceContext>()) };
         }
         private Label CreateLabel(LabelContext context)
         {

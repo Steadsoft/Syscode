@@ -4,16 +4,16 @@ namespace Syscode
 {
     public class Goto : AstNode
     {
-        private Reference target;
+        private Reference reference;
         public Goto(ParserRuleContext context) : base(context)
         {
         }
 
-        public Reference Target { get => target; internal set => target = value; }
+        public Reference Reference { get => reference; internal set => reference = value; }
 
         public override string ToString()
         {
-            return $"goto {Target}";
+            return $"goto {Reference}";
         }
     }
 }

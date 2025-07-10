@@ -14,7 +14,6 @@ namespace Syscode
             reporter = Reporter;
         }
 
-
         public void ResolveContainedReferences(IContainer root)
         {
             ResolveStatementReferences(root, root.Statements);
@@ -23,15 +22,15 @@ namespace Syscode
             root.Statements.OfType<Scope>().ForEach(s => ResolveContainedReferences(s));
 
         }
-
         private void ResolveStatementReferences(IContainer root, IEnumerable<AstNode> statements)
         {
             statements.OfType<Assignment>().ForEach(a => ResolveAssignment(root, a));
             statements.OfType<Goto>().ForEach(a => ResolveGoto(root, a));
             statements.OfType<If>().ForEach(a => ResolveIf(root, a));
             statements.OfType<Loop>().ForEach(l => ResolveLoop(root, l));
+            statements.OfType<Call>().ForEach(c => ResolveCall(root, c));
+            statements.OfType<Return>().ForEach(r => ResolveReturn(root, r));
         }
-
         private void ResolveQualifiedReference(Reference reference, Symbol symbol)
         {
             // every Reference contains a single BasicReference and that might or might not be qualified.
@@ -71,11 +70,23 @@ namespace Syscode
                 return;
             }
         }
-
         private void ResolveReference(IContainer container, Reference reference)
         {
             if (reference.IsntBasic)// || reference.Basic.IsQualified)
                 return;
+
+            if ( reference.ArgumentsList.Any())
+            {
+                // Please refer to grammar to understand how this is structured.
+
+                foreach (Arguments args in reference.ArgumentsList)
+                {
+                    foreach (Expression e in args.ExpressionList)
+                    {
+                        ResolveExpression(container, e);
+                    }
+                }
+            }
 
             if (reference.Basic.IsQualified)
             {
@@ -115,7 +126,6 @@ namespace Syscode
                 ResolveReference(proc.Container, reference);
             }
         }
-
         private void ResolveExpression(IContainer container, Expression expression)
         {
             switch (expression.Type)
@@ -143,32 +153,46 @@ namespace Syscode
 
             }
         }
-
-        public void ResolveLoop (IContainer container, Loop loop)
+        private void ResolveLoop (IContainer container, Loop loop)
         {
             ResolveStatementReferences (container, loop.Statements);
         }
-
         private void ResolveIf(IContainer container, If ifstmt)
         {
             ResolveStatementReferences(container, ifstmt.ThenStatements);
             ResolveStatementReferences(container, ifstmt.ElseStatements);
             ResolveStatementReferences(container, ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));
         }
-
         private void ResolveGoto(IContainer container, Goto statement)
         {
-            ResolveReference(container, statement.Target);
+            ResolveReference(container, statement.Reference);
         }
-
+        private void ResolveCall(IContainer container, Call statement)
+        {
+            ResolveReference(container, statement.Reference);
+        }
+        private void ResolveReturn(IContainer container, Return statement)
+        {
+            ResolveExpression(container, statement.Expression);
+        }
         private void ResolveAssignment(IContainer container, Assignment statement) 
         {
             ResolveReference(container, statement.Reference);
             ResolveExpression(container, statement.Expression);
         }
-
         public void ReportUnresolvedReference(AstNode node, Reference reference)
         {
+            if (reference.ArgumentsList.Any())
+            {
+                foreach (Arguments args in reference.ArgumentsList)
+                {
+                    foreach (Expression e in args.ExpressionList)
+                    {
+                        ReportUnresolvedReferences(node, e);
+                    }
+                }
+            }
+
             if (reference.IsBasic && reference.Basic.IsQualified)
             {
                 if (reference.IsntResolved)
@@ -200,7 +224,6 @@ namespace Syscode
             }
 
         }
-
         public void ReportUnresolvedReferences(AstNode node, Expression expression)
         {
             if (expression.Type == ExpressionType.Primitive)
@@ -217,7 +240,6 @@ namespace Syscode
             }
 
         }
-
         public void ReportUnresolvedReferences(IEnumerable<AstNode> statements)
         {
             if (statements.Any() == false)
@@ -240,7 +262,7 @@ namespace Syscode
                         }
                     case Goto gotostmt:
                         {
-                            ReportUnresolvedReference(gotostmt, gotostmt.Target);
+                            ReportUnresolvedReference(gotostmt, gotostmt.Reference);
                             break;
                         }
                     case If ifstmt: // this statements contains other statements
@@ -248,6 +270,16 @@ namespace Syscode
                             ReportUnresolvedReferences(ifstmt.ThenStatements);
                             ReportUnresolvedReferences(ifstmt.ElseStatements);
                             ReportUnresolvedReferences(ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));
+                            break;
+                        }
+                    case Call call:
+                        {
+                            ReportUnresolvedReference(call, call.Reference);
+                            break;
+                        }
+                    case Return ret:
+                        {
+                            ReportUnresolvedReferences(ret, ret.Expression); 
                             break;
                         }
                     default:
@@ -258,8 +290,7 @@ namespace Syscode
             statements.OfType<Procedure>().ForEach(s => ReportUnresolvedReferences(s.Statements));
             statements.OfType<Scope>().ForEach(s => ReportUnresolvedReferences(s.Statements));
         }
-
-        public static int DeclarationCount(IContainer root, string Spelling, out Symbol symbol)
+        private static int DeclarationCount(IContainer root, string Spelling, out Symbol symbol)
         {
             symbol = null;
             
@@ -271,8 +302,6 @@ namespace Syscode
             return count;
         }
     }
-
-
     public static class CompilerExtensions
     {
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
