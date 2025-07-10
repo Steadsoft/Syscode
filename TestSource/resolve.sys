@@ -15,6 +15,9 @@ proc main
 
     end
 
+    outer.inner1.dont.age = 9
+
+
     outer.inner1.field1_2 = 1000
     outer(a,b,c).inner1.field1_2 = 1000
 
@@ -23,6 +26,7 @@ proc main
     outer.inner3.field2_1 = 500
 
     call reset_database(x,y,z)
+
 
     return junk.trash(x)
 

@@ -50,7 +50,9 @@ namespace Syscode
                 }
                 else
                 {
-                    reporter.Report(reference, 1011, quals[X], symbol.Spelling);
+                    // TODO: by reporting here, while resolving, the line number can be higher than line numbers reported during the reporting phase. 
+                    // This gets reported out of seq in the sense of source line, we need to address this.
+                    reporter.Report(reference, 1011, quals[X], quals[X-1]); 
                 }
             }
 
