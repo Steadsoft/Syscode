@@ -7,7 +7,9 @@ dcl global_rate  bin16 static external // this is only legal in the global scope
 // we must not accept a scope inside of a proc/func 
 // a scope can only contain procs/funcs, declared data (vars, structs but must be static ext), types
 
-scope utilities
+// SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
+
+package utilities
 
     speed = fast
 
@@ -27,7 +29,7 @@ scope utilities
             end
         end
 
-        scope illegal
+        package illegal
 
         end
 

@@ -22,7 +22,7 @@ namespace Syscode
                 {
                     foreach (var scope in root.Statements.OfType<Scope>())
                     {
-                        reporter.Report(scope, 1013, "scope");
+                        reporter.Report(scope, 1013, "package"); // TODO: rename scope stuff to package
                     }
                 }
             }

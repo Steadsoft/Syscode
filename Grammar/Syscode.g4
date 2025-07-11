@@ -41,8 +41,8 @@ labelSubscript: LPAR Literal=decLiteral RPAR;
 goto: GOTO reference statementSeparator;
 gotoSubscript: LPAR expression RPAR;
 
-scope:  blockScope;
-blockScope: (SCOPE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
+scope:  blockScope; // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
+blockScope: (PACKAGE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
 procedure: PROC emptyLines? Spelling=identifier Params=paramList? statement* emptyLines? END;
 function: FUNC emptyLines? Spelling=identifier Params=paramList? AS Type=typename statement* emptyLines? END;
 
@@ -334,11 +334,12 @@ keyword
     | LABEL
     | LIT
     | LOOP
+    | PACKAGE
     | PATH
     | POINTER
     | PROC
     | RETURN
-    | SCOPE
+    //| SCOPE
     | STATIC
     | STRING
     | STRUCT
@@ -417,6 +418,7 @@ IS:             'is';
 LABEL:          'label';
 LIT:            'lit' | 'literal';
 LOOP:           'loop';
+PACKAGE:        'package';
 PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROC:           'proc' | 'procedure';
