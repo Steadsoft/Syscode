@@ -1,33 +1,53 @@
-proc main
+// any variable declared in the global scope MUST be explicitly declared as static
+// if it is not declared as external then it is internal, there is no 'internal' keyword.
 
-    dcl c bin(32)
+dcl global_count bin16 static          // this defaults to internal
+dcl global_rate  bin16 static external // this is only legal in the global scope nn inside a proc
 
-    dcl struct outer
-        struct inner1
-            field1_1 bin8
-            field1_2 bin8
+// we must not accept a scope inside of a proc/func 
+// a scope can only contain procs/funcs, declared data (vars, structs but must be static ext), types
+
+scope utilities
+
+    speed = fast
+
+    proc main // outermost, therefore has external scope, full name: utilities.main
+
+        dcl c bin(32)
+
+        dcl struct outer
+            struct inner1
+                field1_1 bin8
+                field1_2 bin8
+            end
+            struct inner2
+                field2_1 bin8
+                field2_2 bin8
+
+            end
         end
-        struct inner2
-            field2_1 bin8
-            field2_2 bin8
+
+        scope illegal
 
         end
+
+        outer.inner1.dont.age = 9
+
+
+        outer.inner1.field1_2 = 1000
+        outer(a,b,c).inner1.field1_2 = 1000
+
+        none.missing.rate = 1000
+
+        outer.inner3.field2_1 = 500
+
+        call reset_database(x,y,z)
+
+
+        return junk.trash(x)
 
     end
 
-    outer.inner1.dont.age = 9
+    goto reboot
 
-
-    outer.inner1.field1_2 = 1000
-    outer(a,b,c).inner1.field1_2 = 1000
-
-    none.missing.rate = 1000
-
-    outer.inner3.field2_1 = 500
-
-    call reset_database(x,y,z)
-
-
-    return junk.trash(x)
-
-end
+end 

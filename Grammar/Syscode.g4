@@ -15,6 +15,13 @@ grammar Syscode;
 
 // reference: data alignment = http://bitsavers.informatik.uni-stuttgart.de/pdf/ibm/370/pli/SC26-3114-01_PLI_for_MVS_and_VM_Release_1.1_Language_Reference_199506.pdf
 
+// TODO: We could support this a 'chained' comparison:
+// if a < b < c < d < e then...
+// but need to fully analyze its meaning and behavior with various operators.
+// See: https://langdev.stackexchange.com/a/1866
+// See: https://kaya3.github.io/MJr/notes/parser.html#operator-precedence
+// Semms its more trouble than its worth, cofuses people and not that common a need.
+
 // Parser rules
 
 preamble: (NEWLINE | SEMICOLON)+;
@@ -278,7 +285,7 @@ unalignedAttribute: UNALIGNED;
 externalAttribute: EXTERNAL;
 staticAttribute: STATIC;
 basedAttribute: BASED LPAR primitiveExpression RPAR ;
-
+externAttribute: EXTERNAL;
 unitType: UNIT;
 
 typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN | DEC | UDEC | STRING | BIT | LABEL | ENTRY | POINTER ;
@@ -400,7 +407,7 @@ ELSE:           'else';
 END:            'end';
 ENTRY:          'entry';
 ENUM:           'enum';
-EXTERNAL:       'external';
+EXTERNAL:       'ext' | 'external';
 FOR:            'for';
 FOREVER:        'forever';
 FUNC:           'func' | 'function';

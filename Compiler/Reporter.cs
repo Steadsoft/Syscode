@@ -32,7 +32,6 @@ namespace Syscode
                 message = message.Replace(argid, args[argpos]);
                 argpos++;
             }
-            
 
             diagnostics(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
         }

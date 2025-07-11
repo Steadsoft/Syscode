@@ -63,7 +63,26 @@
       "number": 1011,
       "message": "The structure '{arg0}' is not a member of the structure '{arg1}'.",
       "severity": "Error"
+    },
+        {
+      "number": 1012,
+      "message": "The structure '{arg0}' could not be resolved to a declaration in this or any containing scope.",
+      "severity": "Error"
+    },
+            {
+      "number": 1013,
+      "message": "This {arg0} statement is illegal, it is not permitted inside procedures or functions.",
+      "severity": "Error"
+    },
+
+            {
+      "number": 1014,
+      "message": "This {arg0} statement is illegal, it is not permitted inside a scope.",
+      "severity": "Error"
     }
+
+
+
 
 
   ]

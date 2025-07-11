@@ -10,9 +10,9 @@ namespace Syscode
     public class AstBuilder
     {
         private IContainer currentContainer = null;
-        public AstBuilder() 
-        { 
-        
+        public AstBuilder()
+        {
+
         }
 
         public AstNode Generate(ParserRuleContext context)
@@ -49,8 +49,8 @@ namespace Syscode
             }
             if (context.For != null)
             {
-                return new For(context) 
-                { 
+                return new For(context)
+                {
                     ForRef = CreateReference(context.For.For),
                     From = CreateExpression(context.For.From),
                     To = CreateExpression(context.For.To),
@@ -65,9 +65,9 @@ namespace Syscode
             {
                 return new While(context)
                 {
-                   WhileExp = CreateExpression(context.While.While.Exp),
-                   UntilExp = CreateExpression(context.While.Until?.Exp),
-                   Statements = GetStatements(context.While).Select(s => Generate(s)).ToList()
+                    WhileExp = CreateExpression(context.While.While.Exp),
+                    UntilExp = CreateExpression(context.While.Until?.Exp),
+                    Statements = GetStatements(context.While).Select(s => Generate(s)).ToList()
                 };
             }
 
@@ -75,7 +75,7 @@ namespace Syscode
             {
                 return new Until(context)
                 {
-                    UntilExp = CreateExpression(context.Until.Until.Exp) ,
+                    UntilExp = CreateExpression(context.Until.Until.Exp),
                     WhileExp = CreateExpression(context.Until.While?.Exp),
                     Statements = GetStatements(context.Until).Select(s => Generate(s)).ToList()
                 };
@@ -205,7 +205,7 @@ namespace Syscode
                 reference.InnerReference = CreateReference(context.Ref);
             }
 
-            if (context.ArgsList != null) 
+            if (context.ArgsList != null)
             {
                 var argumentsList = context.ArgsList._ArgsSet; /* one or more 'arguments' always present */
 
@@ -241,7 +241,7 @@ namespace Syscode
                 foreach (var qual in quals)
                 {
                     var qualifier = new Qualification(qual);
-                    
+
                     if (qual.TryGetExactNode<ArgumentsContext>(out var arg))
                     {
                         var subs = arg.GetExactNode<SubscriptCommalistContext>();
@@ -251,7 +251,7 @@ namespace Syscode
                         qualifier.Arguments = new Arguments(subs) { ExpressionList = expressions };
 
                     }
-                        
+
                     basic.Qualifier.Add(qualifier);
                 }
             }
@@ -279,7 +279,7 @@ namespace Syscode
         {
             var dcl = new Declare(context);
 
-            if (context.Bounds !=  null)
+            if (context.Bounds != null)
             {
                 dcl.Bounds = context.Bounds.Pair._BoundPairs.Select(p => new BoundsPair(p) { Lower = CreateExpression(p.Lower), Upper = CreateExpression(p.Upper) }).ToList();
             }
@@ -297,19 +297,35 @@ namespace Syscode
 
             var attribs = context.GetDerivedNodes<MemberAttributesContext>();
 
-            foreach ( var attrib in attribs)
+            foreach (var attrib in attribs)
             {
                 switch (attrib)
                 {
                     case (AttribAlignedContext):
-                        dcl.Attributes.Add(new Aligned(attrib));
-                        break;
+                        {
+                            dcl.Attributes.Add(new Aligned(attrib));
+                            break;
+                        }
                     case (AttribUnalignedContext):
-                        dcl.Attributes.Add(new Unaligned(attrib));
-                        break;
+                        {
+                            dcl.Attributes.Add(new Unaligned(attrib));
+                            break;
+                        }
                     case (AttribConstContext):
-                        dcl.Attributes.Add(new Const(attrib));
-                        break;
+                        {
+                            dcl.Attributes.Add(new Const(attrib));
+                            break;
+                        }
+                    case (AttribStaticContext):
+                        {
+                            dcl.Attributes.Add(new Static(attrib));
+                            break;
+                        }
+                    case (AttribExternalContext):
+                        {
+                            dcl.Attributes.Add(new External(attrib));
+                            break;
+                        }
                     default:
                         throw new InvalidOperationException();
                 }
@@ -369,7 +385,7 @@ namespace Syscode
         private List<BoundsPair> CreateBounds(DimensionSuffixContext context)
         {
 
-            var bounds = context.Pair._BoundPairs.Select(p => new BoundsPair(p) { Lower = CreateExpression(p.Lower), Upper = CreateExpression(p.Upper)}).ToList();
+            var bounds = context.Pair._BoundPairs.Select(p => new BoundsPair(p) { Lower = CreateExpression(p.Lower), Upper = CreateExpression(p.Upper) }).ToList();
 
             return bounds;
         }
@@ -377,7 +393,7 @@ namespace Syscode
         {
             var node = new Procedure(context, currentContainer);
 
-            currentContainer = node; 
+            currentContainer = node;
 
             node.Spelling = context.Spelling.GetText();
 
@@ -399,7 +415,7 @@ namespace Syscode
 
             currentContainer = node;
 
-            node.Spelling = context.Spelling.GetText(); 
+            node.Spelling = context.Spelling.GetText();
 
             node.As = context.Type.GetText();
 

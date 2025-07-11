@@ -16,6 +16,29 @@ namespace Syscode
 
         public void ResolveContainedReferences(IContainer root)
         {
+            if (root is Procedure)
+            {
+                if (root.Statements.OfType<Scope>().Any())
+                {
+                    foreach (var scope in root.Statements.OfType<Scope>())
+                    {
+                        reporter.Report(scope, 1013, "scope");
+                    }
+                }
+            }
+
+            if (root is Scope)
+            {
+                if (root.Statements.Any(s => s is Assignment || s is Goto || s is If || s is Loop || s is Call || s is Return)) 
+                {
+                    foreach (var stmt in root.Statements.Where(s => s is Assignment || s is Goto || s is If || s is Loop || s is Call || s is Return))
+                    {
+                        reporter.Report(stmt, 1014, stmt.GetType().Name.ToLower());
+                    }
+                }
+            }
+
+
             ResolveStatementReferences(root, root.Statements);
 
             root.Statements.OfType<Procedure>().ForEach(s => ResolveContainedReferences(s));
@@ -113,6 +136,12 @@ namespace Syscode
 
                     ResolveQualifiedReference(reference, sym);
                 }
+                else
+                {
+                    // struct name itself not resolved.
+                    reference.Report = new Report(reference,1012,reference.Basic.Qualifier.First().Spelling);
+                    return;
+                }
             }
             else
             {
@@ -206,7 +235,7 @@ namespace Syscode
                 }
                 if (reference.IsntResolved)
                 {
-                    reporter.Report(node, 1010, reference.Basic.ToString());
+                    reporter.Report(node, 1010, reference.Basic.Spelling);
                 }
 
                 if (reference.Basic.Qualifier != null)
