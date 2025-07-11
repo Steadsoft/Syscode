@@ -259,7 +259,9 @@ entryList: LPAR typename (COMMA typename)* RPAR ;
 
 structAttributes 
     : ALIGNED 
-    | UNALIGNED ;
+    | UNALIGNED 
+    | basedAttribute
+    ;
 
 memberAttributes
     : constAttribute         #AttribConst
@@ -267,6 +269,7 @@ memberAttributes
     | unalignedAttribute     #AttribUnaligned
     | externalAttribute      #AttribExternal
     | staticAttribute        #AttribStatic
+    | basedAttribute         #AttrBased
     ;
 
 constAttribute: CONST;
@@ -274,6 +277,7 @@ alignedAttribute: ALIGNED;
 unalignedAttribute: UNALIGNED;    
 externalAttribute: EXTERNAL;
 staticAttribute: STATIC;
+basedAttribute: BASED LPAR primitiveExpression RPAR ;
 
 unitType: UNIT;
 
@@ -294,6 +298,7 @@ endOfFile: emptyLines? EOF;
 keyword
     : ALIGNED
     | AS
+    | BASED
     | BIN16
     | BIN32
     | BIN64
@@ -376,6 +381,7 @@ INTEGER:      ([1-9] [0-9]*);
 
 ALIGNED:        'aligned';
 AS:             'as';
+BASED:          'based';
 BIN16:          'bin16';
 BIN32:          'bin32';
 BIN64:          'bin64';

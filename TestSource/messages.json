@@ -61,7 +61,7 @@
 
         {
       "number": 1011,
-      "message": "The referenced member '{arg0}' is not a member of the structure '{arg1}'.",
+      "message": "The structure '{arg0}' is not a member of the structure '{arg1}'.",
       "severity": "Error"
     }
 

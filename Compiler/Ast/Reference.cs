@@ -9,7 +9,7 @@ namespace Syscode
         private List<Arguments> argumentsList = new();
         private BasicReference basic = null;
         private bool resolved = false;
-
+        private Report report;
         public Reference(ReferenceContext context) : base(context)
         {
         }
@@ -26,6 +26,10 @@ namespace Syscode
         public BasicReference Basic { get => basic; internal set => basic = value; }
         public Reference InnerReference { get => innerReference; set => innerReference = value; }
         public List<Arguments> ArgumentsList { get => argumentsList; set => argumentsList = value; }
+        /// <summary>
+        /// This is a diagnostic that must be reported if present, it is only ever present on qualified references. 
+        /// </summary>
+        public Report Report { get => report; set => report = value; }
 
         public override string ToString()
         {

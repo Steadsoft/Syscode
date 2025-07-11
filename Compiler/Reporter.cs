@@ -15,6 +15,10 @@ namespace Syscode
             messages = erfile;
             this.diagnostics = diagnostics;
         }
+        public void Report(Report report)
+        {
+            Report(report.Node, report.Code, report.Args.ToArray());
+        }
         public void Report(AstNode node, int number, params string[] args)
         {
             var errormsg = messages.Errors.Where(e => e.Number == number).Single();

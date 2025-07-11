@@ -50,9 +50,10 @@ namespace Syscode
                 }
                 else
                 {
-                    // TODO: by reporting here, while resolving, the line number can be higher than line numbers reported during the reporting phase. 
-                    // This gets reported out of seq in the sense of source line, we need to address this.
-                    reporter.Report(reference, 1011, quals[X], quals[X-1]); 
+                    // we defer reporting this so that when the errors are later reported they are reported in
+                    // line number order. 
+                    reference.Report = new Report(reference, 1011, quals[X], quals[X - 1]);
+                    return;
                 }
             }
 
@@ -197,6 +198,12 @@ namespace Syscode
 
             if (reference.IsBasic && reference.Basic.IsQualified)
             {
+                if (reference.Report != null)
+                {
+                    // this is a qualification error, report this and be done.
+                    reporter.Report(reference.Report);
+                    return;
+                }
                 if (reference.IsntResolved)
                 {
                     reporter.Report(node, 1010, reference.Basic.ToString());
