@@ -77,7 +77,7 @@
 
             {
       "number": 1014,
-      "message": "This {arg0} statement is illegal, it is not permitted inside a scope.",
+      "message": "This {arg0} statement is illegal, it is not permitted immediately inside a scope.",
       "severity": "Error"
     }
 

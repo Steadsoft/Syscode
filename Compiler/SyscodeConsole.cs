@@ -30,6 +30,8 @@ namespace Syscode
 
             compiler.ResolveCompilationReferences(ast);
 
+            compiler.PrintDiagnostics();
+
             Console.WriteLine();
             Console.WriteLine($"ERRORS {errors}, WARNINGS {warns}, INFOS {infos}");
 

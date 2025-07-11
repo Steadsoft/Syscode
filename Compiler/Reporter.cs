@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Syscode
 {
@@ -10,6 +11,7 @@ namespace Syscode
     {
         private ErrorFile messages;
         private event EventHandler<DiagnosticEvent> diagnostics = delegate { };
+        private List<DiagnosticEvent> errors = new();
         public Reporter(ErrorFile erfile, EventHandler<DiagnosticEvent> diagnostics)
         {
             messages = erfile;
@@ -33,7 +35,13 @@ namespace Syscode
                 argpos++;
             }
 
-            diagnostics(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
+            errors.Add(new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
+
+        }
+
+        public void PrintReport()
+        {
+            errors.OrderBy(e => e.line).ForEach(r =>  diagnostics(this, r));
         }
 
     }

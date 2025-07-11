@@ -58,7 +58,6 @@ namespace Syscode
             symtabBuilder = new SymtabBuilder(reporter);
             resolver = new ReferenceResolver(reporter);
 
-
             return parser.compilation();
         }
 
@@ -195,6 +194,11 @@ namespace Syscode
                     depth--;
                 }
             }
+        }
+
+        public void PrintDiagnostics()
+        {
+            reporter.PrintReport();
         }
         public void PrintAbstractSyntaxTree(AstNode node, int depth = 0)
         {

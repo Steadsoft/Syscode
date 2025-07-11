@@ -42,7 +42,7 @@
 
                 {
                     "patterns": [
-                        "do","call","type", "struct", "dcl","proc", "procedure", "func","function","scope","aligned","unaligned","end","goto","return"
+                        "call","type", "struct", "dcl","proc", "procedure", "func","function","scope","aligned","unaligned","end","goto","return"
                     ],
                     "color":"BrightCyan",
                     "bold": true,
@@ -51,7 +51,7 @@
                 },
                 {
                     "patterns": [
-                        "while","until", "for ", "to ","by ","loop"
+                        "do", "while","until", "for ", "to ","by ","loop"
                     ],
                     "color":"BrightRed",
                     "bold": true,
