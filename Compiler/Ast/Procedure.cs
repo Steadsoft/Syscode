@@ -3,7 +3,7 @@ using Syscode.Ast;
 
 namespace Syscode
 {
-    public class Procedure : Declare, IContainer
+    public class Procedure : AstNode, IContainer
     {
         public string Spelling;
         private bool isFunction;

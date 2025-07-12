@@ -6,6 +6,7 @@ namespace Syscode
     {
         private bool invalid = true;
         private Declare declaration;
+        private Procedure procedure;
         private CoreType coreType;
         private int? precision;
         private int? scale;
@@ -15,6 +16,11 @@ namespace Syscode
         public Symbol(Declare declaration) 
         {
             this.declaration = declaration;
+        }
+
+        public Symbol(Procedure procedure)
+        {
+            this.procedure = procedure;
         }
 
         public StructBody StructBody { get => declaration.StructBody; }

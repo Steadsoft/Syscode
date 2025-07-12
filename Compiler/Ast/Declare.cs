@@ -27,27 +27,27 @@ namespace Syscode
 
         public bool Varying { get => varying; internal set => varying = value; }
 
-        public Declare(ParserRuleContext context) : base(context)
+        public Declare(DeclareContext context) : base(context)
         {
-            if (context.TryGetExactNode<TypeSpecifierContext>(out var tn))
-            {
-                if (tn.TryGetExactNode<TypeCodeContext>(out var tc))
-                {
-                    var terminal = (TerminalNodeImpl)tc.children.Where(c => c is TerminalNodeImpl).Single();
-
-                    CoreType = (CoreType)(terminal.Symbol.Type);
-                }
-
-                if (tn.TryGetExactNode<VaryingContext>(out var varying))
-                {
-                    this.varying = true;
-                }
-            }
+            CoreType = GetCoreType(context.Type);
         }
 
         public override string ToString()
         {
             return $"dcl {Spelling} {TypeName}"; 
+        }
+
+        public static CoreType GetCoreType(TypeSpecifierContext context)
+        {
+            if (context.Fix != null) return (CoreType)(context.Fix.Typename.Type);
+            if (context.Bit != null) return (CoreType)(context.Bit.Typename.Type);
+            if (context.Str != null) return (CoreType)(context.Str.Typename.Type);
+            if (context.Ent != null) return (CoreType)(context.Ent.Typename.Type);
+            if (context.Lab != null) return (CoreType)(context.Lab.Typename.Type);
+            if (context.Ptr != null) return (CoreType)(context.Ptr.Typename.Type);
+
+            return CoreType.UNDEFINED;
+
         }
     }
 }

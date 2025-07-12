@@ -2,6 +2,7 @@
 {
     public enum CoreType
     {
+        UNDEFINED = 0,
         BIN = SyscodeParser.BIN,
         UBIN = SyscodeParser.UBIN,
         DEC = SyscodeParser.DEC,

@@ -1,4 +1,5 @@
 ﻿using Syscode.Ast;
+using System.Xml.Linq;
 
 namespace Syscode
 {
@@ -18,17 +19,18 @@ namespace Syscode
             root.Symbols = declarations.Select(d => CreateSymbol(d)).ToList();
         }
 
+        public Symbol CreateSymbol(Procedure procedure)
+        {
+
+            var sym = new Symbol(procedure);
+            procedure.Symbols = procedure.Statements.Where(s => s is Declare).Cast<Declare>().Select(d => CreateSymbol(d)).ToList();
+            sym.Invalid = false;
+            return sym;
+
+        }
         public Symbol CreateSymbol(Declare declaration)
         {
             var symbol = new Symbol(declaration);
-
-            if (declaration is Procedure proc)
-            {
-                var sym = new Symbol(declaration);
-                proc.Symbols = proc.Statements.Where(s => s is Declare).Cast<Declare>().Select(d => CreateSymbol(d)).ToList();
-                sym.Invalid = false;
-                return sym;
-            }
 
             symbol.CoreType = declaration.CoreType;
 
@@ -149,7 +151,7 @@ namespace Syscode
                     return false;
                 }
 
-                Precision = Convert.ToInt32(declaration.TypeName.Substring(3));
+                Precision = Convert.ToInt32(declaration.TypeName.Substring(4));
                 Scale = 0;
                 Signed = false;
                 return true;
