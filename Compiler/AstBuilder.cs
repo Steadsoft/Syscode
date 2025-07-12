@@ -333,17 +333,25 @@ namespace Syscode
 
             if (context.Type != null)
             {
-                if (context.Type.As != null)
-                    dcl.As = context.Type.As.GetText();
 
-                if (context.Type.Code != null)
-                {
-                    dcl.TypeName = context.Type.Code.GetText();
-                }
+#pragma warning disable CS8601 // Possible null reference assignment.
+                dcl.TypeName =
+                    context.Type.Fix?.Typename.Text ??
+                    context.Type.Bit?.Typename.Text ??
+                    context.Type.Str?.Typename.Text ??
+                    context.Type.Ent?.Typename.Text ??
+                    context.Type.Lab?.Typename.Text ??
+                    context.Type.Ptr?.Typename.Text;
+#pragma warning restore CS8601 // Possible null reference assignment.
 
-                if (context.Type.Args != null)
+
+#pragma warning disable CS8601 // Possible null reference assignment.
+                dcl.As = context.Type.As?.Typename.GetText();
+#pragma warning restore CS8601 // Possible null reference assignment.
+
+                if (context.Type.Fix?.Args != null)
                 {
-                    var expressions = context.Type.Args.GetExactNode<SubscriptCommalistContext>().GetDerivedNodes<ExpressionContext>().Select(e => CreateExpression(e)).ToList();
+                    var expressions = context.Type.Fix.Args.GetExactNode<SubscriptCommalistContext>().GetDerivedNodes<ExpressionContext>().Select(e => CreateExpression(e)).ToList();
                     dcl.typeSubscripts = expressions;
                 }
             }

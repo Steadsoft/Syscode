@@ -7,6 +7,8 @@ dcl global_rate  bin16 static external // this is only legal in the global scope
 // we must not accept a scope inside of a proc/func 
 // a scope can only contain procs/funcs, declared data (vars, structs but must be static ext), types
 
+dcl get_date entry (bin32) as (string(64))
+
 // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
 
 package utilities
@@ -29,9 +31,13 @@ package utilities
             end
         end
 
-        package illegal
+        dcl a bin(10,4)
+
+        package not_allowed_here
 
         end
+
+        date = get_date(123)
 
         outer.inner1.dont.age = 9
 

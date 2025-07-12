@@ -1,0 +1,14 @@
+dcl var1 ubin8
+dcl var2 bin(9)
+dcl var3 bin(8,5)
+dcl var4 bin32
+dcl var5 string(23)
+dcl var6 pointer
+dcl var7 label
+dcl var8 entry 
+dcl var9 entry(string(128))
+dcl var10 entry (bin(9,4), bin(8,3))
+dcl var10 entry variable (bin(33))
+dcl var11 bit(99)
+dcl var12 as core_layout
+

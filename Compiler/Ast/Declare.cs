@@ -29,7 +29,7 @@ namespace Syscode
 
         public Declare(ParserRuleContext context) : base(context)
         {
-            if (context.TryGetExactNode<TypenameContext>(out var tn))
+            if (context.TryGetExactNode<TypeSpecifierContext>(out var tn))
             {
                 if (tn.TryGetExactNode<TypeCodeContext>(out var tc))
                 {

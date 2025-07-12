@@ -33,7 +33,7 @@ statement:  preamble?  (call | return | label | scope | enum | if | declare | ty
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
-structField: Spelling=identifier dimensionSuffix? Type=typename memberAttributes? statementSeparator;
+structField: Spelling=identifier dimensionSuffix? Type=typeSpecifier memberAttributes? statementSeparator;
 
 label: AT Spelling=identifier Subscript=labelSubscript? statementSeparator;
 labelSubscript: LPAR Literal=decLiteral RPAR;
@@ -44,15 +44,15 @@ gotoSubscript: LPAR expression RPAR;
 scope:  blockScope; // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
 blockScope: (PACKAGE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
 procedure: PROC emptyLines? Spelling=identifier Params=paramList? statement* emptyLines? END;
-function: FUNC emptyLines? Spelling=identifier Params=paramList? AS Type=typename statement* emptyLines? END;
+function: FUNC emptyLines? Spelling=identifier Params=paramList? AS Type=returnDescriptor? statement* emptyLines? END;
 
-enum: ENUM emptyLines? Name=identifier emptyLines? typename? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
+enum: ENUM emptyLines? Name=identifier emptyLines? typeSpecifier? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? reference statementSeparator;
 return: (RETURN (emptyLines? expression)?) statementSeparator ; //| (RETURN (emptyLines? expression)?)) statementSeparator;
 
 declare
     : DCL Struct=structBody
-    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? Type=typename memberAttributes* statementSeparator 
+    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? Type=typeSpecifier memberAttributes* statementSeparator 
     ;
 
 type: TYPE Body=structBody ;    
@@ -73,10 +73,47 @@ thenBlock :     statement*;
 elseBlock :     (ELSE emptyLines? thenBlock);
 elifBlock :     (ELIF emptyLines? exprThenBlock)+;
 
-typename 
-    : Code=typeCode Args=arguments? varying?
-    | AS As=identifier
+// typeSpecifier 
+//     : Code=typeCode Args=arguments? varying?
+//     | AS As=identifier
+//     ;
+
+typeSpecifier
+    : Fix=fixedType
+    | Bit=bitType
+    | Str=stringType
+    | Ent=entryType
+    | Lab=labelType
+    | Ptr=pointerType
+    | As=asType
     ;
+
+asType: AS Typename=identifier ;    
+
+fixedType: (Typename=(BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64)) | (Typename=(BIN | UBIN | DEC | UDEC) Args=arguments? );
+
+bitType: Typename=BIT LPAR Len=decLiteral RPAR;
+
+stringType
+    : Typename=STRING LPAR Len=decLiteral RPAR Var=VARIABLE? ;
+
+entryType: Typename=ENTRY 
+    (
+    | Args=entryArgTypes? Ret=returnDescriptor? Var=VARIABLE?
+    | Args=entryArgTypes? Var=VARIABLE? Ret=returnDescriptor? 
+    | Ret=returnDescriptor? Args=entryArgTypes? Var=VARIABLE?
+    | Ret=returnDescriptor? Var=VARIABLE? Args=entryArgTypes? 
+    | Var=VARIABLE? Ret=returnDescriptor? Args=entryArgTypes?
+    | var=VARIABLE? Args=entryArgTypes? Ret=returnDescriptor? 
+    )
+    ;
+
+labelType: Typename=LABEL ;    
+
+pointerType: Typename=POINTER ;    
+
+typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN | DEC | UDEC | STRING | BIT | LABEL | (ENTRY entryArgTypes? returnDescriptor?) | POINTER ;
+
 
 assignment : reference comparer expression statementSeparator;
 
@@ -256,13 +293,12 @@ enumMembers: emptyLines? enumMember emptyLines? (memberSeparator emptyLines? enu
 enumMember: (Name=identifier);
 identifier: keyword | IDENTIFIER;
 
-varying: VAR ;
+varying: VARIABLE ;
 
-labelType: LABEL ;
 
-entryType: ENTRY (entryList);
+//entryType: ENTRY (entryList);
 
-entryList: LPAR typename (COMMA typename)* RPAR ;
+//entryList: LPAR typename (COMMA typename)* RPAR ;
 
 structAttributes 
     : ALIGNED 
@@ -288,7 +324,9 @@ basedAttribute: BASED LPAR primitiveExpression RPAR ;
 externAttribute: EXTERNAL;
 unitType: UNIT;
 
-typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN | DEC | UDEC | STRING | BIT | LABEL | ENTRY | POINTER ;
+
+entryArgTypes: LPAR typeSpecifier (COMMA typeSpecifier)* RPAR;
+returnDescriptor: AS LPAR typeSpecifier RPAR;
 
 // binaryCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN arguments?) ;
 // decimalType:  ((DEC | UDEC) arguments) ;
@@ -355,7 +393,7 @@ keyword
     | UNALIGNED
     | UNIT
     | UNTIL
-    | VAR
+    | VARIABLE
     | WHILE 
     ;
 
@@ -439,7 +477,7 @@ UDEC:           'udec';
 UNALIGNED:      'unaligned';
 UNIT:           'unit';
 UNTIL:          'until';
-VAR:            'var';
+VARIABLE:       'var' | 'variable';
 WHILE:          'while';
 
 // Symbol tokens
