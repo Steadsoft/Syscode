@@ -80,7 +80,7 @@ namespace Syscode
         {
             if (Struct.IsKeyword)
             {
-                reporter.Report(Struct, 1015,Struct.Spelling);
+                reporter.Report(Struct, 1016,Struct.Spelling);
             }
 
             foreach (var body in Struct.Structs)

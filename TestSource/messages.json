@@ -84,10 +84,14 @@
                 {
       "number": 1015,
       "message": "The identifier '{arg0}' is a language keyword, this is permitted but might be unintended.",
-      "severity": "Info "
+      "severity": "Notice "
+    },
+
+                {
+      "number": 1016,
+      "message": "The structure name '{arg0}' is a language keyword, this is permitted but might be unintended.",
+      "severity": "Notice "
     }
-
-
 
 
 

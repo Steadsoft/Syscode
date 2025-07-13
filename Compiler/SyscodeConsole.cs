@@ -55,21 +55,21 @@ namespace Syscode
         {
             string message = $"{eventArgs.message}";
 
-            if (eventArgs.severity == "Error")
+            if (eventArgs.severity.ToLower().StartsWith("error"))
             {
                Console.ForegroundColor = ConsoleColor.Red;
                 errors++;
             }
 
 
-            if (eventArgs.severity == "Warning")
+            if (eventArgs.severity.ToLower().StartsWith("warning"))
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 warns++;
             }
 
 
-            if (eventArgs.severity == "Info ")
+            if (eventArgs.severity.ToLower().StartsWith("notice"))
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 infos++;
@@ -77,7 +77,7 @@ namespace Syscode
 
 
 
-            Console.Write($"{eventArgs.severity}  {eventArgs.code} on line {eventArgs.line.ToString().PadRight(5)} ");
+            Console.Write($"{eventArgs.severity.ToUpper().PadRight(8)}{eventArgs.code} on line {eventArgs.line.ToString().PadRight(5)} ");
             Console.ResetColor();
             Console.WriteLine(message);
            
