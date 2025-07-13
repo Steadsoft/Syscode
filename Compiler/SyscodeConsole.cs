@@ -16,7 +16,7 @@ namespace Syscode
 
             compiler.diagnostics += onFileFound;
 
-            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\declares.sys");
+            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\resolve.sys");
 
             //compiler.PrintConcreteSyntaxTree(cst);
 
@@ -69,9 +69,9 @@ namespace Syscode
             }
 
 
-            if (eventArgs.severity == "Info")
+            if (eventArgs.severity == "Info ")
             {
-                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 infos++;
             }
 

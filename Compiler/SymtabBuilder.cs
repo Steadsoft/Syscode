@@ -14,14 +14,17 @@ namespace Syscode
 
         public void Generate(Compilation root)
         {
-            var declarations = root.Statements.Where(s => s is Declare).Cast<Declare>();
+            var declarations = root.Statements.OfType<Declare>(); //.Where(s => s is Declare).Cast<Declare>();
+            var procedures = root.Statements.OfType<Procedure>();//.Where(s => s is Procedure).Cast<Procedure>();
+            var scopes = root.Statements.OfType<Scope>();//.Where(s => s is Scope).Cast<Scope>();
 
-            root.Symbols = declarations.Select(d => CreateSymbol(d)).ToList();
+            root.Symbols.AddRange(declarations.Select(d => CreateSymbol(d))); 
+            root.Symbols.AddRange(procedures.Select(d => CreateSymbol(d)));
+
         }
 
         public Symbol CreateSymbol(Procedure procedure)
         {
-
             var sym = new Symbol(procedure);
             procedure.Symbols = procedure.Statements.Where(s => s is Declare).Cast<Declare>().Select(d => CreateSymbol(d)).ToList();
             sym.Invalid = false;
@@ -30,6 +33,8 @@ namespace Syscode
         }
         public Symbol CreateSymbol(Declare declaration)
         {
+            ReportDeclaredKeywords(declaration);
+
             var symbol = new Symbol(declaration);
 
             symbol.CoreType = declaration.CoreType;
@@ -56,6 +61,34 @@ namespace Syscode
             }
 
             return symbol;
+        }
+
+        private void ReportDeclaredKeywords(Declare declaration)
+        {
+            if (declaration.IsntStructure)
+            {
+                if (declaration.IsKeyword)
+                    reporter.Report(declaration, 1015, declaration.Spelling);
+            }
+            else
+            {
+                ReportDeclaredKeywords(declaration.StructBody);
+            }
+        }
+
+        private void ReportDeclaredKeywords(StructBody Struct)
+        {
+            if (Struct.IsKeyword)
+            {
+                reporter.Report(Struct, 1015,Struct.Spelling);
+            }
+
+            foreach (var body in Struct.Structs)
+            {
+                ReportDeclaredKeywords(body);
+            }
+
+            // TODO: need to report any fields that are also keywords...
         }
 
         private bool IsScaleInvalid(Declare declaration)

@@ -79,7 +79,15 @@
       "number": 1014,
       "message": "This {arg0} statement is illegal, it is not permitted immediately inside a package.",
       "severity": "Error"
+    },
+
+                {
+      "number": 1015,
+      "message": "The identifier '{arg0}' is a language keyword, this is permitted but might be unintended.",
+      "severity": "Info "
     }
+
+
 
 
 

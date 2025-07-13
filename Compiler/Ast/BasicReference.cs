@@ -9,9 +9,11 @@ namespace Syscode
         public string Spelling;
         private List<Qualification> qualifier = new();
         private Symbol symbol;
+        private bool isKeyword;
         public BasicReference(ParserRuleContext context) : base(context)
         {
             Spelling = context.GetLabelText(nameof(BasicReferenceContext.Spelling));
+            isKeyword = context.children.OfType<IdentifierContext>().Single().children.OfType<KeywordContext>().Any();
         }
 
 
@@ -19,6 +21,8 @@ namespace Syscode
         public bool IsntQualified { get => !IsQualified; }
         public Symbol Symbol { get => symbol; internal set => symbol = value; }
         public List<Qualification> Qualifier { get => qualifier; set => qualifier = value; }
+        public bool IsKeyword { get => isKeyword;  }
+        public bool IsntKeyword { get => !IsKeyword;  }
 
         public override string ToString()
         {

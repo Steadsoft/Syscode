@@ -9,56 +9,64 @@ dcl global_rate  bin16 static external // this is only legal in the global scope
 
 dcl get_date entry (bin32) as (string(64))
 
+// a "package" in PL/I is rather weak, it's not really a proper namespace. 
+// dcl utils.set_date (bin64)
+
 // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
 
-package utilities
+dcl goto bin16
 
-    speed = fast
+speed = fast
 
-    proc main // outermost, therefore has external scope, full name: utilities.main
+dcl struct if
+       struct then
+       end
+       struct else
+          struct struct
+          end
+       end
+end
 
-        dcl c bin(32)
+proc main // outermost, therefore has external scope, full name: utilities.main
 
-        dcl struct outer
-            struct inner1
-                field1_1 bin8
-                field1_2 bin8
-            end
-            struct inner2
-                field2_1 bin8
-                field2_2 bin8
+    then = 100
 
-            end
+    dcl c bin(32)
+
+    dcl struct while
+        struct inner1
+            field1_1 bin8
+            field1_2 bin8
         end
-
-        dcl a bin(10,4)
-
-        package not_allowed_here
-
+        struct inner2
+            field2_1 bin8
+            field2_2 bin8
         end
-
-        date = get_date(123)
-
-        outer.inner1.dont.age = 9
-
-        do loop
-            error_count += 1
-        end
-
-        outer.inner1.field1_2 = 1000
-        outer(a,b,c).inner1.field1_2 = 1000
-
-        none.missing.rate = 1000
-
-        outer.inner3.field2_1 = 500
-
-        call reset_database(x,y,z)
-
-
-        return junk.trash(x)
-
     end
 
-    goto reboot
+    dcl a bin(10,4)
 
-end 
+    date = get_date(123)
+
+    outer.inner1.dont.age = 9
+
+    do loop
+        error_count += 1
+    end
+
+    outer.inner1.field1_2 = 1000
+    outer(a,b,c).inner1.field1_2 = 1000
+
+    none.missing.rate = 1000
+
+    outer.inner3.field2_1 = 500
+
+    call reset_database(x,y,z)
+
+
+    return junk.trash(x)
+
+end
+
+goto reboot
+

@@ -3,9 +3,9 @@ using Syscode.Ast;
 
 namespace Syscode
 {
-    public class Procedure : AstNode, IContainer
+    public class Procedure : AstNode, IContainer , ISpelling
     {
-        public string Spelling;
+        private string spelling;
         private bool isFunction;
         private string @as;
         private List<string> parameters = new List<string>();
@@ -23,6 +23,7 @@ namespace Syscode
         public bool IsFunction { get => isFunction; set => isFunction = value; }
         public string As { get => @as; set => @as = value; }
         public List<string> Parameters { get => parameters; set => parameters = value; }
+        public string Spelling { get => spelling; set => spelling = value; }
 
         public override string ToString()
         {

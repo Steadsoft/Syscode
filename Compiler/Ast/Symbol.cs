@@ -2,7 +2,7 @@
 
 namespace Syscode
 {
-    public class Symbol  
+    public class Symbol : ISpelling  
     {
         private bool invalid = true;
         private Declare declaration;
@@ -23,10 +23,13 @@ namespace Syscode
             this.procedure = procedure;
         }
 
-        public StructBody StructBody { get => declaration.StructBody; }
-        public List<BoundsPair> Bounds { get => declaration.Bounds; }
-        public string Spelling { get => declaration.Spelling; }
-        public bool IsStructure { get => declaration.StructBody != null; }
+        public StructBody StructBody { get => declaration?.StructBody; }
+        public List<BoundsPair> Bounds { get => declaration?.Bounds; }
+        public string Spelling 
+        { 
+            get => declaration != null ? declaration.Spelling : procedure.Spelling; 
+        }
+        public bool IsStructure { get => declaration?.StructBody != null; }
         public bool IsntStructure { get => !IsStructure; }
         public CoreType CoreType { get => coreType; internal set => coreType = value; }
         public int? Precision { get => precision; internal set => precision = value; }
@@ -38,7 +41,7 @@ namespace Syscode
 
         public override string ToString()
         {
-            return declaration.ToString();
+            return Spelling;
         }
     }
 }

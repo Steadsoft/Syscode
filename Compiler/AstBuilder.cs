@@ -292,6 +292,7 @@ namespace Syscode
             else
             {
                 dcl.Spelling = context.Spelling.GetText();
+                dcl.IsKeyword = context.Spelling.Key != null;
                 dcl.TypeName = context.GetLabelText(nameof(DeclareContext.Type));
             }
 
@@ -368,7 +369,7 @@ namespace Syscode
         {
             var bounds = new List<BoundsPair>();
             var spelling = context.GetLabelText(nameof(StructBodyContext.Spelling));
-
+            var iskeyword = context.Spelling.children.OfType<KeywordContext>().Any();
             if (context.TryGetExactNode<DimensionSuffixContext>(out var dimensions))
             {
                 bounds = CreateBounds(dimensions);
@@ -377,7 +378,7 @@ namespace Syscode
             var structs = context.GetExactNodes<StructBodyContext>().Select(s => CreateStructure(s)).ToList();
             var fields = context.GetExactNodes<StructFieldContext>().Select(f => CreateField(f)).ToList(); ;
 
-            return new StructBody(context) { Spelling = spelling, Bounds = bounds, Structs = structs, Fields = fields };
+            return new StructBody(context) { IsKeyword = iskeyword, Spelling = spelling, Bounds = bounds, Structs = structs, Fields = fields };
         }
         private StructField CreateField(StructFieldContext context)
         {

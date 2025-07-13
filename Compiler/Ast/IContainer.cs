@@ -9,4 +9,9 @@
         bool HasNoSymbols { get => Symbols.Any() == false; }
 
     }
+
+    public interface ISpelling
+    {
+        string Spelling { get; }
+    }
 }

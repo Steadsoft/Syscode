@@ -225,6 +225,10 @@ namespace Syscode
                 }
             }
 
+            if (reference.IsBasic)
+                if (reference.Basic.IsKeyword)
+                    reporter.Report(node, 1015, reference.Basic.Spelling);
+
             if (reference.IsBasic && reference.Basic.IsQualified)
             {
                 if (reference.Report != null)

@@ -29,7 +29,15 @@ statementSeparator : (SEMICOLON | NEWLINE | EOF); // EOF lets us end a source fi
 emptyLines: NEWLINE+;
 
 compilation: (statement* endOfFile); 
-statement:  preamble?  (call | return | label | scope | enum | if | declare | type | literal | procedure | function | loop | goto | assignment );
+
+// TODO: avoid 'scope' (aka 'package') for now this is not really a namespace in PL/I and the feature
+// needs to be carefully thought out. e.g two source files might each contribute stuff to a package and that 
+// complicates how we resolve rerences in package A to stuff in package B...etc
+
+// One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
+// several source files with that namespace prefix, each of which contributes stuff to the namespace.
+
+statement:  preamble?  (call | return | label | /* scope | */  enum | if | declare | type | literal | procedure | function | loop | goto | assignment );
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
@@ -291,7 +299,7 @@ constArrayList: (LPAR INTEGER (COMMA INTEGER)* RPAR);
 enumMembers: emptyLines? enumMember emptyLines? (memberSeparator emptyLines? enumMember emptyLines?)* memberSeparator? emptyLines?;
 
 enumMember: (Name=identifier);
-identifier: keyword | IDENTIFIER;
+identifier: Key=keyword | IDENTIFIER;
 
 varying: VARIABLE ;
 
