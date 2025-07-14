@@ -39,12 +39,14 @@ namespace Syscode
 
             symbol.CoreType = declaration.CoreType;
 
-            if (IsBinary(symbol.CoreType) && ValidateBinary(declaration, out var precision, out var scale, out var signed))
+            if (IsBinary(symbol.CoreType) && ValidateBinary(declaration, out var precision, out var scale, out var signed, out var align))
             {
                 symbol.Precision = precision;
                 symbol.Scale = scale;
                 symbol.Signed = signed;
                 symbol.Invalid = false;
+                symbol.Alignment = align;
+                SetDefaultAlignment(symbol);
                 return symbol;
             }
 
@@ -137,11 +139,12 @@ namespace Syscode
 
         }
 
-        private bool ValidateBinary(Declare declaration, out Int32? Precision, out Int32? Scale, out bool Signed)
+        private bool ValidateBinary(Declare declaration, out Int32 Precision, out Int32 Scale, out bool Signed, out int Alignment)
         {
-            Precision = null;
-            Scale = null;
+            Precision = 0;
+            Scale = 0;
             Signed = false;
+            Alignment = 1;
 
             if (!TypeNames.AllBinaryTypes.Contains(declaration.TypeName))
             {
@@ -242,6 +245,12 @@ namespace Syscode
             return true;
         }
 
+        private void SetDefaultAlignment(Symbol symbol)
+        {
+            int byteLength = (symbol.Precision + 7) / 8;
+            symbol.Alignment = 1 << (int)Math.Ceiling(Math.Log2(byteLength));
+        }
+
         private bool IsBinary(CoreType type)
         {
             switch (type)
@@ -262,5 +271,6 @@ namespace Syscode
 
             }
         }
+
     }
 }
