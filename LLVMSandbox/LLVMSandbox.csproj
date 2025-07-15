@@ -10,11 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="libLLVM.runtime.win-x64" Version="20.1.2" />
-    <!--<PackageReference Include="LLVMSharp" Version="20.1.2" />-->
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\LLVMSharp\sources\LLVMSharp\LLVMSharp.csproj" />
+    <PackageReference Include="LLVMSharp" Version="20.1.2" />
+    <PackageReference Include="LLVMSharp.Interop" Version="20.1.2" />
   </ItemGroup>
 
 </Project>

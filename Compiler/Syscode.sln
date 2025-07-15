@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36127.28
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syscode", "Syscode.csproj", "{15B70DB6-2B7E-4757-82F0-0CBC5ECB2DC3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLVMSandbox", "..\LLVMSandbox\LLVMSandbox.csproj", "{FB39ECFC-7B4D-C3F2-E126-A34B968BDE59}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{15B70DB6-2B7E-4757-82F0-0CBC5ECB2DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15B70DB6-2B7E-4757-82F0-0CBC5ECB2DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15B70DB6-2B7E-4757-82F0-0CBC5ECB2DC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB39ECFC-7B4D-C3F2-E126-A34B968BDE59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB39ECFC-7B4D-C3F2-E126-A34B968BDE59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB39ECFC-7B4D-C3F2-E126-A34B968BDE59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB39ECFC-7B4D-C3F2-E126-A34B968BDE59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
