@@ -7,7 +7,7 @@
     2. Statements are either block or single in nature. Block statements are terminated by 'end' and single by either Newline or Semicolon.
     3. Staments may be preceded by any number of Newlines and or Semicolons which are simply ignored.
     4. One or more newlines may appear inbetween the terms of a statement so that a statement can be split across lines.
-    5. Semicolons must appear at the end of single statements and optionally in front of statements (which are ignored like empty statements)
+    5. A semicolon or newline must appear at the end of single statements and optionally in front of statements (which are ignored like empty statements)
     6. An alternative numeric literal that's an (colon identifier) starting with digits or digits.digits (and optional leading +/-) is supported but must be defined with a true numeric value.
  */
 
