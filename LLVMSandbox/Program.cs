@@ -32,7 +32,7 @@ namespace LLVMSandbox
             int op2 = 4;
 
             var returnType = LLVMTypeRef.Int16;
-            var name = "main";
+            var name = "add";
             var parameterTypes = new LLVMTypeRef[] { LLVMTypeRef.Int16, LLVM.PointerType(LLVMTypeRef.Int16,0) };
 
             var type = LLVMTypeRef.CreateFunction(returnType, parameterTypes);
@@ -47,8 +47,22 @@ namespace LLVMSandbox
             var zex = builder.BuildPtrToInt(p2, LLVMTypeRef.Int16); // builder.BuildZExt(p2, LLVMTypeRef.Int16);
             var add = builder.BuildAdd(p1, zex);
             var sub = builder.BuildMul(add, zex);
-            var cal = builder.BuildCall2(printf_type, printf_func, new LLVMValueRef[] { glob, sub });
+            //var cal = builder.BuildCall2(printf_type, printf_func, new LLVMValueRef[] { glob, sub });
             var ret = builder.BuildRet(sub);
+
+            returnType = LLVMTypeRef.Int32;
+            name = "main";
+            parameterTypes = new LLVMTypeRef[] {  };
+
+            type = LLVMTypeRef.CreateFunction(returnType, parameterTypes);
+            func = module.AddFunction(name, type);
+            block = func.AppendBasicBlock(string.Empty);
+            builder.PositionAtEnd(block);
+
+            var val1 = builder.BuildAdd(LLVM.ConstInt(LLVMTypeRef.Int32, 22, 0), LLVM.ConstInt(LLVMTypeRef.Int32, 37, 0));
+            var cal = builder.BuildCall2(printf_type, printf_func, new LLVMValueRef[] { glob, val1 });
+            ret = builder.BuildRet(cal);
+
 
             /*
              * The above generates:
