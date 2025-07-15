@@ -2,6 +2,7 @@
 using LLVMSharp.Interop;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 
 namespace LLVMSandbox
 {
@@ -10,6 +11,22 @@ namespace LLVMSandbox
         static unsafe void Main(string[] unused)
         {
             using var module = LLVMModuleRef.CreateWithName("test_call");
+            var builder = module.Context.CreateBuilder();
+                          
+            LLVMTypeRef[] param_types = { LLVM.PointerType(LLVMTypeRef.Int16, 0) };
+            LLVMTypeRef printf_type = LLVMTypeRef.CreateFunction(LLVMTypeRef.Int32, param_types, true);
+            // not adding a basic block etc, to this function, causes it to become just a 'declare' rather than a 'define'
+            LLVMValueRef printf_func = module.AddFunction("printf", printf_type);
+
+            //var blocky = printf_func.AppendBasicBlock(string.Empty);
+
+            //builder.PositionAtEnd(blocky);
+
+            using var format = new MarshaledString("Value: %d\n");
+            using var fmt = new MarshaledString("fmt");
+
+
+            
 
             int op1 = 3;
             int op2 = 4;
@@ -21,8 +38,10 @@ namespace LLVMSandbox
             var type = LLVMTypeRef.CreateFunction(returnType, parameterTypes);
             var func = module.AddFunction(name, type);
             var block = func.AppendBasicBlock(string.Empty);
-            var builder = module.Context.CreateBuilder();
             builder.PositionAtEnd(block);
+
+            LLVM.BuildGlobalStringPtr(builder, format, fmt);
+
             var p1 = func.GetParam(0);
             var p2 = func.GetParam(1);
             var zex = builder.BuildPtrToInt(p2, LLVMTypeRef.Int16); // builder.BuildZExt(p2, LLVMTypeRef.Int16);
