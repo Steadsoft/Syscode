@@ -32,7 +32,7 @@ namespace LLVMSandbox
             int op2 = 4;
 
             var returnType = LLVMTypeRef.Int16;
-            var name = "add";
+            var name = "main";
             var parameterTypes = new LLVMTypeRef[] { LLVMTypeRef.Int16, LLVM.PointerType(LLVMTypeRef.Int16,0) };
 
             var type = LLVMTypeRef.CreateFunction(returnType, parameterTypes);
@@ -40,13 +40,14 @@ namespace LLVMSandbox
             var block = func.AppendBasicBlock(string.Empty);
             builder.PositionAtEnd(block);
 
-            LLVM.BuildGlobalStringPtr(builder, format, fmt);
+            var glob = LLVM.BuildGlobalStringPtr(builder, format, fmt);
 
             var p1 = func.GetParam(0);
             var p2 = func.GetParam(1);
             var zex = builder.BuildPtrToInt(p2, LLVMTypeRef.Int16); // builder.BuildZExt(p2, LLVMTypeRef.Int16);
             var add = builder.BuildAdd(p1, zex);
             var sub = builder.BuildMul(add, zex);
+            var cal = builder.BuildCall2(printf_type, printf_func, new LLVMValueRef[] { glob, sub });
             var ret = builder.BuildRet(sub);
 
             /*
