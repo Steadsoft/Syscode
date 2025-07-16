@@ -19,6 +19,7 @@
         LABEL = SyscodeParser.LABEL,
         ENTRY = SyscodeParser.ENTRY,
         POINTER = SyscodeParser.POINTER,
+        STRUCT = SyscodeParser.STRUCT,
 
     }
 

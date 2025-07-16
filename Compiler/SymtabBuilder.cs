@@ -279,14 +279,14 @@ namespace Syscode
             {
                 return symbol.CoreType switch
                 {
-                    CoreType.BIN8 => 8,
-                    CoreType.BIN16 => 16,
-                    CoreType.BIN32 => 32,
-                    CoreType.BIN64 => 64,
-                    CoreType.UBIN8 => 8,
-                    CoreType.UBIN16 => 16,
-                    CoreType.UBIN32 => 32,
-                    CoreType.UBIN64 => 64,
+                    CoreType.BIN8 => 1,
+                    CoreType.BIN16 => 2,
+                    CoreType.BIN32 => 4,
+                    CoreType.BIN64 => 8,
+                    CoreType.UBIN8 => 1,
+                    CoreType.UBIN16 => 2,
+                    CoreType.UBIN32 => 4,
+                    CoreType.UBIN64 => 8,
                     CoreType.BIN => (Precision + 7) / 8,
                     CoreType.UBIN => (Precision + 7) / 8
                 };

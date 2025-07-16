@@ -46,6 +46,8 @@ proc main // outermost, therefore has external scope, full name: utilities.main
 
     dcl a bin(10,4)
 
+    dcl large(10 + a) ubin(71)
+
     date = get_date(123)
 
     outer.inner1.dont.age = 9

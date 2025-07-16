@@ -21,6 +21,19 @@ namespace Syscode
             Type = ExpressionType.None;
         }
 
+        public bool IsConstant
+        {
+            get
+            {
+                if (Literal != null)
+                    return true;
+
+                if (Left != null && Right != null)
+                    return Left.IsConstant & Right.IsConstant;
+
+                return false;
+            }
+        }
         public override string ToString()
         {
             var text = Type switch

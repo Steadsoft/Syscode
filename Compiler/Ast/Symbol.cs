@@ -30,6 +30,7 @@ namespace Syscode
         { 
             get => Declaration != null ? Declaration.Spelling : procedure.Spelling; 
         }
+        public bool ConstantSize => declaration.ConstantSize;
         public bool IsStructure { get => Declaration?.StructBody != null; }
         public bool IsntStructure { get => !IsStructure; }
         public CoreType CoreType { get => coreType; internal set => coreType = value; }

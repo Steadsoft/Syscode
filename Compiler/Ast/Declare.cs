@@ -9,12 +9,13 @@ namespace Syscode
         public string TypeName;
         public string As;
         public CoreType CoreType;
-        public List<BoundsPair> Bounds = new();
+        private List<BoundsPair> bounds = new();
         private string spelling;
         private StructBody structBody;
         public List<Attribute> Attributes = new();
         public List<Expression> typeSubscripts = new();
         private bool varying;
+        private bool constantSize = true;
         public StructBody StructBody 
         { 
             get => structBody; 
@@ -22,14 +23,43 @@ namespace Syscode
             {
                 structBody = value;
                 TypeName = "structure"; // not possible in grammar but helps by avoiding null typename
+                CoreType = CoreType.STRUCT;
             }
         }
+        public bool IsArray { get => Bounds.Any(); }
+        public bool ConstantSize { get => constantSize; }
+        public bool IsntArray { get => !IsArray; }
         private bool isKeyword;
         public bool Varying { get => varying; internal set => varying = value; }
         public string Spelling { get => spelling; set => spelling = value; }
         public bool IsKeyword { get => isKeyword; set => isKeyword = value; }
         public bool IsStructure { get => structBody != null; }
         public bool IsntStructure { get => !IsStructure; }
+        public List<BoundsPair> Bounds 
+        { 
+            get => bounds; 
+            set
+            {
+                bounds = value;
+
+                foreach (var pair in bounds)
+                {
+                    if (!pair.Upper.IsConstant)
+                    {
+                        constantSize = false;
+                        return;
+                    }
+
+                    if (pair.Lower != null)
+                        if (!pair.Lower.IsConstant)
+                        {
+                            constantSize = false;
+                            return;
+                        }
+                }
+            }
+        }
+
         public Declare(DeclareContext context) : base(context)
         {
             if (context.Type != null) 

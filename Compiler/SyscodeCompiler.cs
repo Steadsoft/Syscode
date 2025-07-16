@@ -391,7 +391,7 @@ namespace Syscode
             {
                 if (symbol.IsntStructure)
                 {
-                    Console.WriteLine ($"{LineDepth(depth, symbol.Declaration)}  SYMBOL: '{symbol.ToString()}' {symbol.CoreType} ({symbol.Precision},{symbol.Scale}) BYTES {symbol.Bytes} ALIGN {symbol.Alignment}");
+                    Console.WriteLine ($"{LineDepth(depth, symbol.Declaration)}  SYMBOL: '{symbol.ToString()}' {symbol.CoreType} ({symbol.Precision},{symbol.Scale}) BYTES={symbol.Bytes} ALIGN={symbol.Alignment} FIXED={symbol.ConstantSize}");
                 }
                 else
                     Console.WriteLine($"{LineDepth(depth, symbol.Declaration)}  SYMBOL: '{symbol.ToString()}' STRUCT");

@@ -1,3 +1,4 @@
+/*
 dcl var1 ubin8
 dcl var2 bin(9)
 dcl var3 bin(8,5)
@@ -11,4 +12,22 @@ dcl var10 entry (bin(9,4), bin(8,3))
 dcl var10 entry variable (bin(33))
 dcl var11 bit(99)
 dcl var12 as core_layout
+*/
 
+//use syscode.io
+
+proc calc_demo 
+
+   dcl a bin16 aligned(1)
+   dcl b bin16
+   dcl c bin16
+   
+   a = 25
+   b = 17
+
+   c = a + b
+
+   call syscode.io.printf(c)
+
+
+end
