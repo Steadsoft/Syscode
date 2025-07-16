@@ -31,7 +31,7 @@ A prominent feature of the language is the complete absence of reserved words. T
 The language syntax borrows a lot from PL/I and takes the positive features of that syntax while removing some of the out dated or idiosyncratic features.
 
 ### Declarations
-Begin with the `dcl` keyword followed an `identifier` and obligator and optional attributes, examples
+Begin with the `dcl` keyword followed an `identifier` then obligatory and optional attributes, examples
 - `dcl counter bin8` an 8 bit signed integer
 - `dcl rate bin(44)` a 44 bit signed integer
 - `dcl name string(32)` a 32 character fixed length string
