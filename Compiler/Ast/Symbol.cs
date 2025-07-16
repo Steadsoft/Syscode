@@ -12,7 +12,7 @@ namespace Syscode
         private int scale;
         private bool signed;
         private bool varying;
-        private int length;
+        private int bytes;
         private int alignment;
         public Symbol(Declare declaration) 
         {
@@ -38,7 +38,7 @@ namespace Syscode
         public int Scale { get => scale; internal set => scale = value; }
         public bool Invalid { get => invalid; internal set => invalid = value; }
         public bool Varying { get => varying; internal set => varying = value; }
-        public int Length { get => length; internal set => length = value; }
+        public int Bytes { get => bytes; internal set => bytes = value; }
         /// <summary>
         /// The runtime aligmnet for this datum. 
         /// </summary>

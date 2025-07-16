@@ -39,13 +39,13 @@ namespace Syscode
 
             symbol.CoreType = declaration.CoreType;
 
-            if (IsBinary(symbol.CoreType) && ValidateBinary(declaration, out var precision, out var scale, out var signed, out var align))
+            if (IsBinary(symbol.CoreType) && ValidateBinary(declaration, out var precision, out var scale, out var signed, out var align, out var bytes))
             {
                 symbol.Precision = precision;
                 symbol.Scale = scale;
                 symbol.Signed = signed;
                 symbol.Invalid = false;
-
+                symbol.Bytes = bytes;
                 if (align == -1)
                     SetDefaultAlignment(symbol);
                 else
@@ -59,7 +59,7 @@ namespace Syscode
                 if (ValidateString(declaration, out var length, out var varying))
                 {
                     symbol.Varying = varying;
-                    symbol.Length = length;
+                    symbol.Bytes = length;
                     symbol.Invalid = false;
                     symbol.Varying = declaration.Varying;
                     return symbol;
@@ -143,18 +143,19 @@ namespace Syscode
 
         }
 
-        private bool ValidateBinary(Declare declaration, out Int32 Precision, out Int32 Scale, out bool Signed, out int Alignment)
+        private bool ValidateBinary(Declare declaration, out Int32 Precision, out Int32 Scale, out bool Signed, out int Alignment, out int Bytes)
         {
             Precision = 0;
             Scale = 0;
             Signed = false;
             Alignment = -1;
+            Bytes = 0;
 
             if (declaration.Attributes.OfType<Aligned>().Any())
             {
                 var exp = declaration.Attributes.OfType<Aligned>().First().Alignment;
 
-                if (exp.Literal == null)
+                if (exp.Literal == null || exp.Literal.LiteralType != LiteralType.Numeric )
                 {
                     reporter.Report(declaration, 1017, declaration.Spelling);
                 }
@@ -173,7 +174,6 @@ namespace Syscode
             {
                 reporter.Report(declaration, 1005, "var");
                 return false;
-
             }
 
             if (TypeNames.BaseBinaryTypes.Contains(declaration.TypeName))
@@ -194,6 +194,7 @@ namespace Syscode
 
                 Scale = 0;
                 Signed = true;
+                Bytes = GetByteSize(declaration, Precision);
                 return true;
             }
 
@@ -208,6 +209,7 @@ namespace Syscode
                 Precision = Convert.ToInt32(declaration.TypeName.Substring(4));
                 Scale = 0;
                 Signed = false;
+                Bytes = GetByteSize(declaration, Precision);
                 return true;
             }
 
@@ -232,6 +234,7 @@ namespace Syscode
                     if (!PrecisionInvalid)
                         Precision = Convert.ToInt32(declaration.typeSubscripts[0].Literal.Value);
 
+                    Bytes = GetByteSize(declaration, Precision);
                     return true;
                 }
 
@@ -256,6 +259,7 @@ namespace Syscode
                     {
                         Precision = Convert.ToInt32(declaration.typeSubscripts[0].Literal.Value);
                         Scale = Convert.ToInt32(declaration.typeSubscripts[1].Literal.Value);
+                        Bytes = GetByteSize(declaration, Precision);
                     }
                 }
             }
@@ -267,6 +271,28 @@ namespace Syscode
         {
             int byteLength = (symbol.Precision + 7) / 8;
             symbol.Alignment = 1 << (int)Math.Ceiling(Math.Log2(byteLength));
+        }
+
+        private int GetByteSize(Declare symbol, int Precision)
+        {
+            if (symbol.Bounds.Count == 0) // not an array
+            {
+                return symbol.CoreType switch
+                {
+                    CoreType.BIN8 => 8,
+                    CoreType.BIN16 => 16,
+                    CoreType.BIN32 => 32,
+                    CoreType.BIN64 => 64,
+                    CoreType.UBIN8 => 8,
+                    CoreType.UBIN16 => 16,
+                    CoreType.UBIN32 => 32,
+                    CoreType.UBIN64 => 64,
+                    CoreType.BIN => (Precision + 7) / 8,
+                    CoreType.UBIN => (Precision + 7) / 8
+                };
+            }
+            
+            return 0;
         }
 
         private bool IsBinary(CoreType type)
