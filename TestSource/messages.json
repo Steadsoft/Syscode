@@ -91,7 +91,14 @@
       "number": 1016,
       "message": "The structure name '{arg0}' is a language keyword, this is permitted but might be unintended.",
       "severity": "Notice "
+    },
+
+                {
+      "number": 1017,
+      "message": "The alignment specified for '{arg0}' must an integer constant.",
+      "severity": "Notice "
     }
+
 
 
 

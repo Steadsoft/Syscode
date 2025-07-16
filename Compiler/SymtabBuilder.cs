@@ -45,8 +45,12 @@ namespace Syscode
                 symbol.Scale = scale;
                 symbol.Signed = signed;
                 symbol.Invalid = false;
-                symbol.Alignment = align;
-                SetDefaultAlignment(symbol);
+
+                if (align == -1)
+                    SetDefaultAlignment(symbol);
+                else
+                    symbol.Alignment = align;
+
                 return symbol;
             }
 
@@ -144,7 +148,21 @@ namespace Syscode
             Precision = 0;
             Scale = 0;
             Signed = false;
-            Alignment = 1;
+            Alignment = -1;
+
+            if (declaration.Attributes.OfType<Aligned>().Any())
+            {
+                var exp = declaration.Attributes.OfType<Aligned>().First().Alignment;
+
+                if (exp.Literal == null)
+                {
+                    reporter.Report(declaration, 1017, declaration.Spelling);
+                }
+                else
+                {
+                    Alignment = Convert.ToInt32(exp.Literal.Value);
+                }
+            }
 
             if (!TypeNames.AllBinaryTypes.Contains(declaration.TypeName))
             {

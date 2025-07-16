@@ -304,7 +304,17 @@ namespace Syscode
                 {
                     case (AttribAlignedContext):
                         {
-                            dcl.Attributes.Add(new Aligned(attrib));
+                            Expression exp = null;
+
+                            if (attrib.TryGetExactNode<AlignedAttributeContext>(out var aln))
+                            {
+                                if (aln.Alignment != null)
+                                {
+                                    exp = CreateExpression(aln.Alignment);
+                                }
+                            }
+
+                            dcl.Attributes.Add(new Aligned(attrib, exp));
                             break;
                         }
                     case (AttribUnalignedContext):

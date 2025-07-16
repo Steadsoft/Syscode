@@ -1,7 +1,10 @@
 ﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Misc;
 using System;
+using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Xml.Linq;
 using static SyscodeParser;
 
 namespace Syscode
@@ -16,6 +19,8 @@ namespace Syscode
         private string errorMesagesPath;
         private ErrorFile messages;
         private Reporter reporter;
+        private string file;
+        private string[] namespaceparts;
         public SyscodeCompiler(string ErrorMessagesPath)
         {
             errorMesagesPath = ErrorMessagesPath;
@@ -48,6 +53,15 @@ namespace Syscode
 
         public CompilationContext CompileSourceFile(string SourceFile)
         {
+            file = SourceFile;
+
+            var fileName = Path.GetFileNameWithoutExtension(file); 
+
+            // extract any namespace components from the file's name
+
+            namespaceparts = fileName.Split('.');
+            namespaceparts = namespaceparts.Take(namespaceparts.Length - 1).ToArray();
+
             reporter = new Reporter(messages, diagnostics);
             var source = new StreamReader(SourceFile);
             var stream = new AntlrInputStream(source);
@@ -200,7 +214,7 @@ namespace Syscode
         {
             reporter.PrintReport();
         }
-        public void PrintAbstractSyntaxTree(AstNode node, int depth = 0)
+        public void PrintAbstractSyntaxTree(AstNode node, int depth = 0, bool Symtab = false)
         {
             if (depth == 0)
             {
@@ -309,6 +323,8 @@ namespace Syscode
                     {
                         Console.WriteLine($"{LineDepth(depth, proc)} {proc.GetType().Name} '{proc.Spelling}'");
 
+                        PrintSymbols(proc.Symbols, depth, proc);
+
                         var children = ((IContainer)(proc)).Statements;
 
                         if (children.Any())
@@ -366,6 +382,20 @@ namespace Syscode
                         }
                         break;
                     }
+            }
+        }
+
+        public void PrintSymbols (IEnumerable<Symbol> symbols, int depth, AstNode node)
+        {
+            foreach (var symbol in symbols)
+            {
+                if (symbol.IsntStructure)
+                {
+                    Console.WriteLine ($"{LineDepth(depth, symbol.Declaration)}  SYMBOL: '{symbol.ToString()}' {symbol.CoreType} ({symbol.Precision},{symbol.Scale}) BYTES {symbol.Length} ALIGN {symbol.Alignment}");
+                }
+                else
+                    Console.WriteLine($"{LineDepth(depth, symbol.Declaration)}  SYMBOL: '{symbol.ToString()}' STRUCT");
+
             }
         }
         public string LineDepth(int depth, AstNode node)

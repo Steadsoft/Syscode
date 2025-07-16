@@ -10,9 +10,13 @@ namespace Syscode
     }
     public class Aligned : Attribute
     {
-        public Aligned(ParserRuleContext context) : base(context)
+        private Expression alignment = null;
+        public Aligned(ParserRuleContext context, Expression alignment) : base(context)
         {
+            this.Alignment = alignment;
         }
+
+        public Expression Alignment { get => alignment; set => alignment = value; }
     }
     public class Unaligned : Attribute
     {

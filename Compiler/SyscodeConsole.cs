@@ -16,7 +16,7 @@ namespace Syscode
 
             compiler.diagnostics += onFileFound;
 
-            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\resolve.sys");
+            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\syscode.core.resolve.sys");
 
             //compiler.PrintConcreteSyntaxTree(cst);
 
@@ -37,7 +37,7 @@ namespace Syscode
 
             clock.Stop();
 
-            //compiler.PrintAbstractSyntaxTree(ast);
+            compiler.PrintAbstractSyntaxTree(ast);
 
             //var types = compiler.GetLLVMStructTypes(ast);
 

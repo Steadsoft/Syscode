@@ -324,7 +324,7 @@ memberAttributes
     ;
 
 constAttribute: CONST;
-alignedAttribute: ALIGNED;
+alignedAttribute: ALIGNED (LPAR Alignment=expression RPAR)?;
 unalignedAttribute: UNALIGNED;    
 externalAttribute: EXTERNAL;
 staticAttribute: STATIC;

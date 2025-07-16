@@ -16,7 +16,7 @@ namespace Syscode
         private int alignment;
         public Symbol(Declare declaration) 
         {
-            this.declaration = declaration;
+            this.Declaration = declaration;
         }
 
         public Symbol(Procedure procedure)
@@ -24,13 +24,13 @@ namespace Syscode
             this.procedure = procedure;
         }
 
-        public StructBody StructBody { get => declaration?.StructBody; }
-        public List<BoundsPair> Bounds { get => declaration?.Bounds; }
+        public StructBody StructBody { get => Declaration?.StructBody; }
+        public List<BoundsPair> Bounds { get => Declaration?.Bounds; }
         public string Spelling 
         { 
-            get => declaration != null ? declaration.Spelling : procedure.Spelling; 
+            get => Declaration != null ? Declaration.Spelling : procedure.Spelling; 
         }
-        public bool IsStructure { get => declaration?.StructBody != null; }
+        public bool IsStructure { get => Declaration?.StructBody != null; }
         public bool IsntStructure { get => !IsStructure; }
         public CoreType CoreType { get => coreType; internal set => coreType = value; }
         public int Precision { get => precision; internal set => precision = value; }
@@ -46,6 +46,7 @@ namespace Syscode
         /// The alignment is zero for next bit alignment, then 1 for next byte and so on
         /// </remarks>
         public int Alignment { get => alignment; set => alignment = value; }
+        public Declare Declaration { get => declaration; set => declaration = value; }
 
         public override string ToString()
         {

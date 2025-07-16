@@ -14,7 +14,7 @@ dcl get_date entry (bin32) as (string(64))
 
 // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
 
-dcl goto bin16
+dcl goto bin16 aligned(1)
 
 speed = fast
 
@@ -31,7 +31,7 @@ proc main // outermost, therefore has external scope, full name: utilities.main
 
     then = 100
 
-    dcl c bin(32)
+    dcl c bin(32) aligned(1)
 
     dcl struct while
         struct inner1
