@@ -97,7 +97,21 @@
       "number": 1017,
       "message": "The alignment specified for '{arg0}' must an integer constant.",
       "severity": "Notice "
+    },
+
+                {
+      "number": 1018,
+      "message": "In the declaration of '{arg0}' the attribute '{arg1}' must not be specified more than once.",
+      "severity": "Error"
     }
+,
+
+                {
+      "number": 1019,
+      "message": "The struct '{arg0}' contains multiple members with the same name '{arg1}'.",
+      "severity": "Error"
+    }
+
 
 
 

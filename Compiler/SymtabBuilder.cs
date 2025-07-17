@@ -18,7 +18,7 @@ namespace Syscode
             var procedures = root.Statements.OfType<Procedure>();//.Where(s => s is Procedure).Cast<Procedure>();
             var scopes = root.Statements.OfType<Scope>();//.Where(s => s is Scope).Cast<Scope>();
 
-            root.Symbols.AddRange(declarations.Select(d => CreateSymbol(d))); 
+            root.Symbols.AddRange(declarations.Select(d => CreateSymbol(d)));
             root.Symbols.AddRange(procedures.Select(d => CreateSymbol(d)));
 
         }
@@ -35,6 +35,11 @@ namespace Syscode
         {
             ReportDeclaredKeywords(declaration);
 
+            ValidateAttributes(declaration);
+
+            if (declaration.IsStructure)
+                ValidateStructure(declaration);
+
             var symbol = new Symbol(declaration);
 
             symbol.CoreType = declaration.CoreType;
@@ -46,6 +51,7 @@ namespace Syscode
                 symbol.Signed = signed;
                 symbol.Invalid = false;
                 symbol.Bytes = bytes;
+
                 if (align == -1)
                     SetDefaultAlignment(symbol);
                 else
@@ -62,11 +68,44 @@ namespace Syscode
                     symbol.Bytes = length;
                     symbol.Invalid = false;
                     symbol.Varying = declaration.Varying;
+
+                    //if (align == -1)
+                    //    SetDefaultAlignment(symbol);
+                    //else
+                    //    symbol.Alignment = align;
+
                     return symbol;
                 }
             }
 
             return symbol;
+        }
+
+        private void ValidateStructure(Declare declaration)
+        {
+            if (declaration.IsntStructure)
+                throw new ArgumentException("The argument must represent a structure.", nameof(declaration));
+
+            ValidateStructure(declaration.StructBody);
+        }
+
+        private void ValidateStructure(StructBody Struct)
+        {
+            var memberNames = Struct.Fields.Select(s => s.Spelling).Concat(Struct.Structs.Select(s => s.Spelling));
+
+            var nameGroups = memberNames.GroupBy(memberNames => memberNames);
+
+            foreach ( var nameGroup in nameGroups)
+            {
+                if (nameGroup.Count() > 1)
+                    reporter.Report(Struct, 1019, Struct.Spelling, nameGroup.Key);
+
+            }
+
+            foreach (var structure in Struct.Structs)
+            {
+                ValidateStructure(structure);
+            }
         }
 
         private void ReportDeclaredKeywords(Declare declaration)
@@ -86,7 +125,7 @@ namespace Syscode
         {
             if (Struct.IsKeyword)
             {
-                reporter.Report(Struct, 1016,Struct.Spelling);
+                reporter.Report(Struct, 1016, Struct.Spelling);
             }
 
             foreach (var body in Struct.Structs)
@@ -113,7 +152,7 @@ namespace Syscode
         }
 
 
-        private bool ValidateString (Declare declaration, out int Length, out bool Varying)
+        private bool ValidateString(Declare declaration, out int Length, out bool Varying)
         {
             Length = 0;
             Varying = false;
@@ -143,6 +182,53 @@ namespace Syscode
 
         }
 
+        private void ValidateAttributes(Declare declaration)
+        {
+            var groups = declaration.Attributes.GroupBy(g => g.GetType());
+            bool dupes = false;
+
+            foreach (var group in groups)
+            {
+                if (group.Count() > 1)
+                {
+                    reporter.Report(declaration, 1018, declaration.Spelling, group.Key.Name.ToLower());
+                    dupes = true;
+                }
+            }
+
+            foreach (var attribute in declaration.Attributes)
+            {
+                switch (attribute)
+                {
+                    case Aligned aligned:
+                        if (ValidateAligned(declaration, aligned, out var alignment))
+                        {
+                            declaration.Alignment = alignment;
+                        }
+                        break;
+                    default:
+                        break;
+
+                }
+            }
+        }
+
+        private bool ValidateAligned(Declare declaration, Aligned Aligned, out int alignment)
+        {
+            alignment = -1;
+
+            if (Aligned.Alignment.IsConstant && Aligned.Alignment.Literal != null)
+            {
+                alignment = Convert.ToInt32(Aligned.Alignment.Literal.Value);
+                return true;
+            }
+            else
+            {
+                reporter.Report(declaration, 1017, declaration.Spelling);
+                return false;
+            }
+        }
+
         private bool ValidateBinary(Declare declaration, out Int32 Precision, out Int32 Scale, out bool Signed, out int Alignment, out int Bytes)
         {
             Precision = 0;
@@ -155,7 +241,7 @@ namespace Syscode
             {
                 var exp = declaration.Attributes.OfType<Aligned>().First().Alignment;
 
-                if (exp.Literal == null || exp.Literal.LiteralType != LiteralType.Numeric )
+                if (exp.Literal == null || exp.Literal.LiteralType != LiteralType.Numeric)
                 {
                     reporter.Report(declaration, 1017, declaration.Spelling);
                 }
@@ -291,7 +377,7 @@ namespace Syscode
                     CoreType.UBIN => (Precision + 7) / 8
                 };
             }
-            
+
             return 0;
         }
 
@@ -310,7 +396,7 @@ namespace Syscode
                 case CoreType.UBIN32:
                 case CoreType.UBIN64:
                     return true;
-                    default:
+                default:
                     return false;
 
             }

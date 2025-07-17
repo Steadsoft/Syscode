@@ -31,12 +31,12 @@ proc main // outermost, therefore has external scope, full name: utilities.main
 
     then = 100
 
-    dcl c bin(32) aligned(1)
+    dcl c bin(32) aligned(1) aligned(2)
 
     dcl struct while
         struct inner1
             field1_1 bin8
-            field1_2 bin8
+            field1_1 bin8
         end
         struct inner2
             field2_1 bin8

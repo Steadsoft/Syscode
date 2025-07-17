@@ -16,6 +16,7 @@ namespace Syscode
         public List<Expression> typeSubscripts = new();
         private bool varying;
         private bool constantSize = true;
+        private int alignment = -1;
         public StructBody StructBody 
         { 
             get => structBody; 
@@ -59,6 +60,8 @@ namespace Syscode
                 }
             }
         }
+
+        public int Alignment { get => alignment; internal set => alignment = value; }
 
         public Declare(DeclareContext context) : base(context)
         {
