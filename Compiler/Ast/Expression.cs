@@ -34,6 +34,7 @@ namespace Syscode
                 return false;
             }
         }
+        public bool IsntConstant => !IsConstant;
         public override string ToString()
         {
             var text = Type switch

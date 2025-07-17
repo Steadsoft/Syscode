@@ -18,6 +18,11 @@ namespace Syscode
             };
         }
 
+        public Literal(LiteralType literalType) : base(null)
+        {
+            this.literalType = literalType;
+        }
+
         public LiteralType LiteralType { get => literalType;  }
 
         public override string ToString()

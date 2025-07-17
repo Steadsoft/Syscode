@@ -44,7 +44,7 @@ namespace Syscode
 
             symbol.CoreType = declaration.CoreType;
 
-            if (IsBinary(symbol.CoreType) && ValidateBinary(declaration, out var precision, out var scale, out var signed, out var align, out var bytes))
+            if (IsBinaryType(symbol.CoreType) && ValidateBinaryType(declaration, out var precision, out var scale, out var signed, out var bytes))
             {
                 symbol.Precision = precision;
                 symbol.Scale = scale;
@@ -52,10 +52,8 @@ namespace Syscode
                 symbol.Invalid = false;
                 symbol.Bytes = bytes;
 
-                if (align == -1)
-                    SetDefaultAlignment(symbol);
-                else
-                    symbol.Alignment = align;
+                if (declaration.Alignment == -1)
+                   declaration.Alignment = GetDefaultAlignment(symbol);
 
                 return symbol;
             }
@@ -69,10 +67,8 @@ namespace Syscode
                     symbol.Invalid = false;
                     symbol.Varying = declaration.Varying;
 
-                    //if (align == -1)
-                    //    SetDefaultAlignment(symbol);
-                    //else
-                    //    symbol.Alignment = align;
+                    if (declaration.Alignment == -1)
+                       declaration.Alignment = GetDefaultAlignment(symbol);
 
                     return symbol;
                 }
@@ -229,27 +225,12 @@ namespace Syscode
             }
         }
 
-        private bool ValidateBinary(Declare declaration, out Int32 Precision, out Int32 Scale, out bool Signed, out int Alignment, out int Bytes)
+        private bool ValidateBinaryType(Declare declaration, out Int32 Precision, out Int32 Scale, out bool Signed, out int Bytes)
         {
             Precision = 0;
             Scale = 0;
             Signed = false;
-            Alignment = -1;
             Bytes = 0;
-
-            if (declaration.Attributes.OfType<Aligned>().Any())
-            {
-                var exp = declaration.Attributes.OfType<Aligned>().First().Alignment;
-
-                if (exp.Literal == null || exp.Literal.LiteralType != LiteralType.Numeric)
-                {
-                    reporter.Report(declaration, 1017, declaration.Spelling);
-                }
-                else
-                {
-                    Alignment = Convert.ToInt32(exp.Literal.Value);
-                }
-            }
 
             if (!TypeNames.AllBinaryTypes.Contains(declaration.TypeName))
             {
@@ -353,10 +334,10 @@ namespace Syscode
             return true;
         }
 
-        private void SetDefaultAlignment(Symbol symbol)
+        private int GetDefaultAlignment(Symbol symbol)
         {
             int byteLength = (symbol.Precision + 7) / 8;
-            symbol.Alignment = 1 << (int)Math.Ceiling(Math.Log2(byteLength));
+            return 1 << (int)Math.Ceiling(Math.Log2(byteLength));
         }
 
         private int GetByteSize(Declare symbol, int Precision)
@@ -381,7 +362,7 @@ namespace Syscode
             return 0;
         }
 
-        private bool IsBinary(CoreType type)
+        private bool IsBinaryType(CoreType type)
         {
             switch (type)
             {

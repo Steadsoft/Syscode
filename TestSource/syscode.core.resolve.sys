@@ -29,9 +29,9 @@ end
 
 proc main // outermost, therefore has external scope, full name: utilities.main
 
-    then = 100
+    then = 100 + 75;
 
-    dcl c bin(32) aligned(1) aligned(2)
+    dcl c bin(32) aligned(2 * 23) 
 
     dcl structure while
         struct inner1

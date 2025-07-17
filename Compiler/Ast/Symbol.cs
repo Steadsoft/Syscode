@@ -13,7 +13,6 @@ namespace Syscode
         private bool signed;
         private bool varying;
         private int bytes;
-        private int alignment;
         public Symbol(Declare declaration) 
         {
             this.Declaration = declaration;
@@ -46,7 +45,7 @@ namespace Syscode
         /// <remarks>
         /// The alignment is zero for next bit alignment, then 1 for next byte and so on
         /// </remarks>
-        public int Alignment { get => alignment; set => alignment = value; }
+        public int Alignment { get => declaration.Alignment; }
         public Declare Declaration { get => declaration; set => declaration = value; }
 
         public override string ToString()

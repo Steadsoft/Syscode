@@ -1,6 +1,9 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using Syscode.Ast;
+using System.Net.Http.Headers;
 using static SyscodeParser;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Syscode
 {
@@ -138,7 +141,7 @@ namespace Syscode
                         }
 
 
-                        return expr;
+                        return FoldConstantExpression(expr); ;
                     }
                 case ExprParenthesizedContext paren:
                     {
@@ -146,7 +149,7 @@ namespace Syscode
                         var expression = parenctxt.GetDerivedNode<ExpressionContext>();
                         var result = CreateExpression(expression);
                         result.Parenthesized = true;
-                        return result;
+                        return FoldConstantExpression(result); ;
                     }
                 case ExprPrefixedContext prefixed:
                     {
@@ -161,12 +164,89 @@ namespace Syscode
                         expr.Right = CreateExpression(binary.Rite);
                         expr.Operator = GetOperator(binary);
                         expr.Type = ExpressionType.Binary;
-                        return expr; ;
+                        return FoldConstantExpression(expr);
                     }
                 default:  // every other case always contains an operator and a left/right expression. 
                     {
                         throw new InvalidOperationException("Unexpected expression class encountered.");
                     }
+            }
+
+            // If the expression is composed wholly of literal constants, we should fold it and make a new literal constant
+
+
+            return FoldConstantExpression(expr);
+
+        }
+
+        private Expression FoldConstantExpression(Expression expr)
+        {
+
+            if (expr.Type == ExpressionType.Literal)
+                return expr;
+
+            if (expr.Type == ExpressionType.Binary)
+            {
+                if (expr.Left.IsConstant && expr.Right.IsConstant)
+                {
+                    switch (expr.Operator)
+                    {
+                        case Operator.PLUS:
+                            {
+                                var left = Convert.ToInt32(expr.Left.Literal.Value);
+                                var right = Convert.ToInt32(expr.Right.Literal.Value);
+
+                                var sum = left + right;
+
+                                var result = new Expression(null);
+
+                                result.Literal = new Literal(LiteralType.Numeric) { Value = sum.ToString() };
+                                result.Type = ExpressionType.Literal;
+                                return result;
+                            }
+                        case Operator.MINUS:
+                            {
+                                var left = Convert.ToInt32(expr.Left.Literal.Value);
+                                var right = Convert.ToInt32(expr.Right.Literal.Value);
+
+                                var sum = left - right;
+
+                                var result = new Expression(null);
+
+                                result.Literal = new Literal(LiteralType.Numeric) { Value = sum.ToString() };
+                                result.Type = ExpressionType.Literal;
+                                return result;
+                            }
+                        case Operator.TIMES:
+                            {
+                                var left = Convert.ToInt32(expr.Left.Literal.Value);
+                                var right = Convert.ToInt32(expr.Right.Literal.Value);
+
+                                var sum = left * right;
+
+                                var result = new Expression(null);
+
+                                result.Literal = new Literal(LiteralType.Numeric) { Value = sum.ToString() };
+                                result.Type = ExpressionType.Literal;
+                                return result;
+                            }
+                        case Operator.DIVIDE:
+                            {
+                                var left = Convert.ToInt32(expr.Left.Literal.Value);
+                                var right = Convert.ToInt32(expr.Right.Literal.Value);
+
+                                var sum = left / right;
+
+                                var result = new Expression(null);
+
+                                result.Literal = new Literal(LiteralType.Numeric) { Value = sum.ToString() };
+                                result.Type = ExpressionType.Literal;
+                                return result;
+                            }
+
+
+                    }
+                }
             }
 
             return expr;

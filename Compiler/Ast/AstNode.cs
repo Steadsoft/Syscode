@@ -11,10 +11,13 @@ namespace Syscode
 
         public AstNode(ParserRuleContext context)
         {
-            StartLine = context.Start.Line;
-            StartColumn = context.Start.Column;
-            StopLine = context.Stop.Line;
-            StopColumn = context.Stop.Column;
+            if (context != null)
+            {
+                StartLine = context.Start.Line;
+                StartColumn = context.Start.Column;
+                StopLine = context.Stop.Line;
+                StopColumn = context.Stop.Column;
+            }
         }
     }
 }
