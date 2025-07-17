@@ -32,7 +32,7 @@
                 },
                                 {
                     "patterns": [
-                        "type", "struct", "dcl"
+                        "type", "struct", "structure","dcl"
                     ],
                     "color":"BrightGreen",
                     "bold": true,
@@ -42,7 +42,7 @@
 
                 {
                     "patterns": [
-                        "call","type", "struct", "dcl","proc", "procedure", "func","function","package","aligned","unaligned","end","goto","return"
+                        "call","proc", "procedure", "func","function","package","aligned","unaligned","end","goto","return"
                     ],
                     "color":"BrightCyan",
                     "bold": true,

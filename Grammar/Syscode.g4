@@ -472,7 +472,7 @@ RETURN:         'return';
 SCOPE:          'scope';
 STATIC:         'static';
 STRING:         'string';
-STRUCT:         'struct';
+STRUCT:         'struct' | 'structure';
 THEN:           'then';
 TO:             'to';
 TYPE:           'type';

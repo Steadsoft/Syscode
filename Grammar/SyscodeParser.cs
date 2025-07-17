@@ -110,14 +110,14 @@ public partial class SyscodeParser : Parser {
 		"'by'", "'call'", "'const'", "'dcl'", "'dec'", "'def'", "'do'", "'elif'", 
 		"'else'", "'end'", "'entry'", "'enum'", null, "'for'", "'forever'", null, 
 		"'goto'", "'if'", "'is'", "'label'", null, "'loop'", "'package'", "'path'", 
-		null, null, "'return'", "'scope'", "'static'", "'string'", "'struct'", 
-		"'then'", "'to'", "'type'", "'ubin16'", "'ubin32'", "'ubin64'", "'ubin8'", 
-		"'ubin'", "'udec'", "'unaligned'", "'unit'", "'until'", null, "'while'", 
-		"':'", "'++'", "'&&'", "'||'", "'&'", "'|'", "'~&'", "'~|'", null, null, 
-		"'~'", "'>'", "'<'", null, null, "'~>'", "'~<'", null, null, null, "'+'", 
-		"'-'", "'*'", "'//'", null, "'%'", "'\"'", "'<&'", "'<|'", "'<^'", "'<<'", 
-		"'>>'", "'>>>'", null, null, "'='", "'<-'", null, "'.'", "'@'", "';'", 
-		"','", "'('", "')'", "'->'"
+		null, null, "'return'", "'scope'", "'static'", "'string'", null, "'then'", 
+		"'to'", "'type'", "'ubin16'", "'ubin32'", "'ubin64'", "'ubin8'", "'ubin'", 
+		"'udec'", "'unaligned'", "'unit'", "'until'", null, "'while'", "':'", 
+		"'++'", "'&&'", "'||'", "'&'", "'|'", "'~&'", "'~|'", null, null, "'~'", 
+		"'>'", "'<'", null, null, "'~>'", "'~<'", null, null, null, "'+'", "'-'", 
+		"'*'", "'//'", null, "'%'", "'\"'", "'<&'", "'<|'", "'<^'", "'<<'", "'>>'", 
+		"'>>>'", null, null, "'='", "'<-'", null, "'.'", "'@'", "';'", "','", 
+		"'('", "')'", "'->'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "COMMENT", "LINECOM", "HYPERCOMMENT", "HEX_LITERAL", "OCT_LITERAL", 

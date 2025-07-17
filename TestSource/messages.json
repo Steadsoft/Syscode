@@ -108,7 +108,7 @@
 
                 {
       "number": 1019,
-      "message": "The struct '{arg0}' contains multiple members with the same name '{arg1}'.",
+      "message": "The structure '{arg0}' contains multiple members with the same name '{arg1}'.",
       "severity": "Error"
     }
 

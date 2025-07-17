@@ -33,7 +33,7 @@ proc main // outermost, therefore has external scope, full name: utilities.main
 
     dcl c bin(32) aligned(1) aligned(2)
 
-    dcl struct while
+    dcl structure while
         struct inner1
             field1_1 bin8
             field1_1 bin8
