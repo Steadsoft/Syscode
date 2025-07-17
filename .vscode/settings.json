@@ -32,7 +32,7 @@
                 },
                                 {
                     "patterns": [
-                        "type", "struct", "structure","dcl"
+                        "type", "struct", "structure","dcl", "main"
                     ],
                     "color":"BrightGreen",
                     "bold": true,

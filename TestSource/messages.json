@@ -2,12 +2,12 @@
   "errors": [
     {
       "number": 1000,
-      "message": "The reference to '{arg0}' could not be resolved to a declaration in this or any containing scope.",
+      "message": "The reference to '{arg0}' could not be resolved to a declaration in this or any enclosing scope.",
       "severity": "Error"
     },
     {
       "number": 1001,
-      "message": "The goto target '{arg0}' could not be resolved to a label in this or any containing scope.",
+      "message": "The goto target '{arg0}' could not be resolved to a label in this or any enclosing scope.",
       "severity": "Error"
     },
     {
@@ -48,13 +48,13 @@
     },
         {
       "number": 1009,
-      "message": "XXXXXThe reference to '{arg0}' could not be resolved to a declaration in this or any containing scope.",
+      "message": "XXXXXThe reference to '{arg0}' could not be resolved to a declaration in this or any enclosing scope.",
       "severity": "Error"
     },
 
         {
       "number": 1010,
-      "message": "The qualified reference '{arg0}' could not be resolved to a declaration in this or any containing scope.",
+      "message": "The qualified reference '{arg0}' could not be resolved to a declaration in this or any enclosing scope.",
       "severity": "Error"
 
     },
@@ -66,7 +66,7 @@
     },
         {
       "number": 1012,
-      "message": "The structure '{arg0}' could not be resolved to a declaration in this or any containing scope.",
+      "message": "The structure '{arg0}' could not be resolved to a declaration in this or any enclosing scope.",
       "severity": "Error"
     },
             {
@@ -111,6 +111,23 @@
       "message": "The structure '{arg0}' contains multiple members with the same name '{arg1}'.",
       "severity": "Error"
     }
+
+,
+
+                {
+      "number": 1020,
+      "message": "In the declaration of '{arg0}' the storage scope '{arg1}' is invalid when the storage scope '{arg2}' has previously been specified.",
+      "severity": "Error"
+    }
+
+,
+
+                {
+      "number": 1021,
+      "message": "In the declaration of '{arg0}' the storage class '{arg1}' is invalid when the storage class '{arg2}' has previously been specified.",
+      "severity": "Error"
+    }
+
 
 
 

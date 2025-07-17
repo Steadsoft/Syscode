@@ -6,12 +6,10 @@ namespace Syscode
     public class SymtabBuilder
     {
         private Reporter reporter;
-
         public SymtabBuilder(Reporter reporter)
         {
             this.reporter = reporter;
         }
-
         public void Generate(Compilation root)
         {
             var declarations = root.Statements.OfType<Declare>(); //.Where(s => s is Declare).Cast<Declare>();
@@ -22,7 +20,6 @@ namespace Syscode
             root.Symbols.AddRange(procedures.Select(d => CreateSymbol(d)));
 
         }
-
         public Symbol CreateSymbol(Procedure procedure)
         {
             var sym = new Symbol(procedure);
@@ -42,8 +39,6 @@ namespace Syscode
 
             var symbol = new Symbol(declaration);
 
-            symbol.CoreType = declaration.CoreType;
-
             if (IsBinaryType(symbol.CoreType) && ValidateBinaryType(declaration, out var precision, out var scale, out var signed, out var bytes))
             {
                 symbol.Precision = precision;
@@ -58,7 +53,7 @@ namespace Syscode
                 return symbol;
             }
 
-            if (symbol.CoreType == CoreType.STRING)
+            if (symbol.CoreType == DataType.STRING)
             {
                 if (ValidateString(declaration, out var length, out var varying))
                 {
@@ -76,7 +71,6 @@ namespace Syscode
 
             return symbol;
         }
-
         private void ValidateStructure(Declare declaration)
         {
             if (declaration.IsntStructure)
@@ -84,7 +78,6 @@ namespace Syscode
 
             ValidateStructure(declaration.StructBody);
         }
-
         private void ValidateStructure(StructBody Struct)
         {
             var memberNames = Struct.Fields.Select(s => s.Spelling).Concat(Struct.Structs.Select(s => s.Spelling));
@@ -103,7 +96,6 @@ namespace Syscode
                 ValidateStructure(structure);
             }
         }
-
         private void ReportDeclaredKeywords(Declare declaration)
         {
             if (declaration.IsntStructure)
@@ -116,7 +108,6 @@ namespace Syscode
                 ReportDeclaredKeywords(declaration.StructBody);
             }
         }
-
         private void ReportDeclaredKeywords(StructBody Struct)
         {
             if (Struct.IsKeyword)
@@ -131,23 +122,18 @@ namespace Syscode
 
             // TODO: need to report any fields that are also keywords...
         }
-
         private bool IsScaleInvalid(Declare declaration)
         {
             return !((declaration.typeSubscripts[1].Type == ExpressionType.Literal) && (declaration.typeSubscripts[1].Literal.LiteralType == LiteralType.Numeric));
         }
-
         private bool IsPrecisionInvalid(Declare declaration)
         {
             return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal.LiteralType == LiteralType.Numeric));
         }
-
         private bool IsStringLengthInvalid(Declare declaration)
         {
             return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal.LiteralType == LiteralType.Numeric));
         }
-
-
         private bool ValidateString(Declare declaration, out int Length, out bool Varying)
         {
             Length = 0;
@@ -177,7 +163,6 @@ namespace Syscode
             return true;
 
         }
-
         private void ValidateAttributes(Declare declaration)
         {
             var groups = declaration.Attributes.GroupBy(g => g.GetType());
@@ -192,6 +177,9 @@ namespace Syscode
                 }
             }
 
+            bool scopeSet = false;
+            bool classSet = false;
+
             foreach (var attribute in declaration.Attributes)
             {
                 switch (attribute)
@@ -202,13 +190,57 @@ namespace Syscode
                             declaration.Alignment = alignment;
                         }
                         break;
+                    case External:
+                        {
+                            if (declaration.StorageScope != StorageScope.Unspecified)
+                                reporter.Report(declaration, 1020, declaration.Spelling, "external", declaration.StorageScope.ToString().ToLower());
+                            declaration.StorageScope = StorageScope.External;
+                            break;
+                        }
+                    case Internal:
+                        {
+                            if (declaration.StorageScope != StorageScope.Unspecified)
+                                reporter.Report(declaration, 1020, declaration.Spelling, "internal", declaration.StorageScope.ToString().ToLower());
+                            declaration.StorageScope = StorageScope.Internal;
+                            break;
+                        }
+                    case Stack:
+                        {
+                            if (declaration.StorageClass != StorageClass.Unspecified)
+                                reporter.Report(declaration, 1021, declaration.Spelling, "stack", declaration.StorageClass.ToString().ToLower());
+                            declaration.StorageClass = StorageClass.Stack;
+                            break;
+                        }
+                    case Based:
+                        {
+                            if (declaration.StorageClass != StorageClass.Unspecified)
+                                reporter.Report(declaration, 1021, declaration.Spelling, "based", declaration.StorageClass.ToString().ToLower());
+                            declaration.StorageClass = StorageClass.Based;
+                            break;
+                        }
+                    case Static:
+                        {
+                            if (declaration.StorageClass != StorageClass.Unspecified)
+                                reporter.Report(declaration, 1021, declaration.Spelling, "static", declaration.StorageClass.ToString().ToLower());
+                            declaration.StorageClass = StorageClass.Static;
+                            break;
+                        }
+                    case Defined:
+                        {
+                            if (declaration.StorageClass != StorageClass.Unspecified)
+                                reporter.Report(declaration, 1021, declaration.Spelling, "defined", declaration.StorageClass.ToString().ToLower());
+                            declaration.StorageClass = StorageClass.Defined;
+                            break;
+                        }
+
                     default:
                         break;
 
                 }
             }
-        }
 
+            
+        }
         private bool ValidateAligned(Declare declaration, Aligned Aligned, out int alignment)
         {
             alignment = -1;
@@ -224,7 +256,6 @@ namespace Syscode
                 return false;
             }
         }
-
         private bool ValidateBinaryType(Declare declaration, out Int32 Precision, out Int32 Scale, out bool Signed, out int Bytes)
         {
             Precision = 0;
@@ -333,55 +364,51 @@ namespace Syscode
 
             return true;
         }
-
         private int GetDefaultAlignment(Symbol symbol)
         {
             int byteLength = (symbol.Precision + 7) / 8;
             return 1 << (int)Math.Ceiling(Math.Log2(byteLength));
         }
-
         private int GetByteSize(Declare symbol, int Precision)
         {
             if (symbol.Bounds.Count == 0) // not an array
             {
                 return symbol.CoreType switch
                 {
-                    CoreType.BIN8 => 1,
-                    CoreType.BIN16 => 2,
-                    CoreType.BIN32 => 4,
-                    CoreType.BIN64 => 8,
-                    CoreType.UBIN8 => 1,
-                    CoreType.UBIN16 => 2,
-                    CoreType.UBIN32 => 4,
-                    CoreType.UBIN64 => 8,
-                    CoreType.BIN => (Precision + 7) / 8,
-                    CoreType.UBIN => (Precision + 7) / 8
+                    DataType.BIN8 => 1,
+                    DataType.BIN16 => 2,
+                    DataType.BIN32 => 4,
+                    DataType.BIN64 => 8,
+                    DataType.UBIN8 => 1,
+                    DataType.UBIN16 => 2,
+                    DataType.UBIN32 => 4,
+                    DataType.UBIN64 => 8,
+                    DataType.BIN => (Precision + 7) / 8,
+                    DataType.UBIN => (Precision + 7) / 8
                 };
             }
 
             return 0;
         }
-
-        private bool IsBinaryType(CoreType type)
+        private bool IsBinaryType(DataType type)
         {
             switch (type)
             {
-                case CoreType.BIN:
-                case CoreType.BIN8:
-                case CoreType.BIN16:
-                case CoreType.BIN32:
-                case CoreType.BIN64:
-                case CoreType.UBIN:
-                case CoreType.UBIN8:
-                case CoreType.UBIN16:
-                case CoreType.UBIN32:
-                case CoreType.UBIN64:
+                case DataType.BIN:
+                case DataType.BIN8:
+                case DataType.BIN16:
+                case DataType.BIN32:
+                case DataType.BIN64:
+                case DataType.UBIN:
+                case DataType.UBIN8:
+                case DataType.UBIN16:
+                case DataType.UBIN32:
+                case DataType.UBIN64:
                     return true;
                 default:
                     return false;
 
             }
         }
-
     }
 }

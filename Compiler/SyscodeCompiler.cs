@@ -321,7 +321,7 @@ namespace Syscode
 
                 case Procedure proc:
                     {
-                        Console.WriteLine($"{LineDepth(depth, proc)} {proc.GetType().Name} '{proc.Spelling}'");
+                        Console.WriteLine($"{LineDepth(depth, proc)} {proc.GetType().Name} '{proc.Spelling}' Main = {proc.Main}");
 
                         PrintSymbols(proc.Symbols, depth, proc);
 
@@ -391,7 +391,19 @@ namespace Syscode
             {
                 if (symbol.IsntStructure)
                 {
-                    Console.WriteLine ($"{LineDepth(depth, symbol.Declaration)}  SYMBOL: '{symbol.ToString()}' {symbol.CoreType} ({symbol.Precision},{symbol.Scale}) BYTES={symbol.Bytes} ALIGN={symbol.Alignment} FIXED={symbol.ConstantSize} ARRAY={symbol.Declaration.IsArray}");
+                    StringBuilder builder = new StringBuilder();
+
+                    builder.Append($"{LineDepth(depth, symbol.Declaration)}  ");
+                    builder.Append($"SYMBOL: '{symbol.ToString()}'");
+                    builder.Append($", TYPE: {symbol.CoreType}");
+                    builder.Append($"({symbol.Precision},{symbol.Scale})");
+                    builder.Append($", BYTES: {symbol.Bytes}");
+                    builder.Append($", ALIGN: {symbol.Alignment}");
+                    builder.Append($", IS FIXED SIZE: {symbol.ConstantSize}");
+                    builder.Append($", IS ARRAY: {symbol.Declaration.IsArray}");
+                    builder.Append($", CLASS: {symbol.StorageClass}");
+                    builder.Append($", SCOPE: {symbol.StorageScope}");
+                    Console.WriteLine( builder.ToString() );
                 }
                 else
                     Console.WriteLine($"{LineDepth(depth, symbol.Declaration)}  SYMBOL: '{symbol.ToString()}' STRUCT");

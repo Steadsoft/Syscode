@@ -16,10 +16,10 @@ dcl var12 as core_layout
 
 //use syscode.io
 
-proc calc_demo 
+proc calc_demo options (main)
 
-   dcl a bin16 aligned(1)
-   dcl b bin16
+   dcl a bin16 aligned(1) static ext
+   dcl b bin16 static aligned(4)
    dcl c bin16
    
    a = 25

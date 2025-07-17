@@ -8,7 +8,9 @@ namespace Syscode
     {
         public string TypeName;
         public string As;
-        public CoreType CoreType;
+        public DataType CoreType;
+        private StorageClass storageClass = StorageClass.Unspecified;
+        private StorageScope storageScope = StorageScope.Unspecified;
         private List<BoundsPair> bounds = new();
         private string spelling;
         private StructBody structBody;
@@ -24,7 +26,7 @@ namespace Syscode
             {
                 structBody = value;
                 TypeName = "structure"; // not possible in grammar but helps by avoiding null typename
-                CoreType = CoreType.STRUCT;
+                CoreType = DataType.STRUCT;
             }
         }
         public bool IsArray { get => Bounds.Any(); }
@@ -62,6 +64,8 @@ namespace Syscode
         }
 
         public int Alignment { get => alignment; internal set => alignment = value; }
+        public StorageClass StorageClass { get => storageClass; set => storageClass = value; }
+        public StorageScope StorageScope { get => storageScope; set => storageScope = value; }
 
         public Declare(DeclareContext context) : base(context)
         {
@@ -74,16 +78,16 @@ namespace Syscode
             return $"dcl {Spelling} {TypeName}"; 
         }
 
-        public static CoreType GetCoreType(TypeSpecifierContext context)
+        public static DataType GetCoreType(TypeSpecifierContext context)
         {
-            if (context.Fix != null) return (CoreType)(context.Fix.Typename.Type);
-            if (context.Bit != null) return (CoreType)(context.Bit.Typename.Type);
-            if (context.Str != null) return (CoreType)(context.Str.Typename.Type);
-            if (context.Ent != null) return (CoreType)(context.Ent.Typename.Type);
-            if (context.Lab != null) return (CoreType)(context.Lab.Typename.Type);
-            if (context.Ptr != null) return (CoreType)(context.Ptr.Typename.Type);
+            if (context.Fix != null) return (DataType)(context.Fix.Typename.Type);
+            if (context.Bit != null) return (DataType)(context.Bit.Typename.Type);
+            if (context.Str != null) return (DataType)(context.Str.Typename.Type);
+            if (context.Ent != null) return (DataType)(context.Ent.Typename.Type);
+            if (context.Lab != null) return (DataType)(context.Lab.Typename.Type);
+            if (context.Ptr != null) return (DataType)(context.Ptr.Typename.Type);
 
-            return CoreType.UNDEFINED;
+            return DataType.UNDEFINED;
 
         }
     }

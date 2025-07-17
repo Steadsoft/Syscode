@@ -12,6 +12,7 @@ namespace Syscode
         private List<AstNode> statements = new List<AstNode>();
         private List<Symbol> symbols = new List<Symbol>();
         private IContainer container;
+        private bool main;
         public Procedure(ParserRuleContext context, IContainer Container) : base(context)
         {
             this.Container = Container;
@@ -24,6 +25,7 @@ namespace Syscode
         public string As { get => @as; set => @as = value; }
         public List<string> Parameters { get => parameters; set => parameters = value; }
         public string Spelling { get => spelling; set => spelling = value; }
+        public bool Main { get => main; set => main = value; }
 
         public override string ToString()
         {

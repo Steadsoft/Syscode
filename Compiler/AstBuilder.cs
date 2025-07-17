@@ -181,6 +181,8 @@ namespace Syscode
 
         private Expression FoldConstantExpression(Expression expr)
         {
+            // TODO: This is fragile just now, we must validate operand types, we cannot assume the expression is valid, only valid syntactically.
+            // The expression might need implicit conversions inserting and so on.
 
             if (expr.Type == ExpressionType.Literal)
                 return expr;
@@ -243,8 +245,6 @@ namespace Syscode
                                 result.Type = ExpressionType.Literal;
                                 return result;
                             }
-
-
                     }
                 }
             }
@@ -376,7 +376,7 @@ namespace Syscode
                 dcl.TypeName = context.GetLabelText(nameof(DeclareContext.Type));
             }
 
-            var attribs = context.GetDerivedNodes<MemberAttributesContext>();
+            var attribs = context.GetDerivedNodes<AttributesContext>();
 
             foreach (var attrib in attribs)
             {
@@ -417,6 +417,22 @@ namespace Syscode
                             dcl.Attributes.Add(new External(attrib));
                             break;
                         }
+                    case (AttribInternalContext):
+                        {
+                            dcl.Attributes.Add(new Internal(attrib));
+                            break;
+                        }
+                    case (AttribBasedContext):
+                        {
+                            dcl.Attributes.Add(new Based(attrib));
+                            break;
+                        }
+                    case (AttribStackContext):
+                        {
+                            dcl.Attributes.Add(new Stack(attrib));
+                            break;
+                        }
+
                     default:
                         throw new InvalidOperationException();
                 }
@@ -499,6 +515,12 @@ namespace Syscode
             if (context.Params != null)
             {
                 node.Parameters = context.Params._Params.Select(i => i.GetText()).ToList();
+            }
+
+            if (context.Options != null)
+            {
+                if (context.Options.Main != null)
+                    node.Main = true;
             }
 
             node.Statements = [.. GetStatements(context).Select(s => Generate(s))];

@@ -41,7 +41,7 @@ statement:  preamble?  (call | return | label | /* scope | */  enum | if | decla
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
-structField: Spelling=identifier dimensionSuffix? Type=typeSpecifier memberAttributes? statementSeparator;
+structField: Spelling=identifier dimensionSuffix? Type=typeSpecifier attributes* statementSeparator;
 
 label: AT Spelling=identifier Subscript=labelSubscript? statementSeparator;
 labelSubscript: LPAR Literal=decLiteral RPAR;
@@ -51,8 +51,10 @@ gotoSubscript: LPAR expression RPAR;
 
 scope:  blockScope; // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
 blockScope: (PACKAGE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
-procedure: PROC emptyLines? Spelling=identifier Params=paramList? statement* emptyLines? END;
-function: FUNC emptyLines? Spelling=identifier Params=paramList? AS Type=returnDescriptor? statement* emptyLines? END;
+procedure: PROC emptyLines? Spelling=identifier Params=paramList? Options=procOptions? statement* emptyLines? END;
+function: FUNC emptyLines? Spelling=identifier Params=paramList? Options=procOptions? AS Type=returnDescriptor? statement* emptyLines? END;
+
+procOptions: OPTIONS LPAR (Main=MAIN)+ RPAR;
 
 enum: ENUM emptyLines? Name=identifier emptyLines? typeSpecifier? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? reference statementSeparator;
@@ -60,7 +62,7 @@ return: (RETURN (emptyLines? expression)?) statementSeparator ; //| (RETURN (emp
 
 declare
     : DCL Struct=structBody
-    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? Type=typeSpecifier memberAttributes* statementSeparator 
+    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? Type=typeSpecifier attributes* statementSeparator 
     ;
 
 type: TYPE Body=structBody ;    
@@ -314,13 +316,15 @@ structAttributes
     | basedAttribute
     ;
 
-memberAttributes
+attributes
     : constAttribute         #AttribConst
     | alignedAttribute       #AttribAligned
     | unalignedAttribute     #AttribUnaligned
     | externalAttribute      #AttribExternal
+    | internalAttribute      #AttribInternal
     | staticAttribute        #AttribStatic
-    | basedAttribute         #AttrBased
+    | basedAttribute         #AttribBased
+    | stackAttribute         #AttribStack
     ;
 
 constAttribute: CONST;
@@ -330,6 +334,8 @@ externalAttribute: EXTERNAL;
 staticAttribute: STATIC;
 basedAttribute: BASED LPAR primitiveExpression RPAR ;
 externAttribute: EXTERNAL;
+internalAttribute: INTERNAL;
+stackAttribute: STACK;
 unitType: UNIT;
 
 
@@ -376,16 +382,20 @@ keyword
     | FUNC
     | GOTO
     | IF
+    | INTERNAL
     | IS
     | LABEL
     | LIT
     | LOOP
+    | MAIN
+    | OPTIONS
     | PACKAGE
     | PATH
     | POINTER
     | PROC
     | RETURN
     //| SCOPE
+    | STACK
     | STATIC
     | STRING
     | STRUCT
@@ -460,16 +470,20 @@ FOREVER:        'forever';
 FUNC:           'func' | 'function';
 GOTO:           'goto';
 IF:             'if';
+INTERNAL:       'internal';
 IS:             'is';
 LABEL:          'label';
 LIT:            'lit' | 'literal';
 LOOP:           'loop';
+MAIN:           'main';
+OPTIONS:        'options';
 PACKAGE:        'package';
 PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROC:           'proc' | 'procedure';
 RETURN:         'return';
 SCOPE:          'scope';
+STACK:          'stack';
 STATIC:         'static';
 STRING:         'string';
 STRUCT:         'struct' | 'structure';

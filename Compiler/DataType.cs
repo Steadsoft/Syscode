@@ -1,6 +1,6 @@
 ﻿namespace Syscode
 {
-    public enum CoreType
+    public enum DataType
     {
         UNDEFINED = 0,
         BIN = SyscodeParser.BIN,

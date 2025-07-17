@@ -27,11 +27,12 @@ dcl struct if
        end
 end
 
-proc main // outermost, therefore has external scope, full name: utilities.main
+proc main options(main) // outermost, therefore has external scope, full name: utilities.main
 
     then = 100 + 75;
 
-    dcl c bin(32) aligned(2 * 23) 
+    dcl c bin(32) aligned(2 * 23) static internal external
+    dcl d bin(32) static aligned(2 * 23) external internal
 
     dcl structure while
         struct inner1
@@ -44,7 +45,7 @@ proc main // outermost, therefore has external scope, full name: utilities.main
         end
     end
 
-    dcl a bin(10,4)
+    dcl a bin(10,4) static based (p)
 
     dcl large(10 + a) ubin(71)
 

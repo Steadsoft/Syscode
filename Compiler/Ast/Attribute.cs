@@ -42,4 +42,33 @@ namespace Syscode
         {
         }
     }
+    public class Internal : Attribute
+    {
+        public Internal(ParserRuleContext context) : base(context)
+        {
+        }
+    }
+
+    public class Stack : Attribute
+    {
+        public Stack(ParserRuleContext context) : base(context)
+        {
+        }
+    }
+
+    public class Based : Attribute
+    {
+        public Based(ParserRuleContext context) : base(context)
+        {
+        }
+    }
+
+    public class Defined : Attribute
+    {
+        public Defined(ParserRuleContext context) : base(context)
+        {
+        }
+    }
+
+
 }

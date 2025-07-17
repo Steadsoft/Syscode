@@ -7,7 +7,7 @@ namespace Syscode
         private bool invalid = true;
         private Declare declaration;
         private Procedure procedure;
-        private CoreType coreType;
+        private DataType dataType;
         private int precision;
         private int scale;
         private bool signed;
@@ -16,11 +16,13 @@ namespace Syscode
         public Symbol(Declare declaration) 
         {
             this.Declaration = declaration;
+            this.dataType = declaration.CoreType;
         }
 
         public Symbol(Procedure procedure)
         {
             this.procedure = procedure;
+            this.dataType = DataType.ENTRY;
         }
 
         public StructBody StructBody { get => Declaration?.StructBody; }
@@ -32,7 +34,7 @@ namespace Syscode
         public bool ConstantSize => declaration.ConstantSize;
         public bool IsStructure { get => Declaration?.StructBody != null; }
         public bool IsntStructure { get => !IsStructure; }
-        public CoreType CoreType { get => coreType; internal set => coreType = value; }
+        public DataType CoreType { get => dataType;  }
         public int Precision { get => precision; internal set => precision = value; }
         public bool Signed { get => signed; internal set => signed = value; }
         public int Scale { get => scale; internal set => scale = value; }
@@ -47,10 +49,28 @@ namespace Syscode
         /// </remarks>
         public int Alignment { get => declaration.Alignment; }
         public Declare Declaration { get => declaration; set => declaration = value; }
+        public StorageClass StorageClass { get => declaration.StorageClass;  }
+        public StorageScope StorageScope { get => declaration.StorageScope; }
 
         public override string ToString()
         {
             return Spelling;
         }
+    }
+
+    public enum StorageClass
+    {
+        Unspecified,
+        Static,
+        Stack,
+        Based,
+        Defined
+    }
+
+    public enum StorageScope
+    {
+        Unspecified,
+        Internal,
+        External
     }
 }
