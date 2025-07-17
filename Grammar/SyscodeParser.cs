@@ -40,18 +40,18 @@ public partial class SyscodeParser : Parser {
 		BIN_LITERAL=7, INTEGER=8, ALIGNED=9, AS=10, BASED=11, BIN16=12, BIN32=13, 
 		BIN64=14, BIN8=15, BIN=16, BIT=17, BY=18, CALL=19, CONST=20, DCL=21, DEC=22, 
 		DEF=23, DO=24, ELIF=25, ELSE=26, END=27, ENTRY=28, ENUM=29, EXTERNAL=30, 
-		FOR=31, FOREVER=32, FUNC=33, GOTO=34, IF=35, INTERNAL=36, IS=37, LABEL=38, 
-		LIT=39, LOOP=40, MAIN=41, OPTIONS=42, PACKAGE=43, PATH=44, POINTER=45, 
-		PROC=46, RETURN=47, SCOPE=48, STACK=49, STATIC=50, STRING=51, STRUCT=52, 
-		THEN=53, TO=54, TYPE=55, UBIN16=56, UBIN32=57, UBIN64=58, UBIN8=59, UBIN=60, 
-		UDEC=61, UNALIGNED=62, UNIT=63, UNTIL=64, VARIABLE=65, WHILE=66, COLON=67, 
-		CONC=68, LOGAND=69, LOGOR=70, AND=71, OR=72, NAND=73, NOR=74, XOR=75, 
-		XNOR=76, NOT=77, GT=78, LT=79, GTE=80, LTE=81, NGT=82, NLT=83, NE=84, 
-		POWER=85, STR_LITERAL=86, PLUS=87, MINUS=88, TIMES=89, LCOM=90, DIVIDE=91, 
-		PCNT=92, QUOTE=93, REDAND=94, REDOR=95, REDXOR=96, L_LOG_SHIFT=97, R_LOG_SHIFT=98, 
-		R_ART_SHIFT=99, L_ROTATE=100, R_ROTATE=101, EQUALS=102, ASSIGN=103, COMPASSIGN=104, 
-		DOT=105, AT=106, SEMICOLON=107, COMMA=108, LPAR=109, RPAR=110, RARROW=111, 
-		IDENTIFIER=112, CUSTOM_LITERAL=113, NEWLINE=114, WS=115;
+		FOR=31, FOREVER=32, FUNC=33, GOTO=34, IF=35, INIT=36, INTERNAL=37, IS=38, 
+		LABEL=39, LIT=40, LOOP=41, MAIN=42, OPTIONS=43, PACKAGE=44, PATH=45, POINTER=46, 
+		PROC=47, RETURN=48, SCOPE=49, STACK=50, STATIC=51, STRING=52, STRUCT=53, 
+		THEN=54, TO=55, TYPE=56, UBIN16=57, UBIN32=58, UBIN64=59, UBIN8=60, UBIN=61, 
+		UDEC=62, UNALIGNED=63, UNIT=64, UNTIL=65, VARIABLE=66, WHILE=67, COLON=68, 
+		CONC=69, LOGAND=70, LOGOR=71, AND=72, OR=73, NAND=74, NOR=75, XOR=76, 
+		XNOR=77, NOT=78, GT=79, LT=80, GTE=81, LTE=82, NGT=83, NLT=84, NE=85, 
+		POWER=86, STR_LITERAL=87, PLUS=88, MINUS=89, TIMES=90, LCOM=91, DIVIDE=92, 
+		PCNT=93, QUOTE=94, REDAND=95, REDOR=96, REDXOR=97, L_LOG_SHIFT=98, R_LOG_SHIFT=99, 
+		R_ART_SHIFT=100, L_ROTATE=101, R_ROTATE=102, EQUALS=103, ASSIGN=104, COMPASSIGN=105, 
+		DOT=106, AT=107, SEMICOLON=108, COMMA=109, LPAR=110, RPAR=111, RARROW=112, 
+		IDENTIFIER=113, CUSTOM_LITERAL=114, NEWLINE=115, WS=116;
 	public const int
 		RULE_preamble = 0, RULE_statementSeparator = 1, RULE_emptyLines = 2, RULE_compilation = 3, 
 		RULE_statement = 4, RULE_structBody = 5, RULE_structField = 6, RULE_label = 7, 
@@ -78,9 +78,9 @@ public partial class SyscodeParser : Parser {
 		RULE_paramList = 81, RULE_constArrayList = 82, RULE_enumMembers = 83, 
 		RULE_enumMember = 84, RULE_identifier = 85, RULE_varying = 86, RULE_structAttributes = 87, 
 		RULE_attributes = 88, RULE_constAttribute = 89, RULE_alignedAttribute = 90, 
-		RULE_unalignedAttribute = 91, RULE_externalAttribute = 92, RULE_staticAttribute = 93, 
-		RULE_basedAttribute = 94, RULE_externAttribute = 95, RULE_internalAttribute = 96, 
-		RULE_stackAttribute = 97, RULE_unitType = 98, RULE_entryArgTypes = 99, 
+		RULE_unalignedAttribute = 91, RULE_externalAttribute = 92, RULE_internalAttribute = 93, 
+		RULE_staticAttribute = 94, RULE_basedAttribute = 95, RULE_stackAttribute = 96, 
+		RULE_initAttribute = 97, RULE_unitType = 98, RULE_entryArgTypes = 99, 
 		RULE_returnDescriptor = 100, RULE_memberSeparator = 101, RULE_endOfFile = 102, 
 		RULE_keyword = 103;
 	public static readonly string[] ruleNames = {
@@ -101,8 +101,8 @@ public partial class SyscodeParser : Parser {
 		"prefixOperator", "qualifiedName", "paramList", "constArrayList", "enumMembers", 
 		"enumMember", "identifier", "varying", "structAttributes", "attributes", 
 		"constAttribute", "alignedAttribute", "unalignedAttribute", "externalAttribute", 
-		"staticAttribute", "basedAttribute", "externAttribute", "internalAttribute", 
-		"stackAttribute", "unitType", "entryArgTypes", "returnDescriptor", "memberSeparator", 
+		"internalAttribute", "staticAttribute", "basedAttribute", "stackAttribute", 
+		"initAttribute", "unitType", "entryArgTypes", "returnDescriptor", "memberSeparator", 
 		"endOfFile", "keyword"
 	};
 
@@ -111,29 +111,30 @@ public partial class SyscodeParser : Parser {
 		"'based'", "'bin16'", "'bin32'", "'bin64'", "'bin8'", "'bin'", "'bit'", 
 		"'by'", "'call'", "'const'", "'dcl'", "'dec'", "'def'", "'do'", "'elif'", 
 		"'else'", "'end'", "'entry'", "'enum'", null, "'for'", "'forever'", null, 
-		"'goto'", "'if'", "'internal'", "'is'", "'label'", null, "'loop'", "'main'", 
-		"'options'", "'package'", "'path'", null, null, "'return'", "'scope'", 
-		"'stack'", "'static'", "'string'", null, "'then'", "'to'", "'type'", "'ubin16'", 
-		"'ubin32'", "'ubin64'", "'ubin8'", "'ubin'", "'udec'", "'unaligned'", 
-		"'unit'", "'until'", null, "'while'", "':'", "'++'", "'&&'", "'||'", "'&'", 
-		"'|'", "'~&'", "'~|'", null, null, "'~'", "'>'", "'<'", null, null, "'~>'", 
-		"'~<'", null, null, null, "'+'", "'-'", "'*'", "'//'", null, "'%'", "'\"'", 
-		"'<&'", "'<|'", "'<^'", "'<<'", "'>>'", "'>>>'", null, null, "'='", "'<-'", 
-		null, "'.'", "'@'", "';'", "','", "'('", "')'", "'->'"
+		"'goto'", "'if'", "'init'", "'internal'", "'is'", "'label'", null, "'loop'", 
+		"'main'", "'options'", "'package'", "'path'", null, null, "'return'", 
+		"'scope'", "'stack'", "'static'", "'string'", null, "'then'", "'to'", 
+		"'type'", "'ubin16'", "'ubin32'", "'ubin64'", "'ubin8'", "'ubin'", "'udec'", 
+		"'unaligned'", "'unit'", "'until'", null, "'while'", "':'", "'++'", "'&&'", 
+		"'||'", "'&'", "'|'", "'~&'", "'~|'", null, null, "'~'", "'>'", "'<'", 
+		null, null, "'~>'", "'~<'", null, null, null, "'+'", "'-'", "'*'", "'//'", 
+		null, "'%'", "'\"'", "'<&'", "'<|'", "'<^'", "'<<'", "'>>'", "'>>>'", 
+		null, null, "'='", "'<-'", null, "'.'", "'@'", "';'", "','", "'('", "')'", 
+		"'->'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "COMMENT", "LINECOM", "HYPERCOMMENT", "HEX_LITERAL", "OCT_LITERAL", 
 		"DEC_LITERAL", "BIN_LITERAL", "INTEGER", "ALIGNED", "AS", "BASED", "BIN16", 
 		"BIN32", "BIN64", "BIN8", "BIN", "BIT", "BY", "CALL", "CONST", "DCL", 
 		"DEC", "DEF", "DO", "ELIF", "ELSE", "END", "ENTRY", "ENUM", "EXTERNAL", 
-		"FOR", "FOREVER", "FUNC", "GOTO", "IF", "INTERNAL", "IS", "LABEL", "LIT", 
-		"LOOP", "MAIN", "OPTIONS", "PACKAGE", "PATH", "POINTER", "PROC", "RETURN", 
-		"SCOPE", "STACK", "STATIC", "STRING", "STRUCT", "THEN", "TO", "TYPE", 
-		"UBIN16", "UBIN32", "UBIN64", "UBIN8", "UBIN", "UDEC", "UNALIGNED", "UNIT", 
-		"UNTIL", "VARIABLE", "WHILE", "COLON", "CONC", "LOGAND", "LOGOR", "AND", 
-		"OR", "NAND", "NOR", "XOR", "XNOR", "NOT", "GT", "LT", "GTE", "LTE", "NGT", 
-		"NLT", "NE", "POWER", "STR_LITERAL", "PLUS", "MINUS", "TIMES", "LCOM", 
-		"DIVIDE", "PCNT", "QUOTE", "REDAND", "REDOR", "REDXOR", "L_LOG_SHIFT", 
+		"FOR", "FOREVER", "FUNC", "GOTO", "IF", "INIT", "INTERNAL", "IS", "LABEL", 
+		"LIT", "LOOP", "MAIN", "OPTIONS", "PACKAGE", "PATH", "POINTER", "PROC", 
+		"RETURN", "SCOPE", "STACK", "STATIC", "STRING", "STRUCT", "THEN", "TO", 
+		"TYPE", "UBIN16", "UBIN32", "UBIN64", "UBIN8", "UBIN", "UDEC", "UNALIGNED", 
+		"UNIT", "UNTIL", "VARIABLE", "WHILE", "COLON", "CONC", "LOGAND", "LOGOR", 
+		"AND", "OR", "NAND", "NOR", "XOR", "XNOR", "NOT", "GT", "LT", "GTE", "LTE", 
+		"NGT", "NLT", "NE", "POWER", "STR_LITERAL", "PLUS", "MINUS", "TIMES", 
+		"LCOM", "DIVIDE", "PCNT", "QUOTE", "REDAND", "REDOR", "REDXOR", "L_LOG_SHIFT", 
 		"R_LOG_SHIFT", "R_ART_SHIFT", "L_ROTATE", "R_ROTATE", "EQUALS", "ASSIGN", 
 		"COMPASSIGN", "DOT", "AT", "SEMICOLON", "COMMA", "LPAR", "RPAR", "RARROW", 
 		"IDENTIFIER", "CUSTOM_LITERAL", "NEWLINE", "WS"
@@ -612,7 +613,7 @@ public partial class SyscodeParser : Parser {
 			State = 252;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4611686018427390464L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -9223372036854773248L) != 0)) {
 				{
 				State = 251;
 				structAttributes();
@@ -739,7 +740,7 @@ public partial class SyscodeParser : Parser {
 			State = 280;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4613374938081921536L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & -9219994129901024768L) != 0)) {
 				{
 				{
 				State = 277;
@@ -1452,7 +1453,7 @@ public partial class SyscodeParser : Parser {
 			State = 391;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4541915683726029824L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 9083831367179170816L) != 0)) {
 				{
 				State = 390;
 				typeSpecifier();
@@ -1728,7 +1729,7 @@ public partial class SyscodeParser : Parser {
 				State = 439;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4613374938081921536L) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & -9219994129901024768L) != 0)) {
 					{
 					{
 					State = 436;
@@ -3010,7 +3011,7 @@ public partial class SyscodeParser : Parser {
 				State = 622;
 				_localctx.Typename = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 1080863910568980480L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 2161727821137899520L) != 0)) ) {
 					_localctx.Typename = ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -3030,7 +3031,7 @@ public partial class SyscodeParser : Parser {
 				State = 623;
 				_localctx.Typename = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 3458764513824800768L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 6917529027645341696L) != 0)) ) {
 					_localctx.Typename = ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -4108,7 +4109,7 @@ public partial class SyscodeParser : Parser {
 			State = 774;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -281474976710672L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 879616847781895L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -562949953421328L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 1759233695563791L) != 0)) {
 				{
 				State = 773;
 				subscriptCommalist();
@@ -4320,6 +4321,7 @@ public partial class SyscodeParser : Parser {
 			case FUNC:
 			case GOTO:
 			case IF:
+			case INIT:
 			case INTERNAL:
 			case IS:
 			case LABEL:
@@ -4864,6 +4866,7 @@ public partial class SyscodeParser : Parser {
 			case FUNC:
 			case GOTO:
 			case IF:
+			case INIT:
 			case INTERNAL:
 			case IS:
 			case LABEL:
@@ -5377,6 +5380,7 @@ public partial class SyscodeParser : Parser {
 			case FUNC:
 			case GOTO:
 			case IF:
+			case INIT:
 			case INTERNAL:
 			case IS:
 			case LABEL:
@@ -5731,7 +5735,7 @@ public partial class SyscodeParser : Parser {
 			{
 			State = 973;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 97)) & ~0x3f) == 0 && ((1L << (_la - 97)) & 31L) != 0)) ) {
+			if ( !(((((_la - 98)) & ~0x3f) == 0 && ((1L << (_la - 98)) & 31L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -5812,7 +5816,7 @@ public partial class SyscodeParser : Parser {
 			{
 			State = 977;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 89)) & ~0x3f) == 0 && ((1L << (_la - 89)) & 13L) != 0)) ) {
+			if ( !(((((_la - 90)) & ~0x3f) == 0 && ((1L << (_la - 90)) & 13L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -5933,7 +5937,7 @@ public partial class SyscodeParser : Parser {
 			{
 			State = 983;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 72)) & ~0x3f) == 0 && ((1L << (_la - 72)) & 37L) != 0)) ) {
+			if ( !(((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 37L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -5979,7 +5983,7 @@ public partial class SyscodeParser : Parser {
 			{
 			State = 985;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 16777343L) != 0)) ) {
+			if ( !(((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & 16777343L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -6023,7 +6027,7 @@ public partial class SyscodeParser : Parser {
 			{
 			State = 987;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 77)) & ~0x3f) == 0 && ((1L << (_la - 77)) & 920577L) != 0)) ) {
+			if ( !(((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & 920577L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -6442,6 +6446,7 @@ public partial class SyscodeParser : Parser {
 			case FUNC:
 			case GOTO:
 			case IF:
+			case INIT:
 			case INTERNAL:
 			case IS:
 			case LABEL:
@@ -6600,6 +6605,12 @@ public partial class SyscodeParser : Parser {
 			base.CopyFrom(context);
 		}
 	}
+	public partial class AttribInitContext : AttributesContext {
+		[System.Diagnostics.DebuggerNonUserCode] public InitAttributeContext initAttribute() {
+			return GetRuleContext<InitAttributeContext>(0);
+		}
+		public AttribInitContext(AttributesContext context) { CopyFrom(context); }
+	}
 	public partial class AttribBasedContext : AttributesContext {
 		[System.Diagnostics.DebuggerNonUserCode] public BasedAttributeContext basedAttribute() {
 			return GetRuleContext<BasedAttributeContext>(0);
@@ -6654,7 +6665,7 @@ public partial class SyscodeParser : Parser {
 		AttributesContext _localctx = new AttributesContext(Context, State);
 		EnterRule(_localctx, 176, RULE_attributes);
 		try {
-			State = 1066;
+			State = 1067;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case CONST:
@@ -6721,6 +6732,14 @@ public partial class SyscodeParser : Parser {
 				stackAttribute();
 				}
 				break;
+			case INIT:
+				_localctx = new AttribInitContext(_localctx);
+				EnterOuterAlt(_localctx, 9);
+				{
+				State = 1066;
+				initAttribute();
+				}
+				break;
 			default:
 				throw new NoViableAltException(this);
 			}
@@ -6752,7 +6771,7 @@ public partial class SyscodeParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1068;
+			State = 1069;
 			Match(CONST);
 			}
 		}
@@ -6790,18 +6809,18 @@ public partial class SyscodeParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1070;
+			State = 1071;
 			Match(ALIGNED);
-			State = 1075;
+			State = 1076;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==LPAR) {
 				{
-				State = 1071;
-				Match(LPAR);
 				State = 1072;
-				_localctx.Alignment = expression(0);
+				Match(LPAR);
 				State = 1073;
+				_localctx.Alignment = expression(0);
+				State = 1074;
 				Match(RPAR);
 				}
 			}
@@ -6835,7 +6854,7 @@ public partial class SyscodeParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1077;
+			State = 1078;
 			Match(UNALIGNED);
 			}
 		}
@@ -6866,111 +6885,7 @@ public partial class SyscodeParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1079;
-			Match(EXTERNAL);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class StaticAttributeContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STATIC() { return GetToken(SyscodeParser.STATIC, 0); }
-		public StaticAttributeContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_staticAttribute; } }
-	}
-
-	[RuleVersion(0)]
-	public StaticAttributeContext staticAttribute() {
-		StaticAttributeContext _localctx = new StaticAttributeContext(Context, State);
-		EnterRule(_localctx, 186, RULE_staticAttribute);
-		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 1081;
-			Match(STATIC);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class BasedAttributeContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BASED() { return GetToken(SyscodeParser.BASED, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAR() { return GetToken(SyscodeParser.LPAR, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public PrimitiveExpressionContext primitiveExpression() {
-			return GetRuleContext<PrimitiveExpressionContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
-		public BasedAttributeContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_basedAttribute; } }
-	}
-
-	[RuleVersion(0)]
-	public BasedAttributeContext basedAttribute() {
-		BasedAttributeContext _localctx = new BasedAttributeContext(Context, State);
-		EnterRule(_localctx, 188, RULE_basedAttribute);
-		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 1083;
-			Match(BASED);
-			State = 1084;
-			Match(LPAR);
-			State = 1085;
-			primitiveExpression();
-			State = 1086;
-			Match(RPAR);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class ExternAttributeContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EXTERNAL() { return GetToken(SyscodeParser.EXTERNAL, 0); }
-		public ExternAttributeContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_externAttribute; } }
-	}
-
-	[RuleVersion(0)]
-	public ExternAttributeContext externAttribute() {
-		ExternAttributeContext _localctx = new ExternAttributeContext(Context, State);
-		EnterRule(_localctx, 190, RULE_externAttribute);
-		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 1088;
+			State = 1080;
 			Match(EXTERNAL);
 			}
 		}
@@ -6997,12 +6912,95 @@ public partial class SyscodeParser : Parser {
 	[RuleVersion(0)]
 	public InternalAttributeContext internalAttribute() {
 		InternalAttributeContext _localctx = new InternalAttributeContext(Context, State);
-		EnterRule(_localctx, 192, RULE_internalAttribute);
+		EnterRule(_localctx, 186, RULE_internalAttribute);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1090;
+			State = 1082;
 			Match(INTERNAL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class StaticAttributeContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STATIC() { return GetToken(SyscodeParser.STATIC, 0); }
+		public StaticAttributeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_staticAttribute; } }
+	}
+
+	[RuleVersion(0)]
+	public StaticAttributeContext staticAttribute() {
+		StaticAttributeContext _localctx = new StaticAttributeContext(Context, State);
+		EnterRule(_localctx, 188, RULE_staticAttribute);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 1084;
+			Match(STATIC);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class BasedAttributeContext : ParserRuleContext {
+		public ExpressionContext Base;
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BASED() { return GetToken(SyscodeParser.BASED, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAR() { return GetToken(SyscodeParser.LPAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public BasedAttributeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_basedAttribute; } }
+	}
+
+	[RuleVersion(0)]
+	public BasedAttributeContext basedAttribute() {
+		BasedAttributeContext _localctx = new BasedAttributeContext(Context, State);
+		EnterRule(_localctx, 190, RULE_basedAttribute);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 1086;
+			Match(BASED);
+			State = 1091;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==LPAR) {
+				{
+				State = 1087;
+				Match(LPAR);
+				State = 1088;
+				_localctx.Base = expression(0);
+				State = 1089;
+				Match(RPAR);
+				}
+			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -7028,12 +7026,55 @@ public partial class SyscodeParser : Parser {
 	[RuleVersion(0)]
 	public StackAttributeContext stackAttribute() {
 		StackAttributeContext _localctx = new StackAttributeContext(Context, State);
-		EnterRule(_localctx, 194, RULE_stackAttribute);
+		EnterRule(_localctx, 192, RULE_stackAttribute);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1092;
+			State = 1093;
 			Match(STACK);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class InitAttributeContext : ParserRuleContext {
+		public ExpressionContext Value;
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INIT() { return GetToken(SyscodeParser.INIT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAR() { return GetToken(SyscodeParser.LPAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public InitAttributeContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_initAttribute; } }
+	}
+
+	[RuleVersion(0)]
+	public InitAttributeContext initAttribute() {
+		InitAttributeContext _localctx = new InitAttributeContext(Context, State);
+		EnterRule(_localctx, 194, RULE_initAttribute);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 1095;
+			Match(INIT);
+			State = 1096;
+			Match(LPAR);
+			State = 1097;
+			_localctx.Value = expression(0);
+			State = 1098;
+			Match(RPAR);
 			}
 		}
 		catch (RecognitionException re) {
@@ -7063,7 +7104,7 @@ public partial class SyscodeParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1094;
+			State = 1100;
 			Match(UNIT);
 			}
 		}
@@ -7106,27 +7147,27 @@ public partial class SyscodeParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1096;
-			Match(LPAR);
-			State = 1097;
-			typeSpecifier();
 			State = 1102;
+			Match(LPAR);
+			State = 1103;
+			typeSpecifier();
+			State = 1108;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				State = 1098;
+				State = 1104;
 				Match(COMMA);
-				State = 1099;
+				State = 1105;
 				typeSpecifier();
 				}
 				}
-				State = 1104;
+				State = 1110;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 1105;
+			State = 1111;
 			Match(RPAR);
 			}
 		}
@@ -7162,13 +7203,13 @@ public partial class SyscodeParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1107;
+			State = 1113;
 			Match(AS);
-			State = 1108;
+			State = 1114;
 			Match(LPAR);
-			State = 1109;
+			State = 1115;
 			typeSpecifier();
-			State = 1110;
+			State = 1116;
 			Match(RPAR);
 			}
 		}
@@ -7199,7 +7240,7 @@ public partial class SyscodeParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1112;
+			State = 1118;
 			Match(COMMA);
 			}
 		}
@@ -7234,17 +7275,17 @@ public partial class SyscodeParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1115;
+			State = 1121;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==NEWLINE) {
 				{
-				State = 1114;
+				State = 1120;
 				emptyLines();
 				}
 			}
 
-			State = 1117;
+			State = 1123;
 			Match(Eof);
 			}
 		}
@@ -7287,6 +7328,7 @@ public partial class SyscodeParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode FUNC() { return GetToken(SyscodeParser.FUNC, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GOTO() { return GetToken(SyscodeParser.GOTO, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IF() { return GetToken(SyscodeParser.IF, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INIT() { return GetToken(SyscodeParser.INIT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INTERNAL() { return GetToken(SyscodeParser.INTERNAL, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IS() { return GetToken(SyscodeParser.IS, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LABEL() { return GetToken(SyscodeParser.LABEL, 0); }
@@ -7332,9 +7374,9 @@ public partial class SyscodeParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 1119;
+			State = 1125;
 			_la = TokenStream.LA(1);
-			if ( !(((((_la - 9)) & ~0x3f) == 0 && ((1L << (_la - 9)) & 288229826395897855L) != 0)) ) {
+			if ( !(((((_la - 9)) & ~0x3f) == 0 && ((1L << (_la - 9)) & 576459652791795711L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -7385,7 +7427,7 @@ public partial class SyscodeParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,115,1122,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+		4,1,116,1128,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
 		7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
@@ -7470,192 +7512,193 @@ public partial class SyscodeParser : Parser {
 		1,83,1,83,3,83,1033,8,83,5,83,1035,8,83,10,83,12,83,1038,9,83,1,83,3,83,
 		1041,8,83,1,83,3,83,1044,8,83,1,84,1,84,1,85,1,85,3,85,1050,8,85,1,86,
 		1,86,1,87,1,87,1,87,3,87,1057,8,87,1,88,1,88,1,88,1,88,1,88,1,88,1,88,
-		1,88,3,88,1067,8,88,1,89,1,89,1,90,1,90,1,90,1,90,1,90,3,90,1076,8,90,
-		1,91,1,91,1,92,1,92,1,93,1,93,1,94,1,94,1,94,1,94,1,94,1,95,1,95,1,96,
-		1,96,1,97,1,97,1,98,1,98,1,99,1,99,1,99,1,99,5,99,1101,8,99,10,99,12,99,
-		1104,9,99,1,99,1,99,1,100,1,100,1,100,1,100,1,100,1,101,1,101,1,102,3,
-		102,1116,8,102,1,102,1,102,1,103,1,103,1,103,0,2,90,104,104,0,2,4,6,8,
-		10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,
-		58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,
-		104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,
-		140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,
-		176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,0,14,2,
-		0,107,107,114,114,2,1,107,107,114,114,2,0,12,15,56,59,3,0,16,16,22,22,
-		60,61,2,0,102,102,104,104,1,0,97,101,1,0,87,88,2,0,89,89,91,92,2,0,71,
-		71,73,73,1,0,75,76,3,0,72,72,74,74,77,77,2,0,78,84,102,102,3,0,77,77,87,
-		88,94,96,2,0,9,47,49,66,1236,0,209,1,0,0,0,2,213,1,0,0,0,4,216,1,0,0,0,
-		6,223,1,0,0,0,8,229,1,0,0,0,10,246,1,0,0,0,12,272,1,0,0,0,14,285,1,0,0,
-		0,16,292,1,0,0,0,18,296,1,0,0,0,20,300,1,0,0,0,22,304,1,0,0,0,24,306,1,
-		0,0,0,26,325,1,0,0,0,28,347,1,0,0,0,30,373,1,0,0,0,32,382,1,0,0,0,34,403,
-		1,0,0,0,36,410,1,0,0,0,38,444,1,0,0,0,40,446,1,0,0,0,42,449,1,0,0,0,44,
-		459,1,0,0,0,46,461,1,0,0,0,48,503,1,0,0,0,50,519,1,0,0,0,52,535,1,0,0,
-		0,54,548,1,0,0,0,56,551,1,0,0,0,58,554,1,0,0,0,60,577,1,0,0,0,62,592,1,
-		0,0,0,64,595,1,0,0,0,66,606,1,0,0,0,68,617,1,0,0,0,70,619,1,0,0,0,72,627,
-		1,0,0,0,74,629,1,0,0,0,76,634,1,0,0,0,78,641,1,0,0,0,80,699,1,0,0,0,82,
-		701,1,0,0,0,84,726,1,0,0,0,86,728,1,0,0,0,88,733,1,0,0,0,90,735,1,0,0,
-		0,92,752,1,0,0,0,94,757,1,0,0,0,96,762,1,0,0,0,98,766,1,0,0,0,100,772,
-		1,0,0,0,102,778,1,0,0,0,104,790,1,0,0,0,106,911,1,0,0,0,108,913,1,0,0,
-		0,110,919,1,0,0,0,112,921,1,0,0,0,114,923,1,0,0,0,116,925,1,0,0,0,118,
-		929,1,0,0,0,120,931,1,0,0,0,122,933,1,0,0,0,124,937,1,0,0,0,126,940,1,
-		0,0,0,128,951,1,0,0,0,130,953,1,0,0,0,132,961,1,0,0,0,134,963,1,0,0,0,
-		136,965,1,0,0,0,138,967,1,0,0,0,140,969,1,0,0,0,142,971,1,0,0,0,144,973,
-		1,0,0,0,146,975,1,0,0,0,148,977,1,0,0,0,150,979,1,0,0,0,152,981,1,0,0,
-		0,154,983,1,0,0,0,156,985,1,0,0,0,158,987,1,0,0,0,160,989,1,0,0,0,162,
-		997,1,0,0,0,164,1008,1,0,0,0,166,1020,1,0,0,0,168,1045,1,0,0,0,170,1049,
-		1,0,0,0,172,1051,1,0,0,0,174,1056,1,0,0,0,176,1066,1,0,0,0,178,1068,1,
-		0,0,0,180,1070,1,0,0,0,182,1077,1,0,0,0,184,1079,1,0,0,0,186,1081,1,0,
-		0,0,188,1083,1,0,0,0,190,1088,1,0,0,0,192,1090,1,0,0,0,194,1092,1,0,0,
-		0,196,1094,1,0,0,0,198,1096,1,0,0,0,200,1107,1,0,0,0,202,1112,1,0,0,0,
-		204,1115,1,0,0,0,206,1119,1,0,0,0,208,210,7,0,0,0,209,208,1,0,0,0,210,
-		211,1,0,0,0,211,209,1,0,0,0,211,212,1,0,0,0,212,1,1,0,0,0,213,214,7,1,
-		0,0,214,3,1,0,0,0,215,217,5,114,0,0,216,215,1,0,0,0,217,218,1,0,0,0,218,
-		216,1,0,0,0,218,219,1,0,0,0,219,5,1,0,0,0,220,222,3,8,4,0,221,220,1,0,
-		0,0,222,225,1,0,0,0,223,221,1,0,0,0,223,224,1,0,0,0,224,226,1,0,0,0,225,
-		223,1,0,0,0,226,227,3,204,102,0,227,7,1,0,0,0,228,230,3,0,0,0,229,228,
-		1,0,0,0,229,230,1,0,0,0,230,244,1,0,0,0,231,245,3,34,17,0,232,245,3,36,
-		18,0,233,245,3,14,7,0,234,245,3,32,16,0,235,245,3,58,29,0,236,245,3,38,
-		19,0,237,245,3,40,20,0,238,245,3,42,21,0,239,245,3,26,13,0,240,245,3,28,
-		14,0,241,245,3,44,22,0,242,245,3,18,9,0,243,245,3,86,43,0,244,231,1,0,
-		0,0,244,232,1,0,0,0,244,233,1,0,0,0,244,234,1,0,0,0,244,235,1,0,0,0,244,
-		236,1,0,0,0,244,237,1,0,0,0,244,238,1,0,0,0,244,239,1,0,0,0,244,240,1,
-		0,0,0,244,241,1,0,0,0,244,242,1,0,0,0,244,243,1,0,0,0,245,9,1,0,0,0,246,
-		247,5,52,0,0,247,249,3,170,85,0,248,250,3,126,63,0,249,248,1,0,0,0,249,
-		250,1,0,0,0,250,252,1,0,0,0,251,253,3,174,87,0,252,251,1,0,0,0,252,253,
-		1,0,0,0,253,254,1,0,0,0,254,256,3,2,1,0,255,257,3,4,2,0,256,255,1,0,0,
-		0,256,257,1,0,0,0,257,267,1,0,0,0,258,261,3,12,6,0,259,261,3,10,5,0,260,
-		258,1,0,0,0,260,259,1,0,0,0,261,263,1,0,0,0,262,264,3,4,2,0,263,262,1,
-		0,0,0,263,264,1,0,0,0,264,266,1,0,0,0,265,260,1,0,0,0,266,269,1,0,0,0,
-		267,265,1,0,0,0,267,268,1,0,0,0,268,270,1,0,0,0,269,267,1,0,0,0,270,271,
-		5,27,0,0,271,11,1,0,0,0,272,274,3,170,85,0,273,275,3,126,63,0,274,273,
-		1,0,0,0,274,275,1,0,0,0,275,276,1,0,0,0,276,280,3,68,34,0,277,279,3,176,
-		88,0,278,277,1,0,0,0,279,282,1,0,0,0,280,278,1,0,0,0,280,281,1,0,0,0,281,
-		283,1,0,0,0,282,280,1,0,0,0,283,284,3,2,1,0,284,13,1,0,0,0,285,286,5,106,
-		0,0,286,288,3,170,85,0,287,289,3,16,8,0,288,287,1,0,0,0,288,289,1,0,0,
-		0,289,290,1,0,0,0,290,291,3,2,1,0,291,15,1,0,0,0,292,293,5,109,0,0,293,
-		294,3,118,59,0,294,295,5,110,0,0,295,17,1,0,0,0,296,297,5,34,0,0,297,298,
-		3,90,45,0,298,299,3,2,1,0,299,19,1,0,0,0,300,301,5,109,0,0,301,302,3,104,
-		52,0,302,303,5,110,0,0,303,21,1,0,0,0,304,305,3,24,12,0,305,23,1,0,0,0,
-		306,308,5,43,0,0,307,309,3,4,2,0,308,307,1,0,0,0,308,309,1,0,0,0,309,310,
-		1,0,0,0,310,312,3,160,80,0,311,313,3,4,2,0,312,311,1,0,0,0,312,313,1,0,
-		0,0,313,317,1,0,0,0,314,316,3,8,4,0,315,314,1,0,0,0,316,319,1,0,0,0,317,
-		315,1,0,0,0,317,318,1,0,0,0,318,321,1,0,0,0,319,317,1,0,0,0,320,322,3,
-		4,2,0,321,320,1,0,0,0,321,322,1,0,0,0,322,323,1,0,0,0,323,324,5,27,0,0,
-		324,25,1,0,0,0,325,327,5,46,0,0,326,328,3,4,2,0,327,326,1,0,0,0,327,328,
-		1,0,0,0,328,329,1,0,0,0,329,331,3,170,85,0,330,332,3,162,81,0,331,330,
-		1,0,0,0,331,332,1,0,0,0,332,334,1,0,0,0,333,335,3,30,15,0,334,333,1,0,
-		0,0,334,335,1,0,0,0,335,339,1,0,0,0,336,338,3,8,4,0,337,336,1,0,0,0,338,
-		341,1,0,0,0,339,337,1,0,0,0,339,340,1,0,0,0,340,343,1,0,0,0,341,339,1,
-		0,0,0,342,344,3,4,2,0,343,342,1,0,0,0,343,344,1,0,0,0,344,345,1,0,0,0,
-		345,346,5,27,0,0,346,27,1,0,0,0,347,349,5,33,0,0,348,350,3,4,2,0,349,348,
-		1,0,0,0,349,350,1,0,0,0,350,351,1,0,0,0,351,353,3,170,85,0,352,354,3,162,
-		81,0,353,352,1,0,0,0,353,354,1,0,0,0,354,356,1,0,0,0,355,357,3,30,15,0,
-		356,355,1,0,0,0,356,357,1,0,0,0,357,358,1,0,0,0,358,360,5,10,0,0,359,361,
-		3,200,100,0,360,359,1,0,0,0,360,361,1,0,0,0,361,365,1,0,0,0,362,364,3,
-		8,4,0,363,362,1,0,0,0,364,367,1,0,0,0,365,363,1,0,0,0,365,366,1,0,0,0,
-		366,369,1,0,0,0,367,365,1,0,0,0,368,370,3,4,2,0,369,368,1,0,0,0,369,370,
-		1,0,0,0,370,371,1,0,0,0,371,372,5,27,0,0,372,29,1,0,0,0,373,374,5,42,0,
-		0,374,376,5,109,0,0,375,377,5,41,0,0,376,375,1,0,0,0,377,378,1,0,0,0,378,
-		376,1,0,0,0,378,379,1,0,0,0,379,380,1,0,0,0,380,381,5,110,0,0,381,31,1,
-		0,0,0,382,384,5,29,0,0,383,385,3,4,2,0,384,383,1,0,0,0,384,385,1,0,0,0,
-		385,386,1,0,0,0,386,388,3,170,85,0,387,389,3,4,2,0,388,387,1,0,0,0,388,
-		389,1,0,0,0,389,391,1,0,0,0,390,392,3,68,34,0,391,390,1,0,0,0,391,392,
-		1,0,0,0,392,393,1,0,0,0,393,395,3,202,101,0,394,396,3,4,2,0,395,394,1,
-		0,0,0,395,396,1,0,0,0,396,397,1,0,0,0,397,399,3,166,83,0,398,400,3,4,2,
-		0,399,398,1,0,0,0,399,400,1,0,0,0,400,401,1,0,0,0,401,402,5,27,0,0,402,
-		33,1,0,0,0,403,405,5,19,0,0,404,406,3,4,2,0,405,404,1,0,0,0,405,406,1,
-		0,0,0,406,407,1,0,0,0,407,408,3,90,45,0,408,409,3,2,1,0,409,35,1,0,0,0,
-		410,415,5,47,0,0,411,413,3,4,2,0,412,411,1,0,0,0,412,413,1,0,0,0,413,414,
-		1,0,0,0,414,416,3,104,52,0,415,412,1,0,0,0,415,416,1,0,0,0,416,417,1,0,
-		0,0,417,418,3,2,1,0,418,37,1,0,0,0,419,420,5,21,0,0,420,445,3,10,5,0,421,
-		423,5,21,0,0,422,424,3,4,2,0,423,422,1,0,0,0,423,424,1,0,0,0,424,425,1,
-		0,0,0,425,427,3,170,85,0,426,428,3,4,2,0,427,426,1,0,0,0,427,428,1,0,0,
-		0,428,430,1,0,0,0,429,431,3,126,63,0,430,429,1,0,0,0,430,431,1,0,0,0,431,
-		433,1,0,0,0,432,434,3,4,2,0,433,432,1,0,0,0,433,434,1,0,0,0,434,435,1,
-		0,0,0,435,439,3,68,34,0,436,438,3,176,88,0,437,436,1,0,0,0,438,441,1,0,
-		0,0,439,437,1,0,0,0,439,440,1,0,0,0,440,442,1,0,0,0,441,439,1,0,0,0,442,
-		443,3,2,1,0,443,445,1,0,0,0,444,419,1,0,0,0,444,421,1,0,0,0,445,39,1,0,
-		0,0,446,447,5,55,0,0,447,448,3,10,5,0,448,41,1,0,0,0,449,450,5,39,0,0,
-		450,451,3,120,60,0,451,452,5,10,0,0,452,453,3,118,59,0,453,454,3,2,1,0,
-		454,43,1,0,0,0,455,460,3,52,26,0,456,460,3,46,23,0,457,460,3,48,24,0,458,
-		460,3,50,25,0,459,455,1,0,0,0,459,456,1,0,0,0,459,457,1,0,0,0,459,458,
-		1,0,0,0,460,45,1,0,0,0,461,462,5,24,0,0,462,463,3,90,45,0,463,464,5,102,
-		0,0,464,465,3,104,52,0,465,466,5,54,0,0,466,469,3,104,52,0,467,468,5,18,
-		0,0,468,470,3,104,52,0,469,467,1,0,0,0,469,470,1,0,0,0,470,472,1,0,0,0,
-		471,473,3,4,2,0,472,471,1,0,0,0,472,473,1,0,0,0,473,490,1,0,0,0,474,476,
-		3,54,27,0,475,477,3,4,2,0,476,475,1,0,0,0,476,477,1,0,0,0,477,479,1,0,
-		0,0,478,480,3,56,28,0,479,478,1,0,0,0,479,480,1,0,0,0,480,491,1,0,0,0,
-		481,483,3,56,28,0,482,484,3,4,2,0,483,482,1,0,0,0,483,484,1,0,0,0,484,
-		486,1,0,0,0,485,487,3,54,27,0,486,485,1,0,0,0,486,487,1,0,0,0,487,491,
-		1,0,0,0,488,491,3,54,27,0,489,491,3,56,28,0,490,474,1,0,0,0,490,481,1,
-		0,0,0,490,488,1,0,0,0,490,489,1,0,0,0,490,491,1,0,0,0,491,495,1,0,0,0,
-		492,494,3,8,4,0,493,492,1,0,0,0,494,497,1,0,0,0,495,493,1,0,0,0,495,496,
-		1,0,0,0,496,499,1,0,0,0,497,495,1,0,0,0,498,500,3,4,2,0,499,498,1,0,0,
-		0,499,500,1,0,0,0,500,501,1,0,0,0,501,502,5,27,0,0,502,47,1,0,0,0,503,
-		504,5,24,0,0,504,506,3,54,27,0,505,507,3,56,28,0,506,505,1,0,0,0,506,507,
-		1,0,0,0,507,511,1,0,0,0,508,510,3,8,4,0,509,508,1,0,0,0,510,513,1,0,0,
-		0,511,509,1,0,0,0,511,512,1,0,0,0,512,515,1,0,0,0,513,511,1,0,0,0,514,
-		516,3,4,2,0,515,514,1,0,0,0,515,516,1,0,0,0,516,517,1,0,0,0,517,518,5,
-		27,0,0,518,49,1,0,0,0,519,520,5,24,0,0,520,522,3,56,28,0,521,523,3,54,
-		27,0,522,521,1,0,0,0,522,523,1,0,0,0,523,527,1,0,0,0,524,526,3,8,4,0,525,
-		524,1,0,0,0,526,529,1,0,0,0,527,525,1,0,0,0,527,528,1,0,0,0,528,531,1,
-		0,0,0,529,527,1,0,0,0,530,532,3,4,2,0,531,530,1,0,0,0,531,532,1,0,0,0,
-		532,533,1,0,0,0,533,534,5,27,0,0,534,51,1,0,0,0,535,536,5,24,0,0,536,540,
-		5,40,0,0,537,539,3,8,4,0,538,537,1,0,0,0,539,542,1,0,0,0,540,538,1,0,0,
-		0,540,541,1,0,0,0,541,544,1,0,0,0,542,540,1,0,0,0,543,545,3,4,2,0,544,
-		543,1,0,0,0,544,545,1,0,0,0,545,546,1,0,0,0,546,547,5,27,0,0,547,53,1,
-		0,0,0,548,549,5,66,0,0,549,550,3,104,52,0,550,55,1,0,0,0,551,552,5,64,
-		0,0,552,553,3,104,52,0,553,57,1,0,0,0,554,556,5,35,0,0,555,557,3,4,2,0,
-		556,555,1,0,0,0,556,557,1,0,0,0,557,558,1,0,0,0,558,560,3,60,30,0,559,
-		561,3,4,2,0,560,559,1,0,0,0,560,561,1,0,0,0,561,563,1,0,0,0,562,564,3,
-		66,33,0,563,562,1,0,0,0,563,564,1,0,0,0,564,566,1,0,0,0,565,567,3,4,2,
-		0,566,565,1,0,0,0,566,567,1,0,0,0,567,569,1,0,0,0,568,570,3,64,32,0,569,
-		568,1,0,0,0,569,570,1,0,0,0,570,572,1,0,0,0,571,573,3,4,2,0,572,571,1,
-		0,0,0,572,573,1,0,0,0,573,574,1,0,0,0,574,575,5,27,0,0,575,59,1,0,0,0,
-		576,578,3,4,2,0,577,576,1,0,0,0,577,578,1,0,0,0,578,579,1,0,0,0,579,581,
-		3,104,52,0,580,582,3,4,2,0,581,580,1,0,0,0,581,582,1,0,0,0,582,583,1,0,
-		0,0,583,585,5,53,0,0,584,586,3,4,2,0,585,584,1,0,0,0,585,586,1,0,0,0,586,
-		587,1,0,0,0,587,588,3,62,31,0,588,61,1,0,0,0,589,591,3,8,4,0,590,589,1,
-		0,0,0,591,594,1,0,0,0,592,590,1,0,0,0,592,593,1,0,0,0,593,63,1,0,0,0,594,
-		592,1,0,0,0,595,597,5,26,0,0,596,598,3,4,2,0,597,596,1,0,0,0,597,598,1,
-		0,0,0,598,599,1,0,0,0,599,600,3,62,31,0,600,65,1,0,0,0,601,603,5,25,0,
-		0,602,604,3,4,2,0,603,602,1,0,0,0,603,604,1,0,0,0,604,605,1,0,0,0,605,
-		607,3,60,30,0,606,601,1,0,0,0,607,608,1,0,0,0,608,606,1,0,0,0,608,609,
-		1,0,0,0,609,67,1,0,0,0,610,618,3,72,36,0,611,618,3,74,37,0,612,618,3,76,
-		38,0,613,618,3,78,39,0,614,618,3,80,40,0,615,618,3,82,41,0,616,618,3,70,
-		35,0,617,610,1,0,0,0,617,611,1,0,0,0,617,612,1,0,0,0,617,613,1,0,0,0,617,
-		614,1,0,0,0,617,615,1,0,0,0,617,616,1,0,0,0,618,69,1,0,0,0,619,620,5,10,
-		0,0,620,621,3,170,85,0,621,71,1,0,0,0,622,628,7,2,0,0,623,625,7,3,0,0,
-		624,626,3,100,50,0,625,624,1,0,0,0,625,626,1,0,0,0,626,628,1,0,0,0,627,
-		622,1,0,0,0,627,623,1,0,0,0,628,73,1,0,0,0,629,630,5,17,0,0,630,631,5,
-		109,0,0,631,632,3,118,59,0,632,633,5,110,0,0,633,75,1,0,0,0,634,635,5,
-		51,0,0,635,636,5,109,0,0,636,637,3,118,59,0,637,639,5,110,0,0,638,640,
-		5,65,0,0,639,638,1,0,0,0,639,640,1,0,0,0,640,77,1,0,0,0,641,697,5,28,0,
-		0,642,698,1,0,0,0,643,645,3,198,99,0,644,643,1,0,0,0,644,645,1,0,0,0,645,
-		647,1,0,0,0,646,648,3,200,100,0,647,646,1,0,0,0,647,648,1,0,0,0,648,650,
-		1,0,0,0,649,651,5,65,0,0,650,649,1,0,0,0,650,651,1,0,0,0,651,698,1,0,0,
-		0,652,654,3,198,99,0,653,652,1,0,0,0,653,654,1,0,0,0,654,656,1,0,0,0,655,
-		657,5,65,0,0,656,655,1,0,0,0,656,657,1,0,0,0,657,659,1,0,0,0,658,660,3,
-		200,100,0,659,658,1,0,0,0,659,660,1,0,0,0,660,698,1,0,0,0,661,663,3,200,
-		100,0,662,661,1,0,0,0,662,663,1,0,0,0,663,665,1,0,0,0,664,666,3,198,99,
-		0,665,664,1,0,0,0,665,666,1,0,0,0,666,668,1,0,0,0,667,669,5,65,0,0,668,
-		667,1,0,0,0,668,669,1,0,0,0,669,698,1,0,0,0,670,672,3,200,100,0,671,670,
-		1,0,0,0,671,672,1,0,0,0,672,674,1,0,0,0,673,675,5,65,0,0,674,673,1,0,0,
-		0,674,675,1,0,0,0,675,677,1,0,0,0,676,678,3,198,99,0,677,676,1,0,0,0,677,
-		678,1,0,0,0,678,698,1,0,0,0,679,681,5,65,0,0,680,679,1,0,0,0,680,681,1,
-		0,0,0,681,683,1,0,0,0,682,684,3,200,100,0,683,682,1,0,0,0,683,684,1,0,
-		0,0,684,686,1,0,0,0,685,687,3,198,99,0,686,685,1,0,0,0,686,687,1,0,0,0,
-		687,698,1,0,0,0,688,690,5,65,0,0,689,688,1,0,0,0,689,690,1,0,0,0,690,692,
-		1,0,0,0,691,693,3,198,99,0,692,691,1,0,0,0,692,693,1,0,0,0,693,695,1,0,
-		0,0,694,696,3,200,100,0,695,694,1,0,0,0,695,696,1,0,0,0,696,698,1,0,0,
-		0,697,642,1,0,0,0,697,644,1,0,0,0,697,653,1,0,0,0,697,662,1,0,0,0,697,
-		671,1,0,0,0,697,680,1,0,0,0,697,689,1,0,0,0,698,79,1,0,0,0,699,700,5,38,
-		0,0,700,81,1,0,0,0,701,702,5,45,0,0,702,83,1,0,0,0,703,727,5,15,0,0,704,
-		727,5,12,0,0,705,727,5,13,0,0,706,727,5,14,0,0,707,727,5,59,0,0,708,727,
-		5,56,0,0,709,727,5,57,0,0,710,727,5,58,0,0,711,727,5,16,0,0,712,727,5,
-		60,0,0,713,727,5,22,0,0,714,727,5,61,0,0,715,727,5,51,0,0,716,727,5,17,
-		0,0,717,727,5,38,0,0,718,720,5,28,0,0,719,721,3,198,99,0,720,719,1,0,0,
+		1,88,1,88,3,88,1068,8,88,1,89,1,89,1,90,1,90,1,90,1,90,1,90,3,90,1077,
+		8,90,1,91,1,91,1,92,1,92,1,93,1,93,1,94,1,94,1,95,1,95,1,95,1,95,1,95,
+		3,95,1092,8,95,1,96,1,96,1,97,1,97,1,97,1,97,1,97,1,98,1,98,1,99,1,99,
+		1,99,1,99,5,99,1107,8,99,10,99,12,99,1110,9,99,1,99,1,99,1,100,1,100,1,
+		100,1,100,1,100,1,101,1,101,1,102,3,102,1122,8,102,1,102,1,102,1,103,1,
+		103,1,103,0,2,90,104,104,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,
+		34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,
+		82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,
+		122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,
+		158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,
+		194,196,198,200,202,204,206,0,14,2,0,108,108,115,115,2,1,108,108,115,115,
+		2,0,12,15,57,60,3,0,16,16,22,22,61,62,2,0,103,103,105,105,1,0,98,102,1,
+		0,88,89,2,0,90,90,92,93,2,0,72,72,74,74,1,0,76,77,3,0,73,73,75,75,78,78,
+		2,0,79,85,103,103,3,0,78,78,88,89,95,97,2,0,9,48,50,67,1244,0,209,1,0,
+		0,0,2,213,1,0,0,0,4,216,1,0,0,0,6,223,1,0,0,0,8,229,1,0,0,0,10,246,1,0,
+		0,0,12,272,1,0,0,0,14,285,1,0,0,0,16,292,1,0,0,0,18,296,1,0,0,0,20,300,
+		1,0,0,0,22,304,1,0,0,0,24,306,1,0,0,0,26,325,1,0,0,0,28,347,1,0,0,0,30,
+		373,1,0,0,0,32,382,1,0,0,0,34,403,1,0,0,0,36,410,1,0,0,0,38,444,1,0,0,
+		0,40,446,1,0,0,0,42,449,1,0,0,0,44,459,1,0,0,0,46,461,1,0,0,0,48,503,1,
+		0,0,0,50,519,1,0,0,0,52,535,1,0,0,0,54,548,1,0,0,0,56,551,1,0,0,0,58,554,
+		1,0,0,0,60,577,1,0,0,0,62,592,1,0,0,0,64,595,1,0,0,0,66,606,1,0,0,0,68,
+		617,1,0,0,0,70,619,1,0,0,0,72,627,1,0,0,0,74,629,1,0,0,0,76,634,1,0,0,
+		0,78,641,1,0,0,0,80,699,1,0,0,0,82,701,1,0,0,0,84,726,1,0,0,0,86,728,1,
+		0,0,0,88,733,1,0,0,0,90,735,1,0,0,0,92,752,1,0,0,0,94,757,1,0,0,0,96,762,
+		1,0,0,0,98,766,1,0,0,0,100,772,1,0,0,0,102,778,1,0,0,0,104,790,1,0,0,0,
+		106,911,1,0,0,0,108,913,1,0,0,0,110,919,1,0,0,0,112,921,1,0,0,0,114,923,
+		1,0,0,0,116,925,1,0,0,0,118,929,1,0,0,0,120,931,1,0,0,0,122,933,1,0,0,
+		0,124,937,1,0,0,0,126,940,1,0,0,0,128,951,1,0,0,0,130,953,1,0,0,0,132,
+		961,1,0,0,0,134,963,1,0,0,0,136,965,1,0,0,0,138,967,1,0,0,0,140,969,1,
+		0,0,0,142,971,1,0,0,0,144,973,1,0,0,0,146,975,1,0,0,0,148,977,1,0,0,0,
+		150,979,1,0,0,0,152,981,1,0,0,0,154,983,1,0,0,0,156,985,1,0,0,0,158,987,
+		1,0,0,0,160,989,1,0,0,0,162,997,1,0,0,0,164,1008,1,0,0,0,166,1020,1,0,
+		0,0,168,1045,1,0,0,0,170,1049,1,0,0,0,172,1051,1,0,0,0,174,1056,1,0,0,
+		0,176,1067,1,0,0,0,178,1069,1,0,0,0,180,1071,1,0,0,0,182,1078,1,0,0,0,
+		184,1080,1,0,0,0,186,1082,1,0,0,0,188,1084,1,0,0,0,190,1086,1,0,0,0,192,
+		1093,1,0,0,0,194,1095,1,0,0,0,196,1100,1,0,0,0,198,1102,1,0,0,0,200,1113,
+		1,0,0,0,202,1118,1,0,0,0,204,1121,1,0,0,0,206,1125,1,0,0,0,208,210,7,0,
+		0,0,209,208,1,0,0,0,210,211,1,0,0,0,211,209,1,0,0,0,211,212,1,0,0,0,212,
+		1,1,0,0,0,213,214,7,1,0,0,214,3,1,0,0,0,215,217,5,115,0,0,216,215,1,0,
+		0,0,217,218,1,0,0,0,218,216,1,0,0,0,218,219,1,0,0,0,219,5,1,0,0,0,220,
+		222,3,8,4,0,221,220,1,0,0,0,222,225,1,0,0,0,223,221,1,0,0,0,223,224,1,
+		0,0,0,224,226,1,0,0,0,225,223,1,0,0,0,226,227,3,204,102,0,227,7,1,0,0,
+		0,228,230,3,0,0,0,229,228,1,0,0,0,229,230,1,0,0,0,230,244,1,0,0,0,231,
+		245,3,34,17,0,232,245,3,36,18,0,233,245,3,14,7,0,234,245,3,32,16,0,235,
+		245,3,58,29,0,236,245,3,38,19,0,237,245,3,40,20,0,238,245,3,42,21,0,239,
+		245,3,26,13,0,240,245,3,28,14,0,241,245,3,44,22,0,242,245,3,18,9,0,243,
+		245,3,86,43,0,244,231,1,0,0,0,244,232,1,0,0,0,244,233,1,0,0,0,244,234,
+		1,0,0,0,244,235,1,0,0,0,244,236,1,0,0,0,244,237,1,0,0,0,244,238,1,0,0,
+		0,244,239,1,0,0,0,244,240,1,0,0,0,244,241,1,0,0,0,244,242,1,0,0,0,244,
+		243,1,0,0,0,245,9,1,0,0,0,246,247,5,53,0,0,247,249,3,170,85,0,248,250,
+		3,126,63,0,249,248,1,0,0,0,249,250,1,0,0,0,250,252,1,0,0,0,251,253,3,174,
+		87,0,252,251,1,0,0,0,252,253,1,0,0,0,253,254,1,0,0,0,254,256,3,2,1,0,255,
+		257,3,4,2,0,256,255,1,0,0,0,256,257,1,0,0,0,257,267,1,0,0,0,258,261,3,
+		12,6,0,259,261,3,10,5,0,260,258,1,0,0,0,260,259,1,0,0,0,261,263,1,0,0,
+		0,262,264,3,4,2,0,263,262,1,0,0,0,263,264,1,0,0,0,264,266,1,0,0,0,265,
+		260,1,0,0,0,266,269,1,0,0,0,267,265,1,0,0,0,267,268,1,0,0,0,268,270,1,
+		0,0,0,269,267,1,0,0,0,270,271,5,27,0,0,271,11,1,0,0,0,272,274,3,170,85,
+		0,273,275,3,126,63,0,274,273,1,0,0,0,274,275,1,0,0,0,275,276,1,0,0,0,276,
+		280,3,68,34,0,277,279,3,176,88,0,278,277,1,0,0,0,279,282,1,0,0,0,280,278,
+		1,0,0,0,280,281,1,0,0,0,281,283,1,0,0,0,282,280,1,0,0,0,283,284,3,2,1,
+		0,284,13,1,0,0,0,285,286,5,107,0,0,286,288,3,170,85,0,287,289,3,16,8,0,
+		288,287,1,0,0,0,288,289,1,0,0,0,289,290,1,0,0,0,290,291,3,2,1,0,291,15,
+		1,0,0,0,292,293,5,110,0,0,293,294,3,118,59,0,294,295,5,111,0,0,295,17,
+		1,0,0,0,296,297,5,34,0,0,297,298,3,90,45,0,298,299,3,2,1,0,299,19,1,0,
+		0,0,300,301,5,110,0,0,301,302,3,104,52,0,302,303,5,111,0,0,303,21,1,0,
+		0,0,304,305,3,24,12,0,305,23,1,0,0,0,306,308,5,44,0,0,307,309,3,4,2,0,
+		308,307,1,0,0,0,308,309,1,0,0,0,309,310,1,0,0,0,310,312,3,160,80,0,311,
+		313,3,4,2,0,312,311,1,0,0,0,312,313,1,0,0,0,313,317,1,0,0,0,314,316,3,
+		8,4,0,315,314,1,0,0,0,316,319,1,0,0,0,317,315,1,0,0,0,317,318,1,0,0,0,
+		318,321,1,0,0,0,319,317,1,0,0,0,320,322,3,4,2,0,321,320,1,0,0,0,321,322,
+		1,0,0,0,322,323,1,0,0,0,323,324,5,27,0,0,324,25,1,0,0,0,325,327,5,47,0,
+		0,326,328,3,4,2,0,327,326,1,0,0,0,327,328,1,0,0,0,328,329,1,0,0,0,329,
+		331,3,170,85,0,330,332,3,162,81,0,331,330,1,0,0,0,331,332,1,0,0,0,332,
+		334,1,0,0,0,333,335,3,30,15,0,334,333,1,0,0,0,334,335,1,0,0,0,335,339,
+		1,0,0,0,336,338,3,8,4,0,337,336,1,0,0,0,338,341,1,0,0,0,339,337,1,0,0,
+		0,339,340,1,0,0,0,340,343,1,0,0,0,341,339,1,0,0,0,342,344,3,4,2,0,343,
+		342,1,0,0,0,343,344,1,0,0,0,344,345,1,0,0,0,345,346,5,27,0,0,346,27,1,
+		0,0,0,347,349,5,33,0,0,348,350,3,4,2,0,349,348,1,0,0,0,349,350,1,0,0,0,
+		350,351,1,0,0,0,351,353,3,170,85,0,352,354,3,162,81,0,353,352,1,0,0,0,
+		353,354,1,0,0,0,354,356,1,0,0,0,355,357,3,30,15,0,356,355,1,0,0,0,356,
+		357,1,0,0,0,357,358,1,0,0,0,358,360,5,10,0,0,359,361,3,200,100,0,360,359,
+		1,0,0,0,360,361,1,0,0,0,361,365,1,0,0,0,362,364,3,8,4,0,363,362,1,0,0,
+		0,364,367,1,0,0,0,365,363,1,0,0,0,365,366,1,0,0,0,366,369,1,0,0,0,367,
+		365,1,0,0,0,368,370,3,4,2,0,369,368,1,0,0,0,369,370,1,0,0,0,370,371,1,
+		0,0,0,371,372,5,27,0,0,372,29,1,0,0,0,373,374,5,43,0,0,374,376,5,110,0,
+		0,375,377,5,42,0,0,376,375,1,0,0,0,377,378,1,0,0,0,378,376,1,0,0,0,378,
+		379,1,0,0,0,379,380,1,0,0,0,380,381,5,111,0,0,381,31,1,0,0,0,382,384,5,
+		29,0,0,383,385,3,4,2,0,384,383,1,0,0,0,384,385,1,0,0,0,385,386,1,0,0,0,
+		386,388,3,170,85,0,387,389,3,4,2,0,388,387,1,0,0,0,388,389,1,0,0,0,389,
+		391,1,0,0,0,390,392,3,68,34,0,391,390,1,0,0,0,391,392,1,0,0,0,392,393,
+		1,0,0,0,393,395,3,202,101,0,394,396,3,4,2,0,395,394,1,0,0,0,395,396,1,
+		0,0,0,396,397,1,0,0,0,397,399,3,166,83,0,398,400,3,4,2,0,399,398,1,0,0,
+		0,399,400,1,0,0,0,400,401,1,0,0,0,401,402,5,27,0,0,402,33,1,0,0,0,403,
+		405,5,19,0,0,404,406,3,4,2,0,405,404,1,0,0,0,405,406,1,0,0,0,406,407,1,
+		0,0,0,407,408,3,90,45,0,408,409,3,2,1,0,409,35,1,0,0,0,410,415,5,48,0,
+		0,411,413,3,4,2,0,412,411,1,0,0,0,412,413,1,0,0,0,413,414,1,0,0,0,414,
+		416,3,104,52,0,415,412,1,0,0,0,415,416,1,0,0,0,416,417,1,0,0,0,417,418,
+		3,2,1,0,418,37,1,0,0,0,419,420,5,21,0,0,420,445,3,10,5,0,421,423,5,21,
+		0,0,422,424,3,4,2,0,423,422,1,0,0,0,423,424,1,0,0,0,424,425,1,0,0,0,425,
+		427,3,170,85,0,426,428,3,4,2,0,427,426,1,0,0,0,427,428,1,0,0,0,428,430,
+		1,0,0,0,429,431,3,126,63,0,430,429,1,0,0,0,430,431,1,0,0,0,431,433,1,0,
+		0,0,432,434,3,4,2,0,433,432,1,0,0,0,433,434,1,0,0,0,434,435,1,0,0,0,435,
+		439,3,68,34,0,436,438,3,176,88,0,437,436,1,0,0,0,438,441,1,0,0,0,439,437,
+		1,0,0,0,439,440,1,0,0,0,440,442,1,0,0,0,441,439,1,0,0,0,442,443,3,2,1,
+		0,443,445,1,0,0,0,444,419,1,0,0,0,444,421,1,0,0,0,445,39,1,0,0,0,446,447,
+		5,56,0,0,447,448,3,10,5,0,448,41,1,0,0,0,449,450,5,40,0,0,450,451,3,120,
+		60,0,451,452,5,10,0,0,452,453,3,118,59,0,453,454,3,2,1,0,454,43,1,0,0,
+		0,455,460,3,52,26,0,456,460,3,46,23,0,457,460,3,48,24,0,458,460,3,50,25,
+		0,459,455,1,0,0,0,459,456,1,0,0,0,459,457,1,0,0,0,459,458,1,0,0,0,460,
+		45,1,0,0,0,461,462,5,24,0,0,462,463,3,90,45,0,463,464,5,103,0,0,464,465,
+		3,104,52,0,465,466,5,55,0,0,466,469,3,104,52,0,467,468,5,18,0,0,468,470,
+		3,104,52,0,469,467,1,0,0,0,469,470,1,0,0,0,470,472,1,0,0,0,471,473,3,4,
+		2,0,472,471,1,0,0,0,472,473,1,0,0,0,473,490,1,0,0,0,474,476,3,54,27,0,
+		475,477,3,4,2,0,476,475,1,0,0,0,476,477,1,0,0,0,477,479,1,0,0,0,478,480,
+		3,56,28,0,479,478,1,0,0,0,479,480,1,0,0,0,480,491,1,0,0,0,481,483,3,56,
+		28,0,482,484,3,4,2,0,483,482,1,0,0,0,483,484,1,0,0,0,484,486,1,0,0,0,485,
+		487,3,54,27,0,486,485,1,0,0,0,486,487,1,0,0,0,487,491,1,0,0,0,488,491,
+		3,54,27,0,489,491,3,56,28,0,490,474,1,0,0,0,490,481,1,0,0,0,490,488,1,
+		0,0,0,490,489,1,0,0,0,490,491,1,0,0,0,491,495,1,0,0,0,492,494,3,8,4,0,
+		493,492,1,0,0,0,494,497,1,0,0,0,495,493,1,0,0,0,495,496,1,0,0,0,496,499,
+		1,0,0,0,497,495,1,0,0,0,498,500,3,4,2,0,499,498,1,0,0,0,499,500,1,0,0,
+		0,500,501,1,0,0,0,501,502,5,27,0,0,502,47,1,0,0,0,503,504,5,24,0,0,504,
+		506,3,54,27,0,505,507,3,56,28,0,506,505,1,0,0,0,506,507,1,0,0,0,507,511,
+		1,0,0,0,508,510,3,8,4,0,509,508,1,0,0,0,510,513,1,0,0,0,511,509,1,0,0,
+		0,511,512,1,0,0,0,512,515,1,0,0,0,513,511,1,0,0,0,514,516,3,4,2,0,515,
+		514,1,0,0,0,515,516,1,0,0,0,516,517,1,0,0,0,517,518,5,27,0,0,518,49,1,
+		0,0,0,519,520,5,24,0,0,520,522,3,56,28,0,521,523,3,54,27,0,522,521,1,0,
+		0,0,522,523,1,0,0,0,523,527,1,0,0,0,524,526,3,8,4,0,525,524,1,0,0,0,526,
+		529,1,0,0,0,527,525,1,0,0,0,527,528,1,0,0,0,528,531,1,0,0,0,529,527,1,
+		0,0,0,530,532,3,4,2,0,531,530,1,0,0,0,531,532,1,0,0,0,532,533,1,0,0,0,
+		533,534,5,27,0,0,534,51,1,0,0,0,535,536,5,24,0,0,536,540,5,41,0,0,537,
+		539,3,8,4,0,538,537,1,0,0,0,539,542,1,0,0,0,540,538,1,0,0,0,540,541,1,
+		0,0,0,541,544,1,0,0,0,542,540,1,0,0,0,543,545,3,4,2,0,544,543,1,0,0,0,
+		544,545,1,0,0,0,545,546,1,0,0,0,546,547,5,27,0,0,547,53,1,0,0,0,548,549,
+		5,67,0,0,549,550,3,104,52,0,550,55,1,0,0,0,551,552,5,65,0,0,552,553,3,
+		104,52,0,553,57,1,0,0,0,554,556,5,35,0,0,555,557,3,4,2,0,556,555,1,0,0,
+		0,556,557,1,0,0,0,557,558,1,0,0,0,558,560,3,60,30,0,559,561,3,4,2,0,560,
+		559,1,0,0,0,560,561,1,0,0,0,561,563,1,0,0,0,562,564,3,66,33,0,563,562,
+		1,0,0,0,563,564,1,0,0,0,564,566,1,0,0,0,565,567,3,4,2,0,566,565,1,0,0,
+		0,566,567,1,0,0,0,567,569,1,0,0,0,568,570,3,64,32,0,569,568,1,0,0,0,569,
+		570,1,0,0,0,570,572,1,0,0,0,571,573,3,4,2,0,572,571,1,0,0,0,572,573,1,
+		0,0,0,573,574,1,0,0,0,574,575,5,27,0,0,575,59,1,0,0,0,576,578,3,4,2,0,
+		577,576,1,0,0,0,577,578,1,0,0,0,578,579,1,0,0,0,579,581,3,104,52,0,580,
+		582,3,4,2,0,581,580,1,0,0,0,581,582,1,0,0,0,582,583,1,0,0,0,583,585,5,
+		54,0,0,584,586,3,4,2,0,585,584,1,0,0,0,585,586,1,0,0,0,586,587,1,0,0,0,
+		587,588,3,62,31,0,588,61,1,0,0,0,589,591,3,8,4,0,590,589,1,0,0,0,591,594,
+		1,0,0,0,592,590,1,0,0,0,592,593,1,0,0,0,593,63,1,0,0,0,594,592,1,0,0,0,
+		595,597,5,26,0,0,596,598,3,4,2,0,597,596,1,0,0,0,597,598,1,0,0,0,598,599,
+		1,0,0,0,599,600,3,62,31,0,600,65,1,0,0,0,601,603,5,25,0,0,602,604,3,4,
+		2,0,603,602,1,0,0,0,603,604,1,0,0,0,604,605,1,0,0,0,605,607,3,60,30,0,
+		606,601,1,0,0,0,607,608,1,0,0,0,608,606,1,0,0,0,608,609,1,0,0,0,609,67,
+		1,0,0,0,610,618,3,72,36,0,611,618,3,74,37,0,612,618,3,76,38,0,613,618,
+		3,78,39,0,614,618,3,80,40,0,615,618,3,82,41,0,616,618,3,70,35,0,617,610,
+		1,0,0,0,617,611,1,0,0,0,617,612,1,0,0,0,617,613,1,0,0,0,617,614,1,0,0,
+		0,617,615,1,0,0,0,617,616,1,0,0,0,618,69,1,0,0,0,619,620,5,10,0,0,620,
+		621,3,170,85,0,621,71,1,0,0,0,622,628,7,2,0,0,623,625,7,3,0,0,624,626,
+		3,100,50,0,625,624,1,0,0,0,625,626,1,0,0,0,626,628,1,0,0,0,627,622,1,0,
+		0,0,627,623,1,0,0,0,628,73,1,0,0,0,629,630,5,17,0,0,630,631,5,110,0,0,
+		631,632,3,118,59,0,632,633,5,111,0,0,633,75,1,0,0,0,634,635,5,52,0,0,635,
+		636,5,110,0,0,636,637,3,118,59,0,637,639,5,111,0,0,638,640,5,66,0,0,639,
+		638,1,0,0,0,639,640,1,0,0,0,640,77,1,0,0,0,641,697,5,28,0,0,642,698,1,
+		0,0,0,643,645,3,198,99,0,644,643,1,0,0,0,644,645,1,0,0,0,645,647,1,0,0,
+		0,646,648,3,200,100,0,647,646,1,0,0,0,647,648,1,0,0,0,648,650,1,0,0,0,
+		649,651,5,66,0,0,650,649,1,0,0,0,650,651,1,0,0,0,651,698,1,0,0,0,652,654,
+		3,198,99,0,653,652,1,0,0,0,653,654,1,0,0,0,654,656,1,0,0,0,655,657,5,66,
+		0,0,656,655,1,0,0,0,656,657,1,0,0,0,657,659,1,0,0,0,658,660,3,200,100,
+		0,659,658,1,0,0,0,659,660,1,0,0,0,660,698,1,0,0,0,661,663,3,200,100,0,
+		662,661,1,0,0,0,662,663,1,0,0,0,663,665,1,0,0,0,664,666,3,198,99,0,665,
+		664,1,0,0,0,665,666,1,0,0,0,666,668,1,0,0,0,667,669,5,66,0,0,668,667,1,
+		0,0,0,668,669,1,0,0,0,669,698,1,0,0,0,670,672,3,200,100,0,671,670,1,0,
+		0,0,671,672,1,0,0,0,672,674,1,0,0,0,673,675,5,66,0,0,674,673,1,0,0,0,674,
+		675,1,0,0,0,675,677,1,0,0,0,676,678,3,198,99,0,677,676,1,0,0,0,677,678,
+		1,0,0,0,678,698,1,0,0,0,679,681,5,66,0,0,680,679,1,0,0,0,680,681,1,0,0,
+		0,681,683,1,0,0,0,682,684,3,200,100,0,683,682,1,0,0,0,683,684,1,0,0,0,
+		684,686,1,0,0,0,685,687,3,198,99,0,686,685,1,0,0,0,686,687,1,0,0,0,687,
+		698,1,0,0,0,688,690,5,66,0,0,689,688,1,0,0,0,689,690,1,0,0,0,690,692,1,
+		0,0,0,691,693,3,198,99,0,692,691,1,0,0,0,692,693,1,0,0,0,693,695,1,0,0,
+		0,694,696,3,200,100,0,695,694,1,0,0,0,695,696,1,0,0,0,696,698,1,0,0,0,
+		697,642,1,0,0,0,697,644,1,0,0,0,697,653,1,0,0,0,697,662,1,0,0,0,697,671,
+		1,0,0,0,697,680,1,0,0,0,697,689,1,0,0,0,698,79,1,0,0,0,699,700,5,39,0,
+		0,700,81,1,0,0,0,701,702,5,46,0,0,702,83,1,0,0,0,703,727,5,15,0,0,704,
+		727,5,12,0,0,705,727,5,13,0,0,706,727,5,14,0,0,707,727,5,60,0,0,708,727,
+		5,57,0,0,709,727,5,58,0,0,710,727,5,59,0,0,711,727,5,16,0,0,712,727,5,
+		61,0,0,713,727,5,22,0,0,714,727,5,62,0,0,715,727,5,52,0,0,716,727,5,17,
+		0,0,717,727,5,39,0,0,718,720,5,28,0,0,719,721,3,198,99,0,720,719,1,0,0,
 		0,720,721,1,0,0,0,721,723,1,0,0,0,722,724,3,200,100,0,723,722,1,0,0,0,
-		723,724,1,0,0,0,724,727,1,0,0,0,725,727,5,45,0,0,726,703,1,0,0,0,726,704,
+		723,724,1,0,0,0,724,727,1,0,0,0,725,727,5,46,0,0,726,703,1,0,0,0,726,704,
 		1,0,0,0,726,705,1,0,0,0,726,706,1,0,0,0,726,707,1,0,0,0,726,708,1,0,0,
 		0,726,709,1,0,0,0,726,710,1,0,0,0,726,711,1,0,0,0,726,712,1,0,0,0,726,
 		713,1,0,0,0,726,714,1,0,0,0,726,715,1,0,0,0,726,716,1,0,0,0,726,717,1,
@@ -7663,7 +7706,7 @@ public partial class SyscodeParser : Parser {
 		729,730,3,88,44,0,730,731,3,104,52,0,731,732,3,2,1,0,732,87,1,0,0,0,733,
 		734,7,4,0,0,734,89,1,0,0,0,735,736,6,45,-1,0,736,738,3,92,46,0,737,739,
 		3,94,47,0,738,737,1,0,0,0,738,739,1,0,0,0,739,748,1,0,0,0,740,741,10,2,
-		0,0,741,742,5,111,0,0,742,744,3,92,46,0,743,745,3,94,47,0,744,743,1,0,
+		0,0,741,742,5,112,0,0,742,744,3,92,46,0,743,745,3,94,47,0,744,743,1,0,
 		0,0,744,745,1,0,0,0,745,747,1,0,0,0,746,740,1,0,0,0,747,750,1,0,0,0,748,
 		746,1,0,0,0,748,749,1,0,0,0,749,91,1,0,0,0,750,748,1,0,0,0,751,753,3,96,
 		48,0,752,751,1,0,0,0,752,753,1,0,0,0,753,754,1,0,0,0,754,755,3,170,85,
@@ -7671,9 +7714,9 @@ public partial class SyscodeParser : Parser {
 		757,1,0,0,0,759,760,1,0,0,0,760,95,1,0,0,0,761,763,3,98,49,0,762,761,1,
 		0,0,0,763,764,1,0,0,0,764,762,1,0,0,0,764,765,1,0,0,0,765,97,1,0,0,0,766,
 		768,3,170,85,0,767,769,3,100,50,0,768,767,1,0,0,0,768,769,1,0,0,0,769,
-		770,1,0,0,0,770,771,5,105,0,0,771,99,1,0,0,0,772,774,5,109,0,0,773,775,
-		3,102,51,0,774,773,1,0,0,0,774,775,1,0,0,0,775,776,1,0,0,0,776,777,5,110,
-		0,0,777,101,1,0,0,0,778,783,3,104,52,0,779,780,5,108,0,0,780,782,3,104,
+		770,1,0,0,0,770,771,5,106,0,0,771,99,1,0,0,0,772,774,5,110,0,0,773,775,
+		3,102,51,0,774,773,1,0,0,0,774,775,1,0,0,0,775,776,1,0,0,0,776,777,5,111,
+		0,0,777,101,1,0,0,0,778,783,3,104,52,0,779,780,5,109,0,0,780,782,3,104,
 		52,0,781,779,1,0,0,0,782,785,1,0,0,0,783,781,1,0,0,0,783,784,1,0,0,0,784,
 		103,1,0,0,0,785,783,1,0,0,0,786,787,6,52,-1,0,787,791,3,106,53,0,788,791,
 		3,122,61,0,789,791,3,124,62,0,790,786,1,0,0,0,790,788,1,0,0,0,790,789,
@@ -7714,34 +7757,34 @@ public partial class SyscodeParser : Parser {
 		902,1,0,0,0,904,905,1,0,0,0,905,105,1,0,0,0,906,904,1,0,0,0,907,912,3,
 		110,55,0,908,912,3,108,54,0,909,912,3,120,60,0,910,912,3,90,45,0,911,907,
 		1,0,0,0,911,908,1,0,0,0,911,909,1,0,0,0,911,910,1,0,0,0,912,107,1,0,0,
-		0,913,914,5,86,0,0,914,109,1,0,0,0,915,920,3,114,57,0,916,920,3,116,58,
+		0,913,914,5,87,0,0,914,109,1,0,0,0,915,920,3,114,57,0,916,920,3,116,58,
 		0,917,920,3,112,56,0,918,920,3,118,59,0,919,915,1,0,0,0,919,916,1,0,0,
 		0,919,917,1,0,0,0,919,918,1,0,0,0,920,111,1,0,0,0,921,922,5,4,0,0,922,
 		113,1,0,0,0,923,924,5,7,0,0,924,115,1,0,0,0,925,926,5,5,0,0,926,117,1,
 		0,0,0,927,930,5,8,0,0,928,930,5,6,0,0,929,927,1,0,0,0,929,928,1,0,0,0,
-		930,119,1,0,0,0,931,932,5,113,0,0,932,121,1,0,0,0,933,934,5,109,0,0,934,
-		935,3,104,52,0,935,936,5,110,0,0,936,123,1,0,0,0,937,938,3,158,79,0,938,
-		939,3,104,52,0,939,125,1,0,0,0,940,941,5,109,0,0,941,942,3,130,65,0,942,
-		943,5,110,0,0,943,127,1,0,0,0,944,945,3,104,52,0,945,946,5,67,0,0,946,
+		930,119,1,0,0,0,931,932,5,114,0,0,932,121,1,0,0,0,933,934,5,110,0,0,934,
+		935,3,104,52,0,935,936,5,111,0,0,936,123,1,0,0,0,937,938,3,158,79,0,938,
+		939,3,104,52,0,939,125,1,0,0,0,940,941,5,110,0,0,941,942,3,130,65,0,942,
+		943,5,111,0,0,943,127,1,0,0,0,944,945,3,104,52,0,945,946,5,68,0,0,946,
 		948,1,0,0,0,947,944,1,0,0,0,947,948,1,0,0,0,948,949,1,0,0,0,949,952,3,
-		104,52,0,950,952,5,89,0,0,951,947,1,0,0,0,951,950,1,0,0,0,952,129,1,0,
-		0,0,953,958,3,128,64,0,954,955,5,108,0,0,955,957,3,128,64,0,956,954,1,
+		104,52,0,950,952,5,90,0,0,951,947,1,0,0,0,951,950,1,0,0,0,952,129,1,0,
+		0,0,953,958,3,128,64,0,954,955,5,109,0,0,955,957,3,128,64,0,956,954,1,
 		0,0,0,957,960,1,0,0,0,958,956,1,0,0,0,958,959,1,0,0,0,959,131,1,0,0,0,
 		960,958,1,0,0,0,961,962,3,104,52,0,962,133,1,0,0,0,963,964,3,104,52,0,
-		964,135,1,0,0,0,965,966,5,69,0,0,966,137,1,0,0,0,967,968,5,70,0,0,968,
-		139,1,0,0,0,969,970,5,68,0,0,970,141,1,0,0,0,971,972,5,85,0,0,972,143,
+		964,135,1,0,0,0,965,966,5,70,0,0,966,137,1,0,0,0,967,968,5,71,0,0,968,
+		139,1,0,0,0,969,970,5,69,0,0,970,141,1,0,0,0,971,972,5,86,0,0,972,143,
 		1,0,0,0,973,974,7,5,0,0,974,145,1,0,0,0,975,976,7,6,0,0,976,147,1,0,0,
 		0,977,978,7,7,0,0,978,149,1,0,0,0,979,980,7,8,0,0,980,151,1,0,0,0,981,
 		982,7,9,0,0,982,153,1,0,0,0,983,984,7,10,0,0,984,155,1,0,0,0,985,986,7,
 		11,0,0,986,157,1,0,0,0,987,988,7,12,0,0,988,159,1,0,0,0,989,994,3,170,
-		85,0,990,991,5,105,0,0,991,993,3,170,85,0,992,990,1,0,0,0,993,996,1,0,
+		85,0,990,991,5,106,0,0,991,993,3,170,85,0,992,990,1,0,0,0,993,996,1,0,
 		0,0,994,992,1,0,0,0,994,995,1,0,0,0,995,161,1,0,0,0,996,994,1,0,0,0,997,
-		998,5,109,0,0,998,1003,3,170,85,0,999,1000,5,108,0,0,1000,1002,3,170,85,
+		998,5,110,0,0,998,1003,3,170,85,0,999,1000,5,109,0,0,1000,1002,3,170,85,
 		0,1001,999,1,0,0,0,1002,1005,1,0,0,0,1003,1001,1,0,0,0,1003,1004,1,0,0,
-		0,1004,1006,1,0,0,0,1005,1003,1,0,0,0,1006,1007,5,110,0,0,1007,163,1,0,
-		0,0,1008,1009,5,109,0,0,1009,1014,5,8,0,0,1010,1011,5,108,0,0,1011,1013,
+		0,1004,1006,1,0,0,0,1005,1003,1,0,0,0,1006,1007,5,111,0,0,1007,163,1,0,
+		0,0,1008,1009,5,110,0,0,1009,1014,5,8,0,0,1010,1011,5,109,0,0,1011,1013,
 		5,8,0,0,1012,1010,1,0,0,0,1013,1016,1,0,0,0,1014,1012,1,0,0,0,1014,1015,
-		1,0,0,0,1015,1017,1,0,0,0,1016,1014,1,0,0,0,1017,1018,5,110,0,0,1018,165,
+		1,0,0,0,1015,1017,1,0,0,0,1016,1014,1,0,0,0,1017,1018,5,111,0,0,1018,165,
 		1,0,0,0,1019,1021,3,4,2,0,1020,1019,1,0,0,0,1020,1021,1,0,0,0,1021,1022,
 		1,0,0,0,1022,1024,3,168,84,0,1023,1025,3,4,2,0,1024,1023,1,0,0,0,1024,
 		1025,1,0,0,0,1025,1036,1,0,0,0,1026,1028,3,202,101,0,1027,1029,3,4,2,0,
@@ -7751,38 +7794,41 @@ public partial class SyscodeParser : Parser {
 		1,0,0,0,1037,1040,1,0,0,0,1038,1036,1,0,0,0,1039,1041,3,202,101,0,1040,
 		1039,1,0,0,0,1040,1041,1,0,0,0,1041,1043,1,0,0,0,1042,1044,3,4,2,0,1043,
 		1042,1,0,0,0,1043,1044,1,0,0,0,1044,167,1,0,0,0,1045,1046,3,170,85,0,1046,
-		169,1,0,0,0,1047,1050,3,206,103,0,1048,1050,5,112,0,0,1049,1047,1,0,0,
-		0,1049,1048,1,0,0,0,1050,171,1,0,0,0,1051,1052,5,65,0,0,1052,173,1,0,0,
-		0,1053,1057,5,9,0,0,1054,1057,5,62,0,0,1055,1057,3,188,94,0,1056,1053,
-		1,0,0,0,1056,1054,1,0,0,0,1056,1055,1,0,0,0,1057,175,1,0,0,0,1058,1067,
-		3,178,89,0,1059,1067,3,180,90,0,1060,1067,3,182,91,0,1061,1067,3,184,92,
-		0,1062,1067,3,192,96,0,1063,1067,3,186,93,0,1064,1067,3,188,94,0,1065,
-		1067,3,194,97,0,1066,1058,1,0,0,0,1066,1059,1,0,0,0,1066,1060,1,0,0,0,
-		1066,1061,1,0,0,0,1066,1062,1,0,0,0,1066,1063,1,0,0,0,1066,1064,1,0,0,
-		0,1066,1065,1,0,0,0,1067,177,1,0,0,0,1068,1069,5,20,0,0,1069,179,1,0,0,
-		0,1070,1075,5,9,0,0,1071,1072,5,109,0,0,1072,1073,3,104,52,0,1073,1074,
-		5,110,0,0,1074,1076,1,0,0,0,1075,1071,1,0,0,0,1075,1076,1,0,0,0,1076,181,
-		1,0,0,0,1077,1078,5,62,0,0,1078,183,1,0,0,0,1079,1080,5,30,0,0,1080,185,
-		1,0,0,0,1081,1082,5,50,0,0,1082,187,1,0,0,0,1083,1084,5,11,0,0,1084,1085,
-		5,109,0,0,1085,1086,3,106,53,0,1086,1087,5,110,0,0,1087,189,1,0,0,0,1088,
-		1089,5,30,0,0,1089,191,1,0,0,0,1090,1091,5,36,0,0,1091,193,1,0,0,0,1092,
-		1093,5,49,0,0,1093,195,1,0,0,0,1094,1095,5,63,0,0,1095,197,1,0,0,0,1096,
-		1097,5,109,0,0,1097,1102,3,68,34,0,1098,1099,5,108,0,0,1099,1101,3,68,
-		34,0,1100,1098,1,0,0,0,1101,1104,1,0,0,0,1102,1100,1,0,0,0,1102,1103,1,
-		0,0,0,1103,1105,1,0,0,0,1104,1102,1,0,0,0,1105,1106,5,110,0,0,1106,199,
-		1,0,0,0,1107,1108,5,10,0,0,1108,1109,5,109,0,0,1109,1110,3,68,34,0,1110,
-		1111,5,110,0,0,1111,201,1,0,0,0,1112,1113,5,108,0,0,1113,203,1,0,0,0,1114,
-		1116,3,4,2,0,1115,1114,1,0,0,0,1115,1116,1,0,0,0,1116,1117,1,0,0,0,1117,
-		1118,5,0,0,1,1118,205,1,0,0,0,1119,1120,7,13,0,0,1120,207,1,0,0,0,157,
-		211,218,223,229,244,249,252,256,260,263,267,274,280,288,308,312,317,321,
-		327,331,334,339,343,349,353,356,360,365,369,378,384,388,391,395,399,405,
-		412,415,423,427,430,433,439,444,459,469,472,476,479,483,486,490,495,499,
-		506,511,515,522,527,531,540,544,556,560,563,566,569,572,577,581,585,592,
-		597,603,608,617,625,627,639,644,647,650,653,656,659,662,665,668,671,674,
-		677,680,683,686,689,692,695,697,720,723,726,738,744,748,752,759,764,768,
-		774,783,790,794,798,804,808,814,818,824,828,834,838,844,848,854,858,864,
-		868,874,878,884,888,894,898,902,904,911,919,929,947,951,958,994,1003,1014,
-		1020,1024,1028,1032,1036,1040,1043,1049,1056,1066,1075,1102,1115
+		169,1,0,0,0,1047,1050,3,206,103,0,1048,1050,5,113,0,0,1049,1047,1,0,0,
+		0,1049,1048,1,0,0,0,1050,171,1,0,0,0,1051,1052,5,66,0,0,1052,173,1,0,0,
+		0,1053,1057,5,9,0,0,1054,1057,5,63,0,0,1055,1057,3,190,95,0,1056,1053,
+		1,0,0,0,1056,1054,1,0,0,0,1056,1055,1,0,0,0,1057,175,1,0,0,0,1058,1068,
+		3,178,89,0,1059,1068,3,180,90,0,1060,1068,3,182,91,0,1061,1068,3,184,92,
+		0,1062,1068,3,186,93,0,1063,1068,3,188,94,0,1064,1068,3,190,95,0,1065,
+		1068,3,192,96,0,1066,1068,3,194,97,0,1067,1058,1,0,0,0,1067,1059,1,0,0,
+		0,1067,1060,1,0,0,0,1067,1061,1,0,0,0,1067,1062,1,0,0,0,1067,1063,1,0,
+		0,0,1067,1064,1,0,0,0,1067,1065,1,0,0,0,1067,1066,1,0,0,0,1068,177,1,0,
+		0,0,1069,1070,5,20,0,0,1070,179,1,0,0,0,1071,1076,5,9,0,0,1072,1073,5,
+		110,0,0,1073,1074,3,104,52,0,1074,1075,5,111,0,0,1075,1077,1,0,0,0,1076,
+		1072,1,0,0,0,1076,1077,1,0,0,0,1077,181,1,0,0,0,1078,1079,5,63,0,0,1079,
+		183,1,0,0,0,1080,1081,5,30,0,0,1081,185,1,0,0,0,1082,1083,5,37,0,0,1083,
+		187,1,0,0,0,1084,1085,5,51,0,0,1085,189,1,0,0,0,1086,1091,5,11,0,0,1087,
+		1088,5,110,0,0,1088,1089,3,104,52,0,1089,1090,5,111,0,0,1090,1092,1,0,
+		0,0,1091,1087,1,0,0,0,1091,1092,1,0,0,0,1092,191,1,0,0,0,1093,1094,5,50,
+		0,0,1094,193,1,0,0,0,1095,1096,5,36,0,0,1096,1097,5,110,0,0,1097,1098,
+		3,104,52,0,1098,1099,5,111,0,0,1099,195,1,0,0,0,1100,1101,5,64,0,0,1101,
+		197,1,0,0,0,1102,1103,5,110,0,0,1103,1108,3,68,34,0,1104,1105,5,109,0,
+		0,1105,1107,3,68,34,0,1106,1104,1,0,0,0,1107,1110,1,0,0,0,1108,1106,1,
+		0,0,0,1108,1109,1,0,0,0,1109,1111,1,0,0,0,1110,1108,1,0,0,0,1111,1112,
+		5,111,0,0,1112,199,1,0,0,0,1113,1114,5,10,0,0,1114,1115,5,110,0,0,1115,
+		1116,3,68,34,0,1116,1117,5,111,0,0,1117,201,1,0,0,0,1118,1119,5,109,0,
+		0,1119,203,1,0,0,0,1120,1122,3,4,2,0,1121,1120,1,0,0,0,1121,1122,1,0,0,
+		0,1122,1123,1,0,0,0,1123,1124,5,0,0,1,1124,205,1,0,0,0,1125,1126,7,13,
+		0,0,1126,207,1,0,0,0,158,211,218,223,229,244,249,252,256,260,263,267,274,
+		280,288,308,312,317,321,327,331,334,339,343,349,353,356,360,365,369,378,
+		384,388,391,395,399,405,412,415,423,427,430,433,439,444,459,469,472,476,
+		479,483,486,490,495,499,506,511,515,522,527,531,540,544,556,560,563,566,
+		569,572,577,581,585,592,597,603,608,617,625,627,639,644,647,650,653,656,
+		659,662,665,668,671,674,677,680,683,686,689,692,695,697,720,723,726,738,
+		744,748,752,759,764,768,774,783,790,794,798,804,808,814,818,824,828,834,
+		838,844,848,854,858,864,868,874,878,884,888,894,898,902,904,911,919,929,
+		947,951,958,994,1003,1014,1020,1024,1028,1032,1036,1040,1043,1049,1056,
+		1067,1076,1091,1108,1121
 	};
 
 	public static readonly ATN _ATN =

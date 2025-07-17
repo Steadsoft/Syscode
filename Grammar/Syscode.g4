@@ -325,17 +325,18 @@ attributes
     | staticAttribute        #AttribStatic
     | basedAttribute         #AttribBased
     | stackAttribute         #AttribStack
+    | initAttribute          #AttribInit
     ;
 
 constAttribute: CONST;
 alignedAttribute: ALIGNED (LPAR Alignment=expression RPAR)?;
 unalignedAttribute: UNALIGNED;    
 externalAttribute: EXTERNAL;
-staticAttribute: STATIC;
-basedAttribute: BASED LPAR primitiveExpression RPAR ;
-externAttribute: EXTERNAL;
 internalAttribute: INTERNAL;
+staticAttribute: STATIC;
+basedAttribute: BASED (LPAR Base=expression RPAR)? ;
 stackAttribute: STACK;
+initAttribute: INIT LPAR Value=expression RPAR;
 unitType: UNIT;
 
 
@@ -382,6 +383,7 @@ keyword
     | FUNC
     | GOTO
     | IF
+    | INIT
     | INTERNAL
     | IS
     | LABEL
@@ -470,6 +472,7 @@ FOREVER:        'forever';
 FUNC:           'func' | 'function';
 GOTO:           'goto';
 IF:             'if';
+INIT:           'init';
 INTERNAL:       'internal';
 IS:             'is';
 LABEL:          'label';

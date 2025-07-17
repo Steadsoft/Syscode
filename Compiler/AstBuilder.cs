@@ -382,19 +382,9 @@ namespace Syscode
             {
                 switch (attrib)
                 {
-                    case (AttribAlignedContext):
+                    case (AttribAlignedContext align):
                         {
-                            Expression exp = null;
-
-                            if (attrib.TryGetExactNode<AlignedAttributeContext>(out var aln))
-                            {
-                                if (aln.Alignment != null)
-                                {
-                                    exp = CreateExpression(aln.Alignment);
-                                }
-                            }
-
-                            dcl.Attributes.Add(new Aligned(attrib, exp));
+                            dcl.Attributes.Add(new Aligned(align, CreateExpression(align.alignedAttribute().Alignment)));
                             break;
                         }
                     case (AttribUnalignedContext):
@@ -432,7 +422,11 @@ namespace Syscode
                             dcl.Attributes.Add(new Stack(attrib));
                             break;
                         }
-
+                    case (AttribInitContext init):
+                        {
+                            dcl.Attributes.Add(new Initial(init,CreateExpression(init.initAttribute().Value)));
+                            break;
+                        }
                     default:
                         throw new InvalidOperationException();
                 }

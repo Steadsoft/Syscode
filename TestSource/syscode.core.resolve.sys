@@ -47,7 +47,7 @@ proc main options(main) // outermost, therefore has external scope, full name: u
 
     dcl a bin(10,4) static based (p)
 
-    dcl large(10 + a) ubin(71)
+    dcl large(10 + a) ubin(71) init(1234)
 
     date = get_date(123)
 
