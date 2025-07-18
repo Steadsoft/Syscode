@@ -130,7 +130,7 @@ assignment : reference comparer expression statementSeparator;
 comparer: EQUALS | COMPASSIGN;
 
 reference
-  : Ref=reference RARROW Basic=basicReference ArgsList=argumentsList?  
+  : Inner=reference RARROW Basic=basicReference ArgsList=argumentsList?  
   | Basic=basicReference ArgsList=argumentsList?                    
   ;
 

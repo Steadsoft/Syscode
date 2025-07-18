@@ -13,9 +13,12 @@ namespace Syscode
         public Reference(ReferenceContext context) : base(context)
         {
         }
+        /// <summary>
+        /// Indicates whether the reference has a preceding 'pointer' qualifier.
+        /// </summary>
         public bool IsBasic
         {
-            get { return InnerReference == null; }
+            get { return Inner == null; }
         }
 
         public bool IsResolved { get => resolved; internal set => resolved = value; }
@@ -24,7 +27,7 @@ namespace Syscode
         public bool IsntBasic { get => !IsBasic; }
 
         public BasicReference Basic { get => basic; internal set => basic = value; }
-        public Reference InnerReference { get => innerReference; set => innerReference = value; }
+        public Reference Inner { get => innerReference; set => innerReference = value; }
         public List<Arguments> ArgumentsList { get => argumentsList; set => argumentsList = value; }
         /// <summary>
         /// This is a diagnostic that must be reported if present, it is only ever present on qualified references. 
@@ -35,9 +38,9 @@ namespace Syscode
         {
             StringBuilder builder = new StringBuilder();
 
-            if (InnerReference != null)
+            if (Inner != null)
             {
-                builder.Append(InnerReference.ToString());
+                builder.Append(Inner.ToString());
                 builder.Append(" -> ");
             }
 

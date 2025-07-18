@@ -278,9 +278,9 @@ namespace Syscode
 
             // A Reference might contain another Reference...
 
-            if (context.Ref != null)
+            if (context.Inner != null)
             {
-                reference.InnerReference = CreateReference(context.Ref);
+                reference.Inner = CreateReference(context.Inner);
             }
 
             if (context.ArgsList != null)

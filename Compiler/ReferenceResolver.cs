@@ -93,10 +93,10 @@
         }
         private void ResolveReference(IContainer container, Reference reference)
         {
-            if (reference.IsntBasic)// || reference.Basic.IsQualified)
-                return;
+            if (reference.IsntBasic)
+                ResolveReference(container, reference.Inner);
 
-            if ( reference.ArgumentsList.Any())
+            if (reference.ArgumentsList.Any())
             {
                 // Please refer to grammar to understand how this is structured.
 
@@ -220,11 +220,10 @@
                 }
             }
 
-            if (reference.IsBasic)
-                if (reference.Basic.IsKeyword)
-                    reporter.Report(node, 1015, reference.Basic.Spelling);
+            if (reference.Basic.IsKeyword)
+                reporter.Report(node, 1015, reference.Basic.Spelling);
 
-            if (reference.IsBasic && reference.Basic.IsQualified)
+            if (reference.Basic.IsQualified)
             {
                 if (reference.Report != null)
                 {
@@ -252,13 +251,16 @@
                 }
             }
 
-            if (reference.IsBasic && reference.Basic.IsntQualified)
+            if (reference.Basic.IsntQualified)
             {
                 if (reference.IsntResolved)
                 {
                     reporter.Report(node, 1000, reference.Basic.Spelling);
                 }
             }
+
+            if (reference.IsntBasic)
+                ReportUnresolvedReference(node, reference.Inner);
 
         }
         public void ReportUnresolvedReferences(AstNode node, Expression expression)
