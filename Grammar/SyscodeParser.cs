@@ -3772,7 +3772,7 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class ReferenceContext : ParserRuleContext {
-		public ReferenceContext Inner;
+		public ReferenceContext Pointer;
 		public BasicReferenceContext Basic;
 		public ArgumentsListContext ArgsList;
 		[System.Diagnostics.DebuggerNonUserCode] public BasicReferenceContext basicReference() {
@@ -3834,7 +3834,7 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					_localctx = new ReferenceContext(_parentctx, _parentState);
-					_localctx.Inner = _prevctx;
+					_localctx.Pointer = _prevctx;
 					PushNewRecursionContext(_localctx, _startState, RULE_reference);
 					State = 740;
 					if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");

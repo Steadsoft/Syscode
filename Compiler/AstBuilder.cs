@@ -278,9 +278,9 @@ namespace Syscode
 
             // A Reference might contain another Reference...
 
-            if (context.Inner != null)
+            if (context.Pointer != null)
             {
-                reference.Inner = CreateReference(context.Inner);
+                reference.Pointer = CreateReference(context.Pointer);
             }
 
             if (context.ArgsList != null)
@@ -304,7 +304,7 @@ namespace Syscode
 
             // TODO: process the optional ArgList list..
 
-            reference.Basic = CreateBasicReference(context.Basic);
+            reference.BasicReference = CreateBasicReference(context.Basic);
 
             return reference;
         }

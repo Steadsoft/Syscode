@@ -56,7 +56,7 @@
             if (symbol.IsntStructure)
                 return; // no way can this be resolved!
 
-            var quals = reference.Basic.Qualifier.Select(q => q.Spelling).ToList();
+            var quals = reference.BasicReference.Qualifier.Select(q => q.Spelling).ToList();
             var count = quals.Count;
             var curr_struct = symbol.StructBody;
 
@@ -77,24 +77,24 @@
 
             // we now have the innermost qualified struct, does that struct contain the referenced name?
 
-            if (curr_struct.Fields.Where(f => f.Spelling == reference.Basic.Spelling).Any())
+            if (curr_struct.Fields.Where(f => f.Spelling == reference.BasicReference.Spelling).Any())
             {
                 reference.IsResolved = true;
-                reference.Basic.Symbol = symbol;
+                reference.BasicReference.Symbol = symbol;
                 return;
             }
 
-            if (curr_struct.Structs.Where(s => s.Spelling == reference.Basic.Spelling).Any())
+            if (curr_struct.Structs.Where(s => s.Spelling == reference.BasicReference.Spelling).Any())
             {
                 reference.IsResolved = true;
-                reference.Basic.Symbol = symbol;
+                reference.BasicReference.Symbol = symbol;
                 return;
             }
         }
         private void ResolveReference(IContainer container, Reference reference)
         {
-            if (reference.IsntBasic)
-                ResolveReference(container, reference.Inner);
+            if (reference.IsntJustBasicReference)
+                ResolveReference(container, reference.Pointer);
 
             if (reference.ArgumentsList.Any())
             {
@@ -109,9 +109,9 @@
                 }
             }
 
-            if (reference.Basic.IsQualified)
+            if (reference.BasicReference.IsQualified)
             {
-                foreach (var qualification in reference.Basic.Qualifier)
+                foreach (var qualification in reference.BasicReference.Qualifier)
                 {
                     if (qualification.Arguments != null)
                     {
@@ -122,7 +122,7 @@
                     }
                 }
 
-                if (DeclarationCount(container, reference.Basic.Qualifier.First().Spelling, out var sym) == 1)
+                if (DeclarationCount(container, reference.BasicReference.Qualifier.First().Spelling, out var sym) == 1)
                 {
                     // if not a struct, then exit, because the reference is to a non-struct and can't be qualied, illegal code...
 
@@ -134,16 +134,16 @@
                 else
                 {
                     // struct name itself not resolved.
-                    reference.Report = new Report(reference,1012,reference.Basic.Qualifier.First().Spelling);
+                    reference.Report = new Report(reference,1012,reference.BasicReference.Qualifier.First().Spelling);
                     return;
                 }
             }
             else
             {
-                if (DeclarationCount(container, reference.Basic.Spelling, out var symbol) == 1)
+                if (DeclarationCount(container, reference.BasicReference.Spelling, out var symbol) == 1)
                 {
                     reference.IsResolved = true;
-                    reference.Basic.Symbol = symbol;
+                    reference.BasicReference.Symbol = symbol;
                     return;
                 }
             }
@@ -220,25 +220,24 @@
                 }
             }
 
-            if (reference.Basic.IsKeyword)
-                reporter.Report(node, 1015, reference.Basic.Spelling);
+            if (reference.BasicReference.IsKeyword)
+                reporter.Report(node, 1015, reference.BasicReference.Spelling);
 
-            if (reference.Basic.IsQualified)
+            if (reference.BasicReference.IsQualified)
             {
                 if (reference.Report != null)
                 {
                     // this is a qualification error, report this and be done.
                     reporter.Report(reference.Report);
-                    return;
                 }
                 if (reference.IsntResolved)
                 {
-                    reporter.Report(node, 1010, reference.Basic.Spelling);
+                    reporter.Report(node, 1010, reference.BasicReference.Spelling);
                 }
 
-                if (reference.Basic.Qualifier != null)
+                if (reference.BasicReference.Qualifier != null)
                 {
-                    foreach (var q in reference.Basic.Qualifier)
+                    foreach (var q in reference.BasicReference.Qualifier)
                     {
                         if (q.Arguments != null)
                         {
@@ -251,16 +250,16 @@
                 }
             }
 
-            if (reference.Basic.IsntQualified)
+            if (reference.BasicReference.IsntQualified)
             {
                 if (reference.IsntResolved)
                 {
-                    reporter.Report(node, 1000, reference.Basic.Spelling);
+                    reporter.Report(node, 1000, reference.BasicReference.Spelling);
                 }
             }
 
-            if (reference.IsntBasic)
-                ReportUnresolvedReference(node, reference.Inner);
+            if (reference.IsntJustBasicReference)
+                ReportUnresolvedReference(node, reference.Pointer);
 
         }
         public void ReportUnresolvedReferences(AstNode node, Expression expression)
