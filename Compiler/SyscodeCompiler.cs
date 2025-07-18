@@ -1,10 +1,6 @@
 ﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Misc;
-using System;
-using System.IO;
 using System.Text;
 using System.Text.Json;
-using System.Xml.Linq;
 using static SyscodeParser;
 
 namespace Syscode

@@ -1,9 +1,4 @@
-﻿
-using System.ComponentModel;
-using System.Text;
-using System.Xml.Linq;
-
-namespace Syscode
+﻿namespace Syscode
 {
     public class ReferenceResolver
     {

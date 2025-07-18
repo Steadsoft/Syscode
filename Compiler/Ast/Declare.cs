@@ -1,6 +1,4 @@
-﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
-using static SyscodeParser;
+﻿using static SyscodeParser;
 
 namespace Syscode
 {

@@ -1,8 +1,4 @@
-﻿using LLVMSharp;
-using LLVMSharp.Interop;
-using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Xml.Linq;
+﻿using LLVMSharp.Interop;
 
 namespace LLVMSandbox
 {

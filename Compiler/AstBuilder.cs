@@ -1,9 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using Syscode.Ast;
-using System.Net.Http.Headers;
 using static SyscodeParser;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Syscode
 {

@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace Syscode
+﻿namespace Syscode
 {
     public class Symbol : ISpelling  
     {

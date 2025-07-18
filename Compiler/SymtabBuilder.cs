@@ -1,5 +1,4 @@
 ﻿using Syscode.Ast;
-using System.Xml.Linq;
 
 namespace Syscode
 {
