@@ -46,9 +46,10 @@ namespace Syscode
                 symbol.Invalid = false;
                 symbol.Bytes = bytes;
 
-                if (declaration.Alignment == -1)
+                if (declaration.Alignment.AlignmentUnits == AlignmentUnits.Unspecified)
                    declaration.Alignment = GetDefaultAlignment(symbol);
 
+                ApplyDefaults(symbol);
                 return symbol;
             }
 
@@ -61,14 +62,48 @@ namespace Syscode
                     symbol.Invalid = false;
                     symbol.Varying = declaration.Varying;
 
-                    if (declaration.Alignment == -1)
+                    if (declaration.Alignment.AlignmentUnits == AlignmentUnits.Unspecified)
                        declaration.Alignment = GetDefaultAlignment(symbol);
 
+                    ApplyDefaults(symbol);
                     return symbol;
                 }
             }
 
+            ApplyDefaults(symbol);
+
             return symbol;
+        }
+
+        private void ApplyDefaults(Symbol symbol)
+        {
+            if (symbol.Container == null)  // declared in global namespace
+            {
+                if (symbol.StorageClass == StorageClass.Unspecified)
+                {
+                    symbol.StorageClass = StorageClass.Static;
+                }
+                else
+                {
+                    if (symbol.StorageClass != StorageClass.Static)
+                    {
+                        reporter.Report(symbol.Node, 1022);
+                    }
+                }
+
+                if (symbol.StorageScope == StorageScope.Unspecified)
+                {
+                    symbol.StorageScope = StorageScope.Internal;
+                }
+            }
+            else
+            {
+                if (symbol.StorageClass == StorageClass.Unspecified)
+                    symbol.StorageClass = StorageClass.Stack;
+
+                if (symbol.StorageScope == StorageScope.Unspecified)
+                    symbol.StorageScope = StorageScope.Internal;
+            }
         }
         private void ValidateStructure(Declare declaration)
         {
@@ -240,13 +275,15 @@ namespace Syscode
 
             
         }
-        private bool ValidateAligned(Declare declaration, Aligned Aligned, out int alignment)
+        private bool ValidateAligned(Declare declaration, Aligned Aligned, out Alignment alignment)
         {
-            alignment = -1;
+            alignment = null;
 
             if (Aligned.Alignment.IsConstant && Aligned.Alignment.Literal != null)
             {
-                alignment = Convert.ToInt32(Aligned.Alignment.Literal.Value);
+                alignment = new Alignment();
+                alignment.AlignmentValue = Convert.ToInt32(Aligned.Alignment.Literal.Value);
+                alignment.AlignmentUnits = AlignmentUnits.Bytes;
                 return true;
             }
             else
@@ -363,10 +400,11 @@ namespace Syscode
 
             return true;
         }
-        private int GetDefaultAlignment(Symbol symbol)
+        private Alignment GetDefaultAlignment(Symbol symbol)
         {
             int byteLength = (symbol.Precision + 7) / 8;
-            return 1 << (int)Math.Ceiling(Math.Log2(byteLength));
+            int value = 1 << (int)Math.Ceiling(Math.Log2(byteLength));
+            return new Alignment() { AlignmentUnits = AlignmentUnits.Bytes, AlignmentValue = value };
         }
         private int GetByteSize(Declare symbol, int Precision)
         {

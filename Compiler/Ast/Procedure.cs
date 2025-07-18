@@ -14,7 +14,7 @@ namespace Syscode
         private bool main;
         private StorageClass storageClass = StorageClass.Unspecified;
         private StorageScope storageScope = StorageScope.Unspecified;
-        public Procedure(ParserRuleContext context, IContainer Container) : base(context)
+        public Procedure(IContainer Container, ParserRuleContext context) : base(context)
         {
             this.Container = Container;
         }

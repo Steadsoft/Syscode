@@ -355,7 +355,7 @@ namespace Syscode
         }
         private Declare CreateDeclaration(DeclareContext context)
         {
-            var dcl = new Declare(context);
+            var dcl = new Declare(currentContainer, context);
 
             if (context.Bounds != null)
             {
@@ -498,7 +498,7 @@ namespace Syscode
         }
         private Procedure CreateProcedure(ProcedureContext context)
         {
-            var node = new Procedure(context, currentContainer);
+            var node = new Procedure(currentContainer, context);
 
             currentContainer = node;
 
@@ -524,7 +524,7 @@ namespace Syscode
 
         private Procedure CreateFunction(FunctionContext context)
         {
-            var node = new Procedure(context, currentContainer); // a func is so similar to a proc we use same class to represent them.
+            var node = new Procedure(currentContainer, context); // a func is so similar to a proc we use same class to represent them.
 
             currentContainer = node;
 

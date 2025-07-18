@@ -1,4 +1,5 @@
-﻿using static SyscodeParser;
+﻿using Syscode.Ast;
+using static SyscodeParser;
 
 namespace Syscode
 {
@@ -16,7 +17,8 @@ namespace Syscode
         public List<Expression> typeSubscripts = new();
         private bool varying;
         private bool constantSize = true;
-        private int alignment = -1;
+        private Alignment alignment = new Alignment();
+        private IContainer container;
         public StructBody StructBody 
         { 
             get => structBody; 
@@ -61,15 +63,19 @@ namespace Syscode
             }
         }
 
-        public int Alignment { get => alignment; internal set => alignment = value; }
+        public Alignment Alignment { get => alignment; internal set => alignment = value; }
         public StorageClass StorageClass { get => storageClass; set => storageClass = value; }
         public StorageScope StorageScope { get => storageScope; set => storageScope = value; }
+        public IContainer Container { get => container;  }
 
-        public Declare(DeclareContext context) : base(context)
+        public Declare(IContainer container, DeclareContext context) : base(context)
         {
             if (context.Type != null) 
                 CoreType = GetCoreType(context.Type);
+
+            this.container = container;
         }
+
 
         public override string ToString()
         {

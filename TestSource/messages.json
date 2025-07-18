@@ -128,6 +128,15 @@
       "severity": "Error"
     }
 
+,
+
+                {
+      "number": 1022,
+      "message": "Names declared in a global scope must have static storage class.",
+      "severity": "Error"
+    }
+
+
 
 
 

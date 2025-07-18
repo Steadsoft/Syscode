@@ -417,7 +417,7 @@ namespace Syscode
                         builder.Append($", TYPE: {symbol.CoreType}");
                         builder.Append($"({symbol.Precision},{symbol.Scale})");
                         builder.Append($", BYTES: {symbol.Bytes}");
-                        builder.Append($", ALIGN: {symbol.Alignment}");
+                        builder.Append($", ALIGN: {symbol.Alignment.AlignmentValue} {symbol.Alignment.AlignmentUnits}");
                         builder.Append($", IS FIXED SIZE: {symbol.ConstantSize}");
                         builder.Append($", IS ARRAY: {symbol.Declaration.IsArray}");
                         builder.Append($", CLASS: {symbol.StorageClass}");

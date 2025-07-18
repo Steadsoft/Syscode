@@ -1,4 +1,6 @@
-﻿namespace Syscode
+﻿using Syscode.Ast;
+
+namespace Syscode
 {
     public class Symbol : ISpelling  
     {
@@ -11,16 +13,24 @@
         private bool signed;
         private bool varying;
         private int bytes;
+        private IContainer container;
+        private StorageClass storageClass;
+        private StorageScope storageScope;
         public Symbol(Declare declaration) 
         {
             this.Declaration = declaration;
             this.dataType = declaration.CoreType;
+            this.storageClass = declaration.StorageClass;
+            this.storageScope = declaration.StorageScope;
         }
 
         public Symbol(Procedure procedure)
         {
             this.procedure = procedure;
             this.dataType = DataType.ENTRY;
+            this.container = procedure.Container;
+            this.storageClass = procedure.StorageClass;
+            this.storageScope = procedure.StorageScope;
         }
 
         public StructBody StructBody { get => Declaration?.StructBody; }
@@ -55,11 +65,11 @@
         /// <remarks>
         /// The alignment is zero for next bit alignment, then 1 for next byte and so on
         /// </remarks>
-        public int Alignment { get => declaration.Alignment; }
+        public Alignment Alignment { get => declaration.Alignment; }
         public Declare Declaration { get => declaration; set => declaration = value; }
-        public StorageClass StorageClass { get => declaration != null ? declaration.StorageClass : procedure.StorageClass; }
-        public StorageScope StorageScope { get => declaration != null ? declaration.StorageScope : procedure.StorageScope; }
-
+        public StorageClass StorageClass { get => storageClass; set => storageClass = value; }
+        public StorageScope StorageScope { get => storageScope; set => storageScope = value; }
+        public IContainer Container { get => declaration != null ? declaration.Container : procedure.Container; }
         public override string ToString()
         {
             return Spelling;
