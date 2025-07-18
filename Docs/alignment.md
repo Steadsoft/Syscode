@@ -25,7 +25,7 @@ Every element of an array always has the same aligment. That can be either the d
 ```c++
 dcl entries (32) bin16 aligned (4) // the alignment of elements is 4 depsite their default alignment being 2. 
 ```
-if you declare an array with an alignment less than the element size, the compiler will report an error.
+
 
 ## Structure Alignment
 Syscode allows you to have complete control over the physical layout of storage when using structures. You can declare and use structures without regard to alignment when the structure is used merely as an aggerate of disparate data elements. 
