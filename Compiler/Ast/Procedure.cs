@@ -13,6 +13,8 @@ namespace Syscode
         private List<Symbol> symbols = new List<Symbol>();
         private IContainer container;
         private bool main;
+        private StorageClass storageClass = StorageClass.Unspecified;
+        private StorageScope storageScope = StorageScope.Unspecified;
         public Procedure(ParserRuleContext context, IContainer Container) : base(context)
         {
             this.Container = Container;
@@ -26,6 +28,8 @@ namespace Syscode
         public List<string> Parameters { get => parameters; set => parameters = value; }
         public string Spelling { get => spelling; set => spelling = value; }
         public bool Main { get => main; set => main = value; }
+        public StorageClass StorageClass { get => storageClass; set => storageClass = value; }
+        public StorageScope StorageScope { get => storageScope; set => storageScope = value; }
 
         public override string ToString()
         {

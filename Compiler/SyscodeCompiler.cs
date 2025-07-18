@@ -55,7 +55,7 @@ namespace Syscode
         {
             file = SourceFile;
 
-            var fileName = Path.GetFileNameWithoutExtension(file); 
+            var fileName = Path.GetFileNameWithoutExtension(file);
 
             // extract any namespace components from the file's name
 
@@ -226,7 +226,7 @@ namespace Syscode
 
             switch (node)
             {
-                case Call call :
+                case Call call:
                     {
                         Console.WriteLine($"{LineDepth(depth, call)} {call.GetType().Name} '{call.ToString()}'");
                         break;
@@ -360,10 +360,31 @@ namespace Syscode
                                 depth--;
                             }
                         }
-                        
+
                         if (scope.IsBlockScope)
                             Console.WriteLine($"{LineDepthEnd(depth, scope)} End");
                         break;
+                    }
+                case Compilation proc:
+                    {
+                        Console.WriteLine($"{LineDepth(depth, proc)} {proc.GetType().Name}");
+
+                        PrintSymbols(proc.Symbols, depth, proc);
+
+                        var children = ((IContainer)(proc)).Statements;
+
+                        if (children.Any())
+                        {
+                            foreach (var child in children)
+                            {
+                                depth++;
+                                PrintAbstractSyntaxTree(child, depth);
+                                depth--;
+                            }
+                        }
+                        Console.WriteLine($"{LineDepthEnd(depth, proc)} End");
+                        break;
+
                     }
                 case IContainer statement:
                     {
@@ -385,7 +406,7 @@ namespace Syscode
             }
         }
 
-        public void PrintSymbols (IEnumerable<Symbol> symbols, int depth, AstNode node)
+        public void PrintSymbols(IEnumerable<Symbol> symbols, int depth, AstNode node)
         {
             foreach (var symbol in symbols)
             {
@@ -393,17 +414,31 @@ namespace Syscode
                 {
                     StringBuilder builder = new StringBuilder();
 
-                    builder.Append($"{LineDepth(depth, symbol.Declaration)}  ");
-                    builder.Append($"SYMBOL: '{symbol.ToString()}'");
-                    builder.Append($", TYPE: {symbol.CoreType}");
-                    builder.Append($"({symbol.Precision},{symbol.Scale})");
-                    builder.Append($", BYTES: {symbol.Bytes}");
-                    builder.Append($", ALIGN: {symbol.Alignment}");
-                    builder.Append($", IS FIXED SIZE: {symbol.ConstantSize}");
-                    builder.Append($", IS ARRAY: {symbol.Declaration.IsArray}");
-                    builder.Append($", CLASS: {symbol.StorageClass}");
-                    builder.Append($", SCOPE: {symbol.StorageScope}");
-                    Console.WriteLine( builder.ToString() );
+                    if (symbol.CoreType != DataType.ENTRY)
+                    {
+                        builder.Append($"{LineDepth(depth, symbol.Node)}  ");
+                        builder.Append($"SYMBOL: '{symbol.ToString()}'");
+                        builder.Append($", TYPE: {symbol.CoreType}");
+                        builder.Append($"({symbol.Precision},{symbol.Scale})");
+                        builder.Append($", BYTES: {symbol.Bytes}");
+                        builder.Append($", ALIGN: {symbol.Alignment}");
+                        builder.Append($", IS FIXED SIZE: {symbol.ConstantSize}");
+                        builder.Append($", IS ARRAY: {symbol.Declaration.IsArray}");
+                        builder.Append($", CLASS: {symbol.StorageClass}");
+                        builder.Append($", SCOPE: {symbol.StorageScope}");
+                        Console.WriteLine(builder.ToString());
+
+                    }
+                    else
+                    {
+                        builder.Append($"{LineDepth(depth, symbol.Node)}  ");
+                        builder.Append($"SYMBOL: '{symbol.ToString()}'");
+                        builder.Append($", TYPE: {symbol.CoreType}");
+                        builder.Append($", CLASS: {symbol.StorageClass}");
+                        builder.Append($", SCOPE: {symbol.StorageScope}");
+                        Console.WriteLine(builder.ToString());
+                    }
+
                 }
                 else
                     Console.WriteLine($"{LineDepth(depth, symbol.Declaration)}  SYMBOL: '{symbol.ToString()}' STRUCT");

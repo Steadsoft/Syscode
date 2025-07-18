@@ -31,6 +31,16 @@ namespace Syscode
         { 
             get => Declaration != null ? Declaration.Spelling : procedure.Spelling; 
         }
+        public AstNode Node
+        {
+            get
+            {
+                if (declaration != null)
+                    return declaration;
+                
+                return procedure;
+            }
+        }
         public bool ConstantSize => declaration.ConstantSize;
         public bool IsStructure { get => Declaration?.StructBody != null; }
         public bool IsntStructure { get => !IsStructure; }
@@ -49,8 +59,8 @@ namespace Syscode
         /// </remarks>
         public int Alignment { get => declaration.Alignment; }
         public Declare Declaration { get => declaration; set => declaration = value; }
-        public StorageClass StorageClass { get => declaration.StorageClass;  }
-        public StorageScope StorageScope { get => declaration.StorageScope; }
+        public StorageClass StorageClass { get => declaration != null ? declaration.StorageClass : procedure.StorageClass; }
+        public StorageScope StorageScope { get => declaration != null ? declaration.StorageScope : procedure.StorageScope; }
 
         public override string ToString()
         {
