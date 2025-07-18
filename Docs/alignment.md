@@ -11,3 +11,9 @@ A bit data type too has a default alignemnt of 1 byte. If you declare a variable
 
 You can specify the keyword `aligned` on its own, in a declaration to emphasize that the variable is being explicitly given its default alignment.
 
+## Specified Alignment
+The `aligned` keyword can optionally include an alignment value which represents the byte alignment tp be given to the declared data elemeent. 
+
+```sys
+dcl count_rate bin(12) aligned(4) // the datum is aligned on a 4 byte boundary despite it's default alignment being 2 bytes.
+```
