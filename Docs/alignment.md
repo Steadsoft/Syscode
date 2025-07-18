@@ -7,5 +7,5 @@ A `structure` too has a default alignemnt that's based on the default alignment 
 
 A bit data type too has a default alignemnt of 1 byte. If you declare a variable to be `bit(3)` or `bit(47)` the variable will be aligned on a byte boundary, the `0th` bit being aligned with bit 0 of the byte. 
 
-You can specify the keyword `aligned` on its own, in a declaration to emphasize that the variable is being given its default alignment.
+You can specify the keyword `aligned` on its own, in a declaration to emphasize that the variable is being explicitly given its default alignment.
 
