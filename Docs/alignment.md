@@ -5,7 +5,7 @@ Syscode is designed for working with unusual or challenging memory layouts. Ever
 
 A `structure` too has a default alignemnt that's based on the default alignment of the structure member which has the greatest alignment, so a `structure` that has a member of type `ubin64` for example will be given a default alignment of 8 bytes.
 
-A bit data type too has a default alignemnt of 1 byte. If you declare a variabel to be `bit(3)` or `bit47` the variable will be aligned on a byte boundary, the `0th` bit being aligned with bit 0 of the byte. 
+A bit data type too has a default alignemnt of 1 byte. If you declare a variable to be `bit(3)` or `bit(47)` the variable will be aligned on a byte boundary, the `0th` bit being aligned with bit 0 of the byte. 
 
-
+You can specify the keyword `aligned` on its own, in a declaration to emphasize that the variable is being given its default alignment.
 
