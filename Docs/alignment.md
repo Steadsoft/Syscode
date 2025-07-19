@@ -20,12 +20,7 @@ dcl count_rate bin(12) aligned(4) // the datum is aligned on a 4 byte boundary d
 The alignment value is always understood to represent a number of bytes. Bit field alignment is always either 1 byte (`aligned`) or the next "free" bit (`unaligned`), there's no support for aligning bit fields explicitly on some given bit-offset and so their alignment is always on a byte boundary unless it is a member of a structure.
 
 ## Array Alignment
-Every element of an array always has the same aligment. That can be either the default or some specific chosen value:
-
-```c++
-dcl entries (32) bin16 aligned (4) // the alignment of elements is 4 depsite their default alignment being 2. 
-```
-
+An array can be declared with a specific 
 
 ## Structure Alignment
 Syscode allows you to have complete control over the physical layout of storage when using structures. You can declare and use structures without regard to alignment when the structure is used merely as an aggerate of disparate data elements. 
