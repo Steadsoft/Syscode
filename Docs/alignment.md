@@ -1,4 +1,4 @@
-# Data Alignment
+# Data Layout
 
 ## Default Alignment
 Syscode is designed for working with unusual or challenging memory layouts. Every data element has a default alignment based on it's declared type. A `bin8` variable for example is given a default alignment of 1 byte, that is, its address at runtime is unrestricted and can be any address the system chooses for it. By contrast a `bin32` is given a default alignment of 4 bytes, that is, its address at runtime will always be a multiple of 4.
@@ -20,7 +20,25 @@ dcl count_rate bin(12) aligned(4) // the datum is aligned on a 4 byte boundary d
 The alignment value is always understood to represent a number of bytes. Bit field alignment is always either 1 byte (`aligned`) or the next "free" bit (`unaligned`), there's no support for aligning bit fields explicitly on some given bit-offset and so their alignment is always on a byte boundary unless it is a member of a structure.
 
 ## Array Alignment
-An array can be declared with a specific 
+An array can be declared with a specific alignment, this determines the alignment only of the item's address, all array elements however to the default for their type. 
 
 ## Structure Alignment
 Syscode allows you to have complete control over the physical layout of storage when using structures. You can declare and use structures without regard to alignment when the structure is used merely as an aggerate of disparate data elements. 
+
+The following attributes influence the layout of data within a `structure`:
+
+### Packed
+The `packed` attribute on a `structure` causes every member field to be aligned on the next available byte boundary. No padding is inserted between the members of the structure. 
+
+### Align
+The `align` attribute on a declared structure or field, causes that item to be given a runtime address that has the specified alignment. 
+
+### Offset
+The `offset` attribute on a declared structure or field, causes that item to be given a runtime address that is offset by the specified number of bytes, from the start of the structure.
+
+### Auto
+The `auto` attribute causes the compiler reorder structure members if it can use less space, the physical order of members might not be the same as the written order.
+
+For maximum  density in a structure simply give it the `packed` attribute, this might lead to members being misaligned and therefore incurr a runtime cost overhead (or in some cases a hardware misalignment exception).
+
+
