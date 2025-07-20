@@ -41,4 +41,8 @@ The `auto` attribute causes the compiler reorder structure members if it can use
 
 For maximum  density in a structure simply give it the `packed` attribute, this might lead to members being misaligned and therefore incurr a runtime cost overhead (or in some cases a hardware misalignment exception).
 
+| Attribute | Field Effect  | Struct Effect |
+|-----------|---------------|---------------|
+| Packed    | ILLEGAL       | Byte aligned struct and members, no padding and possible misalignment |
+| Align(n)  | Field gets addrtess with specified alignment | Struct gets address with specified alignment |
 
