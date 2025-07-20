@@ -52,3 +52,5 @@ For maximum  density in a structure simply give it the `packed` attribute, this 
 
 The attributes `offset` and `pad` include a unit specifier of either `bit` or `byte` like `offset(3, bit)` or `pad(11,byte)` the `bit` forms only being permitted when the preceding field is a bit field. 
 
+Only bit fields can ever have a bit offset, non bit fields are always aligned at least a 1-byte boundary. 
+
