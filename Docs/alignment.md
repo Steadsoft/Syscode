@@ -41,10 +41,10 @@ The `auto` attribute causes the compiler reorder structure members if it can use
 
 For maximum  density in a structure simply give it the `packed` attribute, this might lead to members being misaligned and therefore incurr a runtime cost overhead (or in some cases a hardware misalignment exception).
 
-| Attribute | Field Effect                                               | Struct Effect                                                            | Auto Padded? |
-|-----------|------------------------------------------------------------|--------------------------------------------------------------------------|--------------|
-| Packed    | ILLEGAL                                                    | Byte aligned struct and members, no padding and possible misalignment    | No padding   |
-| Align(n)  | Field gets address with specified alignment                | Struct gets address with specified alignment                             | Yes          |
-| Offset(n) | Field gets address offset `n` bytes from preceding element | Struct gets address offset `n` bytes from preceding element              | Yes          |
-| Auto      | ILLEGAL                                                    | All fields aligned naturally and possibky reordered from what is written | Yes          |
+| Attribute | Field Effect                                               | Struct Effect                                                            | Auto Padded? |  Remarks     |
+|-----------|------------------------------------------------------------|--------------------------------------------------------------------------|--------------|--------------|
+| Packed    | ILLEGAL                                                    | Byte aligned struct and members, no padding and possible misaligned fields    | No           |   |
+| Align(n)  | Field gets address with specified alignment                | Struct gets address with specified alignment                             | Yes          | |
+| Offset(n) | Field gets address offset `n` bytes from parent struct start      | Struct gets address offset `n` bytes from parent struct start                   | Yes          | Cannot be used on outermost structure |
+| Auto      | ILLEGAL                                                    | All fields aligned naturally and possibly reordered from what is written | Yes          | |
 
