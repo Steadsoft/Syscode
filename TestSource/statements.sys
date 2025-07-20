@@ -19,7 +19,7 @@ procedure master
 
 procedure main (root)
 
-dcl starter bin8 var 
+dcl starter bin8
 dcl array(10) bin(22)
 dcl msg string
 dcl msg string (1,2)
@@ -187,7 +187,7 @@ scope utilities
 
         call startup (1,2,3)
 
-        return (doomsday)
+        return (goto)
 
     end /* proc */
 

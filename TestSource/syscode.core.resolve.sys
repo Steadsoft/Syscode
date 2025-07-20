@@ -29,22 +29,24 @@ end
 
 proc main options(main) // outermost, therefore has external scope, full name: utilities.main
 
-    then = 100 + 75;
+    then = 100 + 75; 
 
     dcl c bin(32) aligned(2 * 23) static internal external
     dcl d bin(32) static aligned(2 * 23) external internal
 
-    dcl structure while unaligned
+    dcl structure while packed
         struct inner1
             field1_1 bin8
-            field1_1 bin8
+            field1_1 bin8 offset(8)
+            unused bytepad(7)
         end
         struct inner2
             field2_1 bin8
+            unused bitpad(4)
             field2_2 bin8
         end
     end
-
+ 
     dcl a bin(10,4) static based (p)
 
     dcl large(10 + a) ubin(71) init(1234)
@@ -65,6 +67,10 @@ proc main options(main) // outermost, therefore has external scope, full name: u
     outer.inner3.field2_1 = 500
 
     call reset_database(x,y,z)
+
+    ord = 23  +  45 // ordinary
+    sat = 23 (+) 45 // saturated
+    ovf = 23 [+] 45 // overflow aware
 
     master_ptr(10) -> pointer_table(x).rate_ptr -> counts = 23
 

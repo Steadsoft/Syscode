@@ -96,6 +96,8 @@ typeSpecifier
     | Lab=labelType
     | Ptr=pointerType
     | As=asType
+    | Bytes=bytepadType
+    | Bits=bitpadType
     ;
 
 asType: AS Typename=identifier ;    
@@ -103,6 +105,9 @@ asType: AS Typename=identifier ;
 fixedType: (Typename=(BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64)) | (Typename=(BIN | UBIN | DEC | UDEC) Args=arguments? );
 
 bitType: Typename=BIT LPAR Len=decLiteral RPAR;
+
+bitpadType: BITPAD LPAR Len=decLiteral RPAR;
+bytepadType: BYTEPAD LPAR Len=decLiteral RPAR;
 
 stringType
     : Typename=STRING LPAR Len=decLiteral RPAR Var=VARIABLE? ;
@@ -256,11 +261,13 @@ shiftRotate
   ;
 
 addSub
-  : (PLUS | MINUS)
+  : (PLUS  | MINUS)
+  | (OPLUS | OMINUS)
+  | (SPLUS | SMINUS)
   ;
 
 mulDiv
-  : (TIMES | DIVIDE | PCNT)
+  : (OTIMES | STIMES | TIMES | DIVIDE | PCNT)
   ;
 
 boolAnd
@@ -278,7 +285,7 @@ boolOr
 comparison
   : GT
   | GTE
-  | EQUALS
+  | EQUALS 
   | LT
   | LTE
   | NGT
@@ -312,14 +319,15 @@ varying: VARIABLE ;
 
 structAttributes 
     : ALIGNED 
-    | UNALIGNED 
+    | PACKED 
     | basedAttribute
     ;
 
 attributes
     : constAttribute         #AttribConst
     | alignedAttribute       #AttribAligned
-    | unalignedAttribute     #AttribUnaligned
+    | offsetAttribute        #AttribOffset
+    | packedAttribute        #AttribPacked
     | externalAttribute      #AttribExternal
     | internalAttribute      #AttribInternal
     | staticAttribute        #AttribStatic
@@ -330,7 +338,8 @@ attributes
 
 constAttribute: CONST;
 alignedAttribute: ALIGNED (LPAR Alignment=expression RPAR)?;
-unalignedAttribute: UNALIGNED;    
+offsetAttribute: OFFSET (LPAR Offset=expression RPAR);
+packedAttribute: PACKED;    
 externalAttribute: EXTERNAL;
 internalAttribute: INTERNAL;
 staticAttribute: STATIC;
@@ -338,7 +347,6 @@ basedAttribute: BASED (LPAR Base=expression RPAR)? ;
 stackAttribute: STACK;
 initAttribute: INIT LPAR Value=expression RPAR;
 unitType: UNIT;
-
 
 entryArgTypes: LPAR typeSpecifier (COMMA typeSpecifier)* RPAR;
 returnDescriptor: AS LPAR typeSpecifier RPAR;
@@ -365,7 +373,9 @@ keyword
     | BIN8
     | BIN
     | BIT
+    | BITPAD
     | BY
+    | BYTEPAD
     | CALL
     | CONST
     | DCL
@@ -390,8 +400,10 @@ keyword
     | LIT
     | LOOP
     | MAIN
+    | OFFSET
     | OPTIONS
     | PACKAGE
+    | PACKED
     | PATH
     | POINTER
     | PROC
@@ -410,7 +422,6 @@ keyword
     | UBIN8
     | UBIN
     | UDEC
-    | UNALIGNED
     | UNIT
     | UNTIL
     | VARIABLE
@@ -454,7 +465,9 @@ BIN64:          'bin64';
 BIN8:           'bin8';
 BIN:            'bin';
 BIT:            'bit';
+BITPAD:         'bitpad';
 BY:             'by';
+BYTEPAD:        'bytepad';
 CALL:           'call';
 CONST:          'const';
 DCL:            'dcl' ;
@@ -479,8 +492,10 @@ LABEL:          'label';
 LIT:            'lit' | 'literal';
 LOOP:           'loop';
 MAIN:           'main';
+OFFSET:         'offset';
 OPTIONS:        'options';
 PACKAGE:        'package';
+PACKED:         'packed';
 PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROC:           'proc' | 'procedure';
@@ -499,7 +514,6 @@ UBIN64:         'ubin64';
 UBIN8:          'ubin8';
 UBIN:           'ubin';
 UDEC:           'udec';
-UNALIGNED:      'unaligned';
 UNIT:           'unit';
 UNTIL:          'until';
 VARIABLE:       'var' | 'variable';
@@ -530,8 +544,14 @@ NE:             '~='|'≠';
 POWER:          '**' | '🠕';   // U+1F815
 STR_LITERAL:    (QUOTE (.)*? QUOTE);
 PLUS:           '+';
+OPLUS:          '[+]';
+SPLUS:          '(+)';
 MINUS:          '-';
+OMINUS:         '[-]';
+SMINUS:         '(-)';
 TIMES:          '*';
+OTIMES:         '[*]';
+STIMES:         '(*)';
 LCOM:           '//';
 DIVIDE:         '/' | '÷';    // U+00F7
 PCNT:           '%';
@@ -556,6 +576,8 @@ SEMICOLON:      ';';
 COMMA:          ',';
 LPAR:           '(';
 RPAR:           ')';
+LBRACK:         '[';
+RBRACK:         ']';
 RARROW:         '->';
 
 

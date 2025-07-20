@@ -18,9 +18,9 @@ namespace Syscode
 
         public Expression Alignment { get => alignment; set => alignment = value; }
     }
-    public class Unaligned : Attribute
+    public class Packed : Attribute
     {
-        public Unaligned(ParserRuleContext context) : base(context)
+        public Packed(ParserRuleContext context) : base(context)
         {
         }
     }

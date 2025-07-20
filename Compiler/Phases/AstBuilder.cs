@@ -385,9 +385,9 @@ namespace Syscode
                             dcl.Attributes.Add(new Aligned(align, CreateExpression(align.alignedAttribute().Alignment)));
                             break;
                         }
-                    case (AttribUnalignedContext):
+                    case (AttribPackedContext):
                         {
-                            dcl.Attributes.Add(new Unaligned(attrib));
+                            dcl.Attributes.Add(new Packed(attrib));
                             break;
                         }
                     case (AttribConstContext):
