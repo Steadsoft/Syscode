@@ -42,12 +42,13 @@ The `auto` attribute causes the compiler reorder structure members if it can use
 For maximum  density in a structure simply give it the `packed` attribute, this might lead to members being misaligned and therefore incurr a runtime cost overhead (or in some cases a hardware misalignment exception).
 
 | Attribute | Field Effect                                                 | Struct Effect                                                              | Auto Padded? |  Remarks                              |
-|-----------|--------------------------------------------------------------|----------------------------------------------------------------------------|--------------|---------------------------------------|
-| Packed    | ILLEGAL                                                      | Byte aligned struct and members, no padding and possible misaligned fields | No           |                                       |
-| Align(n)  | Field gets address with specified alignment                  | Struct gets address with specified alignment                               | Yes          |                                       |
-| Offset(n) | Field gets address offset `n` bytes from parent struct start | Struct gets address offset `n` bytes from parent struct start              | Yes          | Cannot be used on outermost structure |
-| Pad(n)    | Insert a `pad` field `n` bytes long.                         |  ILLEGAL                                                                   |              | Creates a distinct field              |
-| Auto      | ILLEGAL                                                      | All fields aligned naturally and possibly reordered from what is written   | Yes          |                                       |
+|-------------|--------------------------------------------------------------|----------------------------------------------------------------------------|--------------|---------------------------------------|
+| Packed      | ILLEGAL                                                      | Byte aligned struct and members, no padding and possible misaligned fields | No           |                                       |
+| Align(n)    | Field gets address with specified alignment                  | Struct gets address with specified alignment                               | Yes          |                                       |
+| Offset(n)   | Field gets address offset `n` bytes from parent struct start | Struct gets address offset `n` bytes from parent struct start              | Yes          | Cannot be used on outermost structure |
+| Pad(n,byte) | Insert a `pad` field `n` bytes long.                         |  ILLEGAL                                                                   |              | Creates a distinct field              |
+| Pad(n,bit)  | Insert a `pad` field `n` bits long.                          |  ILLEGAL                                                                   |              | Creates a distinct field              |
+| Auto        | ILLEGAL                                                      | All fields aligned naturally and possibly reordered from what is written   | Yes          |                                       |
 
 The attributes `offset` and `pad` include a unit specifier of either `bit` or `byte` like `offset(3, bit)` or `pad(11,byte)` the `bit` forms only being permitted when the preceding/following fields are bit fields. 
 
