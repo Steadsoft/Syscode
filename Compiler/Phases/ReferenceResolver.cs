@@ -200,7 +200,8 @@
         }
         private void ResolveReturn(IContainer container, Return statement)
         {
-            ResolveExpression(container, statement.Expression);
+            if (statement.Expression != null) 
+                ResolveExpression(container, statement.Expression);
         }
         private void ResolveAssignment(IContainer container, Assignment statement) 
         {
@@ -317,7 +318,8 @@
                         }
                     case Return ret:
                         {
-                            ReportUnresolvedReferences(ret, ret.Expression); 
+                            if (ret.Expression != null)
+                               ReportUnresolvedReferences(ret, ret.Expression); 
                             break;
                         }
                     default:

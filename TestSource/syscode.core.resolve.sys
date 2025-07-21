@@ -27,6 +27,25 @@ dcl struct if
        end
 end
 
+// "packed" here, means align all contained elements on the next avaiable byte/bit 
+
+dcl struct RCC at (1200 4300 8A00 0010:h) packed order (asc)
+    SW              bit(3)
+    SWS             bit(3)
+    STOPWUCK        bit(1)
+    STOPKERWUCK     bit(1)
+    RTCPRE          bit(6)
+    HRTIMSEL        bit(1)
+    TIMPRE          bit(1)
+    RESERVED        bit(2) pad
+    MCO(2)          as MCO
+end
+
+type struct MCO 
+    PRE             bit(4)
+    SEL             bit(3)
+end
+
 proc main options(main) // outermost, therefore has external scope, full name: utilities.main
 
     then = 100 + 75; 
@@ -68,9 +87,13 @@ proc main options(main) // outermost, therefore has external scope, full name: u
 
     call reset_database(x,y,z)
 
-    ord = 23  +  45 // ordinary
-    sat = 23 (+) 45 // saturated
-    ovf = 23 [+] 45 // overflow aware
+    ord = 23  +  45                  // ordinary
+    sat = 23 (+) 45                  // saturated
+    sum = 23 [+] 45    // overflow aware
+
+    if overflowed then
+       return;
+    end
 
     master_ptr(10) -> pointer_table(x).rate_ptr -> counts = 23
 

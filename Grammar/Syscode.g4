@@ -40,10 +40,10 @@ compilation: (statement* endOfFile);
 statement:  preamble?  (call | return | label | /* scope | */  enum | if | declare | type | literal | procedure | function | loop | goto | assignment );
 
 //struct: STRUCT structBody ;
-structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes? statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
+structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes* statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
 structField: Spelling=identifier dimensionSuffix? Type=typeSpecifier attributes* statementSeparator;
 
-label: AT Spelling=identifier Subscript=labelSubscript? statementSeparator;
+label: ATSIGN Spelling=identifier Subscript=labelSubscript? statementSeparator;
 labelSubscript: LPAR Literal=decLiteral RPAR;
 
 goto: GOTO reference statementSeparator;
@@ -129,8 +129,12 @@ pointerType: Typename=POINTER ;
 
 typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN | DEC | UDEC | STRING | BIT | LABEL | (ENTRY entryArgTypes? returnDescriptor?) | POINTER ;
 
+// Consider also <- or == as an assignment opeator, which implicitly does an atomic assignment...
 
-assignment : reference comparer expression statementSeparator;
+assignment 
+    : reference comparer expression statementSeparator
+    // | LPAR reference COMMA reference RPAR comparer expression statementSeparator; this is too 'out there' for an initial language design. 
+    ;
 
 comparer: EQUALS | COMPASSIGN;
 
@@ -321,6 +325,9 @@ structAttributes
     : ALIGNED 
     | PACKED 
     | basedAttribute
+    | AUTO
+    | atAttribute
+    | orderAttribute
     ;
 
 attributes
@@ -334,8 +341,11 @@ attributes
     | basedAttribute         #AttribBased
     | stackAttribute         #AttribStack
     | initAttribute          #AttribInit
+    | PAD                    #AttrPad
     ;
 
+atAttribute: AT (LPAR Address=expression RPAR);
+orderAttribute: ORDER LPAR (ASC | DESC) RPAR;
 constAttribute: CONST;
 alignedAttribute: ALIGNED (LPAR Alignment=expression RPAR)?;
 offsetAttribute: OFFSET (LPAR Offset=expression RPAR);
@@ -366,6 +376,8 @@ endOfFile: emptyLines? EOF;
 keyword
     : ALIGNED
     | AS
+    | ATSIGN
+    | AUTO
     | BASED
     | BIN16
     | BIN32
@@ -404,11 +416,11 @@ keyword
     | OPTIONS
     | PACKAGE
     | PACKED
+    | PAD
     | PATH
     | POINTER
     | PROC
     | RETURN
-    //| SCOPE
     | STACK
     | STATIC
     | STRING
@@ -458,6 +470,9 @@ INTEGER:      ([1-9] [0-9]*);
 
 ALIGNED:        'aligned';
 AS:             'as';
+ASC:            'asc' | 'ascending';
+AT:             'at';
+AUTO:           'auto';
 BASED:          'based';
 BIN16:          'bin16';
 BIN32:          'bin32';
@@ -473,6 +488,7 @@ CONST:          'const';
 DCL:            'dcl' ;
 DEC:            'dec';
 DEF:            'def';
+DESC:           'desc' | 'descending';
 DO:             'do';         
 ELIF:           'elif';
 ELSE:           'else';
@@ -494,8 +510,10 @@ LOOP:           'loop';
 MAIN:           'main';
 OFFSET:         'offset';
 OPTIONS:        'options';
+ORDER:          'order';
 PACKAGE:        'package';
 PACKED:         'packed';
+PAD:            'pad';
 PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROC:           'proc' | 'procedure';
@@ -571,7 +589,7 @@ ASSIGN:         '<-';
 
 COMPASSIGN:     '+='|'-='|'*='|'/='|'%='|'&='|'|='|'^='|'<<='|'>>='|'<@='|'@>=';
 DOT:            '.';
-AT:             '@';
+ATSIGN:         '@';
 SEMICOLON:      ';'; 
 COMMA:          ',';
 LPAR:           '(';
