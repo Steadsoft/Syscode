@@ -241,7 +241,10 @@ scope utilities
 
     end
 
-    do x = 2 to 100  until (size < 100)
+    do (iterate) x = 2 to 100  until (size < 100)
+
+       if some_condition then
+          leave iterate
 
     end
 

@@ -37,13 +37,14 @@ compilation: (statement* endOfFile);
 // One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
 // several source files with that namespace prefix, each of which contributes stuff to the namespace.
 
-statement:  preamble?  (call | return | label | /* scope | */  enum | if | declare | type | literal | procedure | function | loop | goto | assignment );
+statement:  preamble?  (call | return | label | /* scope | */  enum | if | declare | type | literal | procedure | function | loop | goto | leave | assignment );
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes* statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
 structField: Spelling=identifier dimensionSuffix? Type=typeSpecifier attributes* statementSeparator;
 
-label: ATSIGN Spelling=identifier Subscript=labelSubscript? statementSeparator;
+label: labelName Subscript=labelSubscript? statementSeparator;
+labelName: ATSIGN Spelling=identifier;
 labelSubscript: LPAR Literal=decLiteral RPAR;
 
 goto: GOTO reference statementSeparator;
@@ -67,15 +68,19 @@ declare
 
 type: TYPE Body=structBody ;    
 
+leave: LEAVE identifier statementSeparator;
+
 literal: LIT customLiteral AS decLiteral statementSeparator ;
 loop: Loop=loopLoop | For=forLoop | While=whileLoop | Until=untilLoop ;
-forLoop : DO For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  statement* emptyLines? END ;
-whileLoop: DO While=whileCondition Until=untilCondition?  statement* emptyLines? END;
-untilLoop: DO Until=untilCondition While=whileCondition?  statement* emptyLines? END;
-loopLoop: DO LOOP statement* emptyLines? END;
+forLoop : DO labelName? For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  statement* emptyLines? END ;
+whileLoop: DO labelName? While=whileCondition Until=untilCondition?  statement* emptyLines? END;
+untilLoop: DO labelName? Until=untilCondition While=whileCondition?  statement* emptyLines? END;
+loopLoop: DO labelName? LOOP statement* emptyLines? END;
 
 whileCondition: WHILE Exp=expression ;
 untilCondition: UNTIL Exp=expression ;
+
+
 
 if:             IF emptyLines? exprThenBlock emptyLines? elifBlock? emptyLines? elseBlock? emptyLines? END;
 exprThenBlock:  emptyLines? expression emptyLines? THEN emptyLines? thenBlock;
@@ -410,6 +415,7 @@ keyword
     | INTERNAL
     | IS
     | LABEL
+    | LEAVE
     | LIT
     | LOOP
     | MAIN
@@ -506,6 +512,7 @@ INIT:           'init';
 INTERNAL:       'internal';
 IS:             'is';
 LABEL:          'label';
+LEAVE:          'leave';
 LIT:            'lit' | 'literal';
 LOOP:           'loop';
 MAIN:           'main';

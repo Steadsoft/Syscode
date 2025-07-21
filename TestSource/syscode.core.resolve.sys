@@ -68,7 +68,7 @@ proc main options(main) // outermost, therefore has external scope, full name: u
         end
     end
  
-    dcl a bin(10,4) static based (p)
+    dcl a bin(10,4) static based (p) 
 
     dcl large(10 + a) ubin(71) init(1234)
 
@@ -76,8 +76,12 @@ proc main options(main) // outermost, therefore has external scope, full name: u
 
     outer.inner1.dont.age = 9
 
-    do loop
+    do @main loop
         error_count += 1
+
+        if error_count > 100 then
+           leave main
+        end
     end
 
     outer.inner1.field1_2 = 1000
