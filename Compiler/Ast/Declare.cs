@@ -90,6 +90,7 @@ namespace Syscode
             if (context.Ent != null) return (DataType)(context.Ent.Typename.Type);
             if (context.Lab != null) return (DataType)(context.Lab.Typename.Type);
             if (context.Ptr != null) return (DataType)(context.Ptr.Typename.Type);
+            if (context.Builtin != null) return (DataType)(context.Builtin.Typename.Type);
 
             return DataType.UNDEFINED;
 

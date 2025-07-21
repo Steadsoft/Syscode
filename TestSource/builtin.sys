@@ -1,0 +1,3 @@
+dcl bin builtin
+    
+then = bin(100,16) + bin(75,16); 

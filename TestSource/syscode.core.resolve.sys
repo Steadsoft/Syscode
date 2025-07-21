@@ -9,6 +9,8 @@ dcl global_rate  bin16 static external // this is only legal in the global scope
 
 dcl get_date entry (bin32) as (string(64)) based
 
+dcl bin builtin
+
 // a "package" in PL/I is rather weak, it's not really a proper namespace. 
 // dcl utils.set_date (bin64)
 
@@ -48,7 +50,7 @@ end
 
 proc main options(main) // outermost, therefore has external scope, full name: utilities.main
 
-    then = 100 + 75; 
+    then = bin(100,16) + bin(75,16); 
 
     dcl c bin(32) aligned(2 * 23) static internal external
     dcl d bin(32) static aligned(2 * 23) external internal
@@ -61,7 +63,7 @@ proc main options(main) // outermost, therefore has external scope, full name: u
         end
         struct inner2
             field2_1 bin8
-            unused bitpad(4)
+            unused bit(4) pad
             field2_2 bin8
         end
     end

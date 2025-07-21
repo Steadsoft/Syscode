@@ -134,7 +134,7 @@ namespace Syscode
         {
             if (declaration.IsntStructure)
             {
-                if (declaration.IsKeyword)
+                if (declaration.IsKeyword && declaration.CoreType != DataType.BUILTIN)
                     reporter.Report(declaration, 1015, declaration.Spelling);
             }
             else

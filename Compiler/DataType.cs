@@ -20,6 +20,7 @@
         ENTRY = SyscodeParser.ENTRY,
         POINTER = SyscodeParser.POINTER,
         STRUCT = SyscodeParser.STRUCT,
+        BUILTIN = SyscodeParser.BUILTIN
 
     }
 

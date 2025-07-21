@@ -222,7 +222,14 @@
             }
 
             if (reference.BasicReference.IsKeyword)
-                reporter.Report(node, 1015, reference.BasicReference.Spelling);
+            {
+                if (!(reference.IsResolved &&
+                      reference.IsJustBasicReference &&
+                      reference.BasicReference.Symbol.CoreType == DataType.BUILTIN))
+                {
+                    reporter.Report(node, 1015, reference.BasicReference.Spelling); // do not warn about references to keywords when the reference is to a builtin function with the same name as a keyword
+                }
+            }
 
             if (reference.BasicReference.IsQualified)
             {

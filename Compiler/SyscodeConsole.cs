@@ -15,7 +15,7 @@ namespace Syscode
 
             compiler.diagnostics += onFileFound;
 
-            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\syscode.core.resolve.sys");
+            var cst = compiler.CompileSourceFile(@"..\..\..\..\TestSource\builtin.sys");
 
             //compiler.PrintConcreteSyntaxTree(cst);
 

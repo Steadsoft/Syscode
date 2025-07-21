@@ -97,7 +97,7 @@ typeSpecifier
     | Ptr=pointerType
     | As=asType
     | Bytes=bytepadType
-    | Bits=bitpadType
+    | Builtin=builtinType
     ;
 
 asType: AS Typename=identifier ;    
@@ -106,7 +106,8 @@ fixedType: (Typename=(BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | U
 
 bitType: Typename=BIT LPAR Len=decLiteral RPAR;
 
-bitpadType: BITPAD LPAR Len=decLiteral RPAR;
+builtinType: Typename=BUILTIN;
+
 bytepadType: BYTEPAD LPAR Len=decLiteral RPAR;
 
 stringType
@@ -385,7 +386,7 @@ keyword
     | BIN8
     | BIN
     | BIT
-    | BITPAD
+    | BUILTIN
     | BY
     | BYTEPAD
     | CALL
@@ -480,7 +481,7 @@ BIN64:          'bin64';
 BIN8:           'bin8';
 BIN:            'bin';
 BIT:            'bit';
-BITPAD:         'bitpad';
+BUILTIN:        'builtin';
 BY:             'by';
 BYTEPAD:        'bytepad';
 CALL:           'call';
