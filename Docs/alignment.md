@@ -45,9 +45,10 @@ For maximum  density in a structure simply give it the `packed` attribute, this 
 |-------------|--------------------------------------------------------------|----------------------------------------------------------------------------|--------------|---------------------------------------|
 | Packed      | ILLEGAL                                                      | Byte aligned struct and members, no padding and possible misaligned fields | No           | Bit fields too are compacted.         |
 | Align(n)    | Field gets address with specified alignment                  | Struct gets address with specified alignment                               | Yes          |                                       |
-| Offset(n)   | Field gets address offset `n` bytes from parent struct start | Struct gets address offset `n` bytes from parent struct start              | Yes          | Cannot be used on outermost structure |
-| Pad(n,byte) | Insert a `pad` field `n` bytes long.                         |  ILLEGAL                                                                   |              | Creates a distinct field              |
-| Pad(n,bit)  | Insert a `pad` field `n` bits long.                          |  ILLEGAL                                                                   |              | Creates a distinct field              |
+| byteoff(n)  | Field gets address offset `n` bytes from parent struct start | Struct gets address offset `n` bytes from parent struct start              | Yes          | Cannot be used on outermost structure |
+| bitoff(n)   | Bitfield begins at the offset from preceding datum           |  ILLEGAL                                                                   | No           | Converse of bitpad                    |
+| bytepad(n)  | Insert a `pad` field `n` bytes long.                         |  ILLEGAL                                                                   |              | Creates a distinct field              |
+| bitpad(n)   | Insert a `pad` field `n` bits long.                          |  ILLEGAL                                                                   |              | Creates a distinct field              |
 | Auto        | ILLEGAL                                                      | All fields aligned naturally and possibly reordered from what is written   | Yes          |                                       |
 
 The attributes `offset` and `pad` include a unit specifier of either `bit` or `byte` like `offset(3, bit)` or `pad(11,byte)` the `bit` forms only being permitted when the preceding field is a bit field. 
