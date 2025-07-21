@@ -50,7 +50,7 @@ For maximum  density in a structure simply give it the `packed` attribute, this 
 | `bytepad(n)`  | Insert a `pad` field `n` bytes long.                         |  ILLEGAL                                                                   |              | Creates a distinct field              |
 | `bitpad(n)`   | Insert a `pad` field `n` bits long.                          |  ILLEGAL                                                                   |              | Creates a distinct field              |
 | `auto`        | ILLEGAL                                                      | All fields aligned naturally and possibly reordered from what is written   | Yes          |                                       |
-| `at(n)`       | Restricted usage                                             | sttruct's address is `n`                                                   | N/A          | Absolute address, no need for pointer |
+| `at(n)`       | Restricted usage                                             | outermost sttruct's address is `n`                                         | N/A          | Absolute address, no need for pointer |
 
 The attributes `offset` and `pad` include a unit specifier of either `bit` or `byte` like `offset(3, bit)` or `pad(11,byte)` the `bit` forms only being permitted when the preceding field is a bit field. 
 
