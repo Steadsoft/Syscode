@@ -10,7 +10,7 @@ So `bin8` + `bin8` yields a `bin8` result.
 
 If the type are not the same then the result type is the same as the largest of the two operand types.
 
-So `bin8 * `bin32` yields a `bin32` result.
+So `bin8` * `bin32` yields a `bin32` result.
 
 The same rule is applied even for types that are not an integral number of bytes.
 
