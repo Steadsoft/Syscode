@@ -2,12 +2,15 @@
 {
     public class Reporter
     {
-        private ErrorFile messages;
+        private ErrorFile file;
         private event EventHandler<DiagnosticEvent> diagnostics = delegate { };
-        private List<DiagnosticEvent> errors = new();
+        private List<DiagnosticEvent> messages = new();
+
+        public List<DiagnosticEvent> Messages { get => messages.OrderBy(e => e.line).ToList(); set => messages = value; }
+
         public Reporter(ErrorFile erfile, EventHandler<DiagnosticEvent> diagnostics)
         {
-            messages = erfile;
+            file = erfile;
             this.diagnostics = diagnostics;
         }
         public void Report(Report report)
@@ -16,7 +19,7 @@
         }
         public void Report(AstNode node, int number, params string[] args)
         {
-            var errormsg = messages.Errors.Where(e => e.Number == number).Single();
+            var errormsg = file.Errors.Where(e => e.Number == number).Single();
             string message = errormsg.Message;
 
             int argpos = 0;
@@ -28,13 +31,13 @@
                 argpos++;
             }
 
-            errors.Add(new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
+            messages.Add(new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
 
         }
 
         public void PrintReport()
         {
-            errors.OrderBy(e => e.line).ForEach(r =>  diagnostics(this, r));
+            Messages.ForEach(r =>  diagnostics(this, r));
         }
 
     }

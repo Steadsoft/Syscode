@@ -90,7 +90,7 @@ namespace Syscode
         }
         private Label CreateLabel(LabelContext context)
         {
-            return new Label(context) { Spelling = context.Spelling.GetText(), Subscript = context.Subscript?.Literal.GetText() };
+            return new Label(context) { Spelling = context.Name.Spelling.GetText(), Subscript = context.Subscript?.Literal.GetText() };
         }
         private Return CreateReturn(ReturnContext context)
         {

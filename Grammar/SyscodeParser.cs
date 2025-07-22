@@ -794,12 +794,13 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class LabelContext : ParserRuleContext {
+		public LabelNameContext Name;
 		public LabelSubscriptContext Subscript;
-		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
-			return GetRuleContext<LabelNameContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
+			return GetRuleContext<LabelNameContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public LabelSubscriptContext labelSubscript() {
 			return GetRuleContext<LabelSubscriptContext>(0);
@@ -820,7 +821,7 @@ public partial class SyscodeParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 303;
-			labelName();
+			_localctx.Name = labelName();
 			State = 305;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);

@@ -43,7 +43,7 @@ statement:  preamble?  (call | return | label | /* scope | */  enum | if | decla
 structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes* statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
 structField: Spelling=identifier dimensionSuffix? Type=typeSpecifier attributes* statementSeparator;
 
-label: labelName Subscript=labelSubscript? statementSeparator;
+label: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;
 labelSubscript: LPAR Literal=decLiteral RPAR;
 

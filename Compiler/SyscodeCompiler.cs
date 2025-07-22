@@ -17,6 +17,9 @@ namespace Syscode
         private Reporter reporter;
         private string file;
         private string[] namespaceparts;
+
+        public Reporter Reporter { get => reporter; set => reporter = value; }
+
         public SyscodeCompiler(string ErrorMessagesPath)
         {
             errorMesagesPath = ErrorMessagesPath;
@@ -58,15 +61,15 @@ namespace Syscode
             namespaceparts = fileName.Split('.');
             namespaceparts = namespaceparts.Take(namespaceparts.Length - 1).ToArray();
 
-            reporter = new Reporter(messages, diagnostics);
+            Reporter = new Reporter(messages, diagnostics);
             var source = new StreamReader(SourceFile);
             var stream = new AntlrInputStream(source);
             lexer = new SyscodeLexer(stream);
             var tokens = new CommonTokenStream(lexer);
             var parser = new SyscodeParser(tokens);
             builder = new AstBuilder();
-            symtabBuilder = new SymtabBuilder(reporter);
-            resolver = new ReferenceResolver(reporter);
+            symtabBuilder = new SymtabBuilder(Reporter);
+            resolver = new ReferenceResolver(Reporter);
 
             return parser.compilation();
         }
@@ -208,7 +211,7 @@ namespace Syscode
 
         public void PrintDiagnostics()
         {
-            reporter.PrintReport();
+            Reporter.PrintReport();
         }
         public void PrintAbstractSyntaxTree(AstNode node, int depth = 0, bool Symtab = false)
         {
