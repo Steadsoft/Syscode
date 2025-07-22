@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syscode", "Syscode.csproj",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLVMSandbox", "..\LLVMSandbox\LLVMSandbox.csproj", "{FB39ECFC-7B4D-C3F2-E126-A34B968BDE59}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "..\UnitTesting\UnitTesting.csproj", "{1139AEB9-4010-4D8B-8725-72029EE47BB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{FB39ECFC-7B4D-C3F2-E126-A34B968BDE59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB39ECFC-7B4D-C3F2-E126-A34B968BDE59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB39ECFC-7B4D-C3F2-E126-A34B968BDE59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1139AEB9-4010-4D8B-8725-72029EE47BB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1139AEB9-4010-4D8B-8725-72029EE47BB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1139AEB9-4010-4D8B-8725-72029EE47BB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1139AEB9-4010-4D8B-8725-72029EE47BB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
