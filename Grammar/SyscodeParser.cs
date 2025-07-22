@@ -1143,6 +1143,8 @@ public partial class SyscodeParser : Parser {
 		public IdentifierContext Spelling;
 		public ParamListContext Params;
 		public ProcOptionsContext Options;
+		public StatementContext _statement;
+		public IList<StatementContext> _Statements = new List<StatementContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PROC() { return GetToken(SyscodeParser.PROC, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
@@ -1154,17 +1156,17 @@ public partial class SyscodeParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines(int i) {
 			return GetRuleContext<EmptyLinesContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
-			return GetRuleContexts<StatementContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
-			return GetRuleContext<StatementContext>(i);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public ParamListContext paramList() {
 			return GetRuleContext<ParamListContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ProcOptionsContext procOptions() {
 			return GetRuleContext<ProcOptionsContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
+			return GetRuleContexts<StatementContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
+			return GetRuleContext<StatementContext>(i);
 		}
 		public ProcedureContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1224,7 +1226,8 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					State = 356;
-					statement();
+					_localctx._statement = statement();
+					_localctx._Statements.Add(_localctx._statement);
 					}
 					} 
 				}
@@ -1262,6 +1265,8 @@ public partial class SyscodeParser : Parser {
 		public ParamListContext Params;
 		public ProcOptionsContext Options;
 		public ReturnDescriptorContext Type;
+		public StatementContext _statement;
+		public IList<StatementContext> _Statements = new List<StatementContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode FUNC() { return GetToken(SyscodeParser.FUNC, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode AS() { return GetToken(SyscodeParser.AS, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
@@ -1274,12 +1279,6 @@ public partial class SyscodeParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines(int i) {
 			return GetRuleContext<EmptyLinesContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
-			return GetRuleContexts<StatementContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
-			return GetRuleContext<StatementContext>(i);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public ParamListContext paramList() {
 			return GetRuleContext<ParamListContext>(0);
 		}
@@ -1288,6 +1287,12 @@ public partial class SyscodeParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ReturnDescriptorContext returnDescriptor() {
 			return GetRuleContext<ReturnDescriptorContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
+			return GetRuleContexts<StatementContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
+			return GetRuleContext<StatementContext>(i);
 		}
 		public FunctionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1359,7 +1364,8 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					State = 382;
-					statement();
+					_localctx._statement = statement();
+					_localctx._Statements.Add(_localctx._statement);
 					}
 					} 
 				}
@@ -2897,7 +2903,8 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class ElifBlockContext : ParserRuleContext {
-		public ExprThenBlockContext ExprThen;
+		public ExprThenBlockContext _exprThenBlock;
+		public IList<ExprThenBlockContext> _ExprThen = new List<ExprThenBlockContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ELIF() { return GetTokens(SyscodeParser.ELIF); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ELIF(int i) {
 			return GetToken(SyscodeParser.ELIF, i);
@@ -2948,7 +2955,8 @@ public partial class SyscodeParser : Parser {
 					break;
 				}
 				State = 641;
-				_localctx.ExprThen = exprThenBlock();
+				_localctx._exprThenBlock = exprThenBlock();
+				_localctx._ExprThen.Add(_localctx._exprThenBlock);
 				}
 				}
 				State = 644;
@@ -3942,17 +3950,19 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class AssignmentContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ReferenceContext reference() {
-			return GetRuleContext<ReferenceContext>(0);
-		}
+		public ReferenceContext Ref;
+		public ExpressionContext Exp;
 		[System.Diagnostics.DebuggerNonUserCode] public ComparerContext comparer() {
 			return GetRuleContext<ComparerContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ReferenceContext reference() {
+			return GetRuleContext<ReferenceContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
 		public AssignmentContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -3969,11 +3979,11 @@ public partial class SyscodeParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 773;
-			reference(0);
+			_localctx.Ref = reference(0);
 			State = 774;
 			comparer();
 			State = 775;
-			expression(0);
+			_localctx.Exp = expression(0);
 			State = 776;
 			statementSeparator();
 			}

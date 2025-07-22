@@ -16,6 +16,7 @@ namespace Syscode
         private ErrorFile messages;
         private Reporter reporter;
         private string file;
+        private string fileName;
         private string[] namespaceparts;
 
         public Reporter Reporter { get => reporter; set => reporter = value; }
@@ -54,7 +55,7 @@ namespace Syscode
         {
             file = SourceFile;
 
-            var fileName = Path.GetFileNameWithoutExtension(file);
+            fileName = Path.GetFileNameWithoutExtension(file);
 
             // extract any namespace components from the file's name
 
@@ -217,7 +218,7 @@ namespace Syscode
         {
             if (depth == 0)
             {
-                Console.WriteLine("AST DUMP");
+                Console.WriteLine($"AST DUMP OF {fileName}.sys");
                 Console.WriteLine();
                 Console.WriteLine("LINE NEST STATEMENT");
                 Console.WriteLine();

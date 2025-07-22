@@ -265,12 +265,10 @@ namespace Syscode
         }
         private Assignment CreateAssignment(AssignmentContext context)
         {
-            var refContext = context.GetExactNode<ReferenceContext>();
-            var referenceTask = CreateReference(refContext);
-            var exprContext = context.GetDerivedNode<ExpressionContext>();
-            var expressionTask = CreateExpression(exprContext);
+            var reference = CreateReference(context.Ref);
+            var expression = CreateExpression(context.Exp);
 
-            return new Assignment(context) { Reference = referenceTask/* .Result */, Expression = expressionTask /* .Result */ };
+            return new Assignment(context) { Reference = reference, Expression = expression };
         }
         private Reference CreateReference(ReferenceContext context)
         {
@@ -532,9 +530,9 @@ namespace Syscode
 
             node.As = context.Type.GetText();
 
-            if (context.TryGetExactNode<ParamListContext>(out var parameters))
+            if (context.Params != null)
             {
-                node.Parameters = [.. parameters.GetExactNodes<IdentifierContext>().Select(i => i.GetText())];
+                node.Parameters = context.Params._Params.Select(i => i.GetText()).ToList();
             }
 
             node.Statements = [.. GetStatements(context).Select(s => Generate(s))];
@@ -548,30 +546,27 @@ namespace Syscode
         private Elif CreateElif(ExprThenBlockContext context)
         {
             var condition = CreateExpression(context.Exp);
-            return new Elif(context) { Expr = condition, ThenStatements = GetStatements(context.GetExactNode<ThenBlockContext>()).Select(s => Generate(s)).ToList() };
+            return new Elif(context) { Condition = condition, ThenStatements = GetStatements(context.GetExactNode<ThenBlockContext>()).Select(s => Generate(s)).ToList() };
         }
         private If CreateIf(IfContext context)
         {
             List<AstNode> else_stmts = new();
             List<Elif> elifs = new();
 
-            var if_then_block = context.ExprThen.Then;  //.GetExactNode<ExprThenBlockContext>().GetExactNode<ThenBlockContext>();
-            var if_then_stmts = GetStatements(if_then_block).Select(s => Generate(s)).ToList();
+            var if_then_stmts = GetStatements(context.ExprThen.Then).Select(s => Generate(s)).ToList();
             var condition = CreateExpression(context.ExprThen.Exp);
 
-            if (context.Else != null) //.TryGetExactNode<ElseBlockContext>(out var else_block))
+            if (context.Else != null)
             {
-                var then_block = context.Else.Then; //.GetExactNode<ThenBlockContext>();
-                else_stmts = GetStatements(then_block).Select(s => Generate(s)).ToList();
+                else_stmts = GetStatements(context.Else.Then).Select(s => Generate(s)).ToList();
             }
 
-            if (context.TryGetExactNode<ElifBlockContext>(out var elif_block))
+            if (context.Elif != null)  // at least one 'elif' is present
             {
-                var then_blocks = elif_block.GetExactNodes<ExprThenBlockContext>();
-                elifs = then_blocks.Select(etb => CreateElif(etb)).ToList();
+                elifs = context.Elif._ExprThen.Select(etb => CreateElif(etb)).ToList();
             }
 
-            return new If(context) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs, Expr = condition };
+            return new If(context) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs, Condition = condition };
         }
     }
 }

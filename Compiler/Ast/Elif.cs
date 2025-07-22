@@ -4,10 +4,10 @@ namespace Syscode
 {
     public class Elif : AstNode
     {
-        private Expression expr;
+        private Expression condition;
         private List<AstNode> thenStatements = new List<AstNode>();
 
-        public Expression Expr { get => expr; set => expr = value; }
+        public Expression Condition { get => condition; set => condition = value; }
         public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }
 
         public Elif(ParserRuleContext context) : base(context)

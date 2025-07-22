@@ -52,8 +52,8 @@ gotoSubscript: LPAR expression RPAR;
 
 scope:  blockScope; // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
 blockScope: (PACKAGE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
-procedure: PROC emptyLines? Spelling=identifier Params=paramList? Options=procOptions? statement* emptyLines? END;
-function: FUNC emptyLines? Spelling=identifier Params=paramList? Options=procOptions? AS Type=returnDescriptor? statement* emptyLines? END;
+procedure: PROC emptyLines? Spelling=identifier Params=paramList? Options=procOptions? Statements+=statement* emptyLines? END;
+function: FUNC emptyLines? Spelling=identifier Params=paramList? Options=procOptions? AS Type=returnDescriptor? Statements+=statement* emptyLines? END;
 
 procOptions: OPTIONS LPAR (Main=MAIN)+ RPAR;
 
@@ -86,7 +86,7 @@ if:             IF emptyLines? ExprThen=exprThenBlock emptyLines? Elif=elifBlock
 exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? Then=thenBlock;
 thenBlock :     statement*;
 elseBlock :     (ELSE emptyLines? Then=thenBlock);
-elifBlock :     (ELIF emptyLines? ExprThen=exprThenBlock)+;
+elifBlock :     (ELIF emptyLines? ExprThen+=exprThenBlock)+;
 
 // typeSpecifier 
 //     : Code=typeCode Args=arguments? varying?
@@ -138,7 +138,7 @@ typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN 
 // Consider also <- or == as an assignment opeator, which implicitly does an atomic assignment...
 
 assignment 
-    : reference comparer expression statementSeparator
+    : Ref=reference comparer Exp=expression statementSeparator
     // | LPAR reference COMMA reference RPAR comparer expression statementSeparator; this is too 'out there' for an initial language design. 
     ;
 
