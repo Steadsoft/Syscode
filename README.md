@@ -82,6 +82,7 @@ end
 
 The `do` keyword was taken from the PL/I language because we need to reliably distinguish between `while`/`until` *loops* and `while`/`until` as *optional clauses* on loops. 
 
+#### Exiting a loop
 Loops can be given an optional name by inserting a label right after the `do` this allows loops to be exited selectively and is especially useful in nested loops:
 ```
 do @outer while space_remains
