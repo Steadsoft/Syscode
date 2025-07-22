@@ -186,9 +186,11 @@
         }
         private void ResolveIf(IContainer container, If ifstmt)
         {
+            ResolveExpression(container, ifstmt.Expr);
             ResolveStatementReferences(container, ifstmt.ThenStatements);
             ResolveStatementReferences(container, ifstmt.ElseStatements);
             ResolveStatementReferences(container, ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));
+            ifstmt.ElifStatements.Select(elif => elif.Expr).ForEach(exp => ResolveExpression (container, exp));
         }
         private void ResolveGoto(IContainer container, Goto statement)
         {
@@ -313,6 +315,7 @@
                         }
                     case If ifstmt: // this statements contains other statements
                         {
+                            ReportUnresolvedReferences(ifstmt, ifstmt.Expr);
                             ReportUnresolvedReferences(ifstmt.ThenStatements);
                             ReportUnresolvedReferences(ifstmt.ElseStatements);
                             ReportUnresolvedReferences(ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));

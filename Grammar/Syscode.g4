@@ -82,11 +82,11 @@ untilCondition: UNTIL Exp=expression ;
 
 
 
-if:             IF emptyLines? exprThenBlock emptyLines? elifBlock? emptyLines? elseBlock? emptyLines? END;
-exprThenBlock:  emptyLines? expression emptyLines? THEN emptyLines? thenBlock;
+if:             IF emptyLines? ExprThen=exprThenBlock emptyLines? Elif=elifBlock? emptyLines? Else=elseBlock? emptyLines? END;
+exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? Then=thenBlock;
 thenBlock :     statement*;
-elseBlock :     (ELSE emptyLines? thenBlock);
-elifBlock :     (ELIF emptyLines? exprThenBlock)+;
+elseBlock :     (ELSE emptyLines? Then=thenBlock);
+elifBlock :     (ELIF emptyLines? ExprThen=exprThenBlock)+;
 
 // typeSpecifier 
 //     : Code=typeCode Args=arguments? varying?

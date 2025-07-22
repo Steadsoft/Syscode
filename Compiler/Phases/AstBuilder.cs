@@ -547,19 +547,21 @@ namespace Syscode
 
         private Elif CreateElif(ExprThenBlockContext context)
         {
-            return new Elif(context) { Expr = null, ThenStatements = GetStatements(context.GetExactNode<ThenBlockContext>()).Select(s => Generate(s)).ToList() };
+            var condition = CreateExpression(context.Exp);
+            return new Elif(context) { Expr = condition, ThenStatements = GetStatements(context.GetExactNode<ThenBlockContext>()).Select(s => Generate(s)).ToList() };
         }
         private If CreateIf(IfContext context)
         {
             List<AstNode> else_stmts = new();
             List<Elif> elifs = new();
 
-            var if_then_block = context.GetExactNode<ExprThenBlockContext>().GetExactNode<ThenBlockContext>();
+            var if_then_block = context.ExprThen.Then;  //.GetExactNode<ExprThenBlockContext>().GetExactNode<ThenBlockContext>();
             var if_then_stmts = GetStatements(if_then_block).Select(s => Generate(s)).ToList();
+            var condition = CreateExpression(context.ExprThen.Exp);
 
-            if (context.TryGetExactNode<ElseBlockContext>(out var else_block))
+            if (context.Else != null) //.TryGetExactNode<ElseBlockContext>(out var else_block))
             {
-                var then_block = else_block.GetExactNode<ThenBlockContext>();
+                var then_block = context.Else.Then; //.GetExactNode<ThenBlockContext>();
                 else_stmts = GetStatements(then_block).Select(s => Generate(s)).ToList();
             }
 
@@ -569,7 +571,7 @@ namespace Syscode
                 elifs = then_blocks.Select(etb => CreateElif(etb)).ToList();
             }
 
-            return new If(context) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs };
+            return new If(context) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs, Expr = condition };
         }
     }
 }

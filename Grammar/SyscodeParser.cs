@@ -2599,11 +2599,14 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class IfContext : ParserRuleContext {
+		public ExprThenBlockContext ExprThen;
+		public ElifBlockContext Elif;
+		public ElseBlockContext Else;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode IF() { return GetToken(SyscodeParser.IF, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ExprThenBlockContext exprThenBlock() {
 			return GetRuleContext<ExprThenBlockContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext[] emptyLines() {
 			return GetRuleContexts<EmptyLinesContext>();
 		}
@@ -2644,7 +2647,7 @@ public partial class SyscodeParser : Parser {
 				break;
 			}
 			State = 594;
-			exprThenBlock();
+			_localctx.ExprThen = exprThenBlock();
 			State = 596;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,67,Context) ) {
@@ -2661,7 +2664,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==ELIF) {
 				{
 				State = 598;
-				elifBlock();
+				_localctx.Elif = elifBlock();
 				}
 			}
 
@@ -2681,7 +2684,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==ELSE) {
 				{
 				State = 604;
-				elseBlock();
+				_localctx.Else = elseBlock();
 				}
 			}
 
@@ -2711,10 +2714,12 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class ExprThenBlockContext : ParserRuleContext {
+		public ExpressionContext Exp;
+		public ThenBlockContext Then;
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode THEN() { return GetToken(SyscodeParser.THEN, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode THEN() { return GetToken(SyscodeParser.THEN, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ThenBlockContext thenBlock() {
 			return GetRuleContext<ThenBlockContext>(0);
 		}
@@ -2750,7 +2755,7 @@ public partial class SyscodeParser : Parser {
 			}
 
 			State = 615;
-			expression(0);
+			_localctx.Exp = expression(0);
 			State = 617;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
@@ -2774,7 +2779,7 @@ public partial class SyscodeParser : Parser {
 				break;
 			}
 			State = 623;
-			thenBlock();
+			_localctx.Then = thenBlock();
 			}
 		}
 		catch (RecognitionException re) {
@@ -2840,6 +2845,7 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class ElseBlockContext : ParserRuleContext {
+		public ThenBlockContext Then;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ELSE() { return GetToken(SyscodeParser.ELSE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ThenBlockContext thenBlock() {
 			return GetRuleContext<ThenBlockContext>(0);
@@ -2875,7 +2881,7 @@ public partial class SyscodeParser : Parser {
 				break;
 			}
 			State = 635;
-			thenBlock();
+			_localctx.Then = thenBlock();
 			}
 			}
 		}
@@ -2891,6 +2897,7 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class ElifBlockContext : ParserRuleContext {
+		public ExprThenBlockContext ExprThen;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ELIF() { return GetTokens(SyscodeParser.ELIF); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ELIF(int i) {
 			return GetToken(SyscodeParser.ELIF, i);
@@ -2941,7 +2948,7 @@ public partial class SyscodeParser : Parser {
 					break;
 				}
 				State = 641;
-				exprThenBlock();
+				_localctx.ExprThen = exprThenBlock();
 				}
 				}
 				State = 644;
