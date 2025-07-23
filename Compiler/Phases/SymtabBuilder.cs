@@ -15,14 +15,14 @@ namespace Syscode
             var procedures = root.Statements.OfType<Procedure>();//.Where(s => s is Procedure).Cast<Procedure>();
             var scopes = root.Statements.OfType<Scope>();//.Where(s => s is Scope).Cast<Scope>();
 
-            root.Symbols.AddRange(declarations.Select(d => CreateSymbol(d)));
-            root.Symbols.AddRange(procedures.Select(d => CreateSymbol(d)));
+            root.Symbols.AddRange(declarations.Select(CreateSymbol));
+            root.Symbols.AddRange(procedures.Select(CreateSymbol));
 
         }
         public Symbol CreateSymbol(Procedure procedure)
         {
             var sym = new Symbol(procedure);
-            procedure.Symbols = procedure.Statements.Where(s => s is Declare).Cast<Declare>().Select(d => CreateSymbol(d)).ToList();
+            procedure.Symbols = procedure.Statements.Where(s => s is Declare).Cast<Declare>().Select(CreateSymbol).ToList();
             sym.Invalid = false;
             return sym;
 

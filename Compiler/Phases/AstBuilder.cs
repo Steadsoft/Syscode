@@ -52,7 +52,7 @@ namespace Syscode
             {
                 return new Loop(context)
                 {
-                    Statements = GetStatements(context.Loop).Select(s => Generate(s)).ToList()
+                    Statements = GetStatements(context.Loop).Select(Generate).ToList()
                 };
             }
             if (context.For != null)
@@ -65,7 +65,7 @@ namespace Syscode
                     By = CreateExpression(context.For.By),
                     WhileExp = CreateExpression(context.For.While?.Exp),
                     UntilExp = CreateExpression(context.For.Until?.Exp),
-                    Statements = GetStatements(context.For).Select(s => Generate(s)).ToList()
+                    Statements = GetStatements(context.For).Select(Generate).ToList()
                 };
             }
 
@@ -75,7 +75,7 @@ namespace Syscode
                 {
                     WhileExp = CreateExpression(context.While.While.Exp),
                     UntilExp = CreateExpression(context.While.Until?.Exp),
-                    Statements = GetStatements(context.While).Select(s => Generate(s)).ToList()
+                    Statements = GetStatements(context.While).Select(Generate).ToList()
                 };
             }
 
@@ -85,7 +85,7 @@ namespace Syscode
                 {
                     UntilExp = CreateExpression(context.Until.Until.Exp),
                     WhileExp = CreateExpression(context.Until.While?.Exp),
-                    Statements = GetStatements(context.Until).Select(s => Generate(s)).ToList()
+                    Statements = GetStatements(context.Until).Select(Generate).ToList()
                 };
             }
 
@@ -317,7 +317,7 @@ namespace Syscode
 
                     if (arguments.TryGetExactNode<SubscriptCommalistContext>(out var subscriptCommalist))
                     {
-                        var expressions = subscriptCommalist.GetDerivedNodes<ExpressionContext>().Select(e => CreateExpression(e)).ToList();
+                        var expressions = subscriptCommalist.GetDerivedNodes<ExpressionContext>().Select(CreateExpression).ToList();
 
                         argsast.ExpressionList.AddRange(expressions); ;
                     }
@@ -348,7 +348,7 @@ namespace Syscode
                     {
                         var subs = arg.GetExactNode<SubscriptCommalistContext>();
 
-                        var expressions = subs.GetDerivedNodes<ExpressionContext>().Select(e => CreateExpression(e)).ToList();
+                        var expressions = subs.GetDerivedNodes<ExpressionContext>().Select(CreateExpression).ToList();
 
                         qualifier.Arguments = new Arguments(subs) { ExpressionList = expressions };
 
@@ -366,13 +366,13 @@ namespace Syscode
         }
         private Compilation CreateCompilation(CompilationContext context)
         {
-            return new Compilation(context) { Statements = GetStatements(context).Select(s => Generate(s)).ToList() };
+            return new Compilation(context) { Statements = GetStatements(context).Select(Generate).ToList() };
         }
         private Scope CreateScope(ScopeContext context)
         {
             if (context.TryGetExactNode<BlockScopeContext>(out var block))
             {
-                return new Scope(block) { Spelling = block.GetExactNode<QualifiedNameContext>().GetText(), Statements = GetStatements(block).Select(s => Generate(s)).ToList() };
+                return new Scope(block) { Spelling = block.GetExactNode<QualifiedNameContext>().GetText(), Statements = GetStatements(block).Select(Generate).ToList() };
             }
 
             throw new InvalidOperationException();
@@ -474,7 +474,7 @@ namespace Syscode
 
                 if (context.Type.Fix?.Args != null)
                 {
-                    var expressions = context.Type.Fix.Args.GetExactNode<SubscriptCommalistContext>().GetDerivedNodes<ExpressionContext>().Select(e => CreateExpression(e)).ToList();
+                    var expressions = context.Type.Fix.Args.GetExactNode<SubscriptCommalistContext>().GetDerivedNodes<ExpressionContext>().Select(CreateExpression).ToList();
                     dcl.typeSubscripts = expressions;
                 }
             }
@@ -497,8 +497,8 @@ namespace Syscode
                 bounds = CreateBounds(dimensions);
             }
 
-            var structs = context.GetExactNodes<StructBodyContext>().Select(s => CreateStructure(s)).ToList();
-            var fields = context.GetExactNodes<StructFieldContext>().Select(f => CreateField(f)).ToList(); ;
+            var structs = context.GetExactNodes<StructBodyContext>().Select(CreateStructure).ToList();
+            var fields = context.GetExactNodes<StructFieldContext>().Select(CreateField).ToList(); ;
 
             return new StructBody(context) { IsKeyword = iskeyword, Spelling = spelling, Bounds = bounds, Structs = structs, Fields = fields };
         }
@@ -539,7 +539,7 @@ namespace Syscode
                     node.Main = true;
             }
 
-            node.Statements = [.. GetStatements(context).Select(s => Generate(s))];
+            node.Statements = [.. GetStatements(context).Select(Generate)];
 
             currentContainer = node.Container;
 
@@ -561,7 +561,7 @@ namespace Syscode
                 node.Parameters = context.Params._Params.Select(i => i.GetText()).ToList();
             }
 
-            node.Statements = [.. GetStatements(context).Select(s => Generate(s))];
+            node.Statements = [.. GetStatements(context).Select(Generate)];
             node.IsFunction = true;
 
             currentContainer = node.Container;
@@ -572,24 +572,24 @@ namespace Syscode
         private Elif CreateElif(ExprThenBlockContext context)
         {
             var condition = CreateExpression(context.Exp);
-            return new Elif(context) { Condition = condition, ThenStatements = GetStatements(context.GetExactNode<ThenBlockContext>()).Select(s => Generate(s)).ToList() };
+            return new Elif(context) { Condition = condition, ThenStatements = GetStatements(context.GetExactNode<ThenBlockContext>()).Select(Generate).ToList() };
         }
         private If CreateIf(IfContext context)
         {
             List<AstNode> else_stmts = new();
             List<Elif> elifs = new();
 
-            var if_then_stmts = GetStatements(context.ExprThen.Then).Select(s => Generate(s)).ToList();
+            var if_then_stmts = GetStatements(context.ExprThen.Then).Select(Generate).ToList();
             var condition = CreateExpression(context.ExprThen.Exp);
 
             if (context.Else != null)
             {
-                else_stmts = GetStatements(context.Else.Then).Select(s => Generate(s)).ToList();
+                else_stmts = GetStatements(context.Else.Then).Select(Generate).ToList();
             }
 
             if (context.Elif != null)  // at least one 'elif' is present
             {
-                elifs = context.Elif._ExprThen.Select(etb => CreateElif(etb)).ToList();
+                elifs = context.Elif._ExprThen.Select(CreateElif).ToList();
             }
 
             return new If(context) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs, Condition = condition };
