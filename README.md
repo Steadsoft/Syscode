@@ -180,8 +180,8 @@ call accessor (3219)
 Numeric literals can include a number base specifier and can contain spaces/underscores to aid readability.
 
 ```
-hex = 01F5 33DA 0F02 11B9:H  // treated as a unsigned ubin64 value 141,075,974,979,719,609
-bin = 1001 1101 0010 0011:B  // treated as a signed bin32 value 40,227
+hex =  01F5 33DA 0F02 11B9:H  // treated as a unsigned ubin64 value 141,075,974,979,719,609
+bin = +1001 1101 0010 0011:B  // treated as a signed bin32 value 40,227
 
 sum = hex + bin
 ```
