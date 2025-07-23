@@ -18,7 +18,14 @@ dcl bin builtin
 
 dcl goto bin16 aligned(1)
 
-speed = fast
+binar = -1001 0111 1101:b
+
+hexsum = -1e44:h + 75a2:h
+
+speed = -2400 1e34:h  // signed hex
+rate = +1200 // signed dec
+velocity = 3400:h // unsigned hex
+errors = bin(-2F04:h,16) // signed 16 bit value 
 
 dcl struct if
        struct then
@@ -97,7 +104,7 @@ proc main options(main) // outermost, therefore has external scope, full name: u
     sat = 23 (+) 45                  // saturated
     sum = 23 [+] 45    // overflow aware
 
-    if overflowed then
+    if @main overflowed then
        return;
     end
 

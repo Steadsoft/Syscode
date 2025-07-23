@@ -4,6 +4,9 @@
     {
         Unknown,
         String,
-        Numeric
+        Binary,
+        Octal,
+        Decimal,
+        Hexadecimal
     }
 }

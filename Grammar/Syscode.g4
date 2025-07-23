@@ -37,7 +37,7 @@ compilation: (statement* endOfFile);
 // One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
 // several source files with that namespace prefix, each of which contributes stuff to the namespace.
 
-statement:  preamble?  (call | return | label | /* scope | */  enum | if | declare | type | literal | procedure | function | loop | goto | leave | assignment );
+statement:  preamble?  (call | return | label | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | leave | assignment );
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes* statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
@@ -70,7 +70,7 @@ type: TYPE Body=structBody ;
 
 leave: LEAVE identifier statementSeparator;
 
-literal: LIT customLiteral AS decLiteral statementSeparator ;
+// literal: LIT customLiteral AS decLiteral statementSeparator ;
 loop: Loop=loopLoop | For=forLoop | While=whileLoop | Until=untilLoop ;
 forLoop : DO Name=labelName? For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  statement* emptyLines? END ;
 whileLoop: DO Name=labelName? While=whileCondition Until=untilCondition?  statement* emptyLines? END;
@@ -82,7 +82,7 @@ untilCondition: UNTIL Exp=expression ;
 
 
 
-if:             IF emptyLines? ExprThen=exprThenBlock emptyLines? Elif=elifBlock? emptyLines? Else=elseBlock? emptyLines? END;
+if:             IF Name=labelName? emptyLines? ExprThen=exprThenBlock emptyLines? Elif=elifBlock? emptyLines? Else=elseBlock? emptyLines? END;
 exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? Then=thenBlock;
 thenBlock :     statement*;
 elseBlock :     (ELSE emptyLines? Then=thenBlock);
@@ -193,20 +193,20 @@ expression
 
 primitiveExpression
   : numericLiteral
-  | strLiteral
-  | customLiteral
+  | stringLiteral
+  //| customLiteral
   | reference
   ;
 
-strLiteral
-  : STR_LITERAL
+stringLiteral
+  : Text=STR_LITERAL
   ;
 
 numericLiteral
-  : binLiteral
-  | octLiteral
-  | hexLiteral
-  | decLiteral
+  : Signed=(PLUS | MINUS)? Bin=binLiteral
+  | Signed=(PLUS | MINUS)? Oct=octLiteral
+  | Signed=(PLUS | MINUS)? Hex=hexLiteral
+  | Signed=(PLUS | MINUS)? Dec=decLiteral
   ;
 
 hexLiteral
@@ -226,9 +226,9 @@ decLiteral
   | (DEC_LITERAL)
   ;
   
-customLiteral // Used to allow stuff like 23.5MHz to represent 23.5 (or whatever, defined by the code somewhere)
-    : (CUSTOM_LITERAL)
-    ;
+// customLiteral // Used to allow stuff like 23.5MHz to represent 23.5 (or whatever, defined by the code somewhere)
+//     : (CUSTOM_LITERAL)
+//     ;
 
 parenthesizedExpression
   : LPAR expression RPAR
@@ -467,8 +467,8 @@ fragment BASE_O:  (':o' | ':O');
 fragment FRAC_B:  ('.' [0-1]+);
 fragment BASE_B:  (':b' | ':B');
 
-HEX_LITERAL:  ((HEX (' '+ HEX)*)+ | (HEX ('_'+ HEX)*)+) FRAC_H? BASE_H;
-OCT_LITERAL:  ((OCT (' '+ OCT)*)+ | (OCT ('_'+ OCT)*)+) FRAC_O? BASE_O;
+HEX_LITERAL:  ((HEX    (' '+ HEX)*)+    | (HEX ('_'+ HEX)*)+) FRAC_H? BASE_H;
+OCT_LITERAL:  ((OCT    (' '+ OCT)*)+    | (OCT ('_'+ OCT)*)+) FRAC_O? BASE_O;
 DEC_LITERAL:  (DECIMAL (' '+ DECIMAL)*)+ FRAC_D? BASE_D?;
 BIN_LITERAL:  ((BINARY (' '+ BINARY)*)+ | (BINARY ('_'+ BINARY)*)+) FRAC_B? BASE_B;
 INTEGER:      ([1-9] [0-9]*);
@@ -611,7 +611,7 @@ RARROW:         '->';
 
 
 IDENTIFIER:     ([a-zA-Z_] [a-zA-Z0-9_]*);
-CUSTOM_LITERAL: ('-' | '+')? ((DECIMAL (' ' DECIMAL)*)+ FRAC_D?) COLON IDENTIFIER;
+//CUSTOM_LITERAL: ('-' | '+')? ((DECIMAL (' ' DECIMAL)*)+ FRAC_D?) COLON IDENTIFIER;
 
 NEWLINE:        ('\r' '\n'); 
 WS:             [ \t]+ -> skip;

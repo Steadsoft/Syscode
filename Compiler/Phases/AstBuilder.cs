@@ -127,14 +127,13 @@ namespace Syscode
 
                         }
 
-                        if (prim.TryGetExactNode<StrLiteralContext>(out var strcontext))
+                        if (prim.TryGetExactNode<StringLiteralContext>(out var strcontext))
                         {
                             var txt = strcontext.GetText();
                             expr.Literal = new Literal(strcontext) { Value = txt };
                             expr.Type = ExpressionType.Literal;
 
                         }
-
 
                         return FoldConstantExpression(expr); ;
                     }
@@ -174,6 +173,8 @@ namespace Syscode
 
         }
 
+        
+
         private Expression FoldConstantExpression(Expression expr)
         {
             // TODO: This is fragile just now, we must validate operand types, we cannot assume the expression is valid, only valid syntactically.
@@ -190,15 +191,36 @@ namespace Syscode
                     {
                         case Operator.PLUS:
                             {
-                                var left = Convert.ToInt32(expr.Left.Literal.Value);
-                                var right = Convert.ToInt32(expr.Right.Literal.Value);
-
-                                var sum = left + right;
-
                                 var result = new Expression(null);
 
-                                result.Literal = new Literal(LiteralType.Numeric) { Value = sum.ToString() };
-                                result.Type = ExpressionType.Literal;
+                                if (expr.Left.Literal.Constant.Signed && expr.Right.Literal.Constant.Signed)
+                                {
+                                    var sum = expr.Left.Literal.Constant.ValueSigned + expr.Right.Literal.Constant.ValueSigned;
+                                    result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+                                    result.Type = ExpressionType.Literal;
+                                }
+
+                                if (expr.Left.Literal.Constant.Signed && expr.Right.Literal.Constant.Unsigned)
+                                {
+                                    var sum = expr.Left.Literal.Constant.ValueSigned + (long)expr.Right.Literal.Constant.ValueUnsigned;
+                                    result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+                                    result.Type = ExpressionType.Literal;
+                                }
+
+                                if (expr.Left.Literal.Constant.Unsigned && expr.Right.Literal.Constant.Signed)
+                                {
+                                    var sum = (long)expr.Left.Literal.Constant.ValueUnsigned + (long)expr.Right.Literal.Constant.ValueUnsigned;
+                                    result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+                                    result.Type = ExpressionType.Literal;
+                                }
+
+                                if (expr.Left.Literal.Constant.Unsigned && expr.Right.Literal.Constant.Unsigned)
+                                {
+                                    var sum = expr.Left.Literal.Constant.ValueUnsigned + expr.Right.Literal.Constant.ValueUnsigned;
+                                    result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+                                    result.Type = ExpressionType.Literal;
+                                }
+
                                 return result;
                             }
                         case Operator.MINUS:
@@ -210,7 +232,7 @@ namespace Syscode
 
                                 var result = new Expression(null);
 
-                                result.Literal = new Literal(LiteralType.Numeric) { Value = sum.ToString() };
+                                result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
                                 result.Type = ExpressionType.Literal;
                                 return result;
                             }
@@ -223,7 +245,7 @@ namespace Syscode
 
                                 var result = new Expression(null);
 
-                                result.Literal = new Literal(LiteralType.Numeric) { Value = sum.ToString() };
+                                result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
                                 result.Type = ExpressionType.Literal;
                                 return result;
                             }
@@ -236,7 +258,7 @@ namespace Syscode
 
                                 var result = new Expression(null);
 
-                                result.Literal = new Literal(LiteralType.Numeric) { Value = sum.ToString() };
+                                result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
                                 result.Type = ExpressionType.Literal;
                                 return result;
                             }
