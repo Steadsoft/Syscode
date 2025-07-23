@@ -237,7 +237,7 @@ scope utilities
 
     end
 
-    do x = 1 to 100 while (size < 100)
+    do @outer x = 1 to 100 while size < 100
 
     end
 
@@ -264,9 +264,13 @@ scope utilities
 
     end
 
-    do while (still_time) 
-        do until no_space_left
+    do @outer while (still_time) 
+        do @inner until no_space_left
             fast = slow
+
+            if count > 10 then
+               leave outer
+            end
         end
     end
 

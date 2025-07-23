@@ -925,12 +925,13 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class GotoContext : ParserRuleContext {
+		public ReferenceContext Ref;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GOTO() { return GetToken(SyscodeParser.GOTO, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ReferenceContext reference() {
-			return GetRuleContext<ReferenceContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ReferenceContext reference() {
+			return GetRuleContext<ReferenceContext>(0);
 		}
 		public GotoContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -949,7 +950,7 @@ public partial class SyscodeParser : Parser {
 			State = 316;
 			Match(GOTO);
 			State = 317;
-			reference(0);
+			_localctx.Ref = reference(0);
 			State = 318;
 			statementSeparator();
 			}
@@ -1567,12 +1568,13 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class CallContext : ParserRuleContext {
+		public ReferenceContext Ref;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CALL() { return GetToken(SyscodeParser.CALL, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ReferenceContext reference() {
-			return GetRuleContext<ReferenceContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ReferenceContext reference() {
+			return GetRuleContext<ReferenceContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines() {
 			return GetRuleContext<EmptyLinesContext>(0);
@@ -1605,7 +1607,7 @@ public partial class SyscodeParser : Parser {
 			}
 
 			State = 427;
-			reference(0);
+			_localctx.Ref = reference(0);
 			State = 428;
 			statementSeparator();
 			}
@@ -1622,6 +1624,7 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class ReturnContext : ParserRuleContext {
+		public ExpressionContext Exp;
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
 		}
@@ -1666,7 +1669,7 @@ public partial class SyscodeParser : Parser {
 				}
 
 				State = 434;
-				expression(0);
+				_localctx.Exp = expression(0);
 				}
 				break;
 			}
@@ -2025,6 +2028,7 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class ForLoopContext : ParserRuleContext {
+		public LabelNameContext Name;
 		public ReferenceContext For;
 		public ExpressionContext From;
 		public ExpressionContext To;
@@ -2044,9 +2048,6 @@ public partial class SyscodeParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
 			return GetRuleContext<ExpressionContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
-			return GetRuleContext<LabelNameContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode BY() { return GetToken(SyscodeParser.BY, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext[] emptyLines() {
 			return GetRuleContexts<EmptyLinesContext>();
@@ -2059,6 +2060,9 @@ public partial class SyscodeParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
 			return GetRuleContext<StatementContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
+			return GetRuleContext<LabelNameContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public WhileConditionContext whileCondition() {
 			return GetRuleContext<WhileConditionContext>(0);
@@ -2090,7 +2094,7 @@ public partial class SyscodeParser : Parser {
 			case 1:
 				{
 				State = 486;
-				labelName();
+				_localctx.Name = labelName();
 				}
 				break;
 			}
@@ -2236,15 +2240,13 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class WhileLoopContext : ParserRuleContext {
+		public LabelNameContext Name;
 		public WhileConditionContext While;
 		public UntilConditionContext Until;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DO() { return GetToken(SyscodeParser.DO, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public WhileConditionContext whileCondition() {
 			return GetRuleContext<WhileConditionContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
-			return GetRuleContext<LabelNameContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
 			return GetRuleContexts<StatementContext>();
@@ -2254,6 +2256,9 @@ public partial class SyscodeParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines() {
 			return GetRuleContext<EmptyLinesContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
+			return GetRuleContext<LabelNameContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public UntilConditionContext untilCondition() {
 			return GetRuleContext<UntilConditionContext>(0);
@@ -2282,7 +2287,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==ATSIGN) {
 				{
 				State = 531;
-				labelName();
+				_localctx.Name = labelName();
 				}
 			}
 
@@ -2340,15 +2345,13 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class UntilLoopContext : ParserRuleContext {
+		public LabelNameContext Name;
 		public UntilConditionContext Until;
 		public WhileConditionContext While;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DO() { return GetToken(SyscodeParser.DO, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public UntilConditionContext untilCondition() {
 			return GetRuleContext<UntilConditionContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
-			return GetRuleContext<LabelNameContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
 			return GetRuleContexts<StatementContext>();
@@ -2358,6 +2361,9 @@ public partial class SyscodeParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines() {
 			return GetRuleContext<EmptyLinesContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
+			return GetRuleContext<LabelNameContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public WhileConditionContext whileCondition() {
 			return GetRuleContext<WhileConditionContext>(0);
@@ -2386,7 +2392,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==ATSIGN) {
 				{
 				State = 550;
-				labelName();
+				_localctx.Name = labelName();
 				}
 			}
 
@@ -2444,12 +2450,10 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class LoopLoopContext : ParserRuleContext {
+		public LabelNameContext Name;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DO() { return GetToken(SyscodeParser.DO, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LOOP() { return GetToken(SyscodeParser.LOOP, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
-			return GetRuleContext<LabelNameContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
 			return GetRuleContexts<StatementContext>();
 		}
@@ -2458,6 +2462,9 @@ public partial class SyscodeParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines() {
 			return GetRuleContext<EmptyLinesContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
+			return GetRuleContext<LabelNameContext>(0);
 		}
 		public LoopLoopContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -2483,7 +2490,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==ATSIGN) {
 				{
 				State = 569;
-				labelName();
+				_localctx.Name = labelName();
 				}
 			}
 

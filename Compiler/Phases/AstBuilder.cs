@@ -16,24 +16,24 @@ namespace Syscode
 
         }
 
-        public AstNode Generate(ParserRuleContext context)
+        public AstNode Generate(ParserRuleContext rule)
         {
-            return context switch
+            return rule switch
             {
-                CompilationContext compilation => CreateCompilation(compilation),
-                ScopeContext scope => CreateScope(scope),
-                ProcedureContext procedure => CreateProcedure(procedure),
-                FunctionContext function => CreateFunction(function),
-                TypeContext type => CreateType(type),
-                IfContext ifContext => CreateIf(ifContext),
-                AssignmentContext assignment => CreateAssignment(assignment),
-                DeclareContext declare => CreateDeclaration(declare),
-                CallContext call => CreateCall(call),
-                ReturnContext ret => CreateReturn(ret),
-                LabelContext lab => CreateLabel(lab),
-                GotoContext gto => CreateGoto(gto),
-                LoopContext loop => CreateLoop(loop),
-                _ => new AstNode(context)
+                CompilationContext context => CreateCompilation(context),
+                ScopeContext context => CreateScope(context),
+                ProcedureContext context => CreateProcedure(context),
+                FunctionContext context => CreateFunction(context),
+                TypeContext context => CreateType(context),
+                IfContext context => CreateIf(context),
+                AssignmentContext context => CreateAssignment(context),
+                DeclareContext context => CreateDeclaration(context),
+                CallContext context => CreateCall(context),
+                ReturnContext context => CreateReturn(context),
+                LabelContext context => CreateLabel(context),
+                GotoContext context => CreateGoto(context),
+                LoopContext context => CreateLoop(context),
+                _ => new AstNode(rule)
             };
         }
 
@@ -86,7 +86,7 @@ namespace Syscode
         }
         public Goto CreateGoto(GotoContext context)
         {
-            return new Goto(context) { Reference = CreateReference(context.GetExactNode<ReferenceContext>()) };
+            return new Goto(context) { Reference = CreateReference(context.Ref) };
         }
         private Label CreateLabel(LabelContext context)
         {
@@ -94,14 +94,11 @@ namespace Syscode
         }
         private Return CreateReturn(ReturnContext context)
         {
-            if (context.TryGetDerivedNode<ExpressionContext>(out var expressionContext))
-                return new Return(context) { Expression = CreateExpression(expressionContext) };
-
-            return new Return(context);
+            return new Return(context) { Expression = CreateExpression(context.Exp) };
         }
         private Call CreateCall(CallContext context)
         {
-            return new Call(context) { Reference = CreateReference(context.GetExactNode<ReferenceContext>()) };
+            return new Call(context) { Reference = CreateReference(context.Ref) };
         }
         private Expression CreateExpression(ExpressionContext context)
         {
