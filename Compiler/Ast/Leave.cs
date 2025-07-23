@@ -1,12 +1,11 @@
-﻿using Antlr4.Runtime;
-using static SyscodeParser;
+﻿using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Goto : AstNode
+    public class Leave : AstNode
     {
         private Reference reference;
-        public Goto(GotoContext context) : base(context)
+        public Leave(LeaveContext context) : base(context)
         {
         }
 
@@ -14,7 +13,7 @@ namespace Syscode
 
         public override string ToString()
         {
-            return $"goto {Reference}";
+            return $"leave {Reference}";
         }
     }
 

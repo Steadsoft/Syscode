@@ -68,7 +68,7 @@ declare
 
 type: TYPE Body=structBody ;    
 
-leave: LEAVE identifier statementSeparator;
+leave: LEAVE Ref=reference statementSeparator;
 
 // literal: LIT customLiteral AS decLiteral statementSeparator ;
 loop: Loop=loopLoop | For=forLoop | While=whileLoop | Until=untilLoop ;

@@ -33,8 +33,15 @@ namespace Syscode
                 LabelContext context => CreateLabel(context),
                 GotoContext context => CreateGoto(context),
                 LoopContext context => CreateLoop(context),
+                LeaveContext context => CreateLeave(context),
                 _ => new AstNode(rule)
             };
+        }
+
+        public Leave CreateLeave(LeaveContext context)
+        {
+            // TODO: The ref on a leave stmt must be a simple identifier.
+            return new Leave(context) { Reference = CreateReference(context.Ref) };
         }
 
         public Loop CreateLoop(LoopContext context)

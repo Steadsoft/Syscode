@@ -1854,12 +1854,13 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class LeaveContext : ParserRuleContext {
+		public ReferenceContext Ref;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LEAVE() { return GetToken(SyscodeParser.LEAVE, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
-			return GetRuleContext<IdentifierContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ReferenceContext reference() {
+			return GetRuleContext<ReferenceContext>(0);
 		}
 		public LeaveContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1878,7 +1879,7 @@ public partial class SyscodeParser : Parser {
 			State = 464;
 			Match(LEAVE);
 			State = 465;
-			identifier();
+			_localctx.Ref = reference(0);
 			State = 466;
 			statementSeparator();
 			}
@@ -8086,8 +8087,8 @@ public partial class SyscodeParser : Parser {
 		454,3,70,35,0,451,453,3,180,90,0,452,451,1,0,0,0,453,456,1,0,0,0,454,452,
 		1,0,0,0,454,455,1,0,0,0,455,457,1,0,0,0,456,454,1,0,0,0,457,458,3,2,1,
 		0,458,460,1,0,0,0,459,434,1,0,0,0,459,436,1,0,0,0,460,41,1,0,0,0,461,462,
-		5,67,0,0,462,463,3,10,5,0,463,43,1,0,0,0,464,465,5,46,0,0,465,466,3,174,
-		87,0,466,467,3,2,1,0,467,45,1,0,0,0,468,473,3,54,27,0,469,473,3,48,24,
+		5,67,0,0,462,463,3,10,5,0,463,43,1,0,0,0,464,465,5,46,0,0,465,466,3,96,
+		48,0,466,467,3,2,1,0,467,45,1,0,0,0,468,473,3,54,27,0,469,473,3,48,24,
 		0,470,473,3,50,25,0,471,473,3,52,26,0,472,468,1,0,0,0,472,469,1,0,0,0,
 		472,470,1,0,0,0,472,471,1,0,0,0,473,47,1,0,0,0,474,476,5,30,0,0,475,477,
 		3,16,8,0,476,475,1,0,0,0,476,477,1,0,0,0,477,478,1,0,0,0,478,479,3,96,
