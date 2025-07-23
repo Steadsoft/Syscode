@@ -183,3 +183,5 @@ Numeric literals can include a number base specifier and can contain spaces/unde
 dcl hex = 01F5 33DA 0F02 11B9:H
 dcl bin = 1001 1101 0010 0011:B
 ```
+Literals are assigned a type that matches the magnitude of the value, if it can fit in a `bin8` for example it's treated as a `bin8`. You can use a conversion `builtin` to force a numeric literal to a specific size. In addition if there is no prefix of `+` or `-` then the literal is treated as `unsigned` so just prefix with either a `+` or `-` to have the value treated as a signed number.
+
