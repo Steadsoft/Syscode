@@ -14,11 +14,11 @@ namespace Syscode
         private LiteralType literalType;
         private int bitlength; // the actual number of bits implied by the literal
         private NumericConstant constant;
-        public Literal(NumericLiteralContext context, Dictionary<string, NumericConstant> constants) : base(context)
+        public Literal(NumericLiteralContext context, Dictionary<string, IConstant> constants) : base(context)
         {
             constant = NumericConstant.Create(context);
 
-            constants.TryAdd(constant.LiteralText, constant);
+            constants.TryAdd(constant.Spelling, constant);
 
             literalType = context switch
             {

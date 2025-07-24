@@ -18,7 +18,7 @@ namespace Syscode
         private string file;
         private string fileName;
         private string[] namespaceparts;
-        private Dictionary<string, NumericConstant> constants = new();
+        private Dictionary<string, IConstant> constants = new();
 
         public Reporter Reporter { get => reporter; set => reporter = value; }
 

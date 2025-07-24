@@ -58,7 +58,10 @@ type struct MCO
     SEL             bit(3)
 end
 
-proc main options(main) // outermost, therefore has external scope, full name: utilities.main
+proc main (a,b,c) options(main) // outermost, therefore has external scope, full name: utilities.main
+
+    dcl a bin8
+    dcl b ubin16
 
     then = bin(100,16) + bin(75,16); 
 

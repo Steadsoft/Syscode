@@ -12,8 +12,8 @@ namespace Syscode
     {
         private IContainer currentContainer = null;
         private Compilation compilation = null;
-        private Dictionary<string, NumericConstant> constants;
-        public AstBuilder(Dictionary<string, NumericConstant> constants)
+        private Dictionary<string, IConstant> constants;
+        public AstBuilder(Dictionary<string, IConstant> constants)
         {
             this.constants = constants;
         }

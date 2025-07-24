@@ -12,7 +12,7 @@ namespace Syscode
     /// <summary>
     /// Represents a numeric constant
     /// </summary>
-    public class NumericConstant : AstNode
+    public class NumericConstant : AstNode, IConstant
     {
         private DataType dataType;
         private UInt64 valueUnsigned = 0;
@@ -100,7 +100,6 @@ namespace Syscode
             }
 
             return constant;
-
         }
         private NumericConstant(NumericLiteralContext context) : base(context)
         {
@@ -128,6 +127,10 @@ namespace Syscode
         public long ValueSigned { get => valueSigned; set => valueSigned = value; }
         public string LiteralText { get => literalText; set => literalText = value; }
 
+        public string Spelling => literalText;
+
+        public DataType DataType => dataType;
+
         /// <summary>
         /// Remioves any trailing chars like ":H" or ":d" etc.
         /// </summary>
@@ -141,4 +144,27 @@ namespace Syscode
             return Value.Replace("_", "").Replace(" ", ""); ;
         }
     }
+
+    public class EntryConstant : AstNode, IConstant
+    {
+        private string name;
+        private StorageScope storageScope;
+
+        public string Spelling => name;
+
+        public DataType DataType => DataType.ENTRY;
+
+        public EntryConstant(ProcedureContext context):base(context)
+        {
+            name = context.Spelling.GetText(); 
+            
+        }
+    }
+
+    public interface IConstant
+    {
+        string Spelling { get; }
+        DataType DataType { get; }
+    }
+
 }
