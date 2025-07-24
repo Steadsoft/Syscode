@@ -11,9 +11,9 @@ namespace Syscode
         }
         public void Generate(Compilation root)
         {
-            var declarations = root.Statements.OfType<Declare>(); //.Where(s => s is Declare).Cast<Declare>();
-            var procedures = root.Statements.OfType<Procedure>();//.Where(s => s is Procedure).Cast<Procedure>();
-            var scopes = root.Statements.OfType<Scope>();//.Where(s => s is Scope).Cast<Scope>();
+            var declarations = root.Statements.OfType<Declare>(); 
+            var procedures = root.Statements.OfType<Procedure>();
+            var scopes = root.Statements.OfType<Scope>();
 
             root.Symbols.AddRange(declarations.Select(CreateSymbol));
             root.Symbols.AddRange(procedures.Select(CreateSymbol));
@@ -22,7 +22,7 @@ namespace Syscode
         public Symbol CreateSymbol(Procedure procedure)
         {
             var sym = new Symbol(procedure);
-            procedure.Symbols = procedure.Statements.Where(s => s is Declare).Cast<Declare>().Select(CreateSymbol).ToList();
+            procedure.Symbols = procedure.Statements.OfType<Declare>().Select(CreateSymbol).ToList();
             sym.Invalid = false;
             return sym;
 

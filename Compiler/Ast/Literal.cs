@@ -18,25 +18,14 @@ namespace Syscode
         {
             constant = new NumericConstant(context);
 
-            if (context.Bin != null)
+            literalType = context switch
             {
-                literalType = LiteralType.Binary;
-            }
-
-            if (context.Oct != null)
-            {
-                literalType = LiteralType.Octal;
-            }
-
-            if (context.Dec != null)
-            {
-                literalType = LiteralType.Decimal;
-            }
-
-            if (context.Hex != null)
-            {
-                literalType = LiteralType.Hexadecimal;
-            }
+                { Bin: not null } => LiteralType.Binary,
+                { Oct: not null } => LiteralType.Octal,
+                { Dec: not null } => LiteralType.Decimal,
+                { Hex: not null } => LiteralType.Hexadecimal,
+                _ => throw new InvalidOperationException("No valid literal found")
+            };
         }
 
         public NumericConstant Constant

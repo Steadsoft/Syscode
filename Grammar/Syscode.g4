@@ -181,13 +181,13 @@ expression
     Left=expression emptyLines? power emptyLines? Rite=expression       # ExprBinary
   | Left=expression emptyLines? mulDiv emptyLines? Rite=expression      # ExprBinary
   | Left=expression emptyLines? addSub emptyLines? Rite=expression      # ExprBinary
-  | Left=expression emptyLines? shiftRotate emptyLines? Rite=expression   # ExprBinary
+  | Left=expression emptyLines? shiftRotate emptyLines? Rite=expression # ExprBinary
   | Left=expression emptyLines? concatenate emptyLines? Rite=expression # ExprBinary
   | Left=expression emptyLines? comparison emptyLines? Rite=expression  # ExprBinary
   | Left=expression emptyLines? boolAnd emptyLines? Rite=expression     # ExprBinary
   | Left=expression emptyLines? boolXor emptyLines? Rite=expression     # ExprBinary
   | Left=expression emptyLines? boolOr emptyLines? Rite=expression      # ExprBinary
-  | Left=expression emptyLines? logand emptyLines?  Rite=expression      # ExprBinary
+  | Left=expression emptyLines? logand emptyLines?  Rite=expression     # ExprBinary
   | Left=expression emptyLines? logor emptyLines? Rite=expression       # ExprBinary
   ;
 
