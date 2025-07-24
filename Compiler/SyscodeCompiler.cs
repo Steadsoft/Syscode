@@ -18,6 +18,7 @@ namespace Syscode
         private string file;
         private string fileName;
         private string[] namespaceparts;
+        private Dictionary<string, NumericConstant> constants = new();
 
         public Reporter Reporter { get => reporter; set => reporter = value; }
 
@@ -68,7 +69,7 @@ namespace Syscode
             lexer = new SyscodeLexer(stream);
             var tokens = new CommonTokenStream(lexer);
             var parser = new SyscodeParser(tokens);
-            builder = new AstBuilder();
+            builder = new AstBuilder(constants);
             symtabBuilder = new SymtabBuilder(Reporter);
             resolver = new ReferenceResolver(Reporter);
 

@@ -11,9 +11,11 @@ namespace Syscode
     public class AstBuilder
     {
         private IContainer currentContainer = null;
-        public AstBuilder()
+        private Compilation compilation = null;
+        private Dictionary<string, NumericConstant> constants;
+        public AstBuilder(Dictionary<string, NumericConstant> constants)
         {
-
+            this.constants = constants;
         }
 
         public AstNode Generate(ParserRuleContext rule)
@@ -129,7 +131,7 @@ namespace Syscode
                         if (prim.TryGetExactNode<NumericLiteralContext>(out var numcontext))
                         {
                             var txt = numcontext.GetText();
-                            expr.Literal = new Literal(numcontext) { Value = txt };
+                            expr.Literal = new Literal(numcontext, constants) { Value = txt };
                             expr.Type = ExpressionType.Literal;
 
                         }
@@ -366,7 +368,12 @@ namespace Syscode
         }
         private Compilation CreateCompilation(CompilationContext context)
         {
-            return new Compilation(context) { Statements = GetStatements(context).Select(Generate).ToList() };
+            if (compilation != null)
+                throw new InvalidOperationException("Internal error. There can only be a single 'compilation' when compiling a source file.");
+
+            compilation = new Compilation(context) { Statements = GetStatements(context).Select(Generate).ToList() };
+
+            return compilation;
         }
         private Scope CreateScope(ScopeContext context)
         {

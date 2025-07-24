@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using static SyscodeParser;
@@ -20,81 +21,89 @@ namespace Syscode
         private bool signed = false;
         private bool negative = false;
         private int scale = 0;
-        public NumericConstant(NumericLiteralContext context) : base(context)
+        public static NumericConstant Create(NumericLiteralContext context)
         {
+            var constant = new NumericConstant(context);
+
             if (context.Signed != null)
             {
-                signed = true;
+                constant.signed = true;
 
                 if (context.Signed.Text == "-")
-                    negative = true;
+                    constant.negative = true;
 
             }
 
             if (context.Bin != null)
             {
-                literalText = CleanupString(context.Bin.GetText());
-                SetValueFromBase(literalText, 2);
+                constant.literalText = constant.CleanupString(context.Bin.GetText());
+                constant.SetValueFromBase(constant.literalText, 2);
             }
 
             if (context.Oct != null)
             {
-                literalText = CleanupString(context.Oct.GetText());
-                SetValueFromBase(literalText, 8);
+                constant.literalText = constant.CleanupString(context.Oct.GetText());
+                constant.SetValueFromBase(constant.literalText, 8);
             }
 
             if (context.Dec != null)
             {
-                literalText = CleanupString(context.Dec.GetText());
-                SetValueFromBase(literalText, 10);
+                constant.literalText = constant.CleanupString(context.Dec.GetText());
+                constant.SetValueFromBase(constant.literalText, 10);
             }
 
             if (context.Hex != null)
             {
-                literalText = CleanupString(context.Hex.GetText());
-                SetValueFromBase(literalText, 16);
+                constant.literalText = constant.CleanupString(context.Hex.GetText());
+                constant.SetValueFromBase(constant.literalText, 16);
             }
 
             // The data type we infer here is the most appropriate standard size for the value
 
-            if (signed)
+            if (constant.signed)
             {
-                if (valueSigned >= SByte.MinValue && valueSigned <= SByte.MaxValue)
+                if (constant.valueSigned >= SByte.MinValue && constant.valueSigned <= SByte.MaxValue)
                 {
-                    dataType = DataType.BIN8;
+                    constant.dataType = DataType.BIN8;
                 }
-                else if (valueSigned >= Int16.MinValue && valueSigned <= Int16.MaxValue)
+                else if (constant.valueSigned >= Int16.MinValue && constant.valueSigned <= Int16.MaxValue)
                 {
-                    dataType = DataType.BIN16;
+                    constant.dataType = DataType.BIN16;
                 }
-                else if (valueSigned >= Int32.MinValue && valueSigned <= Int32.MaxValue)
+                else if (constant.valueSigned >= Int32.MinValue && constant.valueSigned <= Int32.MaxValue)
                 {
-                    dataType = DataType.BIN32;
+                    constant.dataType = DataType.BIN32;
                 }
-                else if (valueSigned >= Int64.MinValue && valueSigned <= Int64.MaxValue)
+                else if (constant.valueSigned >= Int64.MinValue && constant.valueSigned <= Int64.MaxValue)
                 {
-                    dataType = DataType.BIN64;
+                    constant.dataType = DataType.BIN64;
                 }
             }
             else
             {
-                if (valueUnsigned >= Byte.MinValue && valueUnsigned <= Byte.MaxValue)
+                if (constant.valueUnsigned >= Byte.MinValue && constant.valueUnsigned <= Byte.MaxValue)
                 {
-                    dataType = DataType.UBIN8;
+                    constant.dataType = DataType.UBIN8;
                 }
-                else if (valueUnsigned >= UInt16.MinValue && valueUnsigned <= UInt16.MaxValue)
+                else if (constant.valueUnsigned >= UInt16.MinValue && constant.valueUnsigned <= UInt16.MaxValue)
                 {
-                    dataType = DataType.UBIN16;
+                    constant.dataType = DataType.UBIN16;
                 }
-                else if (valueUnsigned >= UInt32.MinValue && valueUnsigned <= UInt32.MaxValue)
+                else if (constant.valueUnsigned >= UInt32.MinValue && constant.valueUnsigned <= UInt32.MaxValue)
                 {
-                    dataType = DataType.UBIN32;
+                    constant.dataType = DataType.UBIN32;
                 }
-                else if (valueUnsigned >= UInt64.MinValue && valueUnsigned <= UInt64.MaxValue)
+                else if (constant.valueUnsigned >= UInt64.MinValue && constant.valueUnsigned <= UInt64.MaxValue)
                 {
-                    dataType = DataType.UBIN64;
+                    constant.dataType = DataType.UBIN64;
                 }
             }
+
+            return constant;
+
+        }
+        private NumericConstant(NumericLiteralContext context) : base(context)
+        {
         }
 
         private void SetValueFromBase(string Text, int Base)
@@ -117,6 +126,7 @@ namespace Syscode
         public bool Unsigned { get => !signed; }
         public ulong ValueUnsigned { get => valueUnsigned; set => valueUnsigned = value; }
         public long ValueSigned { get => valueSigned; set => valueSigned = value; }
+        public string LiteralText { get => literalText; set => literalText = value; }
 
         /// <summary>
         /// Remioves any trailing chars like ":H" or ":d" etc.
