@@ -11,7 +11,7 @@ namespace Syscode
         }
         public void Generate(Compilation root)
         {
-            var declarations = root.Statements.OfType<Declare>(); 
+            var declarations = root.Statements.OfType<Declare>();
             var procedures = root.Statements.OfType<Procedure>();
             var scopes = root.Statements.OfType<Scope>();
 
@@ -25,7 +25,6 @@ namespace Syscode
             procedure.Symbols = procedure.Statements.OfType<Declare>().Select(CreateSymbol).ToList();
             sym.Invalid = false;
             return sym;
-
         }
         public Symbol CreateSymbol(Declare declaration)
         {
@@ -38,24 +37,27 @@ namespace Syscode
 
             var symbol = new Symbol(declaration);
 
-            if (IsBinaryType(symbol.CoreType) && ValidateBinaryType(declaration, out var precision, out var scale, out var signed, out var bytes))
+            if (IsBinaryType(symbol.CoreType))
             {
-                symbol.Precision = precision;
-                symbol.Scale = scale;
-                symbol.Signed = signed;
-                symbol.Invalid = false;
-                symbol.Bytes = bytes;
+                if (ValidBinaryDeclaration(declaration, out var precision, out var scale, out var signed, out var bytes))
+                {
+                    symbol.Precision = precision;
+                    symbol.Scale = scale;
+                    symbol.Signed = signed;
+                    symbol.Invalid = false;
+                    symbol.Bytes = bytes;
 
-                if (declaration.Alignment.AlignmentUnits == AlignmentUnits.Unspecified)
-                   declaration.Alignment = GetDefaultAlignment(symbol);
+                    if (declaration.Alignment.AlignmentUnits == AlignmentUnits.Unspecified)
+                        declaration.Alignment = GetDefaultAlignment(symbol);
 
-                ApplyDefaults(symbol);
-                return symbol;
+                    ApplyDefaults(symbol);
+                    return symbol;
+                }
             }
 
             if (symbol.CoreType == DataType.STRING)
             {
-                if (ValidateString(declaration, out var length, out var varying))
+                if (ValidStringDeclaration(declaration, out var length, out var varying))
                 {
                     symbol.Varying = varying;
                     symbol.Bytes = length;
@@ -63,7 +65,7 @@ namespace Syscode
                     symbol.Varying = declaration.Varying;
 
                     if (declaration.Alignment.AlignmentUnits == AlignmentUnits.Unspecified)
-                       declaration.Alignment = GetDefaultAlignment(symbol);
+                        declaration.Alignment = GetDefaultAlignment(symbol);
 
                     ApplyDefaults(symbol);
                     return symbol;
@@ -118,7 +120,7 @@ namespace Syscode
 
             var nameGroups = memberNames.GroupBy(memberNames => memberNames);
 
-            foreach ( var nameGroup in nameGroups)
+            foreach (var nameGroup in nameGroups)
             {
                 if (nameGroup.Count() > 1)
                     reporter.Report(Struct, 1019, Struct.Spelling, nameGroup.Key);
@@ -168,7 +170,7 @@ namespace Syscode
         {
             return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal.LiteralType == LiteralType.Decimal));
         }
-        private bool ValidateString(Declare declaration, out int Length, out bool Varying)
+        private bool ValidStringDeclaration(Declare declaration, out int Length, out bool Varying)
         {
             Length = 0;
             Varying = false;
@@ -273,7 +275,7 @@ namespace Syscode
                 }
             }
 
-            
+
         }
         private bool ValidateAligned(Declare declaration, Aligned Aligned, out Alignment alignment)
         {
@@ -292,7 +294,7 @@ namespace Syscode
                 return false;
             }
         }
-        private bool ValidateBinaryType(Declare declaration, out Int32 Precision, out Int32 Scale, out bool Signed, out int Bytes)
+        private bool ValidBinaryDeclaration(Declare declaration, out Int32 Precision, out Int32 Scale, out bool Signed, out int Bytes)
         {
             Precision = 0;
             Scale = 0;

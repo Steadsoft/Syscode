@@ -23,7 +23,6 @@ namespace Syscode
             this.storageClass = declaration.StorageClass;
             this.storageScope = declaration.StorageScope;
         }
-
         public Symbol(Procedure procedure)
         {
             this.procedure = procedure;
@@ -32,7 +31,6 @@ namespace Syscode
             this.storageClass = procedure.StorageClass;
             this.storageScope = procedure.StorageScope;
         }
-
         public StructBody StructBody { get => Declaration?.StructBody; }
         public List<BoundsPair> Bounds { get => Declaration?.Bounds; }
         public string Spelling 

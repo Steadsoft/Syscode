@@ -10,7 +10,7 @@ namespace UnitTesting
         public void TestMethod1()
         {
             var compiler = new SyscodeCompiler(@"..\..\..\..\TestSource\messages.json");
-            var cst = compiler.CompileSourceFile(@"..\..\..\Syscode\builtin.sys");
+            var cst = compiler.ParseSourceFile(@"..\..\..\Syscode\builtin.sys");
             var ast = compiler.GenerateAbstractSyntaxTree(cst);
             compiler.ProcessDeclarations(ast);
             compiler.ResolveCompilationReferences(ast);
@@ -21,7 +21,7 @@ namespace UnitTesting
         public void TestMethod2()
         {
             var compiler = new SyscodeCompiler(@"..\..\..\..\TestSource\messages.json");
-            var cst = compiler.CompileSourceFile(@"..\..\..\Syscode\unresolved.sys");
+            var cst = compiler.ParseSourceFile(@"..\..\..\Syscode\unresolved.sys");
             var ast = compiler.GenerateAbstractSyntaxTree(cst);
             compiler.ProcessDeclarations(ast);
             compiler.ResolveCompilationReferences(ast);

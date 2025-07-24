@@ -52,7 +52,7 @@ namespace Syscode
             diagnostics(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
         }
 
-        public CompilationContext CompileSourceFile(string SourceFile)
+        public CompilationContext ParseSourceFile(string SourceFile)
         {
             file = SourceFile;
 
