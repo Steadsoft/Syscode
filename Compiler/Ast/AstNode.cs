@@ -8,6 +8,7 @@ namespace Syscode
         public readonly int StartColumn;
         public readonly int StopLine;
         public readonly int StopColumn;
+        public int ReportedError;
 
         public AstNode(ParserRuleContext context)
         {

@@ -37,13 +37,13 @@ compilation: (statement* endOfFile);
 // One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
 // several source files with that namespace prefix, each of which contributes stuff to the namespace.
 
-statement:  preamble?  (call | return | label | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | leave | assignment );
+statement:  preamble?  (call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | leave | assignment );
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes* statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
-structField: Spelling=identifier dimensionSuffix? Type=typeSpecifier attributes* statementSeparator;
+structField: Spelling=identifier dimensionSuffix? Type=typeSpecifier attribute* statementSeparator;
 
-label: Name=labelName Subscript=labelSubscript? statementSeparator;
+alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;
 labelSubscript: LPAR Literal=decLiteral RPAR;
 
@@ -63,8 +63,37 @@ return: (RETURN (emptyLines? Exp=expression)?) statementSeparator ; //| (RETURN 
 
 declare
     : DCL Struct=structBody
-    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? Type=typeSpecifier attributes* statementSeparator 
+    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? (Data+=dataAttribute | Attr+=attribute)+ statementSeparator 
     ;
+
+// the organization of attributes is close to what's in the ANSI X3.74-1987 PL/I stanadard (basicaally why reinvent the wheel when we're so influneced by PL/I and its terminology)
+
+dataAttribute
+    : Aligned=alignedAttribute  #Aligned
+    | Label=labelType           #Label
+    | Pointer=pointerType       #Pointer
+    | Packed=packedAttribute    #Packed
+    | Var=VARIABLE              #Variable
+    | Integer=integerType       #Integer
+    | Bit=bitType               #Bit
+    | String=stringType         #String
+    | Entry=entryType           #Entry
+    | As=asType                 #As
+    ;
+
+attribute
+    : constAttribute         #AttribConst
+    | offsetAttribute        #AttribOffset
+    | externalAttribute      #AttribExternal
+    | internalAttribute      #AttribInternal
+    | staticAttribute        #AttribStatic
+    | basedAttribute         #AttribBased
+    | stackAttribute         #AttribStack
+    | initAttribute          #AttribInit
+    | builtinType            #AttrBuiltin
+    | PAD                    #AttrPad
+    ;
+
 
 type: TYPE Body=structBody ;    
 
@@ -94,12 +123,12 @@ elifBlock :     (ELIF emptyLines? ExprThen+=exprThenBlock)+;
 //     ;
 
 typeSpecifier
-    : Fix=fixedType
+    : Integer=integerType
     | Bit=bitType
-    | Str=stringType
-    | Ent=entryType
-    | Lab=labelType
-    | Ptr=pointerType
+    | String=stringType
+    | Entry=entryType
+    | Label=labelType
+    | Pointer=pointerType
     | As=asType
     | Bytes=bytepadType
     | Builtin=builtinType
@@ -107,16 +136,27 @@ typeSpecifier
 
 asType: AS Typename=identifier ;    
 
-fixedType: (Typename=(BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64)) | (Typename=(BIN | UBIN | DEC | UDEC) Args=arguments? );
+integerType locals [int digits, String typename, Boolean signed]
+: ((
+    BIN8   {$digits=8;  $typename ="bin";  $signed=true;}  | 
+    BIN16  {$digits=16; $typename ="bin";  $signed=true;}  |
+    BIN32  {$digits=32; $typename ="bin";  $signed=true;}  | 
+    BIN64  {$digits=64; $typename ="bin";  $signed=true;}  | 
+    UBIN8  {$digits=8;  $typename ="ubin"; $signed=false;} | 
+    UBIN16 {$digits=16; $typename ="ubin"; $signed=false;} | 
+    UBIN32 {$digits=32; $typename ="ubin"; $signed=false;} | 
+    UBIN64 {$digits=64; $typename ="ubin"; $signed=false;})) | 
+     
+    ((BIN {$typename="bin";$signed=true;} | UBIN  {$typename="ubin";$signed=false;}| DEC  {$typename="dec";$signed=true;}| UDEC  {$typename="udec";$signed=false;}) Args=arguments? );
 
-bitType: Typename=BIT LPAR Len=decLiteral RPAR;
+bitType: Typename=BIT LPAR Length=expression RPAR;
 
 builtinType: Typename=BUILTIN;
 
 bytepadType: BYTEPAD LPAR Len=decLiteral RPAR;
 
 stringType
-    : Typename=STRING LPAR Len=decLiteral RPAR Var=VARIABLE? ;
+    : Typename=STRING LPAR Length=expression RPAR Varying=VARIABLE? ;
 
 entryType: Typename=ENTRY 
     (
@@ -165,11 +205,11 @@ structureQualification
   ;
 
 arguments
-  : LPAR subscriptCommalist? RPAR
+  : LPAR List=subscriptCommalist? RPAR
   ;
 
 subscriptCommalist
-  : expression (COMMA expression)*
+  : Exp+=expression (COMMA Exp+=expression)*
   ;
 
 expression
@@ -334,20 +374,6 @@ structAttributes
     | AUTO
     | atAttribute
     | orderAttribute
-    ;
-
-attributes
-    : constAttribute         #AttribConst
-    | alignedAttribute       #AttribAligned
-    | offsetAttribute        #AttribOffset
-    | packedAttribute        #AttribPacked
-    | externalAttribute      #AttribExternal
-    | internalAttribute      #AttribInternal
-    | staticAttribute        #AttribStatic
-    | basedAttribute         #AttribBased
-    | stackAttribute         #AttribStack
-    | initAttribute          #AttribInit
-    | PAD                    #AttrPad
     ;
 
 atAttribute: AT (LPAR Address=expression RPAR);

@@ -137,6 +137,55 @@
     }
 
 
+,
+
+                {
+      "number": 1023,
+      "message": "In the declaration of '{arg0}' a data type has been specified more than once.",
+      "severity": "Error"
+    }
+
+,
+
+                {
+      "number": 1024,
+      "message": "The declaration of '{arg0}' contains multiple data type attributes.",
+      "severity": "Error"
+    }
+
+
+,
+
+                {
+      "number": 1025,
+      "message": "In the declaration of '{arg0}' the 'var' attribute is only valid with the 'string' or 'entry' data types.",
+      "severity": "Error"
+    }
+
+,
+
+                {
+      "number": 1026,
+      "message": "A binary variable can only have a precision and an optional scale factor.",
+      "severity": "Error"
+    }
+
+,
+
+                {
+      "number": 1027,
+      "message": "The binary precision must be a constant and have a minimum value of {arg0} and a maximum value of {arg1}.",
+      "severity": "Error"
+    }
+
+,
+
+                {
+      "number": 1028,
+      "message": "The binary scale factor must be a constant and have a minimum value of {arg0} and a maximum value of {arg1}.",
+      "severity": "Error"
+    }
+
 
 
 

@@ -414,14 +414,6 @@ namespace Syscode
             {
                 return symbol.CoreType switch
                 {
-                    DataType.BIN8 => 1,
-                    DataType.BIN16 => 2,
-                    DataType.BIN32 => 4,
-                    DataType.BIN64 => 8,
-                    DataType.UBIN8 => 1,
-                    DataType.UBIN16 => 2,
-                    DataType.UBIN32 => 4,
-                    DataType.UBIN64 => 8,
                     DataType.BIN => (Precision + 7) / 8,
                     DataType.UBIN => (Precision + 7) / 8
                 };
@@ -434,15 +426,6 @@ namespace Syscode
             switch (type)
             {
                 case DataType.BIN:
-                case DataType.BIN8:
-                case DataType.BIN16:
-                case DataType.BIN32:
-                case DataType.BIN64:
-                case DataType.UBIN:
-                case DataType.UBIN8:
-                case DataType.UBIN16:
-                case DataType.UBIN32:
-                case DataType.UBIN64:
                     return true;
                 default:
                     return false;

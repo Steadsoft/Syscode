@@ -64,38 +64,38 @@ namespace Syscode
             {
                 if (constant.valueSigned >= SByte.MinValue && constant.valueSigned <= SByte.MaxValue)
                 {
-                    constant.dataType = DataType.BIN8;
+                    constant.dataType = DataType.BIN;
                 }
                 else if (constant.valueSigned >= Int16.MinValue && constant.valueSigned <= Int16.MaxValue)
                 {
-                    constant.dataType = DataType.BIN16;
+                    constant.dataType = DataType.BIN;
                 }
                 else if (constant.valueSigned >= Int32.MinValue && constant.valueSigned <= Int32.MaxValue)
                 {
-                    constant.dataType = DataType.BIN32;
+                    constant.dataType = DataType.BIN;
                 }
                 else if (constant.valueSigned >= Int64.MinValue && constant.valueSigned <= Int64.MaxValue)
                 {
-                    constant.dataType = DataType.BIN64;
+                    constant.dataType = DataType.BIN;
                 }
             }
             else
             {
                 if (constant.valueUnsigned >= Byte.MinValue && constant.valueUnsigned <= Byte.MaxValue)
                 {
-                    constant.dataType = DataType.UBIN8;
+                    constant.dataType = DataType.UBIN;
                 }
                 else if (constant.valueUnsigned >= UInt16.MinValue && constant.valueUnsigned <= UInt16.MaxValue)
                 {
-                    constant.dataType = DataType.UBIN16;
+                    constant.dataType = DataType.UBIN;
                 }
                 else if (constant.valueUnsigned >= UInt32.MinValue && constant.valueUnsigned <= UInt32.MaxValue)
                 {
-                    constant.dataType = DataType.UBIN32;
+                    constant.dataType = DataType.UBIN;
                 }
                 else if (constant.valueUnsigned >= UInt64.MinValue && constant.valueUnsigned <= UInt64.MaxValue)
                 {
-                    constant.dataType = DataType.UBIN64;
+                    constant.dataType = DataType.UBIN;
                 }
             }
 

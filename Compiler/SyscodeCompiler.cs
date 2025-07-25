@@ -69,7 +69,7 @@ namespace Syscode
             lexer = new SyscodeLexer(stream);
             var tokens = new CommonTokenStream(lexer);
             var parser = new SyscodeParser(tokens);
-            builder = new AstBuilder(constants);
+            builder = new AstBuilder(constants, Reporter);
             symtabBuilder = new SymtabBuilder(Reporter);
             resolver = new ReferenceResolver(Reporter);
 

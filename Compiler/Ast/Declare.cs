@@ -3,11 +3,17 @@ using static SyscodeParser;
 
 namespace Syscode
 {
+    
     public class Declare : AstNode, ISpelling
     {
+        private (int precision, int scale, bool signed) BinDesc;  // represents the details of bin and ubin types.
+        private (int length, bool varying) StringDesc;
+        
         public string TypeName;
+        public bool packed = false;
+        public bool var = false; // for entry variables or varying strings
         public string As;
-        public DataType CoreType;
+        public DataType CoreType = DataType.UNDEFINED;
         private StorageClass storageClass = StorageClass.Unspecified;
         private StorageScope storageScope = StorageScope.Unspecified;
         private List<BoundsPair> bounds = new();
@@ -19,6 +25,10 @@ namespace Syscode
         private bool constantSize = true;
         private Alignment alignment = new Alignment();
         private IContainer container;
+        private bool isKeyword;
+        private bool validated = false;
+        private int reportederror = 0;
+
         public StructBody StructBody 
         { 
             get => structBody; 
@@ -32,7 +42,6 @@ namespace Syscode
         public bool IsArray { get => Bounds.Any(); }
         public bool ConstantSize { get => constantSize; }
         public bool IsntArray { get => !IsArray; }
-        private bool isKeyword;
         public bool Varying { get => varying; internal set => varying = value; }
         public string Spelling { get => spelling; set => spelling = value; }
         public bool IsKeyword { get => isKeyword; set => isKeyword = value; }
@@ -67,12 +76,16 @@ namespace Syscode
         public StorageClass StorageClass { get => storageClass; set => storageClass = value; }
         public StorageScope StorageScope { get => storageScope; set => storageScope = value; }
         public IContainer Container { get => container;  }
+        public (int precision, int scale, bool signed) BIN { get => BinDesc; set => BinDesc = value; }
+        public (int length, bool varying) STRING { get => StringDesc; set => StringDesc = value; }
+        /// <summary>
+        /// Indicates that the declaration contains no errors or inconsistencies
+        /// </summary>
+        public bool Validated { get => validated; set => validated = value; }
+        public int ReportedError { get => reportederror; set => reportederror = value; }
 
         public Declare(IContainer container, DeclareContext context) : base(context)
         {
-            if (context.Type != null) 
-                CoreType = GetCoreType(context.Type);
-
             this.container = container;
         }
 
@@ -82,18 +95,18 @@ namespace Syscode
             return $"dcl {Spelling} {TypeName}"; 
         }
 
-        public static DataType GetCoreType(TypeSpecifierContext context)
-        {
-            if (context.Fix != null) return (DataType)(context.Fix.Typename.Type);
-            if (context.Bit != null) return (DataType)(context.Bit.Typename.Type);
-            if (context.Str != null) return (DataType)(context.Str.Typename.Type);
-            if (context.Ent != null) return (DataType)(context.Ent.Typename.Type);
-            if (context.Lab != null) return (DataType)(context.Lab.Typename.Type);
-            if (context.Ptr != null) return (DataType)(context.Ptr.Typename.Type);
-            if (context.Builtin != null) return (DataType)(context.Builtin.Typename.Type);
+        //public static DataType GetCoreType(TypeSpecifierContext context)
+        //{
+        //    if (context.Fix != null) return (DataType)(context.Fix.typename);
+        //    if (context.Bit != null) return (DataType)(context.Bit.Typename.Type);
+        //    if (context.Str != null) return (DataType)(context.Str.Typename.Type);
+        //    if (context.Ent != null) return (DataType)(context.Ent.Typename.Type);
+        //    if (context.Lab != null) return (DataType)(context.Lab.Typename.Type);
+        //    if (context.Ptr != null) return (DataType)(context.Ptr.Typename.Type);
+        //    if (context.Builtin != null) return (DataType)(context.Builtin.Typename.Type);
 
-            return DataType.UNDEFINED;
+        //    return DataType.UNDEFINED;
 
-        }
+        //}
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Sharpen;
 using Antlr4.Runtime.Tree;
 using Syscode.Ast;
+using System.Runtime.Versioning;
 using static SyscodeParser;
 
 namespace Syscode
@@ -10,12 +12,14 @@ namespace Syscode
     /// </summary>
     public class AstBuilder
     {
+        private Reporter reporter;
         private IContainer currentContainer = null;
         private Compilation compilation = null;
         private Dictionary<string, IConstant> constants;
-        public AstBuilder(Dictionary<string, IConstant> constants)
+        public AstBuilder(Dictionary<string, IConstant> constants, Reporter reporter)
         {
             this.constants = constants;
+            this.reporter = reporter;
         }
 
         public AstNode Generate(ParserRuleContext rule)
@@ -32,7 +36,7 @@ namespace Syscode
                 DeclareContext context => CreateDeclaration(context),
                 CallContext context => CreateCall(context),
                 ReturnContext context => CreateReturn(context),
-                LabelContext context => CreateLabel(context),
+                AlabelContext context => CreateLabel(context),
                 GotoContext context => CreateGoto(context),
                 LoopContext context => CreateLoop(context),
                 LeaveContext context => CreateLeave(context),
@@ -97,7 +101,7 @@ namespace Syscode
         {
             return new Goto(context) { Reference = CreateReference(context.Ref) };
         }
-        private Label CreateLabel(LabelContext context)
+        private Label CreateLabel(AlabelContext context)
         {
             return new Label(context) { Spelling = context.Name.Spelling.GetText(), Subscript = context.Subscript?.Literal.GetText() };
         }
@@ -182,7 +186,7 @@ namespace Syscode
 
         }
 
-        
+
 
         private Expression FoldConstantExpression(Expression expr)
         {
@@ -386,8 +390,20 @@ namespace Syscode
         }
         private Declare CreateDeclaration(DeclareContext context)
         {
+            int packed = 0;
+            int vars = 0;
+            int aligns = 0;
+            int labels = 0;
+            int pointers = 0;
+            int integers = 0;
+            int entries = 0;
+            int bits = 0;
+            int strings = 0;
+            int ases = 0;
+
             var dcl = new Declare(currentContainer, context);
 
+            #region Extract array bounds
             if (context.Bounds != null)
             {
                 dcl.Bounds = context.Bounds.Pair._BoundPairs.Select(p => new BoundsPair(p) { Lower = CreateExpression(p.Lower), Upper = CreateExpression(p.Upper) }).ToList();
@@ -402,89 +418,185 @@ namespace Syscode
             {
                 dcl.Spelling = context.Spelling.GetText();
                 dcl.IsKeyword = context.Spelling.Key != null;
-                dcl.TypeName = context.GetLabelText(nameof(DeclareContext.Type));
             }
-
-            var attribs = context.GetDerivedNodes<AttributesContext>();
-
-            foreach (var attrib in attribs)
+            #endregion
+            #region Count data attributes
+            foreach (var datr in context._Data)
             {
-                switch (attrib)
+                switch (datr)
                 {
-                    case (AttribAlignedContext align):
-                        {
-                            dcl.Attributes.Add(new Aligned(align, CreateExpression(align.alignedAttribute().Alignment)));
-                            break;
-                        }
-                    case (AttribPackedContext):
-                        {
-                            dcl.Attributes.Add(new Packed(attrib));
-                            break;
-                        }
-                    case (AttribConstContext):
-                        {
-                            dcl.Attributes.Add(new Const(attrib));
-                            break;
-                        }
-                    case (AttribStaticContext):
-                        {
-                            dcl.Attributes.Add(new Static(attrib));
-                            break;
-                        }
-                    case (AttribExternalContext):
-                        {
-                            dcl.Attributes.Add(new External(attrib));
-                            break;
-                        }
-                    case (AttribInternalContext):
-                        {
-                            dcl.Attributes.Add(new Internal(attrib));
-                            break;
-                        }
-                    case (AttribBasedContext):
-                        {
-                            dcl.Attributes.Add(new Based(attrib));
-                            break;
-                        }
-                    case (AttribStackContext):
-                        {
-                            dcl.Attributes.Add(new Stack(attrib));
-                            break;
-                        }
-                    case (AttribInitContext init):
-                        {
-                            dcl.Attributes.Add(new Initial(init,CreateExpression(init.initAttribute().Value)));
-                            break;
-                        }
-                    default:
-                        throw new InvalidOperationException();
+                    case PackedContext: packed++; break;
+                    case VariableContext: vars++; break;
+                    case AlignedContext: aligns++; break;
+                    case LabelContext: labels++; break;
+                    case BitContext: bits++; break;
+                    case PointerContext: pointers++; break;
+                    case IntegerContext: integers++; break;
+                    case EntryContext: entries++; break;
+                    case StringContext: strings++; break;
+                    case AsContext: ases++; break;
                 }
             }
+            #endregion
+            #region Report duplications
+            bool anyGreaterThanOne = new[] { packed, vars, aligns, labels, bits, pointers, integers, entries, strings, ases }.Any(x => x > 1);
 
-            if (context.Type != null)
+            if (anyGreaterThanOne)
             {
+                if (packed > 1)
+                    reporter.Report(dcl, 1024, dcl.Spelling, "packed");
 
-#pragma warning disable CS8601 // Possible null reference assignment.
-                dcl.TypeName =
-                    context.Type.Fix?.Typename.Text ??
-                    context.Type.Bit?.Typename.Text ??
-                    context.Type.Str?.Typename.Text ??
-                    context.Type.Ent?.Typename.Text ??
-                    context.Type.Lab?.Typename.Text ??
-                    context.Type.Ptr?.Typename.Text;
-#pragma warning restore CS8601 // Possible null reference assignment.
+                if (vars > 1)
+                    reporter.Report(dcl, 1024, dcl.Spelling, "var");
 
+                if (aligns > 1)
+                    reporter.Report(dcl, 1024, dcl.Spelling, "aligned");
 
-#pragma warning disable CS8601 // Possible null reference assignment.
-                dcl.As = context.Type.As?.Typename.GetText();
-#pragma warning restore CS8601 // Possible null reference assignment.
+                if (labels > 1)
+                    reporter.Report(dcl, 1024, dcl.Spelling, "label");
 
-                if (context.Type.Fix?.Args != null)
-                {
-                    var expressions = context.Type.Fix.Args.GetExactNode<SubscriptCommalistContext>().GetDerivedNodes<ExpressionContext>().Select(CreateExpression).ToList();
-                    dcl.typeSubscripts = expressions;
-                }
+                if (bits > 1)
+                    reporter.Report(dcl, 1024, dcl.Spelling, "bit");
+
+                if (pointers > 1)
+                    reporter.Report(dcl, 1024, dcl.Spelling, "pointer");
+
+                if (integers > 1)
+                    reporter.Report(dcl, 1024, dcl.Spelling, "bin or ubin");
+
+                if (entries > 1)
+                    reporter.Report(dcl, 1024, dcl.Spelling, "entry");
+
+                if (strings > 1)
+                    reporter.Report(dcl, 1024, dcl.Spelling, "string");
+
+                if (ases > 1)
+                    reporter.Report(dcl, 1024, dcl.Spelling, "as");
+
+                return dcl;
             }
+            #endregion
+            #region Report inconsistent attributes
+            if ((vars == 1) && (strings == 0 && entries == 0))
+            {
+                reporter.Report(dcl, 1025, dcl.Spelling);
+                return dcl;
+            }
+
+            if ((labels + bits + pointers + integers + entries + strings + ases) > 1)
+            {
+                reporter.Report(dcl, 1024, dcl.Spelling);
+                return dcl;
+            }
+            #endregion
+            #region Label
+            if (labels == 1)
+            {
+                var attr = context._Data.OfType<LabelContext>().Single();
+                dcl.CoreType = DataType.LABEL;
+            }
+            #endregion
+            #region Bit
+            if (bits == 1)
+            {
+                var attr = context._Data.OfType<BitContext>().Single();
+                dcl.CoreType = DataType.BIT;
+            }
+            #endregion
+            #region Pointer
+            if (pointers == 1)
+            {
+                var attr = context._Data.OfType<PointerContext>().Single();
+                dcl.CoreType = DataType.POINTER;
+            }
+            #endregion
+            #region Binary
+            if (integers == 1)
+            {
+                int precision = 0;
+                int scale = 0;
+
+                dcl.CoreType = DataType.BIN;
+
+                var attr = context._Data.OfType<IntegerContext>().Single();
+
+                if (attr.Integer.Args == null) // this is predefined standard type
+                {
+                    dcl.BIN = (attr.Integer.digits, 0, attr.Integer.signed);
+                }
+                else
+                {
+                    // extract the details by examining the context further
+                    if (attr.Integer.Args.List._Exp.Count > 2)
+                    {
+                        reporter.Report(dcl, 1026);
+                        return dcl;
+                    }
+
+                    var precexp = CreateExpression(attr.Integer.Args.List._Exp[0]);
+
+                    if (precexp.IsConstant)
+                        precision = Convert.ToInt32(precexp.Literal.Value);
+                    else
+                    {
+                        reporter.Report(dcl, 1027,"1","64");
+                        return dcl;
+                    }
+
+                    if (attr.Integer.Args.List._Exp.Count == 2) // is there a scale factor?
+                    {
+                        var scaleexp = CreateExpression(attr.Integer.Args.List._Exp[1]);
+
+                        if (scaleexp.IsConstant)
+                            scale = Convert.ToInt32(scaleexp.Literal.Value);
+                        else
+                        {
+                            reporter.Report(dcl, 1028, "-60", "64");
+                            return dcl;
+                        }
+                    }
+
+                    if (precision < 1 || precision > 64)
+                    {
+                        reporter.Report(dcl, 1027, "1", "64");
+                        return dcl;
+
+                    }
+                    if (scale < -60 || scale > 64)
+                    {
+                        reporter.Report(dcl, 1028, "-60", "64");
+                        return dcl;
+                    }
+
+                    dcl.BIN = (precision, scale, attr.Integer.signed);
+                }
+
+                dcl.Validated = true;
+
+                return dcl;
+            }
+            #endregion
+            #region Entry
+            if (entries == 1)
+            {
+                var attr = context._Data.OfType<EntryContext>().Single();
+                dcl.CoreType = DataType.ENTRY;
+            }
+            #endregion
+            #region String
+            if (strings == 1)
+            {
+                var attr = context._Data.OfType<StringContext>().Single();
+                dcl.CoreType = DataType.STRING;
+            }
+            #endregion
+            #region As
+            if (ases == 1)
+            {
+                var attr = context._Data.OfType<AsContext>().Single();
+                dcl.CoreType = DataType.AS;
+            }
+            #endregion
 
             return dcl;
         }

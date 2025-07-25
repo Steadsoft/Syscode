@@ -19,6 +19,7 @@
         }
         public void Report(AstNode node, int number, params string[] args)
         {
+            node.ReportedError = number;
             var errormsg = file.Errors.Where(e => e.Number == number).Single();
             string message = errormsg.Message;
 
@@ -32,8 +33,8 @@
             }
 
             messages.Add(new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
-
         }
+
 
         public void PrintReport()
         {
