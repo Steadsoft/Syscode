@@ -1684,9 +1684,9 @@ public partial class SyscodeParser : Parser {
 		public IdentifierContext Spelling;
 		public DimensionSuffixContext Bounds;
 		public DataAttributeContext _dataAttribute;
-		public IList<DataAttributeContext> _Data = new List<DataAttributeContext>();
+		public IList<DataAttributeContext> _DataAttributes = new List<DataAttributeContext>();
 		public AttributeContext _attribute;
-		public IList<AttributeContext> _Attr = new List<AttributeContext>();
+		public IList<AttributeContext> _Attributes = new List<AttributeContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DCL() { return GetToken(SyscodeParser.DCL, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public StructBodyContext structBody() {
 			return GetRuleContext<StructBodyContext>(0);
@@ -1822,7 +1822,7 @@ public partial class SyscodeParser : Parser {
 						{
 						State = 452;
 						_localctx._dataAttribute = dataAttribute();
-						_localctx._Data.Add(_localctx._dataAttribute);
+						_localctx._DataAttributes.Add(_localctx._dataAttribute);
 						}
 						break;
 					case BASED:
@@ -1838,7 +1838,7 @@ public partial class SyscodeParser : Parser {
 						{
 						State = 453;
 						_localctx._attribute = attribute();
-						_localctx._Attr.Add(_localctx._attribute);
+						_localctx._Attributes.Add(_localctx._attribute);
 						}
 						break;
 					default:
@@ -2073,63 +2073,63 @@ public partial class SyscodeParser : Parser {
 			base.CopyFrom(context);
 		}
 	}
-	public partial class AttribInitContext : AttributeContext {
+	public partial class InitContext : AttributeContext {
 		[System.Diagnostics.DebuggerNonUserCode] public InitAttributeContext initAttribute() {
 			return GetRuleContext<InitAttributeContext>(0);
 		}
-		public AttribInitContext(AttributeContext context) { CopyFrom(context); }
+		public InitContext(AttributeContext context) { CopyFrom(context); }
 	}
-	public partial class AttribBasedContext : AttributeContext {
-		[System.Diagnostics.DebuggerNonUserCode] public BasedAttributeContext basedAttribute() {
-			return GetRuleContext<BasedAttributeContext>(0);
-		}
-		public AttribBasedContext(AttributeContext context) { CopyFrom(context); }
+	public partial class PadContext : AttributeContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PAD() { return GetToken(SyscodeParser.PAD, 0); }
+		public PadContext(AttributeContext context) { CopyFrom(context); }
 	}
-	public partial class AttribStaticContext : AttributeContext {
-		[System.Diagnostics.DebuggerNonUserCode] public StaticAttributeContext staticAttribute() {
-			return GetRuleContext<StaticAttributeContext>(0);
-		}
-		public AttribStaticContext(AttributeContext context) { CopyFrom(context); }
-	}
-	public partial class AttribInternalContext : AttributeContext {
-		[System.Diagnostics.DebuggerNonUserCode] public InternalAttributeContext internalAttribute() {
-			return GetRuleContext<InternalAttributeContext>(0);
-		}
-		public AttribInternalContext(AttributeContext context) { CopyFrom(context); }
-	}
-	public partial class AttribConstContext : AttributeContext {
+	public partial class ConstContext : AttributeContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ConstAttributeContext constAttribute() {
 			return GetRuleContext<ConstAttributeContext>(0);
 		}
-		public AttribConstContext(AttributeContext context) { CopyFrom(context); }
+		public ConstContext(AttributeContext context) { CopyFrom(context); }
 	}
-	public partial class AttribOffsetContext : AttributeContext {
-		[System.Diagnostics.DebuggerNonUserCode] public OffsetAttributeContext offsetAttribute() {
-			return GetRuleContext<OffsetAttributeContext>(0);
+	public partial class InternalContext : AttributeContext {
+		[System.Diagnostics.DebuggerNonUserCode] public InternalAttributeContext internalAttribute() {
+			return GetRuleContext<InternalAttributeContext>(0);
 		}
-		public AttribOffsetContext(AttributeContext context) { CopyFrom(context); }
+		public InternalContext(AttributeContext context) { CopyFrom(context); }
 	}
-	public partial class AttrPadContext : AttributeContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PAD() { return GetToken(SyscodeParser.PAD, 0); }
-		public AttrPadContext(AttributeContext context) { CopyFrom(context); }
-	}
-	public partial class AttribExternalContext : AttributeContext {
+	public partial class ExternalContext : AttributeContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ExternalAttributeContext externalAttribute() {
 			return GetRuleContext<ExternalAttributeContext>(0);
 		}
-		public AttribExternalContext(AttributeContext context) { CopyFrom(context); }
+		public ExternalContext(AttributeContext context) { CopyFrom(context); }
 	}
-	public partial class AttribStackContext : AttributeContext {
+	public partial class StaticContext : AttributeContext {
+		[System.Diagnostics.DebuggerNonUserCode] public StaticAttributeContext staticAttribute() {
+			return GetRuleContext<StaticAttributeContext>(0);
+		}
+		public StaticContext(AttributeContext context) { CopyFrom(context); }
+	}
+	public partial class BasedContext : AttributeContext {
+		[System.Diagnostics.DebuggerNonUserCode] public BasedAttributeContext basedAttribute() {
+			return GetRuleContext<BasedAttributeContext>(0);
+		}
+		public BasedContext(AttributeContext context) { CopyFrom(context); }
+	}
+	public partial class OffsetContext : AttributeContext {
+		[System.Diagnostics.DebuggerNonUserCode] public OffsetAttributeContext offsetAttribute() {
+			return GetRuleContext<OffsetAttributeContext>(0);
+		}
+		public OffsetContext(AttributeContext context) { CopyFrom(context); }
+	}
+	public partial class StackContext : AttributeContext {
 		[System.Diagnostics.DebuggerNonUserCode] public StackAttributeContext stackAttribute() {
 			return GetRuleContext<StackAttributeContext>(0);
 		}
-		public AttribStackContext(AttributeContext context) { CopyFrom(context); }
+		public StackContext(AttributeContext context) { CopyFrom(context); }
 	}
-	public partial class AttrBuiltinContext : AttributeContext {
+	public partial class BuiltinContext : AttributeContext {
 		[System.Diagnostics.DebuggerNonUserCode] public BuiltinTypeContext builtinType() {
 			return GetRuleContext<BuiltinTypeContext>(0);
 		}
-		public AttrBuiltinContext(AttributeContext context) { CopyFrom(context); }
+		public BuiltinContext(AttributeContext context) { CopyFrom(context); }
 	}
 
 	[RuleVersion(0)]
@@ -2141,7 +2141,7 @@ public partial class SyscodeParser : Parser {
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case CONST:
-				_localctx = new AttribConstContext(_localctx);
+				_localctx = new ConstContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 474;
@@ -2149,7 +2149,7 @@ public partial class SyscodeParser : Parser {
 				}
 				break;
 			case OFFSET:
-				_localctx = new AttribOffsetContext(_localctx);
+				_localctx = new OffsetContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 475;
@@ -2157,7 +2157,7 @@ public partial class SyscodeParser : Parser {
 				}
 				break;
 			case EXTERNAL:
-				_localctx = new AttribExternalContext(_localctx);
+				_localctx = new ExternalContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
 				State = 476;
@@ -2165,7 +2165,7 @@ public partial class SyscodeParser : Parser {
 				}
 				break;
 			case INTERNAL:
-				_localctx = new AttribInternalContext(_localctx);
+				_localctx = new InternalContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
 				State = 477;
@@ -2173,7 +2173,7 @@ public partial class SyscodeParser : Parser {
 				}
 				break;
 			case STATIC:
-				_localctx = new AttribStaticContext(_localctx);
+				_localctx = new StaticContext(_localctx);
 				EnterOuterAlt(_localctx, 5);
 				{
 				State = 478;
@@ -2181,7 +2181,7 @@ public partial class SyscodeParser : Parser {
 				}
 				break;
 			case BASED:
-				_localctx = new AttribBasedContext(_localctx);
+				_localctx = new BasedContext(_localctx);
 				EnterOuterAlt(_localctx, 6);
 				{
 				State = 479;
@@ -2189,7 +2189,7 @@ public partial class SyscodeParser : Parser {
 				}
 				break;
 			case STACK:
-				_localctx = new AttribStackContext(_localctx);
+				_localctx = new StackContext(_localctx);
 				EnterOuterAlt(_localctx, 7);
 				{
 				State = 480;
@@ -2197,7 +2197,7 @@ public partial class SyscodeParser : Parser {
 				}
 				break;
 			case INIT:
-				_localctx = new AttribInitContext(_localctx);
+				_localctx = new InitContext(_localctx);
 				EnterOuterAlt(_localctx, 8);
 				{
 				State = 481;
@@ -2205,7 +2205,7 @@ public partial class SyscodeParser : Parser {
 				}
 				break;
 			case BUILTIN:
-				_localctx = new AttrBuiltinContext(_localctx);
+				_localctx = new BuiltinContext(_localctx);
 				EnterOuterAlt(_localctx, 9);
 				{
 				State = 482;
@@ -2213,7 +2213,7 @@ public partial class SyscodeParser : Parser {
 				}
 				break;
 			case PAD:
-				_localctx = new AttrPadContext(_localctx);
+				_localctx = new PadContext(_localctx);
 				EnterOuterAlt(_localctx, 10);
 				{
 				State = 483;

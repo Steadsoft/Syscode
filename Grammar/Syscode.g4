@@ -63,7 +63,7 @@ return: (RETURN (emptyLines? Exp=expression)?) statementSeparator ; //| (RETURN 
 
 declare
     : DCL Struct=structBody
-    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? (Data+=dataAttribute | Attr+=attribute)+ statementSeparator 
+    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? (DataAttributes+=dataAttribute | Attributes+=attribute)+ statementSeparator 
     ;
 
 // the organization of attributes is close to what's in the ANSI X3.74-1987 PL/I stanadard (basicaally why reinvent the wheel when we're so influneced by PL/I and its terminology)
@@ -82,16 +82,16 @@ dataAttribute
     ;
 
 attribute
-    : constAttribute         #AttribConst
-    | offsetAttribute        #AttribOffset
-    | externalAttribute      #AttribExternal
-    | internalAttribute      #AttribInternal
-    | staticAttribute        #AttribStatic
-    | basedAttribute         #AttribBased
-    | stackAttribute         #AttribStack
-    | initAttribute          #AttribInit
-    | builtinType            #AttrBuiltin
-    | PAD                    #AttrPad
+    : constAttribute         #Const
+    | offsetAttribute        #Offset
+    | externalAttribute      #External
+    | internalAttribute      #Internal
+    | staticAttribute        #Static
+    | basedAttribute         #Based
+    | stackAttribute         #Stack
+    | initAttribute          #Init
+    | builtinType            #Builtin
+    | PAD                    #Pad
     ;
 
 

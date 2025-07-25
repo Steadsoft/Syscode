@@ -149,7 +149,7 @@
 
                 {
       "number": 1024,
-      "message": "The declaration of '{arg0}' contains multiple data type attributes.",
+      "message": "In the declaration of '{arg0}' the data attribute '{arg1}' has been specofied more than once.",
       "severity": "Error"
     }
 
