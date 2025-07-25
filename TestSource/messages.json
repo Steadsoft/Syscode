@@ -149,7 +149,7 @@
 
                 {
       "number": 1024,
-      "message": "In the declaration of '{arg0}' the data attribute '{arg1}' has been specofied more than once.",
+      "message": "In the declaration of '{arg0}' the type attribute '{arg1}' has been specofied more than once.",
       "severity": "Error"
     }
 
@@ -185,6 +185,15 @@
       "message": "The binary scale factor must be a constant and have a minimum value of {arg0} and a maximum value of {arg1}.",
       "severity": "Error"
     }
+
+,
+
+                {
+      "number": 1029,
+      "message": "In the declaration of '{arg0}' the attribute '{arg1}' has been specofied more than once.",
+      "severity": "Error"
+    }
+
 
 
 

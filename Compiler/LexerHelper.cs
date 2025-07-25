@@ -19,6 +19,11 @@
             }
         }
 
+        public static string KeywordText(int tokenType)
+        {
+            return SyscodeLexer.DefaultVocabulary.GetSymbolicName(tokenType).Replace("'", "").ToLower();
+        }
+
         public static string GetOperatorText(Operator Op)
         {
             return SyscodeLexer.DefaultVocabulary.GetLiteralName((int)Op).Replace("'", "");
