@@ -22,7 +22,7 @@ namespace Syscode
         public Symbol CreateSymbol(Procedure procedure)
         {
             var sym = new Symbol(procedure);
-            procedure.Symbols = procedure.Statements.OfType<Declare>().Select(CreateSymbol).ToList();
+            procedure.Symbols.Load(procedure.Statements.OfType<Declare>().Select(CreateSymbol));
             sym.Invalid = false;
             return sym;
         }

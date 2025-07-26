@@ -349,7 +349,7 @@ namespace Syscode
                     {
                         var expressions = subscriptCommalist.GetDerivedNodes<ExpressionContext>().Select(CreateExpression).ToList();
 
-                        argsast.ExpressionList.AddRange(expressions); ;
+                        argsast.ExpressionList.AddRange(expressions);
                     }
 
                     reference.ArgumentsList.Add(argsast);
@@ -378,9 +378,9 @@ namespace Syscode
                     {
                         var subs = arg.GetExactNode<SubscriptCommalistContext>();
 
-                        var expressions = subs.GetDerivedNodes<ExpressionContext>().Select(CreateExpression).ToList();
+                        var expressions = subs.GetDerivedNodes<ExpressionContext>().Select(CreateExpression);
 
-                        qualifier.Arguments = new Arguments(subs) { ExpressionList = expressions };
+                        qualifier.Arguments = new Arguments(subs) { ExpressionList = expressions.ToList() };
 
                     }
 
@@ -390,7 +390,7 @@ namespace Syscode
 
             return basic;
         }
-        private List<ParserRuleContext> GetStatements(ParserRuleContext context)
+        private IEnumerable<ParserRuleContext> GetStatements(ParserRuleContext context)
         {
             return context.GetExactNodes<StatementContext>().Select(s => s.GetDerivedNode<ParserRuleContext>()).ToList();
         }
@@ -711,12 +711,12 @@ namespace Syscode
 
             if (context.Else != null)
             {
-                else_stmts = GetStatements(context.Else.Then).Select(Generate).ToList();
+                else_stmts.Load(GetStatements(context.Else.Then).Select(Generate));
             }
 
             if (context.Elif != null)  // at least one 'elif' is present
             {
-                elifs = context.Elif._ExprThen.Select(CreateElif).ToList();
+                elifs.Load(context.Elif._ExprThen.Select(CreateElif));
             }
 
             return new If(context) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs, Condition = condition };

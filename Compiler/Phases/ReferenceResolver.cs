@@ -42,12 +42,12 @@
         }
         private void ResolveStatementReferences(IContainer root, IEnumerable<AstNode> statements)
         {
-            statements.OfType<Assignment>().ForEach(a => ResolveAssignment(root, a));
-            statements.OfType<Goto>().ForEach(a => ResolveGoto(root, a));
-            statements.OfType<If>().ForEach(a => ResolveIf(root, a));
-            statements.OfType<Loop>().ForEach(l => ResolveLoop(root, l));
-            statements.OfType<Call>().ForEach(c => ResolveCall(root, c));
-            statements.OfType<Return>().ForEach(r => ResolveReturn(root, r));
+            statements.OfType<Assignment>().ForEach(a => Resolve(root, a));
+            statements.OfType<Goto>().ForEach(a => Resolve(root, a));
+            statements.OfType<If>().ForEach(a => Resolve(root, a));
+            statements.OfType<Loop>().ForEach(l => Resolve(root, l));
+            statements.OfType<Call>().ForEach(c => Resolve(root, c));
+            statements.OfType<Return>().ForEach(r => Resolve(root, r));
         }
         private void ResolveQualifiedReference(Reference reference, Symbol symbol)
         {
@@ -180,11 +180,11 @@
 
             }
         }
-        private void ResolveLoop (IContainer container, Loop loop)
+        private void Resolve (IContainer container, Loop loop)
         {
             ResolveStatementReferences (container, loop.Statements);
         }
-        private void ResolveIf(IContainer container, If ifstmt)
+        private void Resolve(IContainer container, If ifstmt)
         {
             ResolveExpression(container, ifstmt.Condition);
             ResolveStatementReferences(container, ifstmt.ThenStatements);
@@ -192,20 +192,20 @@
             ResolveStatementReferences(container, ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));
             ifstmt.ElifStatements.Select(elif => elif.Condition).ForEach(exp => ResolveExpression (container, exp));
         }
-        private void ResolveGoto(IContainer container, Goto statement)
+        private void Resolve(IContainer container, Goto statement)
         {
             ResolveReference(container, statement.Reference);
         }
-        private void ResolveCall(IContainer container, Call statement)
+        private void Resolve(IContainer container, Call statement)
         {
             ResolveReference(container, statement.Reference);
         }
-        private void ResolveReturn(IContainer container, Return statement)
+        private void Resolve(IContainer container, Return statement)
         {
             if (statement.Expression != null) 
                 ResolveExpression(container, statement.Expression);
         }
-        private void ResolveAssignment(IContainer container, Assignment statement) 
+        private void Resolve(IContainer container, Assignment statement) 
         {
             ResolveReference(container, statement.Reference);
             ResolveExpression(container, statement.Expression);
@@ -350,14 +350,6 @@
                 symbol = root.Symbols.Where(s => s.Spelling == Spelling).Single();
 
             return count;
-        }
-    }
-    public static class CompilerExtensions
-    {
-        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
-        {
-            foreach (var item in source)
-                action(item);
         }
     }
 }
