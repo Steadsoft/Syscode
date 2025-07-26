@@ -16,7 +16,7 @@ namespace Syscode
     /// </summary>
     public class AstBuilder
     {
-        private static Dictionary<System.Type, string> typeToKeyword = new Dictionary<System.Type, string>
+        private static readonly Dictionary<System.Type, string> typeToKeyword = new Dictionary<System.Type, string>
             {
                 { typeof(PackedContext),    KeywordText(PACKED) },
                 { typeof(VariableContext),  KeywordText(VARIABLE) },
@@ -488,44 +488,44 @@ namespace Syscode
             {
                 switch (attributeGroup.First())  // We know at this point that no attribute occurs more than once.
                 {
-                    case LabelContext lblCtx:
+                    case LabelContext attribute:
                         {
                             dcl.CoreType = DataType.LABEL;
                             break;
                         }
-                    case BitContext bitCtx:
+                    case BitContext attribute:
                         {
                             dcl.CoreType = DataType.BIT;
                             break;
                         }
-                    case PointerContext pointerCtx:
+                    case PointerContext attribute:
                         {
                             dcl.CoreType = DataType.POINTER;
                             break;
                         }
-                    case IntegerContext integerCtx:
+                    case IntegerContext attribute:
                         {
                             int precision = 0;
                             int scale = 0;
 
                             dcl.CoreType = DataType.BIN;
 
-                            var attr = context._DataAttributes.OfType<IntegerContext>().Single();
+                            //var attr = context._DataAttributes.OfType<IntegerContext>().Single();
 
-                            if (attr.Integer.Args == null) // this is predefined standard type
+                            if (attribute.Integer.Args == null) // this is predefined standard type
                             {
-                                dcl.BIN = (attr.Integer.digits, 0, attr.Integer.signed);
+                                dcl.BIN = (attribute.Integer.digits, 0, attribute.Integer.signed);
                             }
                             else
                             {
                                 // extract the details by examining the context further
-                                if (attr.Integer.Args.List._Exp.Count > 2)
+                                if (attribute.Integer.Args.List._Exp.Count > 2)
                                 {
                                     reporter.Report(dcl, 1026);
                                     return dcl;
                                 }
 
-                                var precexp = CreateExpression(attr.Integer.Args.List._Exp[0]);
+                                var precexp = CreateExpression(attribute.Integer.Args.List._Exp[0]);
 
                                 if (precexp.IsConstant)
                                     precision = Convert.ToInt32(precexp.Literal.Value);
@@ -535,9 +535,9 @@ namespace Syscode
                                     return dcl;
                                 }
 
-                                if (attr.Integer.Args.List._Exp.Count == 2) // is there a scale factor?
+                                if (attribute.Integer.Args.List._Exp.Count == 2) // is there a scale factor?
                                 {
-                                    var scaleexp = CreateExpression(attr.Integer.Args.List._Exp[1]);
+                                    var scaleexp = CreateExpression(attribute.Integer.Args.List._Exp[1]);
 
                                     if (scaleexp.IsConstant)
                                         scale = Convert.ToInt32(scaleexp.Literal.Value);
@@ -560,28 +560,32 @@ namespace Syscode
                                     return dcl;
                                 }
 
-                                dcl.BIN = (precision, scale, attr.Integer.signed);
+                                dcl.BIN = (precision, scale, attribute.Integer.signed);
                             }
                             break;
                         }
-                    case EntryContext entryCtx:
+                    case EntryContext attribute:
                         {
                             dcl.CoreType = DataType.ENTRY;
                             break;
                         }
-                    case StringContext stringCtx:
+                    case StringContext attribute:
                         {
                             dcl.CoreType = DataType.STRING;
                             break;
                         }
-                    case AsContext asCtx:
+                    case AsContext attribute:
                         {
                             dcl.CoreType = DataType.AS;
                             break;
                         }
-                    case AlignedContext alCtx:
+                    case AlignedContext attribute:
                         {
-                            dcl.CoreType = DataType.AS;
+                            //dcl.CoreType = DataType.AS;
+                            break;
+                        }
+                    case VariableContext attribute:
+                        {
                             break;
                         }
                     default:
@@ -591,17 +595,35 @@ namespace Syscode
                         }
                 }
             }
-            #endregion
+            #endregion                                                                                                   
 
             // Process remaining non-data attributes
 
-            #region Count attributes
+            var attributesGroups = context._Attributes.GroupBy(d => d.GetType()).ToArray();
 
-            //context._Attributes.ForEach(d => counters[d.GetType()] = (counters[d.GetType()].Count + 1, counters[d.GetType()].Keyword));
+            #region Repeated data attributes
 
-            //#endregion
-            //#region Report duplications
-            //counters.Values.Where(v => v.Count > 1).ForEach(v => reporter.Report(dcl, 1029, dcl.Spelling, v.Keyword));
+            if (attributesGroups.Where(g => g.Count() > 1).Any())
+            {
+                var repeaters = attributesGroups.Where(g => g.Count() > 1);
+
+                foreach (var group in repeaters)
+                {
+                    string attrtext = typeToKeyword[group.First().GetType()];
+                    reporter.Report(dcl, 1029, dcl.Spelling, attrtext);
+                }
+
+                return dcl;
+            }
+            #endregion
+
+            #region Incompatible attributes
+
+            //TestCompatibility(dcl, dataAttributesGroups.Select(g => g.Key).OrderBy(g => g.Name));
+
+            //if (dcl.ReportedError > 0)
+            //    return dcl;
+
             #endregion
 
             dcl.Validated = true;
@@ -722,6 +744,11 @@ namespace Syscode
             return new If(context) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs, Condition = condition };
         }
 
+        /// <summary>
+        /// Reports if any of the supplied attributes are incompatible with the others.
+        /// </summary>
+        /// <param name="dcl"></param>
+        /// <param name="types"></param>
         private void TestCompatibility(Declare dcl, IEnumerable<System.Type> types)
         {
             if (types.Count() > 1)

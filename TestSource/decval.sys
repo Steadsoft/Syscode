@@ -4,3 +4,5 @@ dcl name3 bin8 pointer bin32
 dcl name4 bin(16) pointer string(32)
 dcl name5 bin(16) pointer bin(32) pointer
 dcl name6 bin(64) aligned(8)
+dcl name7 bin(12) static static
+

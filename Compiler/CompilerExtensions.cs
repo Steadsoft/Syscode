@@ -8,6 +8,12 @@
                 action(item);
         }
 
+        /// <summary>
+        /// Alternative way to populate a list rather than having to call ToList
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="target"></param>
+        /// <param name="source"></param>
         public static void Load<T>(this List<T> target, IEnumerable<T> source)
         {
             target.Clear();

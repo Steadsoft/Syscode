@@ -190,7 +190,7 @@
 
                 {
       "number": 1029,
-      "message": "In the declaration of '{arg0}' the attribute '{arg1}' has been specofied more than once.",
+      "message": "In the declaration of '{arg0}' the attribute '{arg1}' has been specified more than once.",
       "severity": "Error"
     }
 
