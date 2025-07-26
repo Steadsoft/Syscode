@@ -2,9 +2,12 @@
 using Antlr4.Runtime.Sharpen;
 using Antlr4.Runtime.Tree;
 using Syscode.Ast;
+using System.Collections.Generic;
 using System.Runtime.Versioning;
+using System.Linq;
 using static Syscode.LexerHelper;
 using static SyscodeParser;
+using System.Runtime.InteropServices;
 
 namespace Syscode
 {
@@ -13,6 +16,30 @@ namespace Syscode
     /// </summary>
     public class AstBuilder
     {
+        private static Dictionary<System.Type, string> typeToKeyword = new Dictionary<System.Type, string>
+            {
+                { typeof(PackedContext),    KeywordText(PACKED) },
+                { typeof(VariableContext),  KeywordText(VARIABLE) },
+                { typeof(AlignedContext),   KeywordText(ALIGNED) },
+                { typeof(LabelContext),     KeywordText(LABEL) },
+                { typeof(BitContext),       KeywordText(BIT) },
+                { typeof(PointerContext),   KeywordText(POINTER) },
+                { typeof(IntegerContext),   $"{KeywordText(BIN)}/{KeywordText(UBIN)}" },
+                { typeof(EntryContext),     KeywordText(ENTRY) },
+                { typeof(StringContext),    KeywordText(STRING) },
+                { typeof(AsContext),        KeywordText(AS) } ,
+                { typeof(ConstContext),     KeywordText(CONST) },
+                { typeof(OffsetContext),    KeywordText(OFFSET) },
+                { typeof(ExternalContext),  KeywordText(EXTERNAL) },
+                { typeof(InternalContext),  KeywordText(INTERNAL) },
+                { typeof(StaticContext),    KeywordText(STATIC) },
+                { typeof(BasedContext),     KeywordText(BASED) },
+                { typeof(StackContext),     KeywordText(STACK) },
+                { typeof(InitContext),      KeywordText(INIT) },
+                { typeof(BuiltinContext),   KeywordText(BUILTIN) },
+                { typeof(PadContext),       KeywordText(PAD) }
+            };
+
         private Reporter reporter;
         private IContainer currentContainer = null;
         private Compilation compilation = null;
@@ -393,37 +420,9 @@ namespace Syscode
              *  is permissive and avoids parse failures for this kind of error, it is
              *  esier to apply these rules after parsing.
              *  
-             *  The code uses a dictionary of parse rule based tuples, the tuples contain
-             *  the count of how many times each attribute appears in the CST and we do
-             *  the consistency checks uisng this approach.
-             *  
              *  A declaration has two categories of attributes, data-attributes and
              *  attributes.
              */
-
-            var counters = new Dictionary<System.Type, (int Count, string Keyword)>
-            {
-                { typeof(PackedContext),    (0,KeywordText(PACKED)) },
-                { typeof(VariableContext),  (0,KeywordText(VARIABLE)) },
-                { typeof(AlignedContext),   (0,KeywordText(ALIGNED)) },
-                { typeof(LabelContext),     (0,KeywordText(LABEL)) },
-                { typeof(BitContext),       (0,KeywordText(BIT)) },
-                { typeof(PointerContext),   (0,KeywordText(POINTER)) },
-                { typeof(IntegerContext),   (0,$"{KeywordText(BIN)} or {KeywordText(UBIN)}") },
-                { typeof(EntryContext),     (0,KeywordText(ENTRY)) },
-                { typeof(StringContext),    (0,KeywordText(STRING)) },
-                { typeof(AsContext),        (0,KeywordText(AS)) } ,
-                { typeof(ConstContext),     (0,KeywordText(CONST)) },
-                { typeof(OffsetContext),    (0,KeywordText(OFFSET)) },
-                { typeof(ExternalContext),  (0,KeywordText(EXTERNAL)) },
-                { typeof(InternalContext),  (0,KeywordText(INTERNAL)) },
-                { typeof(StaticContext),    (0,KeywordText(STATIC)) },
-                { typeof(BasedContext),     (0,KeywordText(BASED)) },
-                { typeof(StackContext),     (0,KeywordText(STACK)) },
-                { typeof(InitContext),      (0,KeywordText(INIT)) },
-                { typeof(BuiltinContext),   (0,KeywordText(BUILTIN)) },
-                { typeof(PadContext),       (0,KeywordText(PAD)) }
-            };
 
             var dcl = new Declare(currentContainer, context);
 
@@ -445,139 +444,152 @@ namespace Syscode
             }
             #endregion
 
-            // Process the data attributes part of this declaration
+            var dataAttributesGroups = context._DataAttributes.GroupBy(d => d.GetType()).ToArray();
 
-            context._DataAttributes.ForEach(d => counters[d.GetType()] = (counters[d.GetType()].Count + 1, counters[d.GetType()].Keyword));
+            #region No data attribues
 
-            counters.Values.Where(v => v.Count > 1).ForEach(v => reporter.Report(dcl, 1029, dcl.Spelling, v.Keyword));
-
-            #region Report inconsistent attributes
-            if ((counters[typeof(VariableContext)].Count == 1) && (counters[typeof(StringContext)].Count == 0 && counters[typeof(EntryContext)].Count == 0))
+            if (dataAttributesGroups.Any() == false)
             {
-                reporter.Report(dcl, 1025, dcl.Spelling);
-            }
-
-            // of no single attribute was repeated, then check to see if mutliple different types were specified, reporthing these when we know there are repetitions isn't very helpful
-
-            if (counters.Where(a => a.Value.Count > 1).Any() == false)
-            {
-                if ((counters[typeof(LabelContext)].Count + counters[typeof(BitContext)].Count + counters[typeof(PointerContext)].Count + counters[typeof(IntegerContext)].Count + counters[typeof(EntryContext)].Count + counters[typeof(StringContext)].Count + counters[typeof(AsContext)].Count) > 1)
-                {
-                    reporter.Report(dcl, 1024, dcl.Spelling);
-                }
+                reporter.Report(dcl, 1030, dcl.Spelling);
+                return dcl;
             }
             #endregion
 
-            // If any errors were reported for this declaration's type attributes, we exit here, no point in doing further work.
+            #region Repeated data attributes
+
+            if (dataAttributesGroups.Where(g => g.Count() > 1).Any())
+            {
+                var repeaters = dataAttributesGroups.Where(g => g.Count() > 1);
+
+                foreach (var group in repeaters)
+                {
+                    string attrtext = typeToKeyword[group.First().GetType()];
+                    reporter.Report(dcl, 1023, dcl.Spelling, attrtext);
+                }
+
+                return dcl;
+            }
+            #endregion
+
+            #region Incompatible attributes
+
+            TestCompatibility(dcl, dataAttributesGroups.Select(g => g.Key).OrderBy(g => g.Name));
 
             if (dcl.ReportedError > 0)
                 return dcl;
 
-            // Unless there's a bug, at this point there should always be just one data attribute that was counted.
-
-            #region Label
-            if (counters[typeof(LabelContext)].Count == 1)
-            {
-                var attr = context._DataAttributes.OfType<LabelContext>().Single();
-                dcl.CoreType = DataType.LABEL;
-            }
             #endregion
-            #region Bit
-            if (counters[typeof(BitContext)].Count == 1)
-            {
-                var attr = context._DataAttributes.OfType<BitContext>().Single();
-                dcl.CoreType = DataType.BIT;
-            }
-            #endregion
-            #region Pointer
-            if (counters[typeof(PointerContext)].Count == 1)
-            {
-                var attr = context._DataAttributes.OfType<PointerContext>().Single();
-                dcl.CoreType = DataType.POINTER;
-            }
-            #endregion
-            #region Binary
-            if (counters[typeof(IntegerContext)].Count == 1)
-            {
-                int precision = 0;
-                int scale = 0;
 
-                dcl.CoreType = DataType.BIN;
+            #region Apply attributes 
 
-                var attr = context._DataAttributes.OfType<IntegerContext>().Single();
+            // At this point there are potentially several attributes present but they are all compatible
 
-                if (attr.Integer.Args == null) // this is predefined standard type
+            foreach (var attributeGroup in dataAttributesGroups)
+            {
+                switch (attributeGroup.First())  // We know at this point that no attribute occurs more than once.
                 {
-                    dcl.BIN = (attr.Integer.digits, 0, attr.Integer.signed);
-                }
-                else
-                {
-                    // extract the details by examining the context further
-                    if (attr.Integer.Args.List._Exp.Count > 2)
-                    {
-                        reporter.Report(dcl, 1026);
-                        return dcl;
-                    }
-
-                    var precexp = CreateExpression(attr.Integer.Args.List._Exp[0]);
-
-                    if (precexp.IsConstant)
-                        precision = Convert.ToInt32(precexp.Literal.Value);
-                    else
-                    {
-                        reporter.Report(dcl, 1027,"1","64");
-                        return dcl;
-                    }
-
-                    if (attr.Integer.Args.List._Exp.Count == 2) // is there a scale factor?
-                    {
-                        var scaleexp = CreateExpression(attr.Integer.Args.List._Exp[1]);
-
-                        if (scaleexp.IsConstant)
-                            scale = Convert.ToInt32(scaleexp.Literal.Value);
-                        else
+                    case LabelContext lblCtx:
                         {
-                            reporter.Report(dcl, 1028, "-60", "64");
-                            return dcl;
+                            dcl.CoreType = DataType.LABEL;
+                            break;
                         }
-                    }
+                    case BitContext bitCtx:
+                        {
+                            dcl.CoreType = DataType.BIT;
+                            break;
+                        }
+                    case PointerContext pointerCtx:
+                        {
+                            dcl.CoreType = DataType.POINTER;
+                            break;
+                        }
+                    case IntegerContext integerCtx:
+                        {
+                            int precision = 0;
+                            int scale = 0;
 
-                    if (precision < 1 || precision > 64)
-                    {
-                        reporter.Report(dcl, 1027, "1", "64");
-                        return dcl;
+                            dcl.CoreType = DataType.BIN;
 
-                    }
-                    if (scale < -60 || scale > 64)
-                    {
-                        reporter.Report(dcl, 1028, "-60", "64");
-                        return dcl;
-                    }
+                            var attr = context._DataAttributes.OfType<IntegerContext>().Single();
 
-                    dcl.BIN = (precision, scale, attr.Integer.signed);
+                            if (attr.Integer.Args == null) // this is predefined standard type
+                            {
+                                dcl.BIN = (attr.Integer.digits, 0, attr.Integer.signed);
+                            }
+                            else
+                            {
+                                // extract the details by examining the context further
+                                if (attr.Integer.Args.List._Exp.Count > 2)
+                                {
+                                    reporter.Report(dcl, 1026);
+                                    return dcl;
+                                }
+
+                                var precexp = CreateExpression(attr.Integer.Args.List._Exp[0]);
+
+                                if (precexp.IsConstant)
+                                    precision = Convert.ToInt32(precexp.Literal.Value);
+                                else
+                                {
+                                    reporter.Report(dcl, 1027, "1", "64");
+                                    return dcl;
+                                }
+
+                                if (attr.Integer.Args.List._Exp.Count == 2) // is there a scale factor?
+                                {
+                                    var scaleexp = CreateExpression(attr.Integer.Args.List._Exp[1]);
+
+                                    if (scaleexp.IsConstant)
+                                        scale = Convert.ToInt32(scaleexp.Literal.Value);
+                                    else
+                                    {
+                                        reporter.Report(dcl, 1028, "-60", "64");
+                                        return dcl;
+                                    }
+                                }
+
+                                if (precision < 1 || precision > 64)
+                                {
+                                    reporter.Report(dcl, 1027, "1", "64");
+                                    return dcl;
+
+                                }
+                                if (scale < -60 || scale > 64)
+                                {
+                                    reporter.Report(dcl, 1028, "-60", "64");
+                                    return dcl;
+                                }
+
+                                dcl.BIN = (precision, scale, attr.Integer.signed);
+                            }
+                            break;
+                        }
+                    case EntryContext entryCtx:
+                        {
+                            dcl.CoreType = DataType.ENTRY;
+                            break;
+                        }
+                    case StringContext stringCtx:
+                        {
+                            dcl.CoreType = DataType.STRING;
+                            break;
+                        }
+                    case AsContext asCtx:
+                        {
+                            dcl.CoreType = DataType.AS;
+                            break;
+                        }
+                    case AlignedContext alCtx:
+                        {
+                            dcl.CoreType = DataType.AS;
+                            break;
+                        }
+                    default:
+                        {
+                            reporter.Report(dcl, 1032, nameof(CreateDeclaration));
+                            throw new InvalidOperationException("Internal error");
+                        }
                 }
-
-            }
-            #endregion
-            #region Entry
-            if (counters[typeof(EntryContext)].Count == 1)
-            {
-                var attr = context._DataAttributes.OfType<EntryContext>().Single();
-                dcl.CoreType = DataType.ENTRY;
-            }
-            #endregion
-            #region String
-            if (counters[typeof(StringContext)].Count == 1)
-            {
-                var attr = context._DataAttributes.OfType<StringContext>().Single();
-                dcl.CoreType = DataType.STRING;
-            }
-            #endregion
-            #region As
-            if (counters[typeof(AsContext)].Count == 1)
-            {
-                var attr = context._DataAttributes.OfType<AsContext>().Single();
-                dcl.CoreType = DataType.AS;
             }
             #endregion
 
@@ -585,11 +597,11 @@ namespace Syscode
 
             #region Count attributes
 
-            context._Attributes.ForEach(d => counters[d.GetType()] = (counters[d.GetType()].Count + 1, counters[d.GetType()].Keyword));
+            //context._Attributes.ForEach(d => counters[d.GetType()] = (counters[d.GetType()].Count + 1, counters[d.GetType()].Keyword));
 
-            #endregion
-            #region Report duplications
-            counters.Values.Where(v => v.Count > 1).ForEach(v => reporter.Report(dcl, 1029, dcl.Spelling, v.Keyword));
+            //#endregion
+            //#region Report duplications
+            //counters.Values.Where(v => v.Count > 1).ForEach(v => reporter.Report(dcl, 1029, dcl.Spelling, v.Keyword));
             #endregion
 
             dcl.Validated = true;
@@ -709,5 +721,64 @@ namespace Syscode
 
             return new If(context) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs, Condition = condition };
         }
+
+        private void TestCompatibility(Declare dcl, IEnumerable<System.Type> types)
+        {
+            if (types.Count() > 1)
+            {
+                var first = types.First();
+                var rest = types.Skip(1);
+
+                foreach (var attr in rest)
+                {
+                    if (!CompatibleAttributes(first, attr))
+                    {
+                        reporter.Report(dcl, 1031, dcl.Spelling, typeToKeyword[attr], typeToKeyword[first]);
+                    }
+                }
+
+                TestCompatibility(dcl, rest);
+            }
+        }
+
+        private bool CompatibleAttributes(System.Type a, System.Type b)
+        {
+            if (a == typeof(Aligned) && b == typeof(EntryConstant)) return false;
+            if (a == typeof(Aligned) && b == typeof(LabelContext)) return false;
+            if (a == typeof(Aligned) && b == typeof(PackedContext)) return false;
+
+            if (a == typeof(AsContext) && b == typeof(BitContext)) return false;
+            if (a == typeof(AsContext) && b == typeof(EntryContext)) return false;
+            if (a == typeof(AsContext) && b == typeof(IntegerContext)) return false;
+            if (a == typeof(AsContext) && b == typeof(LabelContext)) return false;
+            if (a == typeof(AsContext) && b == typeof(PointerContext)) return false;
+            if (a == typeof(AsContext) && b == typeof(StringContext)) return false;
+            if (a == typeof(AsContext) && b == typeof(VariableContext)) return false;
+
+            if (a == typeof(BitContext) && b == typeof(EntryContext)) return false;
+            if (a == typeof(BitContext) && b == typeof(IntegerContext)) return false;
+            if (a == typeof(BitContext) && b == typeof(LabelContext)) return false;
+            if (a == typeof(BitContext) && b == typeof(PointerContext)) return false;
+            if (a == typeof(BitContext) && b == typeof(StringContext)) return false;
+            if (a == typeof(BitContext) && b == typeof(VariableContext)) return false;
+
+            if (a == typeof(EntryContext) && b == typeof(IntegerContext)) return false;
+            if (a == typeof(EntryContext) && b == typeof(LabelContext)) return false;
+            if (a == typeof(EntryContext) && b == typeof(PointerContext)) return false;
+            if (a == typeof(EntryContext) && b == typeof(StringContext)) return false;
+
+            if (a == typeof(IntegerContext) && b == typeof(LabelContext)) return false;
+            if (a == typeof(IntegerContext) && b == typeof(PointerContext)) return false;
+            if (a == typeof(IntegerContext) && b == typeof(StringContext)) return false;
+
+            if (a == typeof(LabelContext) && b == typeof(PointerContext)) return false;
+            if (a == typeof(LabelContext) && b == typeof(StringContext)) return false;
+
+            if (a == typeof(PointerContext) && b == typeof(StringContext)) return false;
+
+            return true;
+
+        }
+
     }
 }

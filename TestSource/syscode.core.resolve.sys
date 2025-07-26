@@ -21,6 +21,8 @@ dcl bin builtin static static
 
 dcl goto bin16 aligned(1) bin(32) var
 
+dcl throw string(32) bin(16)
+
 binar = -1001 0111 1101:b
 
 hexsum = -1e44:h + 75a2:h

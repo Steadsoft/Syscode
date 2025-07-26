@@ -81,7 +81,6 @@ namespace Syscode
         /// Indicates that the declaration contains no errors or inconsistencies
         /// </summary>
         public bool Validated { get => validated; set => validated = value; }
-        public int ReportedError { get => reportederror; set => reportederror = value; }
         public Declare(IContainer container, DeclareContext context) : base(context)
         {
             this.container = container;

@@ -141,7 +141,7 @@
 
                 {
       "number": 1023,
-      "message": "In the declaration of '{arg0}' a data type has been specified more than once.",
+      "message": "In the declaration of '{arg0}' the data type '{arg1}' has been specified more than once.",
       "severity": "Error"
     }
 
@@ -149,7 +149,7 @@
 
                 {
       "number": 1024,
-      "message": "In the declaration of '{arg0}' multiple conflicting type attributes have been specified.",
+      "message": "In the declaration of '{arg0}' the attribute '{arg1}' conflicts with the already specified attribute '{arg2}'.",
       "severity": "Error"
     }
 
@@ -192,6 +192,32 @@
       "number": 1029,
       "message": "In the declaration of '{arg0}' the attribute '{arg1}' has been specofied more than once.",
       "severity": "Error"
+    }
+
+,
+
+                {
+      "number": 1030,
+      "message": "In the declaration of '{arg0}' no data attributes were specified.",
+      "severity": "Error"
+    }
+
+,
+
+                {
+      "number": 1031,
+      "message": "In the declaration of '{arg0}' the attribute '{arg1}' is incompatible with the attribute '{arg2}'",
+      "severity": "Error"
+    }
+
+
+
+,
+
+                {
+      "number": 1032,
+      "message": "An internal error has ocurred in '{arg0}' compilation terminated",
+      "severity": "Fatal"
     }
 
 
