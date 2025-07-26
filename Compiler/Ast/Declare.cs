@@ -71,7 +71,6 @@ namespace Syscode
                 }
             }
         }
-
         public Alignment Alignment { get => alignment; internal set => alignment = value; }
         public StorageClass StorageClass { get => storageClass; set => storageClass = value; }
         public StorageScope StorageScope { get => storageScope; set => storageScope = value; }
@@ -83,30 +82,13 @@ namespace Syscode
         /// </summary>
         public bool Validated { get => validated; set => validated = value; }
         public int ReportedError { get => reportederror; set => reportederror = value; }
-
         public Declare(IContainer container, DeclareContext context) : base(context)
         {
             this.container = container;
         }
-
-
         public override string ToString()
         {
             return $"dcl {Spelling} {TypeName}"; 
         }
-
-        //public static DataType GetCoreType(TypeSpecifierContext context)
-        //{
-        //    if (context.Fix != null) return (DataType)(context.Fix.typename);
-        //    if (context.Bit != null) return (DataType)(context.Bit.Typename.Type);
-        //    if (context.Str != null) return (DataType)(context.Str.Typename.Type);
-        //    if (context.Ent != null) return (DataType)(context.Ent.Typename.Type);
-        //    if (context.Lab != null) return (DataType)(context.Lab.Typename.Type);
-        //    if (context.Ptr != null) return (DataType)(context.Ptr.Typename.Type);
-        //    if (context.Builtin != null) return (DataType)(context.Builtin.Typename.Type);
-
-        //    return DataType.UNDEFINED;
-
-        //}
     }
 }

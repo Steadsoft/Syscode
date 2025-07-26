@@ -149,7 +149,7 @@
 
                 {
       "number": 1024,
-      "message": "In the declaration of '{arg0}' the type attribute '{arg1}' has been specofied more than once.",
+      "message": "In the declaration of '{arg0}' multiple conflicting type attributes have been specified.",
       "severity": "Error"
     }
 

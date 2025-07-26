@@ -24,7 +24,6 @@ namespace Syscode
             this.reporter = reporter;
             this.lexer = lexer;
         }
-
         public AstNode Generate(ParserRuleContext rule)
         {
             return rule switch
@@ -46,13 +45,11 @@ namespace Syscode
                 _ => new AstNode(rule)
             };
         }
-
         public Leave CreateLeave(LeaveContext context)
         {
             // TODO: The ref on a leave stmt must be a simple identifier.
             return new Leave(context) { Reference = CreateReference(context.Ref) };
         }
-
         public Loop CreateLoop(LoopContext context)
         {
             if (context == null) throw new ArgumentNullException("context");
@@ -188,9 +185,6 @@ namespace Syscode
             return FoldConstantExpression(expr);
 
         }
-
-
-
         private Expression FoldConstantExpression(Expression expr)
         {
             // TODO: This is fragile just now, we must validate operand types, we cannot assume the expression is valid, only valid syntactically.
@@ -393,6 +387,44 @@ namespace Syscode
         }
         private Declare CreateDeclaration(DeclareContext context)
         {
+            /*
+             *  The processing of a Syscode declaration involves the possible presence
+             *  of multiple or contradictory attributes. This is because the grammar
+             *  is permissive and avoids parse failures for this kind of error, it is
+             *  esier to apply these rules after parsing.
+             *  
+             *  The code uses a dictionary of parse rule based tuples, the tuples contain
+             *  the count of how many times each attribute appears in the CST and we do
+             *  the consistency checks uisng this approach.
+             *  
+             *  A declaration has two categories of attributes, data-attributes and
+             *  attributes.
+             */
+
+            var counters = new Dictionary<System.Type, (int Count, string Keyword)>
+            {
+                { typeof(PackedContext),    (0,KeywordText(PACKED)) },
+                { typeof(VariableContext),  (0,KeywordText(VARIABLE)) },
+                { typeof(AlignedContext),   (0,KeywordText(ALIGNED)) },
+                { typeof(LabelContext),     (0,KeywordText(LABEL)) },
+                { typeof(BitContext),       (0,KeywordText(BIT)) },
+                { typeof(PointerContext),   (0,KeywordText(POINTER)) },
+                { typeof(IntegerContext),   (0,$"{KeywordText(BIN)} or {KeywordText(UBIN)}") },
+                { typeof(EntryContext),     (0,KeywordText(ENTRY)) },
+                { typeof(StringContext),    (0,KeywordText(STRING)) },
+                { typeof(AsContext),        (0,KeywordText(AS)) } ,
+                { typeof(ConstContext),     (0,KeywordText(CONST)) },
+                { typeof(OffsetContext),    (0,KeywordText(OFFSET)) },
+                { typeof(ExternalContext),  (0,KeywordText(EXTERNAL)) },
+                { typeof(InternalContext),  (0,KeywordText(INTERNAL)) },
+                { typeof(StaticContext),    (0,KeywordText(STATIC)) },
+                { typeof(BasedContext),     (0,KeywordText(BASED)) },
+                { typeof(StackContext),     (0,KeywordText(STACK)) },
+                { typeof(InitContext),      (0,KeywordText(INIT)) },
+                { typeof(BuiltinContext),   (0,KeywordText(BUILTIN)) },
+                { typeof(PadContext),       (0,KeywordText(PAD)) }
+            };
+
             var dcl = new Declare(currentContainer, context);
 
             #region Extract array bounds
@@ -415,67 +447,57 @@ namespace Syscode
 
             // Process the data attributes part of this declaration
 
+            context._DataAttributes.ForEach(d => counters[d.GetType()] = (counters[d.GetType()].Count + 1, counters[d.GetType()].Keyword));
 
-            var dataAttributeCounters = new Dictionary<System.Type, (int Count, string Keyword)>
-            {
-                { typeof(PackedContext),    (0,KeywordText(PACKED)) },
-                { typeof(VariableContext),  (0,KeywordText(VARIABLE)) },
-                { typeof(AlignedContext),   (0,KeywordText(ALIGNED)) },
-                { typeof(LabelContext),     (0,KeywordText(LABEL)) },
-                { typeof(BitContext),       (0,KeywordText(BIT)) },
-                { typeof(PointerContext),   (0,KeywordText(POINTER)) },
-                { typeof(IntegerContext),   (0,$"{KeywordText(BIN)} or {KeywordText(UBIN)}") },
-                { typeof(EntryContext),     (0,KeywordText(ENTRY)) },
-                { typeof(StringContext),    (0,KeywordText(STRING)) },
-                { typeof(AsContext),        (0,KeywordText(AS)) }
-            };
-
-            context._DataAttributes.ForEach(d => dataAttributeCounters[d.GetType()] = (dataAttributeCounters[d.GetType()].Count + 1, dataAttributeCounters[d.GetType()].Keyword));
-
-
-            if (dataAttributeCounters.Values.Any(x => x.Count > 1))
-            {
-                dataAttributeCounters.Values.Where(v => v.Count > 1).ForEach(v => reporter.Report(dcl, 1029, dcl.Spelling, v.Keyword));
-                return dcl;
-            }
-
+            counters.Values.Where(v => v.Count > 1).ForEach(v => reporter.Report(dcl, 1029, dcl.Spelling, v.Keyword));
 
             #region Report inconsistent attributes
-            if ((dataAttributeCounters[typeof(VariableContext)].Count == 1) && (dataAttributeCounters[typeof(StringContext)].Count == 0 && dataAttributeCounters[typeof(EntryContext)].Count == 0))
+            if ((counters[typeof(VariableContext)].Count == 1) && (counters[typeof(StringContext)].Count == 0 && counters[typeof(EntryContext)].Count == 0))
             {
                 reporter.Report(dcl, 1025, dcl.Spelling);
-                return dcl;
             }
 
-            if ((dataAttributeCounters[typeof(LabelContext)].Count + dataAttributeCounters[typeof(BitContext)].Count + dataAttributeCounters[typeof(PointerContext)].Count + dataAttributeCounters[typeof(IntegerContext)].Count + dataAttributeCounters[typeof(EntryContext)].Count + dataAttributeCounters[typeof(StringContext)].Count + dataAttributeCounters[typeof(AsContext)].Count) > 1)
+            // of no single attribute was repeated, then check to see if mutliple different types were specified, reporthing these when we know there are repetitions isn't very helpful
+
+            if (counters.Where(a => a.Value.Count > 1).Any() == false)
             {
-                reporter.Report(dcl, 1024, dcl.Spelling);
-                return dcl;
+                if ((counters[typeof(LabelContext)].Count + counters[typeof(BitContext)].Count + counters[typeof(PointerContext)].Count + counters[typeof(IntegerContext)].Count + counters[typeof(EntryContext)].Count + counters[typeof(StringContext)].Count + counters[typeof(AsContext)].Count) > 1)
+                {
+                    reporter.Report(dcl, 1024, dcl.Spelling);
+                }
             }
             #endregion
+
+            // If any errors were reported for this declaration's type attributes, we exit here, no point in doing further work.
+
+            if (dcl.ReportedError > 0)
+                return dcl;
+
+            // Unless there's a bug, at this point there should always be just one data attribute that was counted.
+
             #region Label
-            if (dataAttributeCounters[typeof(LabelContext)].Count == 1)
+            if (counters[typeof(LabelContext)].Count == 1)
             {
                 var attr = context._DataAttributes.OfType<LabelContext>().Single();
                 dcl.CoreType = DataType.LABEL;
             }
             #endregion
             #region Bit
-            if (dataAttributeCounters[typeof(BitContext)].Count == 1)
+            if (counters[typeof(BitContext)].Count == 1)
             {
                 var attr = context._DataAttributes.OfType<BitContext>().Single();
                 dcl.CoreType = DataType.BIT;
             }
             #endregion
             #region Pointer
-            if (dataAttributeCounters[typeof(PointerContext)].Count == 1)
+            if (counters[typeof(PointerContext)].Count == 1)
             {
                 var attr = context._DataAttributes.OfType<PointerContext>().Single();
                 dcl.CoreType = DataType.POINTER;
             }
             #endregion
             #region Binary
-            if (dataAttributeCounters[typeof(IntegerContext)].Count == 1)
+            if (counters[typeof(IntegerContext)].Count == 1)
             {
                 int precision = 0;
                 int scale = 0;
@@ -538,21 +560,21 @@ namespace Syscode
             }
             #endregion
             #region Entry
-            if (dataAttributeCounters[typeof(EntryContext)].Count == 1)
+            if (counters[typeof(EntryContext)].Count == 1)
             {
                 var attr = context._DataAttributes.OfType<EntryContext>().Single();
                 dcl.CoreType = DataType.ENTRY;
             }
             #endregion
             #region String
-            if (dataAttributeCounters[typeof(StringContext)].Count == 1)
+            if (counters[typeof(StringContext)].Count == 1)
             {
                 var attr = context._DataAttributes.OfType<StringContext>().Single();
                 dcl.CoreType = DataType.STRING;
             }
             #endregion
             #region As
-            if (dataAttributeCounters[typeof(AsContext)].Count == 1)
+            if (counters[typeof(AsContext)].Count == 1)
             {
                 var attr = context._DataAttributes.OfType<AsContext>().Single();
                 dcl.CoreType = DataType.AS;
@@ -562,30 +584,12 @@ namespace Syscode
             // Process remaining non-data attributes
 
             #region Count attributes
-            var attributeCounters = new Dictionary<System.Type, (int Count, string Keyword)>
-            {
-                { typeof(ConstContext),     (0,KeywordText(CONST)) },
-                { typeof(OffsetContext),    (0,KeywordText(OFFSET)) },
-                { typeof(ExternalContext),  (0,KeywordText(EXTERNAL)) },
-                { typeof(InternalContext),  (0,KeywordText(INTERNAL)) },
-                { typeof(StaticContext),    (0,KeywordText(STATIC)) },
-                { typeof(BasedContext),     (0,KeywordText(BASED)) },
-                { typeof(StackContext),     (0,KeywordText(STACK)) },
-                { typeof(InitContext),      (0,KeywordText(INIT)) },
-                { typeof(BuiltinContext),   (0,KeywordText(BUILTIN)) },
-                { typeof(PadContext),       (0,KeywordText(PAD)) }
-            };
 
-            context._Attributes.ForEach(d => attributeCounters[d.GetType()] = (attributeCounters[d.GetType()].Count + 1, attributeCounters[d.GetType()].Keyword));
+            context._Attributes.ForEach(d => counters[d.GetType()] = (counters[d.GetType()].Count + 1, counters[d.GetType()].Keyword));
 
             #endregion
             #region Report duplications
-
-            if (attributeCounters.Values.Any(x => x.Count > 1))
-            {
-                attributeCounters.Values.Where(v => v.Count > 1).ForEach(v => reporter.Report(dcl, 1029, dcl.Spelling, v.Keyword));
-                return dcl;
-            }
+            counters.Values.Where(v => v.Count > 1).ForEach(v => reporter.Report(dcl, 1029, dcl.Spelling, v.Keyword));
             #endregion
 
             dcl.Validated = true;
