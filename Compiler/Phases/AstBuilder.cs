@@ -71,30 +71,32 @@ namespace Syscode
                 {
                     ForRef = CreateReference(context.For.For),
                     From = CreateExpression(context.For.From),
-                    To = CreateExpression(context.For.To),
-                    By = CreateExpression(context.For.By),
-                    WhileExp = CreateExpression(context.For.While?.Exp),
-                    UntilExp = CreateExpression(context.For.Until?.Exp),
+                    To = CreateExpression(context.For.To)!,
+                    By = context.For.By?.SafeCreate(CreateExpression),
+                    WhileExp = context.For.While?.Exp.SafeCreate(CreateExpression),
+                    UntilExp = context.For.Until?.Exp.SafeCreate(CreateExpression),
                     Statements = GetStatements(context.For).Select(Generate).ToList()
                 };
             }
 
             if (context.While != null)
             {
-                return new While(context)
+                var exp = context.While.While.Exp.SafeCreate(CreateExpression);
+
+                return new While(context, exp)
                 {
-                    WhileExp = CreateExpression(context.While.While.Exp),
-                    UntilExp = CreateExpression(context.While.Until?.Exp),
+                    UntilExp = context.While.Until?.Exp.SafeCreate(CreateExpression),
                     Statements = GetStatements(context.While).Select(Generate).ToList()
                 };
             }
 
             if (context.Until != null)
             {
-                return new Until(context)
+                var exp = context.Until.Until.Exp.SafeCreate(CreateExpression);
+
+                return new Until(context, exp)
                 {
-                    UntilExp = CreateExpression(context.Until.Until.Exp),
-                    WhileExp = CreateExpression(context.Until.While?.Exp),
+                    WhileExp = context.Until.While?.Exp.SafeCreate(CreateExpression),
                     Statements = GetStatements(context.Until).Select(Generate).ToList()
                 };
             }
@@ -117,11 +119,8 @@ namespace Syscode
         {
             return new Call(context) { Reference = CreateReference(context.Ref) };
         }
-        private Expression CreateExpression(ExpressionContext context)
+        internal Expression CreateExpression(ExpressionContext context)
         {
-            if (context == null) // allows this to be called for an  optional expression and not fault.
-                return null;
-
             Expression expr = new(context);
 
             switch (context)
@@ -298,7 +297,7 @@ namespace Syscode
             var reference = CreateReference(context.Ref);
             var expression = CreateExpression(context.Exp);
 
-            return new Assignment(context) { Reference = reference, Expression = expression };
+            return new Assignment(context, reference, expression);
         }
         private Reference CreateReference(ReferenceContext context)
         {
@@ -406,7 +405,7 @@ namespace Syscode
                 #region Extract array bounds
                 if (context.Bounds != null)
                 {
-                    dcl.Bounds = context.Bounds.Pair._BoundPairs.Select(p => new BoundsPair(p) { Lower = CreateExpression(p.Lower), Upper = CreateExpression(p.Upper) }).ToList();
+                    dcl.Bounds = context.Bounds.Pair._BoundPairs.Select(p => new BoundsPair(p,this)).ToList();
                 }
 
                 if (context.Struct != null)
@@ -648,10 +647,7 @@ namespace Syscode
         }
         private List<BoundsPair> CreateBounds(DimensionSuffixContext context)
         {
-
-            var bounds = context.Pair._BoundPairs.Select(p => new BoundsPair(p) { Lower = CreateExpression(p.Lower), Upper = CreateExpression(p.Upper) }).ToList();
-
-            return bounds;
+            return context.Pair._BoundPairs.Select(p => new BoundsPair(p,this)).ToList();
         }
         private Procedure CreateProcedure(ProcedureContext context)
         {

@@ -8,7 +8,7 @@ namespace Syscode
     {
         public string Spelling;
         private List<Qualification> qualifier = new();
-        private Symbol symbol;
+        private Symbol? symbol;
         private bool isKeyword;
         public BasicReference(ParserRuleContext context) : base(context)
         {
@@ -19,7 +19,7 @@ namespace Syscode
 
         public bool IsQualified { get => Qualifier.Any(); }
         public bool IsntQualified { get => !IsQualified; }
-        public Symbol Symbol { get => symbol; internal set => symbol = value; }
+        public Symbol? Symbol { get => symbol; internal set => symbol = value; }
         public List<Qualification> Qualifier { get => qualifier; set => qualifier = value; }
         public bool IsKeyword { get => isKeyword;  }
         public bool IsntKeyword { get => !IsKeyword;  }

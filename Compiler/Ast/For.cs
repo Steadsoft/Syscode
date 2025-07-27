@@ -8,16 +8,16 @@ namespace Syscode
         private Reference forRef;
         private Expression from;
         private Expression to;
-        private Expression by;
-        private Expression untilExp;
-        private Expression whileExp;
+        private Expression? by;
+        private Expression? untilExp;
+        private Expression? whileExp;
 
         public Reference ForRef { get => forRef; set => forRef = value; }
         public Expression From { get => from; set => from = value; }
         public Expression To { get => to; set => to = value; }
-        public Expression By { get => by; set => by = value; }
-        public Expression UntilExp { get => untilExp; set => untilExp = value; }
-        public Expression WhileExp { get => whileExp; set => whileExp = value; }
+        public Expression? By { get => by; set => by = value; }
+        public Expression? UntilExp { get => untilExp; set => untilExp = value; }
+        public Expression? WhileExp { get => whileExp; set => whileExp = value; }
 
         public For(ParserRuleContext context) : base(context)
         {

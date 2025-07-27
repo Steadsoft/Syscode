@@ -4,14 +4,15 @@ namespace Syscode
 {
     public class Until : Loop
     {
-        private Expression untilExp;
-        private Expression whileExp;   // optional
+        private readonly Expression untilExp;
+        private Expression? whileExp;   // optional
 
-        public Expression UntilExp { get => untilExp; set => untilExp = value; }
-        public Expression WhileExp { get => whileExp; set => whileExp = value; }
+        public Expression UntilExp { get => untilExp; }
+        public Expression? WhileExp { get => whileExp; set => whileExp = value; }
 
-        public Until(ParserRuleContext context) : base(context)
+        public Until(ParserRuleContext context, Expression untilexp) : base(context)
         {
+            this.untilExp = untilexp;
         }
 
         public override string ToString()

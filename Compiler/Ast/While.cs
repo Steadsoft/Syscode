@@ -4,14 +4,15 @@ namespace Syscode
 {
     public class While : Loop
     {
-        private Expression whileExp;
-        private Expression untilExp;   // optional
+        private readonly Expression whileExp;
+        private Expression? untilExp;   // optional
 
-        public Expression WhileExp { get => whileExp; set => whileExp = value; }
-        public Expression UntilExp { get => untilExp; set => untilExp = value; }
+        public Expression WhileExp { get => whileExp; }
+        public Expression? UntilExp { get => untilExp; set => untilExp = value; }
 
-        public While(ParserRuleContext context) : base(context)
+        public While(ParserRuleContext context, Expression whileexpr) : base(context)
         {
+            this.whileExp = whileexpr;
         }
 
         public override string ToString()

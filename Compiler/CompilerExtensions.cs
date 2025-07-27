@@ -1,4 +1,6 @@
-﻿namespace Syscode
+﻿using static SyscodeParser;
+
+namespace Syscode
 {
     public static class CompilerExtensions
     {
@@ -18,6 +20,28 @@
         {
             target.Clear();
             target.AddRange(source);
+        }
+
+        /// <summary>
+        /// Can't be called via a nullable reference
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="Creator"></param>
+        /// <returns></returns>
+        public static Expression SafeCreate(this ExpressionContext context,Func<ExpressionContext,Expression> Creator)
+        {
+            return Creator(context);
+        }
+
+        /// <summary>
+        /// Can't be called via a nullable reference
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="Creator"></param>
+        /// <returns></returns>
+        public static Reference SafeCreate(this ReferenceContext context, Func<ReferenceContext, Reference> Creator)
+        {
+            return Creator(context);
         }
 
     }
