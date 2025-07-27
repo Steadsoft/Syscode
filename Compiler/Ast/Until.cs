@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
@@ -10,9 +11,10 @@ namespace Syscode
         public Expression UntilExp { get => untilExp; }
         public Expression? WhileExp { get => whileExp; set => whileExp = value; }
 
-        public Until(ParserRuleContext context, Expression untilexp) : base(context)
+        public Until(LoopContext context, AstBuilder builder) : base(context)
         {
-            this.untilExp = untilexp;
+            this.untilExp = builder.CreateExpression(context.Until.Until.Exp);
+            this.whileExp = context.While.Until?.Exp.SafeCreate(builder.CreateExpression);
         }
 
         public override string ToString()

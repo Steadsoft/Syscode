@@ -92,11 +92,8 @@ namespace Syscode
 
             if (context.Until != null)
             {
-                var exp = context.Until.Until.Exp.SafeCreate(CreateExpression);
-
-                return new Until(context, exp)
+                return new Until(context,this)
                 {
-                    WhileExp = context.Until.While?.Exp.SafeCreate(CreateExpression),
                     Statements = GetStatements(context.Until).Select(Generate).ToList()
                 };
             }
@@ -113,7 +110,7 @@ namespace Syscode
         }
         private Return CreateReturn(ReturnContext context)
         {
-            return new Return(context) { Expression = CreateExpression(context.Exp) };
+            return new Return(context) { Expression = context.Exp?.SafeCreate(CreateExpression) };
         }
         private Call CreateCall(CallContext context)
         {

@@ -4,12 +4,12 @@ namespace Syscode
 {
     public class Return : AstNode
     {
-        private Expression expression;
+        private Expression? expression;
         public Return(ParserRuleContext context) : base(context)
         {
         }
 
-        public Expression Expression { get => expression; set => expression = value; }
+        public Expression? Expression { get => expression; set => expression = value; }
 
         public override string ToString()
         {
