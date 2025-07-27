@@ -11,7 +11,7 @@ namespace Syscode
         
         public string TypeName;
         public bool packed = false;
-        public bool var = false; // for entry variables or varying strings
+        public bool varAttributePresent = false; // for entry variables or varying strings
         public string As;
         public DataType CoreType = DataType.UNDEFINED;
         private StorageClass storageClass = StorageClass.Unspecified;
@@ -21,13 +21,11 @@ namespace Syscode
         private StructBody structBody;
         public List<Attribute> Attributes = new();
         public List<Expression> typeSubscripts = new();
-        private bool varying;
         private bool constantSize = true;
         private Alignment alignment = new Alignment();
         private IContainer container;
         private bool isKeyword;
         private bool validated = false;
-        private int reportederror = 0;
 
         public StructBody StructBody 
         { 
@@ -42,7 +40,25 @@ namespace Syscode
         public bool IsArray { get => Bounds.Any(); }
         public bool ConstantSize { get => constantSize; }
         public bool IsntArray { get => !IsArray; }
-        public bool Varying { get => varying; internal set => varying = value; }
+        public bool Varying 
+        { 
+            get
+            {
+                if (CoreType == DataType.STRING && varAttributePresent)
+                   return true;
+                return false;
+            }
+        }
+        public bool Variable
+        {
+            get
+            {
+                if (CoreType == DataType.ENTRY && varAttributePresent)
+                    return true;
+                return false;
+            }
+        }
+
         public string Spelling { get => spelling; set => spelling = value; }
         public bool IsKeyword { get => isKeyword; set => isKeyword = value; }
         public bool IsStructure { get => structBody != null; }

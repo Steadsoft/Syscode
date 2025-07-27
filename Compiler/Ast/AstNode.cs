@@ -8,6 +8,9 @@ namespace Syscode
         public readonly int StartColumn;
         public readonly int StopLine;
         public readonly int StopColumn;
+        /// <summary>
+        /// Indicates what the last reported diagnostic was when processing a node. 
+        /// </summary>
         public int ReportedError = 0;
 
         public AstNode(ParserRuleContext context)

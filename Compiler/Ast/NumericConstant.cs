@@ -148,7 +148,6 @@ namespace Syscode
     public class EntryConstant : AstNode, IConstant
     {
         private string name;
-        private StorageScope storageScope;
 
         public string Spelling => name;
 

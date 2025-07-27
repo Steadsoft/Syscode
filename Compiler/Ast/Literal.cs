@@ -12,7 +12,6 @@ namespace Syscode
         // but also the numeric value is stored in a 64 bit int, signed or unsigned
         public string Value = String.Empty;
         private LiteralType literalType;
-        private int bitlength; // the actual number of bits implied by the literal
         private NumericConstant constant;
         public Literal(NumericLiteralContext context, Dictionary<string, IConstant> constants) : base(context)
         {
