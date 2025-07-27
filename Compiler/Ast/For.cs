@@ -1,13 +1,16 @@
 ﻿using Antlr4.Runtime;
 using System.Text;
+using static SyscodeParser;
 
 namespace Syscode
 {
     public class For : Loop
     {
+        // Compulsory
         private Reference forRef;
         private Expression from;
         private Expression to;
+        // Optional
         private Expression? by;
         private Expression? untilExp;
         private Expression? whileExp;
@@ -19,8 +22,17 @@ namespace Syscode
         public Expression? UntilExp { get => untilExp; set => untilExp = value; }
         public Expression? WhileExp { get => whileExp; set => whileExp = value; }
 
-        public For(ParserRuleContext context) : base(context)
+        public For(ForLoopContext context, AstBuilder builder) : base(context)
         {
+            // Compulsory
+            forRef = builder.CreateReference(context.For);
+            from = builder.CreateExpression(context.From);
+            to = builder.CreateExpression(context.To);
+
+            // Optional
+            by = context.By?.SafeCreate(builder.CreateExpression);
+            whileExp = context.While?.Exp.SafeCreate(builder.CreateExpression);
+            untilExp = context.Until?.Exp.SafeCreate(builder.CreateExpression);
         }
 
         public override string ToString()

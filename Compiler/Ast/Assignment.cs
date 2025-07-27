@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
@@ -6,10 +7,10 @@ namespace Syscode
     {
         private Reference reference;
         private Expression expression;
-        public Assignment(ParserRuleContext context, Reference reference, Expression expression) : base(context)
+        public Assignment(AssignmentContext context, AstBuilder builder) : base(context)
         {
-            this.reference = reference;
-            this.expression = expression;
+            this.reference = builder.CreateReference(context.Ref);
+            this.expression = builder.CreateExpression(context.Exp);
         }
 
         public Reference Reference { get => reference; }

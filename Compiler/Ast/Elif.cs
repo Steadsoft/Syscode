@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
@@ -10,8 +11,9 @@ namespace Syscode
         public Expression Condition { get => condition; set => condition = value; }
         public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }
 
-        public Elif(ParserRuleContext context) : base(context)
+        public Elif(ExprThenBlockContext context, AstBuilder builder) : base(context)
         {
+            condition = builder.CreateExpression(context.Exp);
         }
 
         public override string ToString()

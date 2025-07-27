@@ -206,7 +206,7 @@
 
                 {
       "number": 1031,
-      "message": "In the declaration of '{arg0}' the attribute '{arg1}' is incompatible with the attribute '{arg2}'",
+      "message": "In the declaration of '{arg0}' the attributes '{arg1}' and '{arg2}' cannot be used together.",
       "severity": "Error"
     }
 

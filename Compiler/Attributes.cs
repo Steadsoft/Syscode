@@ -85,7 +85,7 @@ namespace Syscode
 
             return true;
         }
-        public static string GeyKeywordFromAttribute(System.Type type)
+        public static string GetKeywordFromAttribute(System.Type type)
         {
             return typeToKeyword[type];
         }

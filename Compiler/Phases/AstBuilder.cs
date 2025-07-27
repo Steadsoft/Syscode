@@ -1,4 +1,4 @@
-﻿using Antlr4.Runtime;
+﻿  using Antlr4.Runtime;
 using Antlr4.Runtime.Sharpen;
 using Antlr4.Runtime.Tree;
 using Syscode.Ast;
@@ -49,12 +49,12 @@ namespace Syscode
                 _ => new AstNode(rule)
             };
         }
-        public Leave CreateLeave(LeaveContext context)
+        private Leave CreateLeave(LeaveContext context)
         {
             // TODO: The ref on a leave stmt must be a simple identifier.
-            return new Leave(context) { Reference = CreateReference(context.Ref) };
+            return new Leave(context,this);
         }
-        public Loop CreateLoop(LoopContext context)
+        private Loop CreateLoop(LoopContext context)
         {
             if (context == null) throw new ArgumentNullException("context");
 
@@ -67,32 +67,23 @@ namespace Syscode
             }
             if (context.For != null)
             {
-                return new For(context)
+                return new For(context.For,this)
                 {
-                    ForRef = CreateReference(context.For.For),
-                    From = CreateExpression(context.For.From),
-                    To = CreateExpression(context.For.To)!,
-                    By = context.For.By?.SafeCreate(CreateExpression),
-                    WhileExp = context.For.While?.Exp.SafeCreate(CreateExpression),
-                    UntilExp = context.For.Until?.Exp.SafeCreate(CreateExpression),
                     Statements = GetStatements(context.For).Select(Generate).ToList()
                 };
             }
 
             if (context.While != null)
             {
-                var exp = context.While.While.Exp.SafeCreate(CreateExpression);
-
-                return new While(context, exp)
+                return new While(context.While, this)
                 {
-                    UntilExp = context.While.Until?.Exp.SafeCreate(CreateExpression),
                     Statements = GetStatements(context.While).Select(Generate).ToList()
                 };
             }
 
             if (context.Until != null)
             {
-                return new Until(context,this)
+                return new Until(context.Until,this)
                 {
                     Statements = GetStatements(context.Until).Select(Generate).ToList()
                 };
@@ -100,9 +91,9 @@ namespace Syscode
 
             throw new InternalErrorException($"Unrecognized loop syntax on line {context.Start.Line}");
         }
-        public Goto CreateGoto(GotoContext context)
+        private Goto CreateGoto(GotoContext context)
         {
-            return new Goto(context) { Reference = CreateReference(context.Ref) };
+            return new Goto(context, this);
         }
         private Label CreateLabel(AlabelContext context)
         {
@@ -110,78 +101,11 @@ namespace Syscode
         }
         private Return CreateReturn(ReturnContext context)
         {
-            return new Return(context) { Expression = context.Exp?.SafeCreate(CreateExpression) };
+            return new Return(context, this);
         }
         private Call CreateCall(CallContext context)
         {
-            return new Call(context) { Reference = CreateReference(context.Ref) };
-        }
-        internal Expression CreateExpression(ExpressionContext context)
-        {
-            Expression expr = new(context);
-
-            switch (context)
-            {
-                case ExprPrimitiveContext primContext:
-                    {
-                        var prim = primContext.GetExactNode<PrimitiveExpressionContext>();
-
-                        if (prim.TryGetExactNode<ReferenceContext>(out var refcontext))
-                        {
-                            expr.Reference = CreateReference(refcontext);
-                            expr.Type = ExpressionType.Primitive;
-                        }
-
-                        if (prim.TryGetExactNode<NumericLiteralContext>(out var numcontext))
-                        {
-                            var txt = numcontext.GetText();
-                            expr.Literal = new Literal(numcontext, constants) { Value = txt };
-                            expr.Type = ExpressionType.Literal;
-
-                        }
-
-                        if (prim.TryGetExactNode<StringLiteralContext>(out var strcontext))
-                        {
-                            var txt = strcontext.GetText();
-                            expr.Literal = new Literal(strcontext) { Value = txt };
-                            expr.Type = ExpressionType.Literal;
-
-                        }
-
-                        return FoldConstantExpression(expr); ;
-                    }
-                case ExprParenthesizedContext paren:
-                    {
-                        var parenctxt = paren.GetExactNode<ParenthesizedExpressionContext>();
-                        var expression = parenctxt.GetDerivedNode<ExpressionContext>();
-                        var result = CreateExpression(expression);
-                        result.Parenthesized = true;
-                        return FoldConstantExpression(result); ;
-                    }
-                case ExprPrefixedContext prefixed:
-                    {
-                        expr.Right = CreateExpression(prefixed.GetExactNode<PrefixExpressionContext>().GetDerivedNode<ExpressionContext>());
-                        expr.Operator = GetOperator(prefixed);
-                        expr.Type = ExpressionType.Prefix;
-                        break;
-                    }
-                case ExprBinaryContext binary:
-                    {
-                        expr.Left = CreateExpression(binary.Left);
-                        expr.Right = CreateExpression(binary.Rite);
-                        expr.Operator = GetOperator(binary);
-                        expr.Type = ExpressionType.Binary;
-                        return FoldConstantExpression(expr);
-                    }
-                default:  // every other case always contains an operator and a left/right expression. 
-                    {
-                        throw new InvalidOperationException("Unexpected expression class encountered.");
-                    }
-            }
-
-            // If the expression is composed wholly of literal constants, we should fold it and make a new literal constant
-
-            return FoldConstantExpression(expr);
+            return new Call(context, this);
         }
         private Expression FoldConstantExpression(Expression expr)
         {
@@ -291,46 +215,7 @@ namespace Syscode
         }
         private Assignment CreateAssignment(AssignmentContext context)
         {
-            var reference = CreateReference(context.Ref);
-            var expression = CreateExpression(context.Exp);
-
-            return new Assignment(context, reference, expression);
-        }
-        private Reference CreateReference(ReferenceContext context)
-        {
-            Reference reference = new(context);
-
-            // A Reference might contain another Reference...
-
-            if (context.Pointer != null)
-            {
-                reference.Pointer = CreateReference(context.Pointer);
-            }
-
-            if (context.ArgsList != null)
-            {
-                var argumentsList = context.ArgsList._ArgsSet; /* one or more 'arguments' always present */
-
-                foreach (var arguments in argumentsList)
-                {
-                    var argsast = new Arguments(arguments);
-
-                    if (arguments.TryGetExactNode<SubscriptCommalistContext>(out var subscriptCommalist))
-                    {
-                        var expressions = subscriptCommalist.GetDerivedNodes<ExpressionContext>().Select(CreateExpression).ToList();
-
-                        argsast.ExpressionList.AddRange(expressions);
-                    }
-
-                    reference.ArgumentsList.Add(argsast);
-                }
-            }
-
-            // TODO: process the optional ArgList list..
-
-            reference.BasicReference = CreateBasicReference(context.Basic);
-
-            return reference;
+            return new Assignment(context,this);
         }
         private BasicReference CreateBasicReference(BasicReferenceContext context)
         {
@@ -436,7 +321,7 @@ namespace Syscode
 
                     foreach (var group in repeaters)
                     {
-                        string attrtext = GeyKeywordFromAttribute(group.First().GetType());
+                        string attrtext = GetKeywordFromAttribute(group.First().GetType());
                         reporter.Report(dcl, 1023, dcl.Spelling, attrtext);
                     }
 
@@ -582,7 +467,7 @@ namespace Syscode
 
                     foreach (var group in repeaters)
                     {
-                        string attrtext = GeyKeywordFromAttribute(group.First().GetType());
+                        string attrtext = GetKeywordFromAttribute(group.First().GetType());
                         reporter.Report(dcl, 1029, dcl.Spelling, attrtext);
                     }
 
@@ -609,12 +494,10 @@ namespace Syscode
                 throw new InternalErrorException($"In '{nameof(CreateDeclaration)}' processing line {dcl.StartLine}.", e);
             }
         }
-
-        public Type CreateType(TypeContext context)
+        private Type CreateType(TypeContext context)
         {
             return new Type(context) { Body = CreateStructure(context.Body) };
         }
-
         private StructBody CreateStructure(StructBodyContext context)
         {
             var bounds = new List<BoundsPair>();
@@ -648,57 +531,27 @@ namespace Syscode
         }
         private Procedure CreateProcedure(ProcedureContext context)
         {
-            var node = new Procedure(currentContainer, context);
+            var node = new Procedure(currentContainer, context, this);
 
             currentContainer = node;
-
-            node.Spelling = context.Spelling.GetText();
-
-            if (context.Params != null)
-            {
-                node.Parameters = context.Params._Params.Select(i => i.GetText()).ToList();
-            }
-
-            if (context.Options != null)
-            {
-                if (context.Options.Main != null)
-                    node.Main = true;
-            }
-
             node.Statements = [.. GetStatements(context).Select(Generate)];
-
             currentContainer = node.Container;
 
             return node;
         }
-
         private Procedure CreateFunction(FunctionContext context)
         {
-            var node = new Procedure(currentContainer, context); // a func is so similar to a proc we use same class to represent them.
+            var node = new Procedure(currentContainer, context, this); // a func is so similar to a proc we use same class to represent them.
 
             currentContainer = node;
-
-            node.Spelling = context.Spelling.GetText();
-
-            node.As = context.Type.GetText();
-
-            if (context.Params != null)
-            {
-                node.Parameters = context.Params._Params.Select(i => i.GetText()).ToList();
-            }
-
             node.Statements = [.. GetStatements(context).Select(Generate)];
-            node.IsFunction = true;
-
             currentContainer = node.Container;
 
             return node;
         }
-
         private Elif CreateElif(ExprThenBlockContext context)
         {
-            var condition = CreateExpression(context.Exp);
-            return new Elif(context) { Condition = condition, ThenStatements = GetStatements(context.GetExactNode<ThenBlockContext>()).Select(Generate).ToList() };
+            return new Elif(context, this) { ThenStatements = GetStatements(context.GetExactNode<ThenBlockContext>()).Select(Generate).ToList() };
         }
         private If CreateIf(IfContext context)
         {
@@ -706,7 +559,6 @@ namespace Syscode
             List<Elif> elifs = new();
 
             var if_then_stmts = GetStatements(context.ExprThen.Then).Select(Generate).ToList();
-            var condition = CreateExpression(context.ExprThen.Exp);
 
             if (context.Else != null)
             {
@@ -718,9 +570,8 @@ namespace Syscode
                 elifs.Load(context.Elif._ExprThen.Select(CreateElif));
             }
 
-            return new If(context) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs, Condition = condition };
+            return new If(context, this) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs };
         }
-
         /// <summary>
         /// Reports if any of the supplied attributes are incompatible with the others.
         /// </summary>
@@ -737,12 +588,115 @@ namespace Syscode
                 {
                     if (Attributes.IncompatibleDataAttributes((first, next)))
                     {
-                        reporter.Report(dcl, 1031, dcl.Spelling, GeyKeywordFromAttribute(next), GeyKeywordFromAttribute(first));
+                        reporter.Report(dcl, 1031, dcl.Spelling, GetKeywordFromAttribute(next), GetKeywordFromAttribute(first));
                     }
                 }
 
                 ReportIncompatibleDataAttributes(dcl, rest);
             }
+        }
+        internal Reference CreateReference(ReferenceContext context)
+        {
+            Reference reference = new(context);
+
+            // A Reference might contain another Reference...
+
+            if (context.Pointer != null)
+            {
+                reference.Pointer = CreateReference(context.Pointer);
+            }
+
+            if (context.ArgsList != null)
+            {
+                var argumentsList = context.ArgsList._ArgsSet; /* one or more 'arguments' always present */
+
+                foreach (var arguments in argumentsList)
+                {
+                    var argsast = new Arguments(arguments);
+
+                    if (arguments.TryGetExactNode<SubscriptCommalistContext>(out var subscriptCommalist))
+                    {
+                        var expressions = subscriptCommalist.GetDerivedNodes<ExpressionContext>().Select(CreateExpression).ToList();
+
+                        argsast.ExpressionList.AddRange(expressions);
+                    }
+
+                    reference.ArgumentsList.Add(argsast);
+                }
+            }
+
+            // TODO: process the optional ArgList list..
+
+            reference.BasicReference = CreateBasicReference(context.Basic);
+
+            return reference;
+        }
+        internal Expression CreateExpression(ExpressionContext context)
+        {
+            Expression expr = new(context);
+
+            switch (context)
+            {
+                case ExprPrimitiveContext primContext:
+                    {
+                        var prim = primContext.GetExactNode<PrimitiveExpressionContext>();
+
+                        if (prim.TryGetExactNode<ReferenceContext>(out var refcontext))
+                        {
+                            expr.Reference = CreateReference(refcontext);
+                            expr.Type = ExpressionType.Primitive;
+                        }
+
+                        if (prim.TryGetExactNode<NumericLiteralContext>(out var numcontext))
+                        {
+                            var txt = numcontext.GetText();
+                            expr.Literal = new Literal(numcontext, constants) { Value = txt };
+                            expr.Type = ExpressionType.Literal;
+
+                        }
+
+                        if (prim.TryGetExactNode<StringLiteralContext>(out var strcontext))
+                        {
+                            var txt = strcontext.GetText();
+                            expr.Literal = new Literal(strcontext) { Value = txt };
+                            expr.Type = ExpressionType.Literal;
+
+                        }
+
+                        return FoldConstantExpression(expr); ;
+                    }
+                case ExprParenthesizedContext paren:
+                    {
+                        var parenctxt = paren.GetExactNode<ParenthesizedExpressionContext>();
+                        var expression = parenctxt.GetDerivedNode<ExpressionContext>();
+                        var result = CreateExpression(expression);
+                        result.Parenthesized = true;
+                        return FoldConstantExpression(result); ;
+                    }
+                case ExprPrefixedContext prefixed:
+                    {
+                        expr.Right = CreateExpression(prefixed.GetExactNode<PrefixExpressionContext>().GetDerivedNode<ExpressionContext>());
+                        expr.Operator = GetOperator(prefixed);
+                        expr.Type = ExpressionType.Prefix;
+                        break;
+                    }
+                case ExprBinaryContext binary:
+                    {
+                        expr.Left = CreateExpression(binary.Left);
+                        expr.Right = CreateExpression(binary.Rite);
+                        expr.Operator = GetOperator(binary);
+                        expr.Type = ExpressionType.Binary;
+                        return FoldConstantExpression(expr);
+                    }
+                default:  // every other case always contains an operator and a left/right expression. 
+                    {
+                        throw new InvalidOperationException("Unexpected expression class encountered.");
+                    }
+            }
+
+            // If the expression is composed wholly of literal constants, we should fold it and make a new literal constant
+
+            return FoldConstantExpression(expr);
         }
     }
 }
