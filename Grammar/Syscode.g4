@@ -22,6 +22,8 @@ grammar Syscode;
 // See: https://kaya3.github.io/MJr/notes/parser.html#operator-precedence
 // Semms its more trouble than its worth, cofuses people and not that common a need.
 
+// Unlike the PL/I standard we use the term 'literal' rather than 'constant' as the latter has a more general meaning like a variable declared as const for example
+
 // Parser rules
 
 preamble: (NEWLINE | SEMICOLON)+;
@@ -232,8 +234,8 @@ expression
   ;
 
 primitiveExpression
-  : Numeric=numericLiteral   #Lit
-  | String=stringLiteral     #Str
+  : Numeric=numericLiteral   #LiteralArithmetic
+  | String=stringLiteral     #LiteralString
   //| customLiteral
   | Reference=reference      #Ref
   ;
@@ -243,9 +245,9 @@ stringLiteral
   ;
 
 numericLiteral
-  :  Bin=binLiteral
+  :  Hex=hexLiteral
+  |  Bin=binLiteral
   |  Oct=octLiteral
-  |  Hex=hexLiteral
   |  Dec=decLiteral
   ;
 
@@ -262,8 +264,8 @@ octLiteral
   ;
 
 decLiteral
-  : (INTEGER)
-  | (DEC_LITERAL)
+  : (DEC_LITERAL)
+  //| (DEC_FLOAT_LITERAL)
   ;
   
 // customLiteral // Used to allow stuff like 23.5MHz to represent 23.5 (or whatever, defined by the code somewhere)
@@ -354,7 +356,7 @@ prefixOperator
  
 qualifiedName: identifier (DOT identifier)*;
 paramList: LPAR Params+=identifier (COMMA Params+=identifier)* RPAR;
-constArrayList: (LPAR INTEGER (COMMA INTEGER)* RPAR);
+constArrayList: (LPAR DEC_LITERAL (COMMA DEC_LITERAL)* RPAR);
 enumMembers: emptyLines? enumMember emptyLines? (memberSeparator emptyLines? enumMember emptyLines?)* memberSeparator? emptyLines?;
 
 enumMember: (Name=identifier);
@@ -478,10 +480,10 @@ keyword
 COMMENT: (BCOM (COMMENT | .)*? ECOM) -> skip; //channel(HIDDEN);
 LINECOM: (LCOM ~[\r\n]*) -> skip;
 HYPERCOMMENT: ('/#' (.)*? '#/') -> skip;
-fragment BINARY:  [0-1];
-fragment OCT:     [0-7];
-fragment DECIMAL: [0-9];
-fragment HEX:     [0-9a-fA-F];
+fragment BINCHARS:  [0-1];
+fragment OCTCHARS:  [0-7];
+fragment DECCHARS:  [0-9];
+fragment HEXCHARS:  [0-9a-fA-F];
 fragment BCOM:    ('/*');
 fragment ECOM:    ('*/');
 fragment FRAC_H:  ('.' [0-9a-fA-F]+);
@@ -492,12 +494,35 @@ fragment FRAC_O:  ('.' [0-7]+);
 fragment BASE_O:  (':o' | ':O');
 fragment FRAC_B:  ('.' [0-1]+);
 fragment BASE_B:  (':b' | ':B');
+fragment SEP:     (' ' | '_');
+fragment LHEX:     (HEXCHARS SEP*);
+fragment LOCT:     (OCTCHARS SEP*);
+fragment LBIN:     (BINCHARS SEP*);
+fragment LDEC:     (DECCHARS SEP*);
+fragment DEXP:     'e' (PLUS | MINUS);
+fragment HEXP:     'p' (PLUS | MINUS);fragment SPACE:   ' ';
+//DEC_FIXED:    DECIMAL+ ('.' DECIMAL+)?;
+//DEC_FLOAT_LITERAL:    DEC_FIXED_LITERAL ' '* 'E' ' '* (PLUS | MINUS)? DECIMAL+;
 
-HEX_LITERAL:  ((HEX    (' '+ HEX)*)+    | (HEX ('_'+ HEX)*)+) FRAC_H? BASE_H;
-OCT_LITERAL:  ((OCT    (' '+ OCT)*)+    | (OCT ('_'+ OCT)*)+) FRAC_O? BASE_O;
-DEC_LITERAL:  (DECIMAL (' '+ DECIMAL)*)+ FRAC_D? BASE_D?;
-BIN_LITERAL:  ((BINARY (' '+ BINARY)*)+ | (BINARY ('_'+ BINARY)*)+) FRAC_B? BASE_B;
-INTEGER:      ([1-9] [0-9]*);
+HEX_LITERAL
+    : LHEX+ (SPACE* DOT SPACE* LHEX+)? ((HEXP SPACE* LHEX*) | BASE_H)
+    ;
+
+OCT_LITERAL
+    :  LOCT+ (SPACE* DOT SPACE* LOCT+)? BASE_O;
+
+BIN_LITERAL
+    :  LBIN+ (SPACE* DOT SPACE* LBIN+)? BASE_B;
+
+DEC_LITERAL
+    :  LDEC+ (SPACE* DOT SPACE* LDEC+)? (DEXP SPACE* LDEC*)?
+    ;
+
+//HEX_LITERAL:  ((HEX    (' '+ HEX)*)+    | (HEX ('_'+ HEX)*)+) FRAC_H? BASE_H;
+//OCT_LITERAL:  ((OCT    (' '+ OCT)*)+    | (OCT ('_'+ OCT)*)+) FRAC_O? BASE_O;
+//DEC_FIXED_LITERAL:  (DECIMAL (' '+ DECIMAL)*)+ FRAC_D? BASE_D?;
+//INTEGER:      ([1-9] DECIMAL*);
+//DEC_FLOAT:    INTEGER '.' INTEGER;
 
 // Keyword Tokens
 
