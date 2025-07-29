@@ -107,99 +107,99 @@ namespace Syscode
         {
             return new Call(context, this);
         }
-        private Expression FoldIfConstantExpression(Expression expr)
-        {
-            // TODO: This is fragile just now, we must validate operand types, we cannot assume the expression is valid, only valid syntactically.
-            // The expression might need implicit conversions inserting and so on.
+        //private Expression FoldIfConstantExpression(Expression expr)
+        //{
+        //    // TODO: This is fragile just now, we must validate operand types, we cannot assume the expression is valid, only valid syntactically.
+        //    // The expression might need implicit conversions inserting and so on.
 
-            if (expr.Type == ExpressionType.Literal)
-                return expr;
+        //    if (expr.Type == ExpressionType.Literal)
+        //        return expr;
 
-            if (expr.Type == ExpressionType.Binary)
-            {
-                if (expr.Left != null && expr.Left.IsConstant && expr.Right != null && expr.Right.IsConstant)
-                {
-                    switch (expr.Operator)
-                    {
-                        case Operator.PLUS:
-                            {
-                                var result = new Expression(null);
+        //    if (expr.Type == ExpressionType.Binary)
+        //    {
+        //        if (expr.Left != null && expr.Left.IsConstant && expr.Right != null && expr.Right.IsConstant)
+        //        {
+        //            switch (expr.Operator)
+        //            {
+        //                case Operator.PLUS:
+        //                    {
+        //                        var result = new Expression(null);
 
-                                if (expr.Left.Literal != null && expr.Left.Literal.Constant.Signed && expr.Right?.Literal != null && expr.Right.Literal.Constant.Signed)
-                                {
-                                    var sum = expr.Left.Literal.Constant.ValueSigned + expr.Right.Literal.Constant.ValueSigned;
-                                    result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
-                                    result.Type = ExpressionType.Literal;
-                                }
+        //                        if (expr.Left.Literal != null && expr.Left.Literal.Constant.Signed && expr.Right?.Literal != null && expr.Right.Literal.Constant.Signed)
+        //                        {
+        //                            var sum = expr.Left.Literal.Constant.ValueSigned + expr.Right.Literal.Constant.ValueSigned;
+        //                            result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+        //                            result.Type = ExpressionType.Literal;
+        //                        }
 
-                                if (expr.Left.Literal.Constant.Signed && expr.Right.Literal.Constant.Unsigned)
-                                {
-                                    var sum = expr.Left.Literal.Constant.ValueSigned + (long)expr.Right.Literal.Constant.ValueUnsigned;
-                                    result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
-                                    result.Type = ExpressionType.Literal;
-                                }
+        //                        if (expr.Left.Literal.Constant.Signed && expr.Right.Literal.Constant.Unsigned)
+        //                        {
+        //                            var sum = expr.Left.Literal.Constant.ValueSigned + (long)expr.Right.Literal.Constant.ValueUnsigned;
+        //                            result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+        //                            result.Type = ExpressionType.Literal;
+        //                        }
 
-                                if (expr.Left.Literal.Constant.Unsigned && expr.Right.Literal.Constant.Signed)
-                                {
-                                    var sum = (long)expr.Left.Literal.Constant.ValueUnsigned + (long)expr.Right.Literal.Constant.ValueUnsigned;
-                                    result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
-                                    result.Type = ExpressionType.Literal;
-                                }
+        //                        if (expr.Left.Literal.Constant.Unsigned && expr.Right.Literal.Constant.Signed)
+        //                        {
+        //                            var sum = (long)expr.Left.Literal.Constant.ValueUnsigned + (long)expr.Right.Literal.Constant.ValueUnsigned;
+        //                            result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+        //                            result.Type = ExpressionType.Literal;
+        //                        }
 
-                                if (expr.Left.Literal.Constant.Unsigned && expr.Right.Literal.Constant.Unsigned)
-                                {
-                                    var sum = expr.Left.Literal.Constant.ValueUnsigned + expr.Right.Literal.Constant.ValueUnsigned;
-                                    result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
-                                    result.Type = ExpressionType.Literal;
-                                }
+        //                        if (expr.Left.Literal.Constant.Unsigned && expr.Right.Literal.Constant.Unsigned)
+        //                        {
+        //                            var sum = expr.Left.Literal.Constant.ValueUnsigned + expr.Right.Literal.Constant.ValueUnsigned;
+        //                            result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+        //                            result.Type = ExpressionType.Literal;
+        //                        }
 
-                                return result;
-                            }
-                        case Operator.MINUS:
-                            {
-                                var left = Convert.ToInt32(expr.Left.Literal.Value);
-                                var right = Convert.ToInt32(expr.Right.Literal.Value);
+        //                        return result;
+        //                    }
+        //                case Operator.MINUS:
+        //                    {
+        //                        var left = Convert.ToInt32(expr.Left.Literal.Value);
+        //                        var right = Convert.ToInt32(expr.Right.Literal.Value);
 
-                                var sum = left - right;
+        //                        var sum = left - right;
 
-                                var result = new Expression(null);
+        //                        var result = new Expression(null);
 
-                                result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
-                                result.Type = ExpressionType.Literal;
-                                return result;
-                            }
-                        case Operator.TIMES:
-                            {
-                                var left = Convert.ToInt32(expr.Left.Literal.Value);
-                                var right = Convert.ToInt32(expr.Right.Literal.Value);
+        //                        result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+        //                        result.Type = ExpressionType.Literal;
+        //                        return result;
+        //                    }
+        //                case Operator.TIMES:
+        //                    {
+        //                        var left = Convert.ToInt32(expr.Left.Literal.Value);
+        //                        var right = Convert.ToInt32(expr.Right.Literal.Value);
 
-                                var sum = left * right;
+        //                        var sum = left * right;
 
-                                var result = new Expression(null);
+        //                        var result = new Expression(null);
 
-                                result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
-                                result.Type = ExpressionType.Literal;
-                                return result;
-                            }
-                        case Operator.DIVIDE:
-                            {
-                                var left = Convert.ToInt32(expr.Left.Literal.Value);
-                                var right = Convert.ToInt32(expr.Right.Literal.Value);
+        //                        result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+        //                        result.Type = ExpressionType.Literal;
+        //                        return result;
+        //                    }
+        //                case Operator.DIVIDE:
+        //                    {
+        //                        var left = Convert.ToInt32(expr.Left.Literal.Value);
+        //                        var right = Convert.ToInt32(expr.Right.Literal.Value);
 
-                                var sum = left / right;
+        //                        var sum = left / right;
 
-                                var result = new Expression(null);
+        //                        var result = new Expression(null);
 
-                                result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
-                                result.Type = ExpressionType.Literal;
-                                return result;
-                            }
-                    }
-                }
-            }
+        //                        result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
+        //                        result.Type = ExpressionType.Literal;
+        //                        return result;
+        //                    }
+        //            }
+        //        }
+        //    }
 
-            return expr;
-        }
+        //    return expr;
+        //}
         private Operator GetOperator(ExprPrefixedContext context)
         {
             //var operation = context.GetExactNode<PrefixExpressionContext>().GetExactNode<PrefixOperatorContext>();
@@ -609,27 +609,27 @@ namespace Syscode
                     {
                         expr.Reference = CreateReference(reference.Reference);
                         expr.Type = ExpressionType.Primitive;
-                        return FoldIfConstantExpression(expr);
+                        return expr;
                     }
-                case ExprPrimitiveContext primitive when primitive.Primitive is LitContext literal:
+                case ExprPrimitiveContext primitive when primitive.Primitive is LiteralArithmeticContext literal:
                     {
                         var txt = literal.Numeric.GetText();
                         expr.Literal = new Literal(literal.Numeric, constants) { Value = txt };
                         expr.Type = ExpressionType.Literal;
-                        return FoldIfConstantExpression(expr);
+                        return expr;
                     }
-                case ExprPrimitiveContext primitive when primitive.Primitive is StrContext strng:
+                case ExprPrimitiveContext primitive when primitive.Primitive is LiteralStringContext strng:
                     {
                         var txt = strng.String.GetText();
                         expr.Literal = new Literal(strng.String) { Value = txt };
                         expr.Type = ExpressionType.Literal;
-                        return FoldIfConstantExpression(expr);
+                        return (expr);
                     }
                 case ExprParenthesizedContext paren:
                     {
                         var result = CreateExpression(paren.Parenthesized.Expr);
                         result.Parenthesized = true;    // NOT we almost certainly don' care about this, it's only relevant to parser. 
-                        return FoldIfConstantExpression(result);
+                        return result;
                     }
                 case ExprPrefixedContext prefixed:
                     {
@@ -644,7 +644,7 @@ namespace Syscode
                         expr.Right = CreateExpression(binary.Rite);
                         expr.Operator = GetOperator(binary);
                         expr.Type = ExpressionType.Binary;
-                        return FoldIfConstantExpression(expr);
+                        return expr;
                     }
                 default:  // every other case always contains an operator and a left/right expression. 
                     {
@@ -654,7 +654,7 @@ namespace Syscode
 
             // If the expression is composed wholly of literal constants, we should fold it and make a new literal constant
 
-            return FoldIfConstantExpression(expr);
+            return expr;
         }
     }
 }
