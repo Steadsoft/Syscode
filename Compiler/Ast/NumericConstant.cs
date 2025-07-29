@@ -25,14 +25,14 @@ namespace Syscode
         {
             var constant = new NumericConstant(context);
 
-            if (context.Signed != null)
-            {
-                constant.signed = true;
+            //if (context.Signed != null)
+            //{
+            //    constant.signed = true;
 
-                if (context.Signed.Text == "-")
-                    constant.negative = true;
+            //    if (context.Signed.Text == "-")
+            //        constant.negative = true;
 
-            }
+            //}
 
             if (context.Bin != null)
             {

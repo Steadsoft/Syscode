@@ -202,8 +202,8 @@ namespace Syscode
         }
         private Operator GetOperator(ExprPrefixedContext context)
         {
-            var operation = context.GetExactNode<PrefixExpressionContext>().GetExactNode<PrefixOperatorContext>();
-            var terminal = (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
+            //var operation = context.GetExactNode<PrefixExpressionContext>().GetExactNode<PrefixOperatorContext>();
+            var terminal = (TerminalNodeImpl)context.Prefixed.Op.children[0]; ;//  (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
             return (Operator)(terminal.Symbol.Type);
         }
         private Operator GetOperator(ExprBinaryContext context)

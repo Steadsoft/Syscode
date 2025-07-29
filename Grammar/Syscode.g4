@@ -243,10 +243,10 @@ stringLiteral
   ;
 
 numericLiteral
-  : Signed=(PLUS | MINUS)? Bin=binLiteral
-  | Signed=(PLUS | MINUS)? Oct=octLiteral
-  | Signed=(PLUS | MINUS)? Hex=hexLiteral
-  | Signed=(PLUS | MINUS)? Dec=decLiteral
+  :  Bin=binLiteral
+  |  Oct=octLiteral
+  |  Hex=hexLiteral
+  |  Dec=decLiteral
   ;
 
 hexLiteral
