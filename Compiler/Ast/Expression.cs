@@ -3,19 +3,19 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Expression : AstNode
+    public class ExpressionBase : AstNode
     {
-        public Expression(ExpressionContext expr) : base(expr)
+        public ExpressionBase(ExpressionContext expr) : base(expr)
         {
 
         }
 
 
     }
-    public class BinaryExpression : Expression
+    public class BinaryExpression : ExpressionBase
     {
-        public GeneralExpression Left;
-        public GeneralExpression Right;
+        public Expression Left;
+        public Expression Right;
         public Operator Operator;
 
         public BinaryExpression(ExprBinaryContext expr) : base(expr)
@@ -23,16 +23,16 @@ namespace Syscode
         }
     }
 
-    public class GeneralExpression : AstNode
+    public class Expression : AstNode
     {
         public Literal? Literal;
         public Reference? Reference;
-        public GeneralExpression? Left;
-        public GeneralExpression? Right;
+        public Expression? Left;
+        public Expression? Right;
         public Operator Operator;
         public ExpressionType Type;
         public bool Parenthesized;
-        public GeneralExpression(ParserRuleContext context) : base(context)
+        public Expression(ParserRuleContext context) : base(context)
         {
             Literal = null;
             Reference = null;

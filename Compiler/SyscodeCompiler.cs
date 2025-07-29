@@ -242,7 +242,7 @@ namespace Syscode
                         Console.WriteLine($"{LineDepth(depth, node)} {reference.ToString()}");
                         break;
                     }
-                case GeneralExpression expression:
+                case Expression expression:
                     {
                         Console.WriteLine($"{LineDepth(depth, node)} {expression.ToString()}");
                         break;

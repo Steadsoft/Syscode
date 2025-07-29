@@ -107,7 +107,7 @@ namespace Syscode
         {
             return new Call(context, this);
         }
-        private GeneralExpression FoldIfConstantExpression(GeneralExpression expr)
+        private Expression FoldIfConstantExpression(Expression expr)
         {
             // TODO: This is fragile just now, we must validate operand types, we cannot assume the expression is valid, only valid syntactically.
             // The expression might need implicit conversions inserting and so on.
@@ -123,7 +123,7 @@ namespace Syscode
                     {
                         case Operator.PLUS:
                             {
-                                var result = new GeneralExpression(null);
+                                var result = new Expression(null);
 
                                 if (expr.Left.Literal != null && expr.Left.Literal.Constant.Signed && expr.Right?.Literal != null && expr.Right.Literal.Constant.Signed)
                                 {
@@ -162,7 +162,7 @@ namespace Syscode
 
                                 var sum = left - right;
 
-                                var result = new GeneralExpression(null);
+                                var result = new Expression(null);
 
                                 result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
                                 result.Type = ExpressionType.Literal;
@@ -175,7 +175,7 @@ namespace Syscode
 
                                 var sum = left * right;
 
-                                var result = new GeneralExpression(null);
+                                var result = new Expression(null);
 
                                 result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
                                 result.Type = ExpressionType.Literal;
@@ -188,7 +188,7 @@ namespace Syscode
 
                                 var sum = left / right;
 
-                                var result = new GeneralExpression(null);
+                                var result = new Expression(null);
 
                                 result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
                                 result.Type = ExpressionType.Literal;
@@ -599,9 +599,9 @@ namespace Syscode
         {
             return new Reference(context,this);
         }
-        internal GeneralExpression CreateExpression(ExpressionContext context)
+        internal Expression CreateExpression(ExpressionContext context)
         {
-            GeneralExpression expr = new(context);
+            Expression expr = new(context);
 
             switch (context)
             {

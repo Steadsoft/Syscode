@@ -5,13 +5,13 @@ namespace Syscode
 {
     public class Return : AstNode
     {
-        private GeneralExpression? expression;
+        private Expression? expression;
         public Return(ReturnContext context, AstBuilder builder) : base(context)
         {
             context.Exp?.SafeCreate(builder.CreateExpression);
         }
 
-        public GeneralExpression? Expression { get => expression; set => expression = value; }
+        public Expression? Expression { get => expression; set => expression = value; }
 
         public override string ToString()
         {

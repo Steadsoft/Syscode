@@ -102,7 +102,7 @@
 
                 foreach (Arguments args in reference.ArgumentsList)
                 {
-                    foreach (GeneralExpression e in args.ExpressionList)
+                    foreach (Expression e in args.ExpressionList)
                     {
                         ResolveExpression(container, e);
                     }
@@ -153,7 +153,7 @@
                 ResolveReference(proc.Container, reference);
             }
         }
-        private void ResolveExpression(IContainer container, GeneralExpression expression)
+        private void ResolveExpression(IContainer container, Expression expression)
         {
             switch (expression.Type)
             {
@@ -216,7 +216,7 @@
             {
                 foreach (Arguments args in reference.ArgumentsList)
                 {
-                    foreach (GeneralExpression e in args.ExpressionList)
+                    foreach (Expression e in args.ExpressionList)
                     {
                         ReportUnresolvedReferences(node, e);
                     }
@@ -272,7 +272,7 @@
                 ReportUnresolvedReference(node, reference.Pointer);
 
         }
-        public void ReportUnresolvedReferences(AstNode node, GeneralExpression expression)
+        public void ReportUnresolvedReferences(AstNode node, Expression expression)
         {
             if (expression.Type == ExpressionType.Primitive)
             {
