@@ -5,11 +5,11 @@ namespace Syscode
 {
     public class BoundsPair : AstNode
     {
-        private Expression upper;
-        private Expression? lower;
+        private GeneralExpression upper;
+        private GeneralExpression? lower;
 
-        public Expression Upper { get => upper; set => upper = value; }
-        public Expression? Lower { get => lower; set => lower = value; }
+        public GeneralExpression Upper { get => upper; set => upper = value; }
+        public GeneralExpression? Lower { get => lower; set => lower = value; }
 
         public BoundsPair(BoundPairContext context, AstBuilder builder) : base(context)
         {

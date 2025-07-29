@@ -8,7 +8,7 @@ namespace Syscode
     /// </summary>
     public class Arguments : AstNode
     {
-        public List<Expression> ExpressionList = new();
+        public List<GeneralExpression> ExpressionList = new();
 
         public Arguments(ParserRuleContext context) : base(context)
         {
@@ -20,7 +20,7 @@ namespace Syscode
 
             stringBuilder.Append("(");
 
-            foreach (Expression e in ExpressionList)
+            foreach (GeneralExpression e in ExpressionList)
             {
                 stringBuilder.Append(e.ToString());
                 stringBuilder.Append(",");

@@ -160,15 +160,15 @@ namespace Syscode
         }
         private bool IsScaleInvalid(Declare declaration)
         {
-            return !((declaration.typeSubscripts[1].Type == ExpressionType.Literal) && (declaration.typeSubscripts[1].Literal.LiteralType == LiteralType.Decimal));
+            return !((declaration.typeSubscripts[1].Type == ExpressionType.Literal) && (declaration.typeSubscripts[1].Literal?.LiteralType == LiteralType.Decimal));
         }
         private bool IsPrecisionInvalid(Declare declaration)
         {
-            return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal.LiteralType == LiteralType.Decimal));
+            return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal?.LiteralType == LiteralType.Decimal));
         }
         private bool IsStringLengthInvalid(Declare declaration)
         {
-            return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal.LiteralType == LiteralType.Decimal));
+            return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal?.LiteralType == LiteralType.Decimal));
         }
         private bool ValidStringDeclaration(Declare declaration, out int Length, out bool Varying)
         {
@@ -194,7 +194,7 @@ namespace Syscode
                 return false;
             }
 
-            Length = Convert.ToInt32(declaration.typeSubscripts[0].Literal.Value);
+            Length = Convert.ToInt32(declaration.typeSubscripts[0].Literal?.Value);
 
             return true;
 
@@ -368,7 +368,7 @@ namespace Syscode
                     }
 
                     if (!PrecisionInvalid)
-                        Precision = Convert.ToInt32(declaration.typeSubscripts[0].Literal.Value);
+                        Precision = Convert.ToInt32(declaration.typeSubscripts[0].Literal?.Value);
 
                     Bytes = GetByteSize(declaration, Precision);
                     return true;
@@ -393,8 +393,8 @@ namespace Syscode
 
                     if (!PrecisionInvalid && !ScaleInvalid)
                     {
-                        Precision = Convert.ToInt32(declaration.typeSubscripts[0].Literal.Value);
-                        Scale = Convert.ToInt32(declaration.typeSubscripts[1].Literal.Value);
+                        Precision = Convert.ToInt32(declaration.typeSubscripts[0].Literal?.Value);
+                        Scale = Convert.ToInt32(declaration.typeSubscripts[1].Literal?.Value);
                         Bytes = GetByteSize(declaration, Precision);
                     }
                 }

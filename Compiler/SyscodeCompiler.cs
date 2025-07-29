@@ -242,7 +242,7 @@ namespace Syscode
                         Console.WriteLine($"{LineDepth(depth, node)} {reference.ToString()}");
                         break;
                     }
-                case Expression expression:
+                case GeneralExpression expression:
                     {
                         Console.WriteLine($"{LineDepth(depth, node)} {expression.ToString()}");
                         break;
@@ -324,7 +324,8 @@ namespace Syscode
                     {
                         Console.WriteLine($"{LineDepth(depth, proc)} {proc.GetType().Name} '{proc.Spelling}' Main = {proc.Main}");
 
-                        PrintSymbols(proc.Symbols, depth, proc);
+                        if (Symtab)
+                            PrintSymbols(proc.Symbols, depth, proc);
 
                         var children = ((IContainer)(proc)).Statements;
 
@@ -370,7 +371,8 @@ namespace Syscode
                     {
                         Console.WriteLine($"{LineDepth(depth, proc)} {proc.GetType().Name}");
 
-                        PrintSymbols(proc.Symbols, depth, proc);
+                        if (Symtab)
+                            PrintSymbols(proc.Symbols, depth, proc);
 
                         var children = ((IContainer)(proc)).Statements;
 

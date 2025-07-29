@@ -40,193 +40,130 @@
       "message": "The precision for the variable '{arg0}' must be a positive non-zero integer literal.",
       "severity": "Error"
     },
-
     {
       "number": 1008,
       "message": "The scale for the variable '{arg0}' must be an integer literal.",
       "severity": "Error"
     },
-        {
+    {
       "number": 1009,
       "message": "XXXXXThe reference to '{arg0}' could not be resolved to a declaration in this or any enclosing scope.",
       "severity": "Error"
     },
-
-        {
+    {
       "number": 1010,
       "message": "The qualified reference '{arg0}' could not be resolved to a declaration in this or any enclosing scope.",
       "severity": "Error"
-
     },
-
-        {
+    {
       "number": 1011,
       "message": "The structure '{arg0}' is not a member of the structure '{arg1}'.",
       "severity": "Error"
     },
-        {
+    {
       "number": 1012,
       "message": "The structure '{arg0}' could not be resolved to a declaration in this or any enclosing scope.",
       "severity": "Error"
     },
-            {
+    {
       "number": 1013,
       "message": "This {arg0} statement is illegal, it is not permitted inside procedures or functions.",
       "severity": "Error"
     },
-
-            {
+    {
       "number": 1014,
       "message": "This {arg0} statement is illegal, it is not permitted immediately inside a package.",
       "severity": "Error"
     },
-
-                {
+    {
       "number": 1015,
       "message": "The identifier '{arg0}' is a language keyword, this is permitted but might be unintended.",
       "severity": "Notice "
     },
-
-                {
+    {
       "number": 1016,
       "message": "The structure name '{arg0}' is a language keyword, this is permitted but might be unintended.",
       "severity": "Notice "
     },
-
-                {
+    {
       "number": 1017,
       "message": "The alignment specified for '{arg0}' must an integer constant.",
       "severity": "Notice "
     },
-
-                {
+    {
       "number": 1018,
       "message": "In the declaration of '{arg0}' the attribute '{arg1}' must not be specified more than once.",
       "severity": "Error"
-    }
-,
-
-                {
+    },
+    {
       "number": 1019,
       "message": "The structure '{arg0}' contains multiple members with the same name '{arg1}'.",
       "severity": "Error"
-    }
-
-,
-
-                {
+    },
+    {
       "number": 1020,
       "message": "In the declaration of '{arg0}' the storage scope '{arg1}' is invalid when the storage scope '{arg2}' has previously been specified.",
       "severity": "Error"
-    }
-
-,
-
-                {
+    },
+    {
       "number": 1021,
       "message": "In the declaration of '{arg0}' the storage class '{arg1}' is invalid when the storage class '{arg2}' has previously been specified.",
       "severity": "Error"
-    }
-
-,
-
-                {
+    },
+    {
       "number": 1022,
       "message": "Names declared in a global scope must have static storage class.",
       "severity": "Error"
-    }
-
-
-,
-
-                {
+    },
+    {
       "number": 1023,
       "message": "In the declaration of '{arg0}' the data type '{arg1}' has been specified more than once.",
       "severity": "Error"
-    }
-
-,
-
-                {
+    },
+    {
       "number": 1024,
       "message": "In the declaration of '{arg0}' the attribute '{arg1}' conflicts with the already specified attribute '{arg2}'.",
       "severity": "Error"
-    }
-
-
-,
-
-                {
+    },
+    {
       "number": 1025,
       "message": "In the declaration of '{arg0}' the 'var' attribute is only valid with the 'string' or 'entry' data types.",
       "severity": "Error"
-    }
-
-,
-
-                {
+    },
+    {
       "number": 1026,
       "message": "A binary variable can only have a precision and an optional scale factor.",
       "severity": "Error"
-    }
-
-,
-
-                {
+    },
+    {
       "number": 1027,
       "message": "The binary precision must be a constant and have a minimum value of {arg0} and a maximum value of {arg1}.",
       "severity": "Error"
-    }
-
-,
-
-                {
+    },
+    {
       "number": 1028,
       "message": "The binary scale factor must be a constant and have a minimum value of {arg0} and a maximum value of {arg1}.",
       "severity": "Error"
-    }
-
-,
-
-                {
+    },
+    {
       "number": 1029,
       "message": "In the declaration of '{arg0}' the attribute '{arg1}' has been specified more than once.",
       "severity": "Error"
-    }
-
-,
-
-                {
+    },
+    {
       "number": 1030,
       "message": "In the declaration of '{arg0}' no data attributes were specified.",
       "severity": "Error"
-    }
-
-,
-
-                {
+    },
+    {
       "number": 1031,
       "message": "In the declaration of '{arg0}' the attributes '{arg1}' and '{arg2}' cannot be used together.",
       "severity": "Error"
-    }
-
-
-
-,
-
-                {
+    },
+    {
       "number": 1032,
       "message": "An internal error has ocurred in '{arg0}' compilation terminated",
       "severity": "Fatal"
     }
-
-
-
-
-
-
-
-
-
   ]
 }

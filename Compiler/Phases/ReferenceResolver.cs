@@ -102,7 +102,7 @@
 
                 foreach (Arguments args in reference.ArgumentsList)
                 {
-                    foreach (Expression e in args.ExpressionList)
+                    foreach (GeneralExpression e in args.ExpressionList)
                     {
                         ResolveExpression(container, e);
                     }
@@ -153,7 +153,7 @@
                 ResolveReference(proc.Container, reference);
             }
         }
-        private void ResolveExpression(IContainer container, Expression expression)
+        private void ResolveExpression(IContainer container, GeneralExpression expression)
         {
             switch (expression.Type)
             {
@@ -216,7 +216,7 @@
             {
                 foreach (Arguments args in reference.ArgumentsList)
                 {
-                    foreach (Expression e in args.ExpressionList)
+                    foreach (GeneralExpression e in args.ExpressionList)
                     {
                         ReportUnresolvedReferences(node, e);
                     }
@@ -272,7 +272,7 @@
                 ReportUnresolvedReference(node, reference.Pointer);
 
         }
-        public void ReportUnresolvedReferences(AstNode node, Expression expression)
+        public void ReportUnresolvedReferences(AstNode node, GeneralExpression expression)
         {
             if (expression.Type == ExpressionType.Primitive)
             {
@@ -281,10 +281,10 @@
 
             if (expression.Type == ExpressionType.Binary)
             {
-                if (expression.Left.Type == ExpressionType.Primitive)
-                    ReportUnresolvedReference(node, expression.Left.Reference);
-                if (expression.Right.Type == ExpressionType.Primitive)
-                    ReportUnresolvedReference(node, expression.Right.Reference);
+                if (expression.Left?.Type == ExpressionType.Primitive)
+                    ReportUnresolvedReference(node, expression.Left?.Reference);
+                if (expression.Right?.Type == ExpressionType.Primitive)
+                    ReportUnresolvedReference(node, expression.Right?.Reference);
             }
 
         }

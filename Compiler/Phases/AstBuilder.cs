@@ -18,7 +18,7 @@ namespace Syscode
     public class AstBuilder
     {
         private Reporter reporter;
-        private IContainer currentContainer = null;
+        private IContainer? currentContainer = null;
         private Compilation compilation = null;
         private Dictionary<string, IConstant> constants;
         private SyscodeParser lexer;
@@ -107,7 +107,7 @@ namespace Syscode
         {
             return new Call(context, this);
         }
-        private Expression FoldConstantExpression(Expression expr)
+        private GeneralExpression FoldIfConstantExpression(GeneralExpression expr)
         {
             // TODO: This is fragile just now, we must validate operand types, we cannot assume the expression is valid, only valid syntactically.
             // The expression might need implicit conversions inserting and so on.
@@ -117,15 +117,15 @@ namespace Syscode
 
             if (expr.Type == ExpressionType.Binary)
             {
-                if (expr.Left.IsConstant && expr.Right.IsConstant)
+                if (expr.Left != null && expr.Left.IsConstant && expr.Right != null && expr.Right.IsConstant)
                 {
                     switch (expr.Operator)
                     {
                         case Operator.PLUS:
                             {
-                                var result = new Expression(null);
+                                var result = new GeneralExpression(null);
 
-                                if (expr.Left.Literal.Constant.Signed && expr.Right.Literal.Constant.Signed)
+                                if (expr.Left.Literal != null && expr.Left.Literal.Constant.Signed && expr.Right?.Literal != null && expr.Right.Literal.Constant.Signed)
                                 {
                                     var sum = expr.Left.Literal.Constant.ValueSigned + expr.Right.Literal.Constant.ValueSigned;
                                     result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
@@ -162,7 +162,7 @@ namespace Syscode
 
                                 var sum = left - right;
 
-                                var result = new Expression(null);
+                                var result = new GeneralExpression(null);
 
                                 result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
                                 result.Type = ExpressionType.Literal;
@@ -175,7 +175,7 @@ namespace Syscode
 
                                 var sum = left * right;
 
-                                var result = new Expression(null);
+                                var result = new GeneralExpression(null);
 
                                 result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
                                 result.Type = ExpressionType.Literal;
@@ -188,7 +188,7 @@ namespace Syscode
 
                                 var sum = left / right;
 
-                                var result = new Expression(null);
+                                var result = new GeneralExpression(null);
 
                                 result.Literal = new Literal(LiteralType.Binary) { Value = sum.ToString() };
                                 result.Type = ExpressionType.Literal;
@@ -217,7 +217,7 @@ namespace Syscode
         {
             return new Assignment(context,this);
         }
-        private BasicReference CreateBasicReference(BasicReferenceContext context)
+        internal BasicReference CreateBasicReference(BasicReferenceContext context)
         {
             BasicReference basic = new BasicReference(context);
 
@@ -576,13 +576,13 @@ namespace Syscode
         /// Reports if any of the supplied attributes are incompatible with the others.
         /// </summary>
         /// <param name="dcl"></param>
-        /// <param name="types"></param>
-        private void ReportIncompatibleDataAttributes(Declare dcl, IEnumerable<System.Type> types)
+        /// <param name="classes"></param>
+        private void ReportIncompatibleDataAttributes(Declare dcl, IEnumerable<System.Type> classes)
         {
-            if (types.Count() > 1)
+            if (classes.Count() > 1)
             {
-                var first = types.First();
-                var rest = types.Skip(1);
+                var first = classes.First();
+                var rest = classes.Skip(1);
 
                 foreach (var next in rest)
                 {
@@ -597,85 +597,43 @@ namespace Syscode
         }
         internal Reference CreateReference(ReferenceContext context)
         {
-            Reference reference = new(context);
-
-            // A Reference might contain another Reference...
-
-            if (context.Pointer != null)
-            {
-                reference.Pointer = CreateReference(context.Pointer);
-            }
-
-            if (context.ArgsList != null)
-            {
-                var argumentsList = context.ArgsList._ArgsSet; /* one or more 'arguments' always present */
-
-                foreach (var arguments in argumentsList)
-                {
-                    var argsast = new Arguments(arguments);
-
-                    if (arguments.TryGetExactNode<SubscriptCommalistContext>(out var subscriptCommalist))
-                    {
-                        var expressions = subscriptCommalist.GetDerivedNodes<ExpressionContext>().Select(CreateExpression).ToList();
-
-                        argsast.ExpressionList.AddRange(expressions);
-                    }
-
-                    reference.ArgumentsList.Add(argsast);
-                }
-            }
-
-            // TODO: process the optional ArgList list..
-
-            reference.BasicReference = CreateBasicReference(context.Basic);
-
-            return reference;
+            return new Reference(context,this);
         }
-        internal Expression CreateExpression(ExpressionContext context)
+        internal GeneralExpression CreateExpression(ExpressionContext context)
         {
-            Expression expr = new(context);
+            GeneralExpression expr = new(context);
 
             switch (context)
             {
-                case ExprPrimitiveContext primContext:
+                case ExprPrimitiveContext primitive when primitive.Primitive is RefContext reference:
                     {
-                        var prim = primContext.GetExactNode<PrimitiveExpressionContext>();
-
-                        if (prim.TryGetExactNode<ReferenceContext>(out var refcontext))
-                        {
-                            expr.Reference = CreateReference(refcontext);
-                            expr.Type = ExpressionType.Primitive;
-                        }
-
-                        if (prim.TryGetExactNode<NumericLiteralContext>(out var numcontext))
-                        {
-                            var txt = numcontext.GetText();
-                            expr.Literal = new Literal(numcontext, constants) { Value = txt };
-                            expr.Type = ExpressionType.Literal;
-
-                        }
-
-                        if (prim.TryGetExactNode<StringLiteralContext>(out var strcontext))
-                        {
-                            var txt = strcontext.GetText();
-                            expr.Literal = new Literal(strcontext) { Value = txt };
-                            expr.Type = ExpressionType.Literal;
-
-                        }
-
-                        return FoldConstantExpression(expr); ;
+                        expr.Reference = CreateReference(reference.Reference);
+                        expr.Type = ExpressionType.Primitive;
+                        return FoldIfConstantExpression(expr);
+                    }
+                case ExprPrimitiveContext primitive when primitive.Primitive is LitContext literal:
+                    {
+                        var txt = literal.Numeric.GetText();
+                        expr.Literal = new Literal(literal.Numeric, constants) { Value = txt };
+                        expr.Type = ExpressionType.Literal;
+                        return FoldIfConstantExpression(expr);
+                    }
+                case ExprPrimitiveContext primitive when primitive.Primitive is StrContext strng:
+                    {
+                        var txt = strng.String.GetText();
+                        expr.Literal = new Literal(strng.String) { Value = txt };
+                        expr.Type = ExpressionType.Literal;
+                        return FoldIfConstantExpression(expr);
                     }
                 case ExprParenthesizedContext paren:
                     {
-                        var parenctxt = paren.GetExactNode<ParenthesizedExpressionContext>();
-                        var expression = parenctxt.GetDerivedNode<ExpressionContext>();
-                        var result = CreateExpression(expression);
-                        result.Parenthesized = true;
-                        return FoldConstantExpression(result); ;
+                        var result = CreateExpression(paren.Parenthesized.Expr);
+                        result.Parenthesized = true;    // NOT we almost certainly don' care about this, it's only relevant to parser. 
+                        return FoldIfConstantExpression(result);
                     }
                 case ExprPrefixedContext prefixed:
                     {
-                        expr.Right = CreateExpression(prefixed.GetExactNode<PrefixExpressionContext>().GetDerivedNode<ExpressionContext>());
+                        expr.Right = CreateExpression(prefixed.Prefixed.Expr);  //CreateExpression(prefixed.GetExactNode<PrefixExpressionContext>().GetDerivedNode<ExpressionContext>());
                         expr.Operator = GetOperator(prefixed);
                         expr.Type = ExpressionType.Prefix;
                         break;
@@ -686,7 +644,7 @@ namespace Syscode
                         expr.Right = CreateExpression(binary.Rite);
                         expr.Operator = GetOperator(binary);
                         expr.Type = ExpressionType.Binary;
-                        return FoldConstantExpression(expr);
+                        return FoldIfConstantExpression(expr);
                     }
                 default:  // every other case always contains an operator and a left/right expression. 
                     {
@@ -696,7 +654,7 @@ namespace Syscode
 
             // If the expression is composed wholly of literal constants, we should fold it and make a new literal constant
 
-            return FoldConstantExpression(expr);
+            return FoldIfConstantExpression(expr);
         }
     }
 }

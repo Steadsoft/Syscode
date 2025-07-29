@@ -5,10 +5,10 @@ namespace Syscode
 {
     public class Elif : AstNode
     {
-        private Expression condition;
+        private GeneralExpression condition;
         private List<AstNode> thenStatements = new List<AstNode>();
 
-        public Expression Condition { get => condition; set => condition = value; }
+        public GeneralExpression Condition { get => condition; set => condition = value; }
         public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }
 
         public Elif(ExprThenBlockContext context, AstBuilder builder) : base(context)

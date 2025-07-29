@@ -5,11 +5,11 @@ namespace Syscode
 {
     public class Until : Loop
     {
-        private readonly Expression untilExp;
-        private Expression? whileExp;   // optional
+        private readonly GeneralExpression untilExp;
+        private GeneralExpression? whileExp;   // optional
 
-        public Expression UntilExp { get => untilExp; }
-        public Expression? WhileExp { get => whileExp; set => whileExp = value; }
+        public GeneralExpression UntilExp { get => untilExp; }
+        public GeneralExpression? WhileExp { get => whileExp; set => whileExp = value; }
 
         public Until(UntilLoopContext context, AstBuilder builder) : base(context)
         {

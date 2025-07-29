@@ -12,11 +12,11 @@ namespace Syscode
         private List<string> parameters = new List<string>();
         private List<AstNode> statements = new List<AstNode>();
         private List<Symbol> symbols = new List<Symbol>();
-        private IContainer container;
+        private IContainer? container;
         private bool main;
         private StorageClass storageClass = StorageClass.Unspecified;
         private StorageScope storageScope = StorageScope.Unspecified;
-        public Procedure(IContainer Container, ProcedureContext context, AstBuilder builder) : base(context)
+        public Procedure(IContainer? Container, ProcedureContext context, AstBuilder builder) : base(context)
         {
             container = Container;
             spelling = context.Spelling.GetText();

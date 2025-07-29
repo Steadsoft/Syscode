@@ -10,13 +10,13 @@ namespace Syscode
     }
     public class Aligned : Attribute
     {
-        private Expression alignment = null;
-        public Aligned(ParserRuleContext context, Expression alignment) : base(context)
+        private GeneralExpression? alignment = null;
+        public Aligned(ParserRuleContext context, GeneralExpression alignment) : base(context)
         {
             this.Alignment = alignment;
         }
 
-        public Expression Alignment { get => alignment; set => alignment = value; }
+        public GeneralExpression? Alignment { get => alignment; set => alignment = value; }
     }
     public class Packed : Attribute
     {
@@ -72,8 +72,8 @@ namespace Syscode
 
     public class Initial : Attribute
     {
-        private Expression expression;
-        public Initial(ParserRuleContext context, Expression expression) : base(context)
+        private GeneralExpression expression;
+        public Initial(ParserRuleContext context, GeneralExpression expression) : base(context)
         {
             this.expression = expression;
         }

@@ -28,7 +28,7 @@ namespace Syscode
         /// <param name="context"></param>
         /// <param name="Creator"></param>
         /// <returns></returns>
-        public static Expression SafeCreate(this ExpressionContext context,Func<ExpressionContext,Expression> Creator)
+        public static GeneralExpression SafeCreate(this ExpressionContext context,Func<ExpressionContext,GeneralExpression> Creator)
         {
             return Creator(context);
         }

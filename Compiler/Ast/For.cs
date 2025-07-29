@@ -8,19 +8,19 @@ namespace Syscode
     {
         // Compulsory
         private Reference forRef;
-        private Expression from;
-        private Expression to;
+        private GeneralExpression from;
+        private GeneralExpression to;
         // Optional
-        private Expression? by;
-        private Expression? untilExp;
-        private Expression? whileExp;
+        private GeneralExpression? by;
+        private GeneralExpression? untilExp;
+        private GeneralExpression? whileExp;
 
         public Reference ForRef { get => forRef; set => forRef = value; }
-        public Expression From { get => from; set => from = value; }
-        public Expression To { get => to; set => to = value; }
-        public Expression? By { get => by; set => by = value; }
-        public Expression? UntilExp { get => untilExp; set => untilExp = value; }
-        public Expression? WhileExp { get => whileExp; set => whileExp = value; }
+        public GeneralExpression From { get => from; set => from = value; }
+        public GeneralExpression To { get => to; set => to = value; }
+        public GeneralExpression? By { get => by; set => by = value; }
+        public GeneralExpression? UntilExp { get => untilExp; set => untilExp = value; }
+        public GeneralExpression? WhileExp { get => whileExp; set => whileExp = value; }
 
         public For(ForLoopContext context, AstBuilder builder) : base(context)
         {

@@ -20,7 +20,7 @@ namespace Syscode
         private string spelling;
         private StructBody structBody;
         public List<Attribute> Attributes = new();
-        public List<Expression> typeSubscripts = new();
+        public List<GeneralExpression> typeSubscripts = new();
         private bool constantSize = true;
         private Alignment alignment = new Alignment();
         private IContainer container;

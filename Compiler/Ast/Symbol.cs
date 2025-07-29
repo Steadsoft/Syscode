@@ -31,8 +31,8 @@ namespace Syscode
             this.storageClass = procedure.StorageClass;
             this.storageScope = procedure.StorageScope;
         }
-        public StructBody StructBody { get => Declaration?.StructBody; }
-        public List<BoundsPair> Bounds { get => Declaration?.Bounds; }
+        public StructBody StructBody { get => Declaration.StructBody; }
+        public List<BoundsPair> Bounds { get => Declaration.Bounds; }
         public string Spelling 
         { 
             get => Declaration != null ? Declaration.Spelling : procedure.Spelling; 

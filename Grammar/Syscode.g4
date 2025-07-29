@@ -52,8 +52,8 @@ gotoSubscript: LPAR expression RPAR;
 
 scope:  blockScope; // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
 blockScope: (PACKAGE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
-procedure: PROC emptyLines? Spelling=identifier Params=paramList? Options=procOptions? Statements+=statement* emptyLines? END;
-function: FUNC emptyLines? Spelling=identifier Params=paramList? Options=procOptions? AS Type=returnDescriptor? Statements+=statement* emptyLines? END;
+procedure: PROCEDURE emptyLines? Spelling=identifier Params=paramList? Options=procOptions? Statements+=statement* emptyLines? END;
+function: FUNCTION emptyLines? Spelling=identifier Params=paramList? Options=procOptions? AS Type=returnDescriptor? Statements+=statement* emptyLines? END;
 
 procOptions: OPTIONS LPAR (Main=MAIN)+ RPAR;
 
@@ -213,9 +213,9 @@ subscriptCommalist
   ;
 
 expression
-  : primitiveExpression                         # ExprPrimitive
-  | parenthesizedExpression                     # ExprParenthesized
-  | prefixExpression                            # ExprPrefixed
+  : Primitive=primitiveExpression                                       # ExprPrimitive
+  | Parenthesized=parenthesizedExpression                               # ExprParenthesized
+  | Prefixed=prefixExpression                                           # ExprPrefixed
 
   | <assoc=right> 
     Left=expression emptyLines? power emptyLines? Rite=expression       # ExprBinary
@@ -232,10 +232,10 @@ expression
   ;
 
 primitiveExpression
-  : numericLiteral
-  | stringLiteral
+  : Numeric=numericLiteral   #Lit
+  | String=stringLiteral     #Str
   //| customLiteral
-  | reference
+  | Reference=reference      #Ref
   ;
 
 stringLiteral
@@ -271,11 +271,11 @@ decLiteral
 //     ;
 
 parenthesizedExpression
-  : LPAR expression RPAR
+  : LPAR Expr=expression RPAR
   ;
 
 prefixExpression
-  : prefixOperator expression
+  : Op=prefixOperator Expr=expression
   ;
 
 dimensionSuffix
@@ -344,12 +344,12 @@ comparison
   ;
 
 prefixOperator
-  : PLUS
-  | MINUS
-  | NOT
-  | REDAND
-  | REDOR
-  | REDXOR
+  : PLUS         #Plus
+  | MINUS        #Minus
+  | NOT          #Not
+  | REDAND       #Redand
+  | REDOR        #Redor
+  | REDXOR       #Redxor
   ;
  
 qualifiedName: identifier (DOT identifier)*;
@@ -434,7 +434,7 @@ keyword
     | EXTERNAL
     | FOR
     | FOREVER
-    | FUNC
+    | FUNCTION
     | GOTO
     | IF
     | INIT
@@ -452,7 +452,7 @@ keyword
     | PAD
     | PATH
     | POINTER
-    | PROC
+    | PROCEDURE
     | RETURN
     | STACK
     | STATIC
@@ -531,7 +531,7 @@ ENUM:           'enum';
 EXTERNAL:       'ext' | 'external';
 FOR:            'for';
 FOREVER:        'forever';
-FUNC:           'func' | 'function';
+FUNCTION:       'func' | 'function';
 GOTO:           'goto';
 IF:             'if';
 INIT:           'init';
@@ -550,7 +550,7 @@ PACKED:         'packed';
 PAD:            'pad';
 PATH:           'path';
 POINTER:        'ptr' | 'pointer';
-PROC:           'proc' | 'procedure';
+PROCEDURE:      'proc' | 'procedure';
 RETURN:         'return';
 SCOPE:          'scope';
 STACK:          'stack';

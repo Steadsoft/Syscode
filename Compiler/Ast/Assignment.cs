@@ -6,7 +6,7 @@ namespace Syscode
     public class Assignment : AstNode
     {
         private Reference reference;
-        private Expression expression;
+        private GeneralExpression expression;
         public Assignment(AssignmentContext context, AstBuilder builder) : base(context)
         {
             this.reference = builder.CreateReference(context.Ref);
@@ -14,7 +14,7 @@ namespace Syscode
         }
 
         public Reference Reference { get => reference; }
-        public Expression Expression { get => expression;  }
+        public GeneralExpression Expression { get => expression;  }
 
         public override string ToString()
         {

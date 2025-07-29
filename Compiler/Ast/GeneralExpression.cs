@@ -1,17 +1,38 @@
 ﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
     public class Expression : AstNode
     {
-        public Literal Literal;
-        public Reference Reference;
-        public Expression Left;
-        public Expression Right;
+        public Expression(ExpressionContext expr) : base(expr)
+        {
+
+        }
+
+
+    }
+    public class BinaryExpression : Expression
+    {
+        public GeneralExpression Left;
+        public GeneralExpression Right;
+        public Operator Operator;
+
+        public BinaryExpression(ExprBinaryContext expr) : base(expr)
+        {
+        }
+    }
+
+    public class GeneralExpression : AstNode
+    {
+        public Literal? Literal;
+        public Reference? Reference;
+        public GeneralExpression? Left;
+        public GeneralExpression? Right;
         public Operator Operator;
         public ExpressionType Type;
         public bool Parenthesized;
-        public Expression(ParserRuleContext context) : base(context)
+        public GeneralExpression(ParserRuleContext context) : base(context)
         {
             Literal = null;
             Reference = null;
@@ -39,9 +60,9 @@ namespace Syscode
         {
             var text = Type switch
             {
-                ExpressionType.Primitive => Reference.ToString(),
+                ExpressionType.Primitive => Reference?.ToString(),
                 ExpressionType.Binary => $"{Left} {LexerHelper.GetOperatorText(Operator)} {Right}" ,
-                ExpressionType.Literal => Literal.ToString(),
+                ExpressionType.Literal => Literal?.ToString(),
                 ExpressionType.Prefix => $"{LexerHelper.GetOperatorText(Operator)} {Right}"
             };
 
