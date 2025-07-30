@@ -613,15 +613,13 @@ namespace Syscode
                     }
                 case ExprPrimitiveContext primitive when primitive.Primitive is LiteralArithmeticContext literal:
                     {
-                        var txt = literal.Numeric.GetText();
-                        expr.Literal = new Literal(literal.Numeric, constants) { Value = txt };
+                        expr.Literal = new Literal(literal.Numeric, Operator.UNDEFINED, constants);
                         expr.Type = ExpressionType.Literal;
                         return expr;
                     }
                 case ExprPrimitiveContext primitive when primitive.Primitive is LiteralStringContext strng:
                     {
-                        var txt = strng.String.GetText();
-                        expr.Literal = new Literal(strng.String) { Value = txt };
+                        expr.Literal = new Literal(strng.String);
                         expr.Type = ExpressionType.Literal;
                         return (expr);
                     }
@@ -630,6 +628,13 @@ namespace Syscode
                         var result = CreateExpression(paren.Parenthesized.Expr);
                         result.Parenthesized = true;    // NOT we almost certainly don' care about this, it's only relevant to parser. 
                         return result;
+                    }
+                case ExprPrefixedContext pref when pref.Prefixed.Expr is ExprPrimitiveContext prim && prim.Primitive is LiteralArithmeticContext literal:
+                    {
+                        var prefop = GetOperator(pref);
+                        expr.Literal = new Literal(literal.Numeric, prefop, constants);
+                        expr.Type = ExpressionType.Literal;
+                        return expr;
                     }
                 case ExprPrefixedContext prefixed:
                     {

@@ -29,4 +29,16 @@ namespace UnitTesting
         }
 
     }
+
+    [TestClass]
+    public sealed class LiteralTests
+    {
+        [TestMethod]
+        public void TestBinary1()
+        {
+            var constant = new NumericConstant("123", Operator.UNDEFINED);
+
+            ;
+        }
+    }
 }

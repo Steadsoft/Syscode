@@ -12,7 +12,7 @@ namespace Syscode
     /// <summary>
     /// Represents a numeric constant
     /// </summary>
-    public class NumericConstant : AstNode, IConstant
+    public class NumericConstant : IConstant
     {
         private DataType dataType;
         private UInt64 valueUnsigned = 0;
@@ -20,93 +20,171 @@ namespace Syscode
         private string literalText = string.Empty;
         private bool signed = false;
         private bool negative = false;
-        private int scale = 0;
-        public static NumericConstant Create(NumericLiteralContext context)
+        private Base numberbase;
+        private Scale scale;
+        private int precision = 0;
+        private int scalefactor = 0;
+
+        private Operator prefix;
+        public NumericConstant(string rawtext, Operator prefix) 
         {
-            var constant = new NumericConstant(context);
+            rawtext = rawtext.Trim().Replace(" ","").ToUpper(); 
 
-            //if (context.Signed != null)
-            //{
-            //    constant.signed = true;
+            SetBase(rawtext);
+            SetPrecision(rawtext);
+            SetScale(rawtext);
 
-            //    if (context.Signed.Text == "-")
-            //        constant.negative = true;
+            if (prefix != Operator.UNDEFINED)
+                signed = true;
+            else
+                signed = false;
 
-            //}
-
-            if (context.Bin != null)
-            {
-                constant.literalText = constant.CleanupString(context.Bin.GetText());
-                constant.SetValueFromBase(constant.literalText, 2);
-            }
-
-            if (context.Oct != null)
-            {
-                constant.literalText = constant.CleanupString(context.Oct.GetText());
-                constant.SetValueFromBase(constant.literalText, 8);
-            }
-
-            if (context.Dec != null)
-            {
-                constant.literalText = constant.CleanupString(context.Dec.GetText());
-                constant.SetValueFromBase(constant.literalText, 10);
-            }
-
-            if (context.Hex != null)
-            {
-                constant.literalText = constant.CleanupString(context.Hex.GetText());
-                constant.SetValueFromBase(constant.literalText, 16);
-            }
+            if (prefix == Operator.MINUS)
+                negative = true;
 
             // The data type we infer here is the most appropriate standard size for the value
 
-            if (constant.signed)
+            if (signed)
             {
-                if (constant.valueSigned >= SByte.MinValue && constant.valueSigned <= SByte.MaxValue)
-                {
-                    constant.dataType = DataType.BIN;
-                }
-                else if (constant.valueSigned >= Int16.MinValue && constant.valueSigned <= Int16.MaxValue)
-                {
-                    constant.dataType = DataType.BIN;
-                }
-                else if (constant.valueSigned >= Int32.MinValue && constant.valueSigned <= Int32.MaxValue)
-                {
-                    constant.dataType = DataType.BIN;
-                }
-                else if (constant.valueSigned >= Int64.MinValue && constant.valueSigned <= Int64.MaxValue)
-                {
-                    constant.dataType = DataType.BIN;
-                }
+                if (numberbase == Base.DEC)
+                    dataType = DataType.DEC;
+                if (numberbase == Base.BIN)
+                    dataType = DataType.BIN;
             }
             else
             {
-                if (constant.valueUnsigned >= Byte.MinValue && constant.valueUnsigned <= Byte.MaxValue)
-                {
-                    constant.dataType = DataType.UBIN;
-                }
-                else if (constant.valueUnsigned >= UInt16.MinValue && constant.valueUnsigned <= UInt16.MaxValue)
-                {
-                    constant.dataType = DataType.UBIN;
-                }
-                else if (constant.valueUnsigned >= UInt32.MinValue && constant.valueUnsigned <= UInt32.MaxValue)
-                {
-                    constant.dataType = DataType.UBIN;
-                }
-                else if (constant.valueUnsigned >= UInt64.MinValue && constant.valueUnsigned <= UInt64.MaxValue)
-                {
-                    constant.dataType = DataType.UBIN;
-                }
+                if (numberbase == Base.DEC)
+                    dataType = DataType.UDEC;
+                if (numberbase == Base.BIN)
+                    dataType = DataType.UBIN;
+            }
+        }
+
+        private void SetBase(string Text)
+        {
+            if (Text.EndsWith("[B]"))
+            {
+                numberbase = Base.BIN;
+                return;
             }
 
-            return constant;
-        }
-        private NumericConstant(NumericLiteralContext context) : base(context)
-        {
-        }
+            if (Text.EndsWith("[O]"))
+            {
+                numberbase = Base.OCT;
+                return;
+            }
 
+            if (Text.EndsWith("[D]"))
+            {
+                numberbase = Base.DEC;
+                return;
+            }
+
+            if (Text.EndsWith("[H]") || Text.EndsWith("[HD]") | Text.EndsWith("[HS]") | Text.EndsWith("[DH]") | Text.EndsWith("[SH]"))
+            {
+                numberbase = Base.HEX;
+                return;
+            }
+
+            if (Text.Contains('P'))
+            {
+                numberbase = Base.HEX;
+                return;
+            }
+
+            numberbase = Base.DEC;
+        }
+        private void SetPrecision(string Text)
+        {
+            switch (numberbase)
+            {
+                case Base.BIN:
+                    {
+                        Text = Text.Replace("[", "").Replace("]", "").Replace("B", "");
+
+                        if (Text.Contains('.') == false)
+                        {
+                            precision = Text.Length;
+                            scalefactor = 0;
+                            return;
+                        }
+
+                        var point = Text.IndexOf('.');
+                        var digits = Text.Length - 1;
+                        precision = digits;
+                        scalefactor = precision - point;
+                        return;
+                    }
+
+                case Base.DEC:
+                    {
+                        if (Text.Contains('S'))
+                        {
+                            precision = 32;
+                            scalefactor = 0;
+                            return;
+                        }
+
+                        if (Text.Contains('D'))
+                        {
+                            precision = 64;
+                            scalefactor = 0;
+                            return;
+                        }
+                        
+                        Text = Text.Replace("[", "").Replace("]", "").Replace("B", "");
+
+                        if (Text.Contains('.') == false)
+                        {
+                            precision = Text.Length;
+                            scalefactor = 0;
+                            return;
+                        }
+
+                        var point = Text.IndexOf('.');
+                        var digits = Text.Length - 1;
+                        precision = digits;
+                        scalefactor = precision - point;
+                        return;
+                    }
+
+            }
+
+            return;
+        }
+        private void  SetScale(string Text)
+        {
+            if (numberbase == Base.DEC)
+            {
+                if (Text.Contains('S') || Text.Contains('D') || Text.Contains('E'))
+                {
+                    scale = Scale.FLOAT;
+                    return;
+                }
+
+                scale = Scale.FIXED;
+                return;
+            }
+
+            if (numberbase == Base.HEX)
+            {
+                if (Text.EndsWith("[HD]") | Text.EndsWith("[HS]") | Text.EndsWith("[DH]") | Text.EndsWith("[SH]"))
+                {
+                    scale = Scale.FLOAT;
+                    return;
+                }
+
+                scale = Scale.FIXED;
+                return;
+            }
+
+            scale = Scale.FIXED;
+
+        }
         private void SetValueFromBase(string Text, int Base)
         {
+            return;
+
             if (signed)
             {
                 if (negative)
@@ -120,7 +198,10 @@ namespace Syscode
             }
 
         }
-
+        public Base Base => numberbase;
+        public Scale Scale => scale;
+        public int Scalefactor => scalefactor;
+        public int Precision => precision;
         public bool Signed { get => signed;  }
         public bool Unsigned { get => !signed; }
         public ulong ValueUnsigned { get => valueUnsigned; set => valueUnsigned = value; }

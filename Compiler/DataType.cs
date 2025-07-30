@@ -22,8 +22,26 @@
         POINTER = SyscodeParser.POINTER,
         AS = SyscodeParser.AS,
         STRUCT = SyscodeParser.STRUCT,
-        BUILTIN = SyscodeParser.BUILTIN
+        BUILTIN = SyscodeParser.BUILTIN,
+        SINGLE = SyscodeParser.SINGLE,
+        DOUBLE = SyscodeParser.DOUBLE,
 
+    }
+
+    public enum Base
+    {
+        UNDEFINED = 0,  
+        BIN,
+        OCT,
+        DEC,
+        HEX
+    }
+
+    public enum Scale
+    {
+        UNDEFINED = 0,
+        FIXED,
+        FLOAT
     }
 
     public static class TypeNames

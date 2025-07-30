@@ -81,6 +81,8 @@ dataAttribute
     | String=stringType         #String
     | Entry=entryType           #Entry
     | As=asType                 #As
+    | Double=DOUBLE             #Double
+    | Single=SINGLE             #Single
     ;
 
 attribute
@@ -428,6 +430,7 @@ keyword
     | DEC
     | DEF
     | DO
+    | DOUBLE
     | ELIF
     | ELSE
     | END
@@ -456,6 +459,7 @@ keyword
     | POINTER
     | PROCEDURE
     | RETURN
+    | SINGLE
     | STACK
     | STATIC
     | STRING
@@ -487,43 +491,43 @@ fragment HEXCHARS:  [0-9a-fA-F];
 fragment BCOM:    ('/*');
 fragment ECOM:    ('*/');
 fragment FRAC_H:  ('.' [0-9a-fA-F]+);
-fragment BASE_H:  (':h' | ':H');
+fragment BASE_H:  ('h' | 'H');
 fragment FRAC_D:  ('.' [0-9]+);
-fragment BASE_D:  (':d' | ':D');
+fragment BASE_D:  ('d' | 'D');
 fragment FRAC_O:  ('.' [0-7]+);
-fragment BASE_O:  (':o' | ':O');
+fragment BASE_O:  ('o' | 'O');
 fragment FRAC_B:  ('.' [0-1]+);
-fragment BASE_B:  (':b' | ':B');
+fragment BASE_B:  ('b' | 'B');
+fragment SIZE:    ('s' | 'd'); // single/double float
 fragment SEP:     (' ' | '_');
 fragment LHEX:     (HEXCHARS SEP*);
 fragment LOCT:     (OCTCHARS SEP*);
 fragment LBIN:     (BINCHARS SEP*);
 fragment LDEC:     (DECCHARS SEP*);
 fragment DEXP:     'e' (PLUS | MINUS);
-fragment HEXP:     'p' (PLUS | MINUS);fragment SPACE:   ' ';
+fragment HEXP:     'p' (PLUS | MINUS);
+fragment SPACE:    ' ';
+fragment HEX_TRAIL: LBRACK ('h' | 'hs' | 'hd' | 'dh' | 'sh') RBRACK;
+fragment DEC_TRAIL: LBRACK ('s' | 'd') RBRACK;
+
 //DEC_FIXED:    DECIMAL+ ('.' DECIMAL+)?;
 //DEC_FLOAT_LITERAL:    DEC_FIXED_LITERAL ' '* 'E' ' '* (PLUS | MINUS)? DECIMAL+;
 
+
 HEX_LITERAL
-    : LHEX+ (SPACE* DOT SPACE* LHEX+)? (HEXP SPACE* LHEX*)  BASE_H?
-    | LHEX+ (SPACE* DOT SPACE* LHEX+)? BASE_H
+    : LHEX+ (SPACE* DOT SPACE* LHEX+)? (HEXP SPACE* LHEX*)  HEX_TRAIL?
+    | LHEX+ (SPACE* DOT SPACE* LHEX+)? HEX_TRAIL
     ;
 
 OCT_LITERAL
-    :  LOCT+ (SPACE* DOT SPACE* LOCT+)? BASE_O;
+    :  LOCT+ (SPACE* DOT SPACE* LOCT+)? (LBRACK BASE_O RBRACK);
 
 BIN_LITERAL
-    :  LBIN+ (SPACE* DOT SPACE* LBIN+)? BASE_B;
+    :  LBIN+ (SPACE* DOT SPACE* LBIN+)? (LBRACK BASE_B RBRACK);
 
 DEC_LITERAL
-    :  LDEC+ (SPACE* DOT SPACE* LDEC+)? (DEXP SPACE* LDEC*)?
+    :  LDEC+ (SPACE* DOT SPACE* LDEC+)? (DEXP SPACE* LDEC*)? DEC_TRAIL?
     ;
-
-//HEX_LITERAL:  ((HEX    (' '+ HEX)*)+    | (HEX ('_'+ HEX)*)+) FRAC_H? BASE_H;
-//OCT_LITERAL:  ((OCT    (' '+ OCT)*)+    | (OCT ('_'+ OCT)*)+) FRAC_O? BASE_O;
-//DEC_FIXED_LITERAL:  (DECIMAL (' '+ DECIMAL)*)+ FRAC_D? BASE_D?;
-//INTEGER:      ([1-9] DECIMAL*);
-//DEC_FLOAT:    INTEGER '.' INTEGER;
 
 // Keyword Tokens
 
@@ -548,7 +552,8 @@ DCL:            'dcl' ;
 DEC:            'dec';
 DEF:            'def';
 DESC:           'desc' | 'descending';
-DO:             'do';         
+DO:             'do';   
+DOUBLE:         'double'      ;
 ELIF:           'elif';
 ELSE:           'else';
 END:            'end';
@@ -578,6 +583,7 @@ PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROCEDURE:      'proc' | 'procedure';
 RETURN:         'return';
+SINGLE:         'single';
 SCOPE:          'scope';
 STACK:          'stack';
 STATIC:         'static';

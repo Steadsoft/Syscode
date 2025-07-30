@@ -10,14 +10,17 @@ namespace Syscode
     {
         // Numeric literals are for now, represented by the actual number of bits in the literal
         // but also the numeric value is stored in a 64 bit int, signed or unsigned
-        public string Value = String.Empty;
+        private string value = String.Empty;
         private LiteralType literalType;
         private NumericConstant constant;
-        public Literal(NumericLiteralContext context, Dictionary<string, IConstant> constants) : base(context)
+        private Operator prefixop;
+        public Literal(NumericLiteralContext context, Operator prefixop, Dictionary<string, IConstant> constants) : base(context)
         {
-            constant = NumericConstant.Create(context);
+            constant = new NumericConstant(context.GetText(),prefixop);
 
             constants.TryAdd(constant.Spelling, constant);
+
+            this.prefixop = prefixop;
 
             literalType = context switch
             {
@@ -27,7 +30,35 @@ namespace Syscode
                 { Hex: not null } => LiteralType.Hexadecimal,
                 _ => throw new InvalidOperationException("No valid literal found")
             };
+
+            value = context.GetText();
+
+            switch (literalType)
+            {
+                case LiteralType.Binary:
+                    {
+                        break;
+                    }
+
+                case LiteralType.Octal:
+                    {
+                        break;
+                    }
+                case LiteralType.Decimal:
+                    {
+                        break;
+                    }
+                case LiteralType.Hexadecimal:
+                    {
+                        break;
+                    }
+
+            }
         }
+        public Operator PrefixOp => prefixop;
+        public bool Signed => prefixop == Operator.UNDEFINED ? false : true;
+
+        public string Value => value;
 
         public NumericConstant Constant
         {
@@ -36,7 +67,7 @@ namespace Syscode
 
         public Literal(StringLiteralContext context) :base(context) 
         {
-            Value = context.Text.Text;
+            value = context.Text.Text;
             literalType = LiteralType.String;
         }
 
@@ -49,7 +80,7 @@ namespace Syscode
 
         public override string ToString()
         {
-            return Value;
+            return value;
         }
     }
 }

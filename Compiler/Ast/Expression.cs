@@ -3,25 +3,25 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class ExpressionBase : AstNode
-    {
-        public ExpressionBase(ExpressionContext expr) : base(expr)
-        {
+    //public class ExpressionBase : AstNode
+    //{
+    //    public ExpressionBase(ExpressionContext expr) : base(expr)
+    //    {
 
-        }
+    //    }
 
 
-    }
-    public class BinaryExpression : ExpressionBase
-    {
-        public Expression Left;
-        public Expression Right;
-        public Operator Operator;
+    //}
+    //public class BinaryExpression : ExpressionBase
+    //{
+    //    public Expression Left;
+    //    public Expression Right;
+    //    public Operator Operator;
 
-        public BinaryExpression(ExprBinaryContext expr) : base(expr)
-        {
-        }
-    }
+    //    public BinaryExpression(ExprBinaryContext expr) : base(expr)
+    //    {
+    //    }
+    //}
 
     public class Expression : AstNode
     {
