@@ -23,8 +23,8 @@
         AS = SyscodeParser.AS,
         STRUCT = SyscodeParser.STRUCT,
         BUILTIN = SyscodeParser.BUILTIN,
-        SINGLE = SyscodeParser.SINGLE,
-        DOUBLE = SyscodeParser.DOUBLE,
+        SINGLE = SyscodeParser.SINGLE,  // implicitly binary float
+        DOUBLE = SyscodeParser.DOUBLE,  // implicitoy binary float
 
     }
 

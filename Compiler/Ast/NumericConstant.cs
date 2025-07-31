@@ -31,8 +31,8 @@ namespace Syscode
             rawtext = rawtext.Trim().Replace(" ","").ToUpper(); 
 
             SetBase(rawtext);
-            SetPrecision(rawtext);
             SetScale(rawtext);
+            SetPrecision(rawtext);
 
             if (prefix != Operator.UNDEFINED)
                 signed = true;
@@ -48,14 +48,14 @@ namespace Syscode
             {
                 if (numberbase == Base.DEC)
                     dataType = DataType.DEC;
-                if (numberbase == Base.BIN)
+                if (numberbase == Base.BIN || numberbase == Base.OCT || numberbase == Base.HEX)
                     dataType = DataType.BIN;
             }
             else
             {
                 if (numberbase == Base.DEC)
                     dataType = DataType.UDEC;
-                if (numberbase == Base.BIN)
+                if (numberbase == Base.BIN || numberbase == Base.OCT || numberbase == Base.HEX)
                     dataType = DataType.UBIN;
             }
         }
@@ -96,6 +96,13 @@ namespace Syscode
         }
         private void SetPrecision(string Text)
         {
+            if (scale == Scale.FLOAT)
+            {
+                precision = 0;
+                scalefactor = 0;
+                return;
+            }
+
             switch (numberbase)
             {
                 case Base.BIN:
@@ -112,27 +119,13 @@ namespace Syscode
                         var point = Text.IndexOf('.');
                         var digits = Text.Length - 1;
                         precision = digits;
-                        scalefactor = precision - point;
+                        scalefactor = digits - point;
                         return;
                     }
 
                 case Base.DEC:
                     {
-                        if (Text.Contains('S'))
-                        {
-                            precision = 32;
-                            scalefactor = 0;
-                            return;
-                        }
-
-                        if (Text.Contains('D'))
-                        {
-                            precision = 64;
-                            scalefactor = 0;
-                            return;
-                        }
-                        
-                        Text = Text.Replace("[", "").Replace("]", "").Replace("B", "");
+                        Text = Text.Replace("[", "").Replace("]", "").Replace("D", "");
 
                         if (Text.Contains('.') == false)
                         {
@@ -144,8 +137,49 @@ namespace Syscode
                         var point = Text.IndexOf('.');
                         var digits = Text.Length - 1;
                         precision = digits;
-                        scalefactor = precision - point;
+                        scalefactor = digits - point;
                         return;
+                    }
+                case Base.OCT:
+                    {
+                        Text = Text.Replace("[", "").Replace("]", "").Replace("O", "");
+
+                        // Hex is 1 digit = 4 bits...
+
+                        if (Text.Contains('.') == false)
+                        {
+                            precision = Text.Length * 3;
+                            scalefactor = 0;
+                            return;
+                        }
+
+                        var point = Text.IndexOf('.');
+                        var digits = Text.Length - 1;
+                        precision = 3 * digits;
+                        scalefactor = 3 * (digits - point);
+                        return;
+
+                    }
+
+                case Base.HEX:
+                    {
+                        Text = Text.Replace("[", "").Replace("]", "").Replace("H", "");
+
+                        // Hex is 1 digit = 4 bits...
+
+                        if (Text.Contains('.') == false)
+                        {
+                            precision = Text.Length * 4;
+                            scalefactor = 0;
+                            return;
+                        }
+
+                        var point = Text.IndexOf('.');
+                        var digits = Text.Length - 1;
+                        precision = 4 * digits;
+                        scalefactor = 4 * (digits - point);
+                        return;
+
                     }
 
             }
