@@ -446,6 +446,10 @@ namespace Syscode
                             {
                                 break;
                             }
+                        case BuiltinContext attribute:
+                            {
+                                break;
+                            }
                         default:
                             {
                                 reporter.Report(dcl, 1032, nameof(CreateDeclaration));

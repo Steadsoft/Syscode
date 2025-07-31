@@ -81,6 +81,7 @@ dataAttribute
     | String=stringType         #String
     | Entry=entryType           #Entry
     | As=asType                 #As
+    | Builtin=builtinType       #Builtin
     | Double=DOUBLE             #Double
     | Single=SINGLE             #Single
     ;
@@ -94,7 +95,6 @@ attribute
     | basedAttribute         #Based
     | stackAttribute         #Stack
     | initAttribute          #Init
-    | builtinType            #Builtin
     | PAD                    #Pad
     ;
 

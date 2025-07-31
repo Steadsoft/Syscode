@@ -28,11 +28,11 @@ namespace Syscode
         private Operator prefix;
         public NumericConstant(string rawtext, Operator prefix) 
         {
-            rawtext = rawtext.Trim().Replace(" ","").ToUpper(); 
+            literalText = rawtext.Trim().Replace(" ","").ToUpper(); 
 
-            SetBase(rawtext);
-            SetScale(rawtext);
-            SetPrecision(rawtext);
+            SetBase(literalText);
+            SetScale(literalText);
+            SetPrecision(literalText);
 
             if (prefix != Operator.UNDEFINED)
                 signed = true;
@@ -202,7 +202,7 @@ namespace Syscode
 
             if (numberbase == Base.HEX)
             {
-                if (Text.EndsWith("[HD]") | Text.EndsWith("[HS]") | Text.EndsWith("[DH]") | Text.EndsWith("[SH]"))
+                if (Text.EndsWith("[HD]") | Text.EndsWith("[HS]") | Text.EndsWith("[DH]") | Text.EndsWith("[SH]") | Text.Contains('P'))
                 {
                     scale = Scale.FLOAT;
                     return;
