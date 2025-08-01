@@ -1,14 +1,15 @@
 
 /*
     GRAMMAR OVERVIEW
-    This grammar is based (in part) on the concrete syntax of PL/I defined in ANSI standard X3.74-1987 and Julia and some others.
+    This grammar is based (in part) on the concrete syntax of PL/I defined in ANSI standard X3.74-1987 and Julia, Smalltalk and some others.
     This grammar has several important characteristics that reflect language design goals.
     1. There are no reserved words, identfiers can be keywords, new keywords can be added over time with backward compatibility.
     2. Statements are either block or single in nature. Block statements are terminated by 'end' and single by either Newline or Semicolon.
     3. Staments may be preceded by any number of Newlines and or Semicolons which are simply ignored.
     4. One or more newlines may appear inbetween the terms of a statement so that a statement can be split across lines.
-    5. A semicolon or newline must appear at the end of single statements and optionally in front of statements (which are ignored like empty statements)
-    6. An alternative numeric literal that's an (colon identifier) starting with digits or digits.digits (and optional leading +/-) is supported but must be defined with a true numeric value.
+    5. Expressions are evaluated left-to-right, there is no operator precedence but parentheses can be used to force ordering when desired.
+    6. A semicolon or newline must appear at the end of single statements and optionally in front of statements (which are ignored like empty statements)
+    7. An alternative numeric literal that's an (colon identifier) starting with digits or digits.digits (and optional leading +/-) is supported but must be defined with a true numeric value.
  */
 
 grammar Syscode;
@@ -216,24 +217,44 @@ subscriptCommalist
   : Exp+=expression (COMMA Exp+=expression)*
   ;
 
+//   expression
+//   : Primitive=primitiveExpression                                       # ExprPrimitive
+//   | Parenthesized=parenthesizedExpression                               # ExprParenthesized
+//   | Prefixed=prefixExpression                                           # ExprPrefixed
+
+//   | <assoc=right> 
+//     Left=expression emptyLines? power emptyLines? Rite=expression       # ExprBinary
+//   | Left=expression emptyLines? mulDiv emptyLines? Rite=expression      # ExprBinary
+//   | Left=expression emptyLines? addSub emptyLines? Rite=expression      # ExprBinary
+//   | Left=expression emptyLines? shiftRotate emptyLines? Rite=expression # ExprBinary
+//   | Left=expression emptyLines? concatenate emptyLines? Rite=expression # ExprBinary
+//   | Left=expression emptyLines? comparison emptyLines? Rite=expression  # ExprBinary
+//   | Left=expression emptyLines? boolAnd emptyLines? Rite=expression     # ExprBinary
+//   | Left=expression emptyLines? boolXor emptyLines? Rite=expression     # ExprBinary
+//   | Left=expression emptyLines? boolOr emptyLines? Rite=expression      # ExprBinary
+//   | Left=expression emptyLines? logand emptyLines?  Rite=expression     # ExprBinary
+//   | Left=expression emptyLines? logor emptyLines? Rite=expression       # ExprBinary
+//   ;
+
 expression
   : Primitive=primitiveExpression                                       # ExprPrimitive
   | Parenthesized=parenthesizedExpression                               # ExprParenthesized
   | Prefixed=prefixExpression                                           # ExprPrefixed
-
-  | <assoc=right> 
-    Left=expression emptyLines? power emptyLines? Rite=expression       # ExprBinary
-  | Left=expression emptyLines? mulDiv emptyLines? Rite=expression      # ExprBinary
-  | Left=expression emptyLines? addSub emptyLines? Rite=expression      # ExprBinary
-  | Left=expression emptyLines? shiftRotate emptyLines? Rite=expression # ExprBinary
-  | Left=expression emptyLines? concatenate emptyLines? Rite=expression # ExprBinary
-  | Left=expression emptyLines? comparison emptyLines? Rite=expression  # ExprBinary
-  | Left=expression emptyLines? boolAnd emptyLines? Rite=expression     # ExprBinary
-  | Left=expression emptyLines? boolXor emptyLines? Rite=expression     # ExprBinary
-  | Left=expression emptyLines? boolOr emptyLines? Rite=expression      # ExprBinary
-  | Left=expression emptyLines? logand emptyLines?  Rite=expression     # ExprBinary
-  | Left=expression emptyLines? logor emptyLines? Rite=expression       # ExprBinary
+  | Left=expression emptyLines? Operator=binop emptyLines? Rite=expression     # ExprBinary
   ;
+
+binop
+    :mulDiv
+    |addSub
+    |shiftRotate
+    |concatenate
+    |comparison
+    |boolAnd
+    |boolXor
+    |boolOr
+    |logand
+    |logor
+    ;
 
 primitiveExpression
   : Numeric=numericLiteral   #LiteralArithmetic

@@ -208,7 +208,7 @@ namespace Syscode
         }
         private Operator GetOperator(ExprBinaryContext context)
         {
-            var operation = context.children.Where(c => c is not ExpressionContext).Cast<ParserRuleContext>().Single();
+            var operation = context.Operator.children.Where(c => c is not ExpressionContext).Cast<ParserRuleContext>().Single();
             var terminal = (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
 
             return (Operator)(terminal.Symbol.Type);
