@@ -448,6 +448,7 @@ namespace Syscode
                             }
                         case BuiltinContext attribute:
                             {
+                                dcl.CoreType = DataType.BUILTIN;
                                 break;
                             }
                         default:
@@ -463,7 +464,7 @@ namespace Syscode
 
                 var attributesGroups = context._Attributes.GroupBy(d => d.GetType()).ToArray();
 
-                #region Repeated data attributes
+                #region Repeated attributes
 
                 if (attributesGroups.Where(g => g.Count() > 1).Any())
                 {
@@ -627,22 +628,21 @@ namespace Syscode
                         expr.Type = ExpressionType.Literal;
                         return (expr);
                     }
-                case ExprParenthesizedContext paren:
+                case ExprParenthesizedContext parenthesized:
                     {
-                        var result = CreateExpression(paren.Parenthesized.Expr);
+                        var result = CreateExpression(parenthesized.Parenthesized.Expr);
                         result.Parenthesized = true;    // NOT we almost certainly don' care about this, it's only relevant to parser. 
                         return result;
                     }
-                case ExprPrefixedContext pref when pref.Prefixed.Expr is ExprPrimitiveContext prim && prim.Primitive is LiteralArithmeticContext literal:
+                case ExprPrefixedContext prefix when prefix.Prefixed.Expr is ExprPrimitiveContext prim && prim.Primitive is LiteralArithmeticContext literal:
                     {
-                        var prefop = GetOperator(pref);
-                        expr.Literal = new Literal(literal.Numeric, prefop, constants);
+                        expr.Literal = new Literal(literal.Numeric, GetOperator(prefix), constants);
                         expr.Type = ExpressionType.Literal;
                         return expr;
                     }
                 case ExprPrefixedContext prefixed:
                     {
-                        expr.Right = CreateExpression(prefixed.Prefixed.Expr);  //CreateExpression(prefixed.GetExactNode<PrefixExpressionContext>().GetDerivedNode<ExpressionContext>());
+                        expr.Right = CreateExpression(prefixed.Prefixed.Expr);  
                         expr.Operator = GetOperator(prefixed);
                         expr.Type = ExpressionType.Prefix;
                         break;

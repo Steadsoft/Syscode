@@ -507,8 +507,8 @@ fragment LDEC:     (DECCHARS SEP*);
 fragment DEXP:     'e' (PLUS | MINUS);
 fragment HEXP:     'p' (PLUS | MINUS);
 fragment SPACE:    ' ';
-fragment HEX_TRAIL: LBRACK ('h' | 'hs' | 'hd' | 'dh' | 'sh') RBRACK;
-fragment DEC_TRAIL: LBRACK ('s' | 'd') RBRACK;
+fragment HEX_TRAIL: LBRACE ('h' | 'hs' | 'hd' | 'dh' | 'sh') RBRACE;
+fragment DEC_TRAIL: LBRACE ('s' | 'd') RBRACE;
 
 //DEC_FIXED:    DECIMAL+ ('.' DECIMAL+)?;
 //DEC_FLOAT_LITERAL:    DEC_FIXED_LITERAL ' '* 'E' ' '* (PLUS | MINUS)? DECIMAL+;
@@ -520,10 +520,10 @@ HEX_LITERAL
     ;
 
 OCT_LITERAL
-    :  LOCT+ (SPACE* DOT SPACE* LOCT+)? (LBRACK BASE_O RBRACK);
+    :  LOCT+ (SPACE* DOT SPACE* LOCT+)? (LBRACE BASE_O RBRACE);
 
 BIN_LITERAL
-    :  LBIN+ (SPACE* DOT SPACE* LBIN+)? (LBRACK BASE_B RBRACK);
+    :  LBIN+ (SPACE* DOT SPACE* LBIN+)? (LBRACE BASE_B RBRACE);
 
 DEC_LITERAL
     :  LDEC+ (SPACE* DOT SPACE* LDEC+)? (DEXP SPACE* LDEC*)? DEC_TRAIL?
@@ -662,6 +662,8 @@ LPAR:           '(';
 RPAR:           ')';
 LBRACK:         '[';
 RBRACK:         ']';
+LBRACE:         '{';
+RBRACE:         '}';
 RARROW:         '->';
 
 

@@ -1,8 +1,8 @@
 // any variable declared in the global scope MUST be explicitly declared as static
 // if it is not declared as external then it is internal, there is no 'internal' keyword.
 
-hex = 01F5 33DA 0F02 11B9:H
-bin = +1001 1101 0010 0011:B
+hex = 01F5 33DA 0F02 11B9 {h}
+bin = +1001 1101 0010 0011 {b}
 
 dcl global_count(32) bin16 static          // this defaults to internal
 dcl global_rate  bin16 static external // this is only legal in the global scope nn inside a proc
@@ -25,14 +25,14 @@ dcl throw string(32) bin(16)
 
 global_rate = -100
 
-binar = -1001 0111 1101:b
+binar = -1001 0111 1101{b}
 
-hexsum = -1e44:h + 75a2:h
+hexsum = -1e44{h} + 75a2{h}
 
-speed = -2400 1e34:h  // signed hex
+speed = -2400 1e34{h}  // signed hex
 rate = +1200 // signed dec
-velocity = 3400:h // unsigned hex
-errors = bin(-2F04:h,16) // signed 16 bit value 
+velocity = 3400{h} // unsigned hex
+errors = bin(-2F04 {h}, 16) // signed 16 bit value 
 
 dcl struct if
        struct then
@@ -45,7 +45,7 @@ end
 
 // "packed" here, means align all contained elements on the next avaiable byte/bit 
 
-dcl struct RCC at (1200 4300 8A00 0010:h) packed order (asc)
+dcl struct RCC at (1200 4300 8A00 0010{h}) packed order (asc)
     SW              bit(3)
     SWS             bit(3)
     STOPWUCK        bit(1)
