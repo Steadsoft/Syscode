@@ -43,7 +43,7 @@ statement:  preamble?  (call | return | alabel | /* scope | */  enum | if | decl
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes* statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
-structField: Spelling=identifier dimensionSuffix? Type=typeSpecifier attribute* statementSeparator;
+structField: Spelling=identifier dimensionSuffix? Type=dataAttribute attribute* statementSeparator;
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;
@@ -59,7 +59,7 @@ function: FUNCTION emptyLines? Spelling=identifier Params=paramList? Options=pro
 
 procOptions: OPTIONS LPAR (Main=MAIN)+ RPAR;
 
-enum: ENUM emptyLines? Name=identifier emptyLines? typeSpecifier? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
+enum: ENUM emptyLines? Name=identifier emptyLines? dataAttribute? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
 call: CALL emptyLines? Ref=reference statementSeparator;
 return: (RETURN (emptyLines? Exp=expression)?) statementSeparator ; //| (RETURN (emptyLines? expression)?)) statementSeparator;
 
@@ -126,17 +126,17 @@ elifBlock :     (ELIF emptyLines? ExprThen+=exprThenBlock)+;
 //     | AS As=identifier
 //     ;
 
-typeSpecifier
-    : Integer=integerType
-    | Bit=bitType
-    | String=stringType
-    | Entry=entryType
-    | Label=labelType
-    | Pointer=pointerType
-    | As=asType
-    | Bytes=bytepadType
-    | Builtin=builtinType
-    ;
+// dataAttribute
+//     : Integer=integerType
+//     | Bit=bitType
+//     | String=stringType
+//     | Entry=entryType
+//     | Label=labelType
+//     | Pointer=pointerType
+//     | As=asType
+//     | Bytes=bytepadType
+//     | Builtin=builtinType
+//     ;
 
 asType: AS Typename=identifier ;    
 
@@ -394,8 +394,8 @@ stackAttribute: STACK;
 initAttribute: INIT LPAR Value=expression RPAR;
 unitType: UNIT;
 
-entryArgTypes: LPAR typeSpecifier (COMMA typeSpecifier)* RPAR;
-returnDescriptor: AS LPAR typeSpecifier RPAR;
+entryArgTypes: LPAR dataAttribute (COMMA dataAttribute)* RPAR;
+returnDescriptor: AS LPAR dataAttribute RPAR;
 
 // binaryCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN arguments?) ;
 // decimalType:  ((DEC | UDEC) arguments) ;
@@ -504,8 +504,8 @@ fragment LHEX:     (HEXCHARS SEP*);
 fragment LOCT:     (OCTCHARS SEP*);
 fragment LBIN:     (BINCHARS SEP*);
 fragment LDEC:     (DECCHARS SEP*);
-fragment DEXP:     'e' (PLUS | MINUS);
-fragment HEXP:     'p' (PLUS | MINUS);
+fragment DEXP:     'e' (PLUS | MINUS)?;
+fragment HEXP:     'p' (PLUS | MINUS)?;
 fragment SPACE:    ' ';
 fragment HEX_TRAIL: LBRACE ('h' | 'hs' | 'hd' | 'dh' | 'sh') RBRACE;
 fragment DEC_TRAIL: LBRACE ('s' | 'd') RBRACE;

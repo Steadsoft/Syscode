@@ -77,7 +77,7 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
         struct inner1
             field1_1 bin8
             field1_1 bin8 offset(8)
-            unused bytepad(7)
+            unused bit(8) pad
         end
         struct inner2
             field2_1 bin8
