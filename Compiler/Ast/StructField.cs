@@ -1,4 +1,5 @@
 ﻿using static Syscode.LexerHelper.TokenText;
+//using static SyscodeParser;
 
 namespace Syscode
 {
@@ -8,11 +9,11 @@ namespace Syscode
         private string typeName;
         private List<BoundsPair> bounds = new();
         private int length;
-
+        private bool pad;
         public string TypeName { get => typeName; set => typeName = value; }
         public List<BoundsPair> Bounds { get => bounds; set => bounds = value; }
         public int Length { get => length; set => length = value; }
-
+        public bool Pad => pad;
         public StructField(SyscodeParser.StructFieldContext context) : base(context)
         {
             var bounds = new List<BoundsPair>();
@@ -52,6 +53,12 @@ namespace Syscode
                         Length = Convert.ToInt32(type.Substring(6));
                     }
                 }
+            }
+
+            if (context._Attr.Any())
+            {
+                if (context._Attr.OfType<SyscodeParser.PadContext>().Any())
+                    pad = true;
             }
         }
 

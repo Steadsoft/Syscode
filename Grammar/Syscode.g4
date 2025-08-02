@@ -44,7 +44,7 @@ statement:  preamble?  (call | return | alabel | /* scope | */  enum | if | decl
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes* statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
-structField: Spelling=identifier dimensionSuffix? Type=dataAttribute attribute* statementSeparator;
+structField: Spelling=identifier dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;
@@ -96,7 +96,7 @@ attribute
     | basedAttribute         #Based
     | stackAttribute         #Stack
     | initAttribute          #Init
-    | PAD                    #Pad
+    | padAttribute           #Pad
     ;
 
 
@@ -184,8 +184,11 @@ typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN 
 
 assignment 
     : Ref=reference comparer Exp=expression statementSeparator
-    // | LPAR reference COMMA reference RPAR comparer expression statementSeparator; this is too 'out there' for an initial language design. 
     ;
+    
+    
+    // | LPAR reference COMMA reference RPAR comparer expression statementSeparator; this is too 'out there' for an initial language design. 
+    
 
 comparer: EQUALS | COMPASSIGN;
 
@@ -243,23 +246,11 @@ expression
   | Left=expression emptyLines? Operator=binop emptyLines? Rite=expression     # ExprBinary
   ;
 
-binop
-    :mulDiv
-    |addSub
-    |shiftRotate
-    |concatenate
-    |comparison
-    |boolAnd
-    |boolXor
-    |boolOr
-    |logand
-    |logor
-    ;
+
 
 primitiveExpression
   : Numeric=numericLiteral   #LiteralArithmetic
   | String=stringLiteral     #LiteralString
-  //| customLiteral
   | Reference=reference      #Ref
   ;
 
@@ -294,6 +285,19 @@ decLiteral
 // customLiteral // Used to allow stuff like 23.5MHz to represent 23.5 (or whatever, defined by the code somewhere)
 //     : (CUSTOM_LITERAL)
 //     ;
+
+binop
+    :mulDiv
+    |addSub
+    |shiftRotate
+    |concatenate
+    |comparison
+    |boolAnd
+    |boolXor
+    |boolOr
+    |logand
+    |logor
+    ;
 
 parenthesizedExpression
   : LPAR Expr=expression RPAR
@@ -407,6 +411,7 @@ constAttribute: CONST;
 alignedAttribute: ALIGNED (LPAR Alignment=expression RPAR)?;
 offsetAttribute: OFFSET (LPAR Offset=expression RPAR);
 packedAttribute: PACKED;    
+padAttribute: PAD;
 externalAttribute: EXTERNAL;
 internalAttribute: INTERNAL;
 staticAttribute: STATIC;
@@ -636,17 +641,17 @@ AND:            '&';
 OR:             '|';
 NAND:           '~&';
 NOR:            '~|';
-XOR:            '^'|'⊕';      // U+2295 excluisve bitwise OR
-XNOR:           '~^'|'~⊕';    // U+2295
+XOR:            '^';      // U+2295 excluisve bitwise OR
+XNOR:           '~^';    // U+2295
 NOT:            '~';
 GT:             '>';
 LT:             '<';
-GTE:            '>='|'≥';
-LTE:            '<='|'≤';
+GTE:            '>=';
+LTE:            '<=';
 NGT:            '~>';
 NLT:            '~<';
-NE:             '~='|'≠';
-POWER:          '**' | '🠕';   // U+1F815
+NE:             '~=';
+POWER:          '**' ;   // U+1F815
 STR_LITERAL:    (QUOTE (.)*? QUOTE);
 PLUS:           '+';
 OPLUS:          '[+]';
@@ -658,7 +663,7 @@ TIMES:          '*';
 OTIMES:         '[*]';
 STIMES:         '(*)';
 LCOM:           '//';
-DIVIDE:         '/' | '÷';    // U+00F7
+DIVIDE:         '/' ;    // U+00F7
 PCNT:           '%';
 QUOTE:          '"';
 REDAND:         '<&';
@@ -667,8 +672,8 @@ REDXOR:         '<^';   // U+2295
 L_LOG_SHIFT:    '<<';         // logical: left bit lost rite bit becomes zero
 R_LOG_SHIFT:    '>>';         // logical: rite bit lost left bit becomes zero
 R_ART_SHIFT:    '>>>';        // arithmetic: rite bit lost left bit is copy of sign bit
-L_ROTATE:       '<@'|'⧀';    // U+29C0 rotate: left bit rotated out rite bit becomes that rotated left bit
-R_ROTATE:       '@>'|'⧁';    // U+29C1 rotate: rite bit rotated out left bit becomes that rotated rite bit
+L_ROTATE:       '<@';    // U+29C0 rotate: left bit rotated out rite bit becomes that rotated left bit
+R_ROTATE:       '@>';    // U+29C1 rotate: rite bit rotated out left bit becomes that rotated rite bit
 EQUALS:         '=' ;
 ASSIGN:         '<-';
 

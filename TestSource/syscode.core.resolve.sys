@@ -57,6 +57,7 @@ dcl struct RCC at (1200 4300 8A00 0010{h}) packed order (asc)
     TIMPRE          bit(1)
     RESERVED        bit(2) pad
     MCO(2)          as MCO
+    RESERVED        bit(8) pad
 end
 
 type struct MCO 
@@ -113,8 +114,8 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
 
     call reset_database(x,y,z)
 
-    ord = 23  +  45                  // ordinary
-    sat = 23 (+) 45                  // saturated
+    ord = 23  +  45    // ordinary
+    sat = 23 (+) 45    // saturated
     sum = 23 [+] 45    // overflow aware
 
     if @main overflowed then
@@ -129,6 +130,8 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
         end
           
         if retries = 0 then
+
+        logic = arc <@ b << k & <& H
 
         end
     end

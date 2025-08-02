@@ -10,12 +10,14 @@ namespace Syscode
         {
             Console.Clear();
 
+            
+
             AstNode ast = null;
             var compiler = new SyscodeCompiler(@"..\..\..\..\TestSource\messages.json");
 
             compiler.diagnostics += onFileFound;
 
-            var cst = compiler.ParseSourceFile(@"..\..\..\..\TestSource\literals.sys");
+            var cst = compiler.ParseSourceFile(@"..\..\..\..\TestSource\syscode.core.resolve.sys");
 
             //compiler.PrintConcreteSyntaxTree(cst);
 

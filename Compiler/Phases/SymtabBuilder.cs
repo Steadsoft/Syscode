@@ -116,7 +116,7 @@ namespace Syscode
         }
         private void ValidateStructure(StructBody Struct)
         {
-            var memberNames = Struct.Fields.Select(s => s.Spelling).Concat(Struct.Structs.Select(s => s.Spelling));
+            var memberNames = Struct.Fields.Where(f => f.Pad == false).Select(s => s.Spelling).Concat(Struct.Structs.Select(s => s.Spelling));
 
             var nameGroups = memberNames.GroupBy(memberNames => memberNames);
 
