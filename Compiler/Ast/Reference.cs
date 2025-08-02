@@ -7,8 +7,8 @@ namespace Syscode
     public class Reference : AstNode
     {
         private Reference? preceding = null; // only populated if this ref is the left of ref -> ref
-        private List<Arguments> argumentsList = new();
-        private BasicReference basic = null;
+        private readonly List<Arguments> argumentsList = new();
+        private readonly BasicReference basic;
         private bool resolved = false;
         private Report? report = null;
         public Reference(ReferenceContext context, AstBuilder builder) : base(context)

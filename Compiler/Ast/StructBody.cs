@@ -4,24 +4,34 @@ namespace Syscode
 {
     public class StructBody : AstNode
     {
-        public string Spelling;
-        private List<BoundsPair> bounds = new();
-        private List<StructBody> structs = new List<StructBody>();
-        private List<StructField> fields = new List<StructField>();
-        private bool isKeyword;
-        public List<BoundsPair> Bounds { get => bounds; set => bounds = value; }
-        public List<StructBody> Structs { get => structs; set => structs = value; }
-        public List<StructField> Fields { get => fields; set => fields = value; }
-        public bool IsKeyword { get => isKeyword; set => isKeyword = value; }
+        private readonly string spelling;
+        private readonly List<BoundsPair> bounds = new();
+        private readonly List<StructBody> structs = new List<StructBody>();
+        private readonly List<StructField> fields = new List<StructField>();
+        private readonly bool isKeyword;
+        public List<BoundsPair> Bounds { get => bounds; }
+        public List<StructBody> Structs { get => structs; }
+        public List<StructField> Fields { get => fields; }
+        public bool IsKeyword { get => isKeyword;}
+        public string Spelling => spelling;
 
-        public StructBody(StructBodyContext context) : base(context)
+        public StructBody(StructBodyContext context, AstBuilder builder) : base(context)
         {
+            spelling = context.Spelling.GetText();
+            isKeyword = context.Spelling.children.OfType<KeywordContext>().Any();
+
+            if (context.Dims != null)
+            {
+                bounds = builder.CreateBounds(context.Dims);
+            }
+
+            structs = context._Structs.Select(builder.CreateStructure).ToList(); //context.GetExactNodes<StructBodyContext>().Select(CreateStructure).ToList();
+            fields = context._Fields.Select(builder.CreateField).ToList();  //context.GetExactNodes<StructFieldContext>().Select(CreateField).ToList(); ;
         }
 
         public override string ToString()
         {
-            return $"{nameof(StructBody)}: {Spelling}";
+            return $"{nameof(StructBody)}: {spelling}";
         }
-
     }
 }

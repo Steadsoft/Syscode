@@ -43,8 +43,8 @@ compilation: (statement* endOfFile);
 statement:  preamble?  (call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | leave | assignment );
 
 //struct: STRUCT structBody ;
-structBody: STRUCT Spelling=identifier dimensionSuffix? structAttributes* statementSeparator emptyLines? ((Field=structField|Struct=structBody) emptyLines?)* END ;
-structField: Spelling=identifier dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
+structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? structAttributes* statementSeparator emptyLines? ((Fields+=structField|Structs+=structBody) emptyLines?)* END ;
+structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;

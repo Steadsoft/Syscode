@@ -14,11 +14,17 @@ namespace Syscode
         public List<BoundsPair> Bounds { get => bounds; set => bounds = value; }
         public int Length { get => length; set => length = value; }
         public bool Pad => pad;
-        public StructField(SyscodeParser.StructFieldContext context) : base(context)
+        public StructField(SyscodeParser.StructFieldContext context, AstBuilder builder) : base(context)
         {
             var bounds = new List<BoundsPair>();
 
-            Spelling = context.GetLabelText(nameof(SyscodeParser.StructFieldContext.Spelling));
+            Spelling = context.Spelling.GetText();// GetLabelText(nameof(SyscodeParser.StructFieldContext.Spelling));
+            
+            if (context.Dims != null)
+            {
+                bounds = builder.CreateBounds(context.Dims);
+
+            }
             var type = context.GetLabelText(nameof(SyscodeParser.StructFieldContext.Type));
 
             if (type.Contains(',') ==  false )

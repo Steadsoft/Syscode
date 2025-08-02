@@ -61,9 +61,11 @@ namespace Syscode
             var text = Type switch
             {
                 ExpressionType.Primitive => Reference?.ToString(),
-                ExpressionType.Binary => $"{Left} {LexerHelper.GetOperatorText(Operator)} {Right}" ,
+                ExpressionType.Binary => $"{Left} {LexerHelper.GetOperatorText(Operator)} {Right}",
                 ExpressionType.Literal => Literal?.ToString(),
-                ExpressionType.Prefix => $"{LexerHelper.GetOperatorText(Operator)} {Right}"
+                ExpressionType.Prefix => $"{LexerHelper.GetOperatorText(Operator)} {Right}",
+                ExpressionType.None => "INVALID TYPE!",
+                _ => throw new NotImplementedException()
             };
 
             if (Parenthesized)

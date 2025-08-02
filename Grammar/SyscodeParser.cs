@@ -559,8 +559,11 @@ public partial class SyscodeParser : Parser {
 
 	public partial class StructBodyContext : ParserRuleContext {
 		public IdentifierContext Spelling;
-		public StructFieldContext Field;
-		public StructBodyContext Struct;
+		public DimensionSuffixContext Dims;
+		public StructFieldContext _structField;
+		public IList<StructFieldContext> _Fields = new List<StructFieldContext>();
+		public StructBodyContext _structBody;
+		public IList<StructBodyContext> _Structs = new List<StructBodyContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRUCT() { return GetToken(SyscodeParser.STRUCT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
@@ -568,9 +571,6 @@ public partial class SyscodeParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
 			return GetRuleContext<IdentifierContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public DimensionSuffixContext dimensionSuffix() {
-			return GetRuleContext<DimensionSuffixContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StructAttributesContext[] structAttributes() {
 			return GetRuleContexts<StructAttributesContext>();
@@ -583,6 +583,9 @@ public partial class SyscodeParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines(int i) {
 			return GetRuleContext<EmptyLinesContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public DimensionSuffixContext dimensionSuffix() {
+			return GetRuleContext<DimensionSuffixContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StructFieldContext[] structField() {
 			return GetRuleContexts<StructFieldContext>();
@@ -622,7 +625,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==LPAR) {
 				{
 				State = 262;
-				dimensionSuffix();
+				_localctx.Dims = dimensionSuffix();
 				}
 			}
 
@@ -665,13 +668,15 @@ public partial class SyscodeParser : Parser {
 					case 1:
 						{
 						State = 275;
-						_localctx.Field = structField();
+						_localctx._structField = structField();
+						_localctx._Fields.Add(_localctx._structField);
 						}
 						break;
 					case 2:
 						{
 						State = 276;
-						_localctx.Struct = structBody();
+						_localctx._structBody = structBody();
+						_localctx._Structs.Add(_localctx._structBody);
 						}
 						break;
 					}
@@ -709,6 +714,7 @@ public partial class SyscodeParser : Parser {
 
 	public partial class StructFieldContext : ParserRuleContext {
 		public IdentifierContext Spelling;
+		public DimensionSuffixContext Dims;
 		public DataAttributeContext Type;
 		public AttributeContext _attribute;
 		public IList<AttributeContext> _Attr = new List<AttributeContext>();
@@ -753,7 +759,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==LPAR) {
 				{
 				State = 290;
-				dimensionSuffix();
+				_localctx.Dims = dimensionSuffix();
 				}
 			}
 

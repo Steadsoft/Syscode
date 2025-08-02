@@ -503,34 +503,15 @@ namespace Syscode
         {
             return new Type(context) { Body = CreateStructure(context.Body) };
         }
-        private StructBody CreateStructure(StructBodyContext context)
+        public StructBody CreateStructure(StructBodyContext context)
         {
-            var bounds = new List<BoundsPair>();
-            var spelling = context.GetLabelText(nameof(StructBodyContext.Spelling));
-            var iskeyword = context.Spelling.children.OfType<KeywordContext>().Any();
-
-            if (context.TryGetExactNode<DimensionSuffixContext>(out var dimensions))
-            {
-                bounds = CreateBounds(dimensions);
-            }
-
-            var structs = context.GetExactNodes<StructBodyContext>().Select(CreateStructure).ToList();
-            var fields = context.GetExactNodes<StructFieldContext>().Select(CreateField).ToList(); ;
-
-            return new StructBody(context) { IsKeyword = iskeyword, Spelling = spelling, Bounds = bounds, Structs = structs, Fields = fields };
+            return new StructBody(context, this);
         }
-        private StructField CreateField(StructFieldContext context)
+        public StructField CreateField(StructFieldContext context)
         {
-            var bounds = new List<BoundsPair>();
-
-            if (context.TryGetExactNode<SyscodeParser.DimensionSuffixContext>(out var dimensions))
-            {
-                bounds = CreateBounds(dimensions);
-            }
-
-            return new StructField(context) { Bounds = bounds };
+            return new StructField(context, this);
         }
-        private List<BoundsPair> CreateBounds(DimensionSuffixContext context)
+        public List<BoundsPair> CreateBounds(DimensionSuffixContext context)
         {
             return context.Pair._BoundPairs.Select(p => new BoundsPair(p,this)).ToList();
         }
