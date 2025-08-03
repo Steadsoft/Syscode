@@ -28,6 +28,9 @@ namespace Syscode
             this.reporter = reporter;
             this.lexer = lexer;
         }
+
+
+
         public AstNode Generate(ParserRuleContext rule)
         {
             return rule switch
@@ -49,6 +52,10 @@ namespace Syscode
                 _ => new AstNode(rule)
             };
         }
+
+
+
+
         private Leave CreateLeave(LeaveContext context)
         {
             // TODO: The ref on a leave stmt must be a simple identifier.
@@ -60,10 +67,10 @@ namespace Syscode
 
             return context switch
             {
-                LoopAlwaysContext always => new Always(always, this) ,
-                LoopForContext forl => new For(forl,this),
-                LoopUntilContext untilc => new Until(untilc,this),
-                LoopWhileContext whilec => new While(whilec,this),
+                LoopAlwaysContext loop => new Always(loop,this) ,
+                LoopForContext loop => new For(loop,this),
+                LoopUntilContext loop => new Until(loop,this),
+                LoopWhileContext loop => new While(loop,this),
             };
 
             throw new InternalErrorException($"Unrecognized loop syntax on line {context.Start.Line}");

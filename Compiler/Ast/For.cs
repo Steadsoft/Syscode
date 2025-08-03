@@ -15,7 +15,7 @@ namespace Syscode
         private Expression? untilExp;
         private Expression? whileExp;
 
-        public Reference ForRef { get => forRef; set => forRef = value; }
+        public Reference Ref { get => forRef; set => forRef = value; }
         public Expression From { get => from; set => from = value; }
         public Expression To { get => to; set => to = value; }
         public Expression? By { get => by; set => by = value; }
@@ -44,9 +44,9 @@ namespace Syscode
             StringBuilder builder = new StringBuilder();
 
             if (By == null) 
-                builder.Append($"for {ForRef} = {From} to {To}");
+                builder.Append($"for {Ref} = {From} to {To}");
             else
-                builder.Append($"for {ForRef} = {From} to {To} by {By}");
+                builder.Append($"for {Ref} = {From} to {To} by {By}");
 
             if (WhileExp != null)
                 builder.Append($" while {WhileExp}");

@@ -281,10 +281,14 @@
 
             if (expression.Type == ExpressionType.Binary)
             {
-                if (expression.Left?.Type == ExpressionType.Primitive)
-                    ReportUnresolvedReference(node, expression.Left?.Reference);
-                if (expression.Right?.Type == ExpressionType.Primitive)
-                    ReportUnresolvedReference(node, expression.Right?.Reference);
+                var left = expression.Left?.Reference;
+                var rite = expression.Right?.Reference;
+
+                if (left != null) 
+                    ReportUnresolvedReference(node, left);
+
+                if (rite != null)
+                    ReportUnresolvedReference(node, rite);
             }
 
         }

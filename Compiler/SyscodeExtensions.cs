@@ -81,7 +81,7 @@ namespace Syscode
 
             return (T)matches.Single();
         }
-        public static bool TryGetExactNode<T>(this ParserRuleContext context, out T node) where T : ParserRuleContext
+        public static bool TryGetExactNode<T>(this ParserRuleContext context, out T? node) where T : ParserRuleContext
         {
             node = null;
 
@@ -104,7 +104,7 @@ namespace Syscode
             return true;
 
         }
-        public static bool TryGetDerivedNode<T>(this ParserRuleContext context, out T node) where T : ParserRuleContext
+        public static bool TryGetDerivedNode<T>(this ParserRuleContext context, out T? node) where T : ParserRuleContext
         {
             node = null;
 

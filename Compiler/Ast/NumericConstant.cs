@@ -28,7 +28,8 @@ namespace Syscode
         private Operator prefix;
         public NumericConstant(string rawtext, Operator prefix) 
         {
-            literalText = rawtext.Trim().Replace(" ","").ToUpper(); 
+            literalText = rawtext.Trim().Replace(" ","").ToUpper();
+            this.prefix = prefix;
 
             SetBase(literalText);
             SetScale(literalText);
