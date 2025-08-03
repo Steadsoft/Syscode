@@ -6,7 +6,8 @@ namespace Syscode
     {
         public Always(LoopAlwaysContext context, AstBuilder builder) : base(context)
         {
-            Statements = context.Always._Statements.Select(builder.Generate).ToList();
+            this.Statements = context.Always._Statements.Select(builder.Generate).ToList();
+            this.Label = context.Always.Name?.GetText().Replace("@", "");
         }
     }
 }

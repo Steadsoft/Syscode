@@ -34,6 +34,8 @@ namespace Syscode
             whileExp = context.For.While?.Exp.SafeCreate(builder.CreateExpression);
             untilExp = context.For.Until?.Exp.SafeCreate(builder.CreateExpression);
 
+            this.Label = context.For.Name?.GetText().Replace("@", "");
+
             Statements = context.For._Statements.Select(builder.Generate).ToList();
         }
 
