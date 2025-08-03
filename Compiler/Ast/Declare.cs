@@ -22,7 +22,7 @@ namespace Syscode
         public List<Attribute> Attributes = new();
         public List<Expression> typeSubscripts = new();
         private bool constantSize = true;
-        private Alignment alignment = new Alignment();
+        private Alignment alignment = new();
         private IContainer container;
         private bool isKeyword;
         private bool validated = false;

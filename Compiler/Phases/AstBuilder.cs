@@ -58,36 +58,13 @@ namespace Syscode
         {
             if (context == null) throw new ArgumentNullException("context");
 
-            if (context.Loop != null)
+            return context switch
             {
-                return new Loop(context)
-                {
-                    Statements = GetStatements(context.Loop).Select(Generate).ToList()
-                };
-            }
-            if (context.For != null)
-            {
-                return new For(context.For,this)
-                {
-                    Statements = GetStatements(context.For).Select(Generate).ToList()
-                };
-            }
-
-            if (context.While != null)
-            {
-                return new While(context.While, this)
-                {
-                    Statements = GetStatements(context.While).Select(Generate).ToList()
-                };
-            }
-
-            if (context.Until != null)
-            {
-                return new Until(context.Until,this)
-                {
-                    Statements = GetStatements(context.Until).Select(Generate).ToList()
-                };
-            }
+                LoopAlwaysContext always => new Always(always, this) ,
+                LoopForContext forl => new For(forl,this),
+                LoopUntilContext untilc => new Until(untilc,this),
+                LoopWhileContext whilec => new While(whilec,this),
+            };
 
             throw new InternalErrorException($"Unrecognized loop syntax on line {context.Start.Line}");
         }
@@ -97,7 +74,7 @@ namespace Syscode
         }
         private Label CreateLabel(AlabelContext context)
         {
-            return new Label(context) { Spelling = context.Name.Spelling.GetText(), Subscript = context.Subscript?.Literal.GetText() };
+            return new Label(context);
         }
         private Return CreateReturn(ReturnContext context)
         {

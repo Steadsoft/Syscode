@@ -22,17 +22,19 @@ namespace Syscode
         public Expression? UntilExp { get => untilExp; set => untilExp = value; }
         public Expression? WhileExp { get => whileExp; set => whileExp = value; }
 
-        public For(ForLoopContext context, AstBuilder builder) : base(context)
+        public For(LoopForContext context, AstBuilder builder) : base(context)
         {
             // Compulsory
-            forRef = builder.CreateReference(context.For);
-            from = builder.CreateExpression(context.From);
-            to = builder.CreateExpression(context.To);
+            forRef = builder.CreateReference(context.For.For);
+            from = builder.CreateExpression(context.For.From);
+            to = builder.CreateExpression(context.For.To);
 
             // Optional
-            by = context.By?.SafeCreate(builder.CreateExpression);
-            whileExp = context.While?.Exp.SafeCreate(builder.CreateExpression);
-            untilExp = context.Until?.Exp.SafeCreate(builder.CreateExpression);
+            by = context.For.By?.SafeCreate(builder.CreateExpression);
+            whileExp = context.For.While?.Exp.SafeCreate(builder.CreateExpression);
+            untilExp = context.For.Until?.Exp.SafeCreate(builder.CreateExpression);
+
+            Statements = context.For._Statements.Select(builder.Generate).ToList();
         }
 
         public override string ToString()

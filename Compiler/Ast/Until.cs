@@ -11,10 +11,11 @@ namespace Syscode
         public Expression UntilExp { get => untilExp; }
         public Expression? WhileExp { get => whileExp; set => whileExp = value; }
 
-        public Until(UntilLoopContext context, AstBuilder builder) : base(context)
+        public Until(LoopUntilContext context, AstBuilder builder) : base(context)
         {
-            this.untilExp = builder.CreateExpression(context.Until.Exp);
-            this.whileExp = context.While?.Exp.SafeCreate(builder.CreateExpression);
+            this.untilExp = builder.CreateExpression(context.Until.Until.Exp);
+            this.whileExp = context.Until.While?.Exp.SafeCreate(builder.CreateExpression);
+            this.Statements = context.Until._Statements.Select(builder.Generate).ToList();
         }
 
         public override string ToString()

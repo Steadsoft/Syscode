@@ -560,6 +560,8 @@ public partial class SyscodeParser : Parser {
 	public partial class StructBodyContext : ParserRuleContext {
 		public IdentifierContext Spelling;
 		public DimensionSuffixContext Dims;
+		public StructAttributesContext _structAttributes;
+		public IList<StructAttributesContext> _Attr = new List<StructAttributesContext>();
 		public StructFieldContext _structField;
 		public IList<StructFieldContext> _Fields = new List<StructFieldContext>();
 		public StructBodyContext _structBody;
@@ -572,12 +574,6 @@ public partial class SyscodeParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
 			return GetRuleContext<IdentifierContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public StructAttributesContext[] structAttributes() {
-			return GetRuleContexts<StructAttributesContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StructAttributesContext structAttributes(int i) {
-			return GetRuleContext<StructAttributesContext>(i);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext[] emptyLines() {
 			return GetRuleContexts<EmptyLinesContext>();
 		}
@@ -586,6 +582,12 @@ public partial class SyscodeParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public DimensionSuffixContext dimensionSuffix() {
 			return GetRuleContext<DimensionSuffixContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StructAttributesContext[] structAttributes() {
+			return GetRuleContexts<StructAttributesContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StructAttributesContext structAttributes(int i) {
+			return GetRuleContext<StructAttributesContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StructFieldContext[] structField() {
 			return GetRuleContexts<StructFieldContext>();
@@ -636,7 +638,8 @@ public partial class SyscodeParser : Parser {
 				{
 				{
 				State = 265;
-				structAttributes();
+				_localctx._structAttributes = structAttributes();
+				_localctx._Attr.Add(_localctx._structAttributes);
 				}
 				}
 				State = 270;
@@ -969,11 +972,12 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class GotoSubscriptContext : ParserRuleContext {
+		public ExpressionContext Expr;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAR() { return GetToken(SyscodeParser.LPAR, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAR() { return GetToken(SyscodeParser.RPAR, 0); }
 		public GotoSubscriptContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -991,7 +995,7 @@ public partial class SyscodeParser : Parser {
 			State = 319;
 			Match(LPAR);
 			State = 320;
-			expression(0);
+			_localctx.Expr = expression(0);
 			State = 321;
 			Match(RPAR);
 			}
@@ -2358,27 +2362,44 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class LoopContext : ParserRuleContext {
-		public LoopLoopContext Loop;
-		public ForLoopContext For;
-		public WhileLoopContext While;
-		public UntilLoopContext Until;
-		[System.Diagnostics.DebuggerNonUserCode] public LoopLoopContext loopLoop() {
-			return GetRuleContext<LoopLoopContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ForLoopContext forLoop() {
-			return GetRuleContext<ForLoopContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public WhileLoopContext whileLoop() {
-			return GetRuleContext<WhileLoopContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public UntilLoopContext untilLoop() {
-			return GetRuleContext<UntilLoopContext>(0);
-		}
 		public LoopContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
 		public override int RuleIndex { get { return RULE_loop; } }
+	 
+		public LoopContext() { }
+		public virtual void CopyFrom(LoopContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class LoopForContext : LoopContext {
+		public ForLoopContext For;
+		[System.Diagnostics.DebuggerNonUserCode] public ForLoopContext forLoop() {
+			return GetRuleContext<ForLoopContext>(0);
+		}
+		public LoopForContext(LoopContext context) { CopyFrom(context); }
+	}
+	public partial class LoopAlwaysContext : LoopContext {
+		public LoopLoopContext Always;
+		[System.Diagnostics.DebuggerNonUserCode] public LoopLoopContext loopLoop() {
+			return GetRuleContext<LoopLoopContext>(0);
+		}
+		public LoopAlwaysContext(LoopContext context) { CopyFrom(context); }
+	}
+	public partial class LoopWhileContext : LoopContext {
+		public WhileLoopContext While;
+		[System.Diagnostics.DebuggerNonUserCode] public WhileLoopContext whileLoop() {
+			return GetRuleContext<WhileLoopContext>(0);
+		}
+		public LoopWhileContext(LoopContext context) { CopyFrom(context); }
+	}
+	public partial class LoopUntilContext : LoopContext {
+		public UntilLoopContext Until;
+		[System.Diagnostics.DebuggerNonUserCode] public UntilLoopContext untilLoop() {
+			return GetRuleContext<UntilLoopContext>(0);
+		}
+		public LoopUntilContext(LoopContext context) { CopyFrom(context); }
 	}
 
 	[RuleVersion(0)]
@@ -2390,31 +2411,35 @@ public partial class SyscodeParser : Parser {
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,47,Context) ) {
 			case 1:
+				_localctx = new LoopAlwaysContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 497;
-				_localctx.Loop = loopLoop();
+				((LoopAlwaysContext)_localctx).Always = loopLoop();
 				}
 				break;
 			case 2:
+				_localctx = new LoopForContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
 				State = 498;
-				_localctx.For = forLoop();
+				((LoopForContext)_localctx).For = forLoop();
 				}
 				break;
 			case 3:
+				_localctx = new LoopWhileContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
 				State = 499;
-				_localctx.While = whileLoop();
+				((LoopWhileContext)_localctx).While = whileLoop();
 				}
 				break;
 			case 4:
+				_localctx = new LoopUntilContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
 				State = 500;
-				_localctx.Until = untilLoop();
+				((LoopUntilContext)_localctx).Until = untilLoop();
 				}
 				break;
 			}
@@ -2438,6 +2463,8 @@ public partial class SyscodeParser : Parser {
 		public ExpressionContext By;
 		public WhileConditionContext While;
 		public UntilConditionContext Until;
+		public StatementContext _statement;
+		public IList<StatementContext> _Statements = new List<StatementContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DO() { return GetToken(SyscodeParser.DO, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EQUALS() { return GetToken(SyscodeParser.EQUALS, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TO() { return GetToken(SyscodeParser.TO, 0); }
@@ -2458,12 +2485,6 @@ public partial class SyscodeParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines(int i) {
 			return GetRuleContext<EmptyLinesContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
-			return GetRuleContexts<StatementContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
-			return GetRuleContext<StatementContext>(i);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
 			return GetRuleContext<LabelNameContext>(0);
 		}
@@ -2472,6 +2493,12 @@ public partial class SyscodeParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public UntilConditionContext untilCondition() {
 			return GetRuleContext<UntilConditionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
+			return GetRuleContexts<StatementContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
+			return GetRuleContext<StatementContext>(i);
 		}
 		public ForLoopContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -2609,7 +2636,8 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					State = 537;
-					statement();
+					_localctx._statement = statement();
+					_localctx._Statements.Add(_localctx._statement);
 					}
 					} 
 				}
@@ -2646,16 +2674,12 @@ public partial class SyscodeParser : Parser {
 		public LabelNameContext Name;
 		public WhileConditionContext While;
 		public UntilConditionContext Until;
+		public StatementContext _statement;
+		public IList<StatementContext> _Statements = new List<StatementContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DO() { return GetToken(SyscodeParser.DO, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public WhileConditionContext whileCondition() {
 			return GetRuleContext<WhileConditionContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
-			return GetRuleContexts<StatementContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
-			return GetRuleContext<StatementContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines() {
 			return GetRuleContext<EmptyLinesContext>(0);
@@ -2665,6 +2689,12 @@ public partial class SyscodeParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public UntilConditionContext untilCondition() {
 			return GetRuleContext<UntilConditionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
+			return GetRuleContexts<StatementContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
+			return GetRuleContext<StatementContext>(i);
 		}
 		public WhileLoopContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -2714,7 +2744,8 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					State = 556;
-					statement();
+					_localctx._statement = statement();
+					_localctx._Statements.Add(_localctx._statement);
 					}
 					} 
 				}
@@ -2751,16 +2782,12 @@ public partial class SyscodeParser : Parser {
 		public LabelNameContext Name;
 		public UntilConditionContext Until;
 		public WhileConditionContext While;
+		public StatementContext _statement;
+		public IList<StatementContext> _Statements = new List<StatementContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DO() { return GetToken(SyscodeParser.DO, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public UntilConditionContext untilCondition() {
 			return GetRuleContext<UntilConditionContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
-			return GetRuleContexts<StatementContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
-			return GetRuleContext<StatementContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines() {
 			return GetRuleContext<EmptyLinesContext>(0);
@@ -2770,6 +2797,12 @@ public partial class SyscodeParser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public WhileConditionContext whileCondition() {
 			return GetRuleContext<WhileConditionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
+			return GetRuleContexts<StatementContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
+			return GetRuleContext<StatementContext>(i);
 		}
 		public UntilLoopContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -2819,7 +2852,8 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					State = 575;
-					statement();
+					_localctx._statement = statement();
+					_localctx._Statements.Add(_localctx._statement);
 					}
 					} 
 				}
@@ -2854,20 +2888,22 @@ public partial class SyscodeParser : Parser {
 
 	public partial class LoopLoopContext : ParserRuleContext {
 		public LabelNameContext Name;
+		public StatementContext _statement;
+		public IList<StatementContext> _Statements = new List<StatementContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DO() { return GetToken(SyscodeParser.DO, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LOOP() { return GetToken(SyscodeParser.LOOP, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode END() { return GetToken(SyscodeParser.END, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
-			return GetRuleContexts<StatementContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
-			return GetRuleContext<StatementContext>(i);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public EmptyLinesContext emptyLines() {
 			return GetRuleContext<EmptyLinesContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public LabelNameContext labelName() {
 			return GetRuleContext<LabelNameContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext[] statement() {
+			return GetRuleContexts<StatementContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public StatementContext statement(int i) {
+			return GetRuleContext<StatementContext>(i);
 		}
 		public LoopLoopContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -2907,7 +2943,8 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					State = 591;
-					statement();
+					_localctx._statement = statement();
+					_localctx._Statements.Add(_localctx._statement);
 					}
 					} 
 				}

@@ -202,19 +202,15 @@ namespace Syscode
         private void ValidateAttributes(Declare declaration)
         {
             var groups = declaration.Attributes.GroupBy(g => g.GetType());
-            bool dupes = false;
 
             foreach (var group in groups)
             {
                 if (group.Count() > 1)
                 {
                     reporter.Report(declaration, 1018, declaration.Spelling, group.Key.Name.ToLower());
-                    dupes = true;
                 }
             }
 
-            bool scopeSet = false;
-            bool classSet = false;
 
             foreach (var attribute in declaration.Attributes)
             {
@@ -281,7 +277,7 @@ namespace Syscode
         {
             alignment = null;
 
-            if (Aligned.Alignment.IsConstant && Aligned.Alignment.Literal != null)
+            if (Aligned.Alignment.IsConstant && Aligned.Alignment?.Literal != null)
             {
                 alignment = new Alignment();
                 alignment.AlignmentValue = Convert.ToInt32(Aligned.Alignment.Literal.Value);

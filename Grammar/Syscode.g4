@@ -43,7 +43,7 @@ compilation: (statement* endOfFile);
 statement:  preamble?  (call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | leave | assignment );
 
 //struct: STRUCT structBody ;
-structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? structAttributes* statementSeparator emptyLines? ((Fields+=structField|Structs+=structBody) emptyLines?)* END ;
+structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttributes* statementSeparator emptyLines? ((Fields+=structField|Structs+=structBody) emptyLines?)* END ;
 structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
@@ -51,7 +51,7 @@ labelName: ATSIGN Spelling=identifier;
 labelSubscript: LPAR Literal=decLiteral RPAR;
 
 goto: GOTO Ref=reference statementSeparator;
-gotoSubscript: LPAR expression RPAR;
+gotoSubscript: LPAR Expr=expression RPAR;
 
 scope:  blockScope; // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
 blockScope: (PACKAGE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
@@ -105,11 +105,17 @@ type: TYPE Body=structBody ;
 leave: LEAVE Ref=reference statementSeparator;
 
 // literal: LIT customLiteral AS decLiteral statementSeparator ;
-loop: Loop=loopLoop | For=forLoop | While=whileLoop | Until=untilLoop ;
-forLoop : DO Name=labelName? For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  statement* emptyLines? END ;
-whileLoop: DO Name=labelName? While=whileCondition Until=untilCondition?  statement* emptyLines? END;
-untilLoop: DO Name=labelName? Until=untilCondition While=whileCondition?  statement* emptyLines? END;
-loopLoop: DO Name=labelName? LOOP statement* emptyLines? END;
+loop
+    : Always=loopLoop     #LoopAlways 
+    | For=forLoop         #LoopFor
+    | While=whileLoop     #LoopWhile
+    | Until=untilLoop     #LoopUntil
+    ;
+
+forLoop : DO Name=labelName? For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  Statements+=statement* emptyLines? END ;
+whileLoop: DO Name=labelName? While=whileCondition Until=untilCondition?  Statements+=statement* emptyLines? END;
+untilLoop: DO Name=labelName? Until=untilCondition While=whileCondition?  Statements+=statement* emptyLines? END;
+loopLoop: DO Name=labelName? LOOP Statements+=statement* emptyLines? END;
 
 whileCondition: WHILE Exp=expression ;
 untilCondition: UNTIL Exp=expression ;
