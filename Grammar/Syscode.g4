@@ -31,7 +31,7 @@ preamble: (NEWLINE | SEMICOLON)+;
 statementSeparator : (SEMICOLON | NEWLINE | EOF); // EOF lets us end a source file with a line statement without needing a newline/semicolon
 emptyLines: NEWLINE+;
 
-compilation: (statement* endOfFile); 
+compilation: Statements+=statement* endOfFile; 
 
 // TODO: avoid 'scope' (aka 'package') for now this is not really a namespace in PL/I and the feature
 // needs to be carefully thought out. e.g two source files might each contribute stuff to a package and that 

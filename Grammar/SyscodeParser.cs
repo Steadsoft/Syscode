@@ -337,6 +337,8 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class CompilationContext : ParserRuleContext {
+		public StatementContext _statement;
+		public IList<StatementContext> _Statements = new List<StatementContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public EndOfFileContext endOfFile() {
 			return GetRuleContext<EndOfFileContext>(0);
 		}
@@ -361,7 +363,6 @@ public partial class SyscodeParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			{
 			State = 237;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,2,Context);
@@ -370,7 +371,8 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					State = 234;
-					statement();
+					_localctx._statement = statement();
+					_localctx._Statements.Add(_localctx._statement);
 					}
 					} 
 				}
@@ -380,7 +382,6 @@ public partial class SyscodeParser : Parser {
 			}
 			State = 240;
 			endOfFile();
-			}
 			}
 		}
 		catch (RecognitionException re) {

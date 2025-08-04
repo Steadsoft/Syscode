@@ -36,7 +36,7 @@ namespace Syscode
 
             this.Label = context.For.Name?.GetText().Replace("@", "");
 
-            Statements = context.For._Statements.Select(builder.Generate).ToList();
+            Statements = builder.GetStatements(context.For).Select(builder.Generate).ToList();
         }
 
         public override string ToString()

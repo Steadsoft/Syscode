@@ -227,6 +227,81 @@ namespace Syscode
 
             switch (node)
             {
+                case Always all:
+                    {
+                        Console.WriteLine($"{LineDepth(depth, all)} {all.GetType().Name} '{all.ToString()}'");
+
+                        var children = ((IContainer)(node)).Statements;
+
+                        if (children.Any())
+                        {
+                            foreach (var child in children)
+                            {
+                                depth++;
+                                PrintAbstractSyntaxTree(child, depth);
+                                depth--;
+                            }
+                        }
+
+                        break;
+                    }
+                case For all:
+                    {
+                        Console.WriteLine($"{LineDepth(depth, all)} {all.GetType().Name} '{all.ToString()}'");
+
+                        var children = ((IContainer)(node)).Statements;
+
+                        if (children.Any())
+                        {
+                            foreach (var child in children)
+                            {
+                                depth++;
+                                PrintAbstractSyntaxTree(child, depth);
+                                depth--;
+                            }
+                        }
+
+                        break;
+                    }
+
+                case While all:
+                    {
+                        Console.WriteLine($"{LineDepth(depth, all)} {all.GetType().Name} '{all.ToString()}'");
+
+                        var children = ((IContainer)(node)).Statements;
+
+                        if (children.Any())
+                        {
+                            foreach (var child in children)
+                            {
+                                depth++;
+                                PrintAbstractSyntaxTree(child, depth);
+                                depth--;
+                            }
+                        }
+
+                        break;
+                    }
+
+                case Until all:
+                    {
+                        Console.WriteLine($"{LineDepth(depth, all)} {all.GetType().Name} '{all.ToString()}'");
+
+                        var children = ((IContainer)(node)).Statements;
+
+                        if (children.Any())
+                        {
+                            foreach (var child in children)
+                            {
+                                depth++;
+                                PrintAbstractSyntaxTree(child, depth);
+                                depth--;
+                            }
+                        }
+
+                        break;
+                    }
+
                 case Call call:
                     {
                         Console.WriteLine($"{LineDepth(depth, call)} {call.GetType().Name} '{call.ToString()}'");
@@ -260,7 +335,7 @@ namespace Syscode
                     }
                 case If ifstmt:
                     {
-                        Console.WriteLine($"{LineDepth(depth, node)} {node.GetType().Name}");
+                        Console.WriteLine($"{LineDepth(depth, node)} {node.GetType().Name} {ifstmt.Condition}");
 
                         foreach (var child in ifstmt.ThenStatements)
                         {
@@ -273,7 +348,7 @@ namespace Syscode
 
                             foreach (var child in ifstmt.ElifStatements)
                             {
-                                Console.WriteLine($"{LineDepth(depth, node)} Elif");
+                                Console.WriteLine($"{LineDepth(depth, node)} Elif {child.Condition}");
 
                                 foreach (var elif in child.ThenStatements)
                                 {

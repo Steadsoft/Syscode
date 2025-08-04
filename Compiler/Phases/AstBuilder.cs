@@ -229,7 +229,7 @@ namespace Syscode
 
             return basic;
         }
-        private IEnumerable<ParserRuleContext> GetStatements(ParserRuleContext context)
+        public IEnumerable<ParserRuleContext> GetStatements(ParserRuleContext context)
         {
             return context.GetExactNodes<StatementContext>().Select(s => s.GetDerivedNode<ParserRuleContext>()).ToList();
         }
