@@ -263,7 +263,6 @@ namespace Syscode
 
                         break;
                     }
-
                 case While all:
                     {
                         Console.WriteLine($"{LineDepth(depth, all)} {all.GetType().Name} '{all.ToString()}'");
@@ -282,7 +281,6 @@ namespace Syscode
 
                         break;
                     }
-
                 case Until all:
                     {
                         Console.WriteLine($"{LineDepth(depth, all)} {all.GetType().Name} '{all.ToString()}'");
@@ -301,12 +299,23 @@ namespace Syscode
 
                         break;
                     }
-
                 case Call call:
                     {
                         Console.WriteLine($"{LineDepth(depth, call)} {call.GetType().Name} '{call.ToString()}'");
                         break;
                     }
+                case Goto gto:
+                    {
+                        Console.WriteLine($"{LineDepth(depth, gto)} {gto.GetType().Name} '{gto.ToString()}'");
+                        break;
+                    }
+
+                case Leave leave:
+                    {
+                        Console.WriteLine($"{LineDepth(depth, leave)} {leave.GetType().Name} '{leave.ToString()}'");
+                        break;
+                    }
+
                 case Return ret:
                     {
                         Console.WriteLine($"{LineDepth(depth, ret)} {ret.GetType().Name} '{ret.Expression?.ToString()}'");
@@ -335,7 +344,7 @@ namespace Syscode
                     }
                 case If ifstmt:
                     {
-                        Console.WriteLine($"{LineDepth(depth, node)} {node.GetType().Name} {ifstmt.Condition}");
+                        Console.WriteLine($"{LineDepth(depth, ifstmt)} {ifstmt.GetType().Name} {ifstmt.Condition} '{ifstmt.Label}'");
 
                         foreach (var child in ifstmt.ThenStatements)
                         {
@@ -348,7 +357,7 @@ namespace Syscode
 
                             foreach (var child in ifstmt.ElifStatements)
                             {
-                                Console.WriteLine($"{LineDepth(depth, node)} Elif {child.Condition}");
+                                Console.WriteLine($"{LineDepth(depth, child)} Elif {child.Condition}");
 
                                 foreach (var elif in child.ThenStatements)
                                 {
@@ -394,7 +403,6 @@ namespace Syscode
                         Console.WriteLine($"{LineDepth(depth, node)} {node.GetType().Name} '{((StructField)(node)).Spelling}' {((StructField)(node)).TypeName} {((StructField)(node)).Length}");
                         break;
                     }
-
                 case Procedure proc:
                     {
                         Console.WriteLine($"{LineDepth(depth, proc)} {proc.GetType().Name} '{proc.Spelling}' Main = {proc.Main}");
@@ -422,7 +430,6 @@ namespace Syscode
                         Console.WriteLine($"{LineDepth(depth, dcl)} {node.GetType().Name} '{dcl.Spelling}'");
                         break;
                     }
-
                 case Scope scope:
                     {
                         Console.WriteLine($"{LineDepth(depth, scope)} {node.GetType().Name} '{scope.Spelling}'");
