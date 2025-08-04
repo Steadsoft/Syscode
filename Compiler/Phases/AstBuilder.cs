@@ -229,27 +229,22 @@ namespace Syscode
 
             return basic;
         }
-        public IEnumerable<ParserRuleContext> GetStatements(ParserRuleContext context)
+        public List<AstNode> GenerateStatements(IList<StatementContext> context)
         {
-            return context.GetExactNodes<StatementContext>().Select(s => s.GetDerivedNode<ParserRuleContext>()).ToList();
+            return context.Select(s => s.GetDerivedNode<ParserRuleContext>()).Select(Generate).ToList();
         }
         private Compilation CreateCompilation(CompilationContext context)
         {
             if (compilation != null)
                 throw new InvalidOperationException("Internal error. There can only be a single 'compilation' when compiling a source file.");
 
-            compilation = new Compilation(context) { Statements = GetStatements(context).Select(Generate).ToList() };
+            compilation = new Compilation(context) { Statements = GenerateStatements(context._Statements) };
 
             return compilation;
         }
         private Scope CreateScope(ScopeContext context)
         {
-            if (context.TryGetExactNode<BlockScopeContext>(out var block))
-            {
-                return new Scope(block) { Spelling = block.GetExactNode<QualifiedNameContext>().GetText(), Statements = GetStatements(block).Select(Generate).ToList() };
-            }
-
-            throw new InvalidOperationException();
+            return new Scope(context) { Spelling = context.GetExactNode<QualifiedNameContext>().GetText(), Statements = GenerateStatements(context._Statements) };
         }
         private Declare CreateDeclaration(DeclareContext context)
         {
@@ -504,7 +499,7 @@ namespace Syscode
             var node = new Procedure(currentContainer, context, this);
 
             currentContainer = node;
-            node.Statements = [.. GetStatements(context).Select(Generate)];
+            node.Statements = [.. GenerateStatements(context._Statements)];
             currentContainer = node.Container;
 
             return node;
@@ -514,25 +509,25 @@ namespace Syscode
             var node = new Procedure(currentContainer, context, this); // a func is so similar to a proc we use same class to represent them.
 
             currentContainer = node;
-            node.Statements = [.. GetStatements(context).Select(Generate)];
+            node.Statements = [.. GenerateStatements(context._Statements)];
             currentContainer = node.Container;
 
             return node;
         }
         private Elif CreateElif(ExprThenBlockContext context)
         {
-            return new Elif(context, this) { ThenStatements = GetStatements(context.GetExactNode<ThenBlockContext>()).Select(Generate).ToList() };
+            return new Elif(context, this) { ThenStatements = GenerateStatements(context.Then._Statements)};
         }
         private If CreateIf(IfContext context)
         {
             List<AstNode> else_stmts = new();
             List<Elif> elifs = new();
 
-            var if_then_stmts = GetStatements(context.ExprThen.Then).Select(Generate).ToList();
+            var if_then_stmts = GenerateStatements(context.ExprThen.Then._Statements);
 
             if (context.Else != null)
             {
-                else_stmts.Load(GetStatements(context.Else.Then).Select(Generate));
+                else_stmts.Load(GenerateStatements(context.Else.Then._Statements));
             }
 
             if (context.Elif != null)  // at least one 'elif' is present

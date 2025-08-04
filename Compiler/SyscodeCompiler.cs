@@ -105,29 +105,29 @@ namespace Syscode
 
             switch (node)
             {
-                case Procedure proc:
+                case Procedure Procedure:
                     {
-                        foreach (var n in proc.Statements)
+                        foreach (var n in Procedure.Statements)
                         {
                             types.AddRange(GetLLVMStructTypes(n));
                         }
                         break;
                     }
-                case Compilation prog:
+                case Compilation Compilation:
                     {
-                        foreach (var n in prog.Statements)
+                        foreach (var n in Compilation.Statements)
                         {
                             types.AddRange(GetLLVMStructTypes(n));
                         }
                         break;
                     }
 
-                case StructBody structure:
+                case StructBody Structure:
                     {
-                        var txt = GetLLVMStructType(structure);
-                        types.Add(($"%{structure.Spelling}", txt));
+                        var txt = GetLLVMStructType(Structure);
+                        types.Add(($"%{Structure.Spelling}", txt));
 
-                        foreach (var m in structure.Structs)
+                        foreach (var m in Structure.Structs)
                         {
                             if (m is StructBody)
                             {
@@ -227,9 +227,9 @@ namespace Syscode
 
             switch (node)
             {
-                case Always all:
+                case Always Always:
                     {
-                        Console.WriteLine($"{LineDepth(depth, all)} {all.GetType().Name} '{all.ToString()}'");
+                        Console.WriteLine($"{LineDepth(depth, Always)} {Always.GetType().Name} '{Always.ToString()}'");
 
                         var children = ((IContainer)(node)).Statements;
 
@@ -245,9 +245,9 @@ namespace Syscode
 
                         break;
                     }
-                case For all:
+                case For For:
                     {
-                        Console.WriteLine($"{LineDepth(depth, all)} {all.GetType().Name} '{all.ToString()}'");
+                        Console.WriteLine($"{LineDepth(depth, For)} {For.GetType().Name} '{For.ToString()}'");
 
                         var children = ((IContainer)(node)).Statements;
 
@@ -263,9 +263,9 @@ namespace Syscode
 
                         break;
                     }
-                case While all:
+                case While While:
                     {
-                        Console.WriteLine($"{LineDepth(depth, all)} {all.GetType().Name} '{all.ToString()}'");
+                        Console.WriteLine($"{LineDepth(depth, While)} {While.GetType().Name} '{While.ToString()}'");
 
                         var children = ((IContainer)(node)).Statements;
 
@@ -281,9 +281,9 @@ namespace Syscode
 
                         break;
                     }
-                case Until all:
+                case Until Until:
                     {
-                        Console.WriteLine($"{LineDepth(depth, all)} {all.GetType().Name} '{all.ToString()}'");
+                        Console.WriteLine($"{LineDepth(depth, Until)} {Until.GetType().Name} '{Until.ToString()}'");
 
                         var children = ((IContainer)(node)).Statements;
 
@@ -299,63 +299,59 @@ namespace Syscode
 
                         break;
                     }
-                case Call call:
+                case Call Call:
                     {
-                        Console.WriteLine($"{LineDepth(depth, call)} {call.GetType().Name} '{call.ToString()}'");
+                        Console.WriteLine($"{LineDepth(depth, Call)} {Call.GetType().Name} '{Call.ToString()}'");
                         break;
                     }
-                case Goto gto:
+                case Goto Goto:
                     {
-                        Console.WriteLine($"{LineDepth(depth, gto)} {gto.GetType().Name} '{gto.ToString()}'");
+                        Console.WriteLine($"{LineDepth(depth, Goto)} {Goto.GetType().Name} '{Goto.ToString()}'");
                         break;
                     }
-
-                case Leave leave:
+                case Leave Leave:
                     {
-                        Console.WriteLine($"{LineDepth(depth, leave)} {leave.GetType().Name} '{leave.ToString()}'");
+                        Console.WriteLine($"{LineDepth(depth, Leave)} {Leave.GetType().Name} '{Leave.ToString()}'");
                         break;
                     }
-
-                case Return ret:
+                case Return Return:
                     {
-                        Console.WriteLine($"{LineDepth(depth, ret)} {ret.GetType().Name} '{ret.Expression?.ToString()}'");
+                        Console.WriteLine($"{LineDepth(depth, Return)} {Return.GetType().Name} '{Return.Expression?.ToString()}'");
                         break;
                     }
-                case Reference reference:
+                case Reference Reference:
                     {
-                        Console.WriteLine($"{LineDepth(depth, node)} {reference.ToString()}");
+                        Console.WriteLine($"{LineDepth(depth, node)} {Reference.ToString()}");
                         break;
                     }
-                case Expression expression:
+                case Expression Expression:
                     {
-                        Console.WriteLine($"{LineDepth(depth, node)} {expression.ToString()}");
+                        Console.WriteLine($"{LineDepth(depth, node)} {Expression.ToString()}");
                         break;
                     }
-                case Assignment assign:
+                case Assignment Assignment:
                     {
                         Console.WriteLine($"{LineDepth(depth, node)} {node.GetType().Name}");
 
                         depth++;
-                        Console.WriteLine($"{LineDepth(depth, node)} {assign.Reference} = {assign.Expression}");
-                        //PrintAbstractSyntaxTree(assign.Referenece, depth);
-                        //PrintAbstractSyntaxTree(assign.Expression, depth);
+                        Console.WriteLine($"{LineDepth(depth, node)} {Assignment.Reference} = {Assignment.Expression}");
                         depth--;
                         break;
                     }
-                case If ifstmt:
+                case If If:
                     {
-                        Console.WriteLine($"{LineDepth(depth, ifstmt)} {ifstmt.GetType().Name} {ifstmt.Condition} '{ifstmt.Label}'");
+                        Console.WriteLine($"{LineDepth(depth, If)} {If.GetType().Name} {If.Condition} '{If.Label}'");
 
-                        foreach (var child in ifstmt.ThenStatements)
+                        foreach (var child in If.ThenStatements)
                         {
                             depth++;
                             PrintAbstractSyntaxTree(child, depth);
                             depth--;
                         }
-                        if (ifstmt.ElifStatements.Any())
+                        if (If.ElifStatements.Any())
                         {
 
-                            foreach (var child in ifstmt.ElifStatements)
+                            foreach (var child in If.ElifStatements)
                             {
                                 Console.WriteLine($"{LineDepth(depth, child)} Elif {child.Condition}");
 
@@ -367,24 +363,24 @@ namespace Syscode
                                 }
                             }
                         }
-                        if (ifstmt.ElseStatements.Any())
+                        if (If.ElseStatements.Any())
                         {
                             Console.WriteLine($"{LineDepth(depth, node)} Else");
 
-                            foreach (var child in ifstmt.ElseStatements)
+                            foreach (var child in If.ElseStatements)
                             {
                                 depth++;
                                 PrintAbstractSyntaxTree(child, depth);
                                 depth--;
                             }
                         }
-                        Console.WriteLine($"{LineDepthEnd(depth, ifstmt)} End");
+                        Console.WriteLine($"{LineDepthEnd(depth, If)} End");
                         break;
                     }
-                case StructBody structure:
+                case StructBody Structure:
                     {
-                        Console.WriteLine($"{LineDepth(depth, structure)} {node.GetType().Name} '{structure.Spelling}'");
-                        var children = structure.Structs;
+                        Console.WriteLine($"{LineDepth(depth, Structure)} {node.GetType().Name} '{Structure.Spelling}'");
+                        var children = Structure.Structs;
 
                         if (children.Any())
                         {
@@ -395,45 +391,22 @@ namespace Syscode
                                 depth--;
                             }
                         }
-                        Console.WriteLine($"{LineDepthEnd(depth, structure)} End");
+                        Console.WriteLine($"{LineDepthEnd(depth, Structure)} End");
                         break;
                     }
-                case StructField field:
+                case StructField Field:
                     {
                         Console.WriteLine($"{LineDepth(depth, node)} {node.GetType().Name} '{((StructField)(node)).Spelling}' {((StructField)(node)).TypeName} {((StructField)(node)).Length}");
                         break;
                     }
-                case Procedure proc:
+                case Procedure Procedure:
                     {
-                        Console.WriteLine($"{LineDepth(depth, proc)} {proc.GetType().Name} '{proc.Spelling}' Main = {proc.Main}");
+                        Console.WriteLine($"{LineDepth(depth, Procedure)} {Procedure.GetType().Name} '{Procedure.Spelling}' Main = {Procedure.Main}");
 
                         if (Symtab)
-                            PrintSymbols(proc.Symbols, depth, proc);
+                            PrintSymbols(Procedure.Symbols, depth, Procedure);
 
-                        var children = ((IContainer)(proc)).Statements;
-
-                        if (children.Any())
-                        {
-                            foreach (var child in children)
-                            {
-                                depth++;
-                                PrintAbstractSyntaxTree(child, depth);
-                                depth--;
-                            }
-                        }
-                        Console.WriteLine($"{LineDepthEnd(depth, proc)} End");
-                        break;
-
-                    }
-                case Declare dcl:
-                    {
-                        Console.WriteLine($"{LineDepth(depth, dcl)} {node.GetType().Name} '{dcl.Spelling}'");
-                        break;
-                    }
-                case Scope scope:
-                    {
-                        Console.WriteLine($"{LineDepth(depth, scope)} {node.GetType().Name} '{scope.Spelling}'");
-                        var children = ((IContainer)(scope)).Statements;
+                        var children = ((IContainer)(Procedure)).Statements;
 
                         if (children.Any())
                         {
@@ -444,19 +417,42 @@ namespace Syscode
                                 depth--;
                             }
                         }
+                        Console.WriteLine($"{LineDepthEnd(depth, Procedure)} End");
+                        break;
 
-                        if (scope.IsBlockScope)
-                            Console.WriteLine($"{LineDepthEnd(depth, scope)} End");
+                    }
+                case Declare Declare:
+                    {
+                        Console.WriteLine($"{LineDepth(depth, Declare)} {node.GetType().Name} '{Declare.Spelling}'");
                         break;
                     }
-                case Compilation proc:
+                case Scope Scope:
                     {
-                        Console.WriteLine($"{LineDepth(depth, proc)} {proc.GetType().Name}");
+                        Console.WriteLine($"{LineDepth(depth, Scope)} {node.GetType().Name} '{Scope.Spelling}'");
+                        var children = ((IContainer)(Scope)).Statements;
+
+                        if (children.Any())
+                        {
+                            foreach (var child in children)
+                            {
+                                depth++;
+                                PrintAbstractSyntaxTree(child, depth);
+                                depth--;
+                            }
+                        }
+
+                        if (Scope.IsBlockScope)
+                            Console.WriteLine($"{LineDepthEnd(depth, Scope)} End");
+                        break;
+                    }
+                case Compilation Compilation:
+                    {
+                        Console.WriteLine($"{LineDepth(depth, Compilation)} {Compilation.GetType().Name}");
 
                         if (Symtab)
-                            PrintSymbols(proc.Symbols, depth, proc);
+                            PrintSymbols(Compilation.Symbols, depth, Compilation);
 
-                        var children = ((IContainer)(proc)).Statements;
+                        var children = ((IContainer)(Compilation)).Statements;
 
                         if (children.Any())
                         {
@@ -467,7 +463,7 @@ namespace Syscode
                                 depth--;
                             }
                         }
-                        Console.WriteLine($"{LineDepthEnd(depth, proc)} End");
+                        Console.WriteLine($"{LineDepthEnd(depth, Compilation)} End");
                         break;
 
                     }

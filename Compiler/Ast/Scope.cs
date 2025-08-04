@@ -12,10 +12,10 @@ namespace Syscode
         private IContainer container;
         public Scope(ParserRuleContext context) : base(context)
         {
-            if (context is BlockScopeContext)
+            if (context is ScopeContext)
             {
                 IsBlockScope = true;
-                Spelling = context.GetLabelText(nameof(BlockScopeContext.Name));
+                Spelling = context.GetLabelText(nameof(ScopeContext.Name));
             }
 
         }

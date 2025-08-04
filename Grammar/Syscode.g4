@@ -53,8 +53,8 @@ labelSubscript: LPAR Literal=decLiteral RPAR;
 goto: GOTO Ref=reference statementSeparator;
 gotoSubscript: LPAR Expr=expression RPAR;
 
-scope:  blockScope; // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
-blockScope: (PACKAGE emptyLines? Name=qualifiedName emptyLines? statement* emptyLines? END)  ;
+//scope:  blockScope; // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
+scope: (PACKAGE emptyLines? Name=qualifiedName emptyLines? Statements+=statement* emptyLines? END)  ;
 procedure: PROCEDURE emptyLines? Spelling=identifier Params=paramList? Options=procOptions? Statements+=statement* emptyLines? END;
 function: FUNCTION emptyLines? Spelling=identifier Params=paramList? Options=procOptions? AS Type=returnDescriptor? Statements+=statement* emptyLines? END;
 
@@ -124,7 +124,7 @@ untilCondition: UNTIL Exp=expression ;
 
 if:             IF Name=labelName? emptyLines? ExprThen=exprThenBlock emptyLines? Elif=elifBlock? emptyLines? Else=elseBlock? emptyLines? END;
 exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? Then=thenBlock;
-thenBlock :     statement*;
+thenBlock :     Statements+=statement*;
 elseBlock :     (ELSE emptyLines? Then=thenBlock);
 elifBlock :     (ELIF emptyLines? ExprThen+=exprThenBlock)+;
 
