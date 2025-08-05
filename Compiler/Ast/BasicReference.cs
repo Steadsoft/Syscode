@@ -9,7 +9,7 @@ namespace Syscode
         public string Spelling;
         private List<Qualification> qualifier = new();
         private Symbol? symbol;
-        private bool isKeyword;
+        private readonly bool isKeyword;
         public BasicReference(ParserRuleContext context) : base(context)
         {
             Spelling = context.GetLabelText(nameof(BasicReferenceContext.Spelling));
@@ -17,7 +17,7 @@ namespace Syscode
         }
 
 
-        public bool IsQualified { get => Qualifier.Any(); }
+        public bool IsQualified { get => Qualifier.Count != 0; }
         public bool IsntQualified { get => !IsQualified; }
         public Symbol? Symbol { get => symbol; internal set => symbol = value; }
         public List<Qualification> Qualifier { get => qualifier; set => qualifier = value; }
@@ -26,7 +26,7 @@ namespace Syscode
 
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new();
 
             foreach (var qual in Qualifier)
             {

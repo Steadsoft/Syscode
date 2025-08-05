@@ -4,7 +4,7 @@ namespace Syscode
 {
     public class SymtabBuilder
     {
-        private Reporter reporter;
+        private readonly Reporter reporter;
         public SymtabBuilder(Reporter reporter)
         {
             this.reporter = reporter;
@@ -158,15 +158,15 @@ namespace Syscode
 
             // TODO: need to report any fields that are also keywords...
         }
-        private bool IsScaleInvalid(Declare declaration)
+        private static bool IsScaleInvalid(Declare declaration)
         {
             return !((declaration.typeSubscripts[1].Type == ExpressionType.Literal) && (declaration.typeSubscripts[1].Literal?.LiteralType == LiteralType.Decimal));
         }
-        private bool IsPrecisionInvalid(Declare declaration)
+        private static bool IsPrecisionInvalid(Declare declaration)
         {
             return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal?.LiteralType == LiteralType.Decimal));
         }
-        private bool IsStringLengthInvalid(Declare declaration)
+        private static bool IsStringLengthInvalid(Declare declaration)
         {
             return !((declaration.typeSubscripts[0].Type == ExpressionType.Literal) && (declaration.typeSubscripts[0].Literal?.LiteralType == LiteralType.Decimal));
         }
@@ -310,7 +310,7 @@ namespace Syscode
 
             if (TypeNames.BaseBinaryTypes.Contains(declaration.TypeName))
             {
-                if (declaration.typeSubscripts.Any())
+                if (declaration.typeSubscripts.Count != 0)
                 {
                     reporter.Report(declaration, 1006, declaration.Spelling);
                     return false;
@@ -332,7 +332,7 @@ namespace Syscode
 
             if (TypeNames.BaseUBinaryTypes.Contains(declaration.TypeName))
             {
-                if (declaration.typeSubscripts.Any())
+                if (declaration.typeSubscripts.Count != 0)
                 {
                     reporter.Report(declaration, 1006, declaration.Spelling);
                     return false;
@@ -351,7 +351,7 @@ namespace Syscode
                 Signed = false;
 
 
-            if (declaration.typeSubscripts.Any())
+            if (declaration.typeSubscripts.Count != 0)
             {
                 if (declaration.typeSubscripts.Count == 1)
                 {
@@ -398,13 +398,13 @@ namespace Syscode
 
             return true;
         }
-        private Alignment GetDefaultAlignment(Symbol symbol)
+        private static Alignment GetDefaultAlignment(Symbol symbol)
         {
             int byteLength = (symbol.Precision + 7) / 8;
             int value = 1 << (int)Math.Ceiling(Math.Log2(byteLength));
             return new Alignment() { AlignmentUnits = AlignmentUnits.Bytes, AlignmentValue = value };
         }
-        private int GetByteSize(Declare symbol, int Precision)
+        private static int GetByteSize(Declare symbol, int Precision)
         {
             if (symbol.Bounds.Count == 0) // not an array
             {
@@ -417,7 +417,7 @@ namespace Syscode
 
             return 0;
         }
-        private bool IsBinaryType(DataType type)
+        private static bool IsBinaryType(DataType type)
         {
             switch (type)
             {

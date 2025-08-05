@@ -6,8 +6,8 @@ namespace Syscode
     {
         private readonly string spelling;
         private readonly List<BoundsPair> bounds = new();
-        private readonly List<StructBody> structs = new List<StructBody>();
-        private readonly List<StructField> fields = new List<StructField>();
+        private readonly List<StructBody> structs = new();
+        private readonly List<StructField> fields = new();
         private readonly bool isKeyword;
         public List<BoundsPair> Bounds { get => bounds; }
         public List<StructBody> Structs { get => structs; }

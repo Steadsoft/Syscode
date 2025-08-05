@@ -6,7 +6,7 @@ namespace Syscode
     public class Elif : AstNode
     {
         private Expression condition;
-        private List<AstNode> thenStatements = new List<AstNode>();
+        private List<AstNode> thenStatements = new();
 
         public Expression Condition { get => condition; set => condition = value; }
         public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }

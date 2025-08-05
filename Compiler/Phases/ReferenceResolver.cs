@@ -2,7 +2,7 @@
 {
     public class ReferenceResolver
     {
-        private Reporter reporter;
+        private readonly Reporter reporter;
 
         public ReferenceResolver(Reporter Reporter)
         {
@@ -49,7 +49,7 @@
             statements.OfType<Call>().ForEach(c => Resolve(root, c));
             statements.OfType<Return>().ForEach(r => Resolve(root, r));
         }
-        private void ResolveQualifiedReference(Reference reference, Symbol symbol)
+        private static void ResolveQualifiedReference(Reference reference, Symbol symbol)
         {
             // every Reference contains a single BasicReference and that might or might not be qualified.
 

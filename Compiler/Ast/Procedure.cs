@@ -6,14 +6,14 @@ namespace Syscode
 {
     public class Procedure : AstNode, IContainer , ISpelling
     {
-        private string spelling;
-        private bool isFunction;
-        private string @as = String.Empty;
-        private List<string> parameters = new List<string>();
-        private List<AstNode> statements = new List<AstNode>();
-        private List<Symbol> symbols = new List<Symbol>();
-        private IContainer? container;
-        private bool main;
+        private readonly string spelling;
+        private readonly bool isFunction;
+        private readonly string @as = String.Empty;
+        private readonly List<string> parameters = new();
+        private List<AstNode> statements = new();
+        private List<Symbol> symbols = new();
+        private readonly IContainer? container;
+        private readonly bool main;
         private StorageClass storageClass = StorageClass.Unspecified;
         private StorageScope storageScope = StorageScope.Unspecified;
         public Procedure(ref IContainer? Container, ProcedureContext context, AstBuilder builder) : base(context)

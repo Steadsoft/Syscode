@@ -6,7 +6,7 @@ namespace Syscode
 
     public class Reference : AstNode
     {
-        private Reference? preceding = null; // only populated if this ref is the left of ref -> ref
+        private readonly Reference? preceding = null; // only populated if this ref is the left of ref -> ref
         private readonly List<Arguments> argumentsList = new();
         private readonly BasicReference basic;
         private bool resolved = false;
@@ -62,7 +62,7 @@ namespace Syscode
         public Report? Report { get => report; set => report = value; }
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new();
 
             if (Pointer != null)
             {

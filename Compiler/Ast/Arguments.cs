@@ -16,7 +16,7 @@ namespace Syscode
 
         public override string ToString()
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
 
             stringBuilder.Append("(");
 

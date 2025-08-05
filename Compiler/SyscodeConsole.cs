@@ -58,10 +58,9 @@ namespace Syscode
 
             if (eventArgs.severity.ToLower().StartsWith("error"))
             {
-               Console.ForegroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Red;
                 errors++;
             }
-
 
             if (eventArgs.severity.ToLower().StartsWith("warning"))
             {
@@ -69,19 +68,15 @@ namespace Syscode
                 warns++;
             }
 
-
             if (eventArgs.severity.ToLower().StartsWith("notice"))
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 infos++;
             }
 
-
-
-            Console.Write($"{eventArgs.severity.ToUpper().PadRight(8)}{eventArgs.code} on line {eventArgs.line.ToString().PadRight(5)} ");
+            Console.Write($"{eventArgs.severity.ToUpper(),-8}{eventArgs.code} on line {eventArgs.line,-5} ");
             Console.ResetColor();
             Console.WriteLine(message);
-           
         };
     }
 }

@@ -23,7 +23,7 @@ namespace Syscode
         public List<Expression> typeSubscripts = new();
         private bool constantSize = true;
         private Alignment alignment = new();
-        private IContainer container;
+        private readonly IContainer container;
         private bool isKeyword;
         private bool validated = false;
 
@@ -37,7 +37,7 @@ namespace Syscode
                 CoreType = DataType.STRUCT;
             }
         }
-        public bool IsArray { get => Bounds.Any(); }
+        public bool IsArray { get => Bounds.Count != 0; }
         public bool ConstantSize { get => constantSize; }
         public bool IsntArray { get => !IsArray; }
         public bool Varying 

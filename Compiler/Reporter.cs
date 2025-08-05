@@ -2,7 +2,7 @@
 {
     public class Reporter
     {
-        private ErrorFile file;
+        private readonly ErrorFile file;
         private event EventHandler<DiagnosticEvent> diagnostics = delegate { };
         private List<DiagnosticEvent> messages = new();
 

@@ -6,7 +6,7 @@ namespace Syscode
 {
     public static class SyscodeExtensions
     {
-        private static HashSet<System.Type> excludedTypes;
+        private static readonly HashSet<System.Type> excludedTypes;
         static SyscodeExtensions()
         {
             excludedTypes = new HashSet<System.Type>
@@ -54,7 +54,7 @@ namespace Syscode
 
             var matches = context.GetChildren().Where(child => child is T).ToList();
 
-            if (matches.Any() == false)
+            if (matches.Count != 0 == false)
                 throw new InvalidOperationException("Expected child node is not present.");
 
             if (matches.Count() > 1)
@@ -73,7 +73,7 @@ namespace Syscode
 
             var matches = context.GetChildren().Where(child => child.GetType() == typeof(T)).ToList();
 
-            if (matches.Any() == false)
+            if (matches.Count != 0 == false)
                 throw new InvalidOperationException("Expected child node is not present.");
 
             if (matches.Count() > 1)
@@ -93,7 +93,7 @@ namespace Syscode
 
             var matches = context.GetChildren().Where(child => child.GetType() == typeof(T)).ToList();
 
-            if (matches.Any() == false)
+            if (matches.Count != 0 == false)
                 return false;
 
             if (matches.Count() > 1)
@@ -116,7 +116,7 @@ namespace Syscode
 
             var matches = context.GetChildren().Where(child => child is T).ToList();
 
-            if (matches.Any() == false)
+            if (matches.Count != 0 == false)
                 return false;
 
             if (matches.Count() > 1)
@@ -135,7 +135,7 @@ namespace Syscode
 
             var matches = context.GetChildren().Where(child => child.GetType() == typeof(T)).Cast<T>().ToList();
 
-            if (matches.Any() == false)
+            if (matches.Count != 0 == false)
                 return new List<T>();
 
             return matches;
@@ -147,7 +147,7 @@ namespace Syscode
 
             var matches = context.GetChildren().Where(child => child is T).Cast<T>().ToList();
 
-            if (matches.Any() == false)
+            if (matches.Count != 0 == false)
                 return new List<T>();
 
             return matches;

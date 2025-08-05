@@ -10,10 +10,10 @@ namespace Syscode
     {
         // Numeric literals are for now, represented by the actual number of bits in the literal
         // but also the numeric value is stored in a 64 bit int, signed or unsigned
-        private string value = String.Empty;
-        private LiteralType literalType;
-        private NumericConstant constant;
-        private Operator prefixop;
+        private readonly string value = String.Empty;
+        private readonly LiteralType literalType;
+        private readonly NumericConstant constant;
+        private readonly Operator prefixop;
         public Literal(NumericLiteralContext context, Operator prefixop, Dictionary<string, IConstant> constants) : base(context)
         {
             constant = new NumericConstant(context.GetText(),prefixop);

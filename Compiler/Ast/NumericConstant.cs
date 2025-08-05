@@ -14,18 +14,18 @@ namespace Syscode
     /// </summary>
     public class NumericConstant : IConstant
     {
-        private DataType dataType;
+        private readonly DataType dataType;
         private UInt64 valueUnsigned = 0;
         private Int64 valueSigned = 0;
         private string literalText = string.Empty;
-        private bool signed = false;
-        private bool negative = false;
+        private readonly bool signed = false;
+        private readonly bool negative = false;
         private Base numberbase;
         private Scale scale;
         private int precision = 0;
         private int scalefactor = 0;
 
-        private Operator prefix;
+        private readonly Operator prefix;
         public NumericConstant(string rawtext, Operator prefix) 
         {
             literalText = rawtext.Trim().Replace(" ","").ToUpper();
@@ -252,7 +252,7 @@ namespace Syscode
         /// </summary>
         /// <param name="Value"></param>
         /// <returns></returns>
-        private string CleanupString(string Value)
+        private static string CleanupString(string Value)
         {
             if (Value.Contains(':'))
                 return Value.Substring(0, Value.Length - 2).Replace("_","").Replace(" ","");
@@ -263,7 +263,7 @@ namespace Syscode
 
     public class EntryConstant : AstNode, IConstant
     {
-        private string name;
+        private readonly string name;
 
         public string Spelling => name;
 

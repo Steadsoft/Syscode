@@ -5,8 +5,8 @@ namespace Syscode
 {
     public class Assignment : AstNode
     {
-        private Reference reference;
-        private Expression expression;
+        private readonly Reference reference;
+        private readonly Expression expression;
         public Assignment(AssignmentContext context, AstBuilder builder) : base(context)
         {
             this.reference = builder.CreateReference(context.Ref);

@@ -6,14 +6,14 @@ namespace Syscode
     {
         private bool invalid = true;
         private Declare declaration;
-        private Procedure procedure;
-        private DataType dataType;
+        private readonly Procedure procedure;
+        private readonly DataType dataType;
         private int precision;
         private int scale;
         private bool signed;
         private bool varying;
         private int bytes;
-        private IContainer container;
+        private readonly IContainer container;
         private StorageClass storageClass;
         private StorageScope storageScope;
         public Symbol(Declare declaration) 

@@ -17,11 +17,11 @@ namespace Syscode
     /// </summary>
     public class AstBuilder
     {
-        private Reporter reporter;
+        private readonly Reporter reporter;
         private IContainer? currentContainer = null;
-        private Compilation compilation = null;
-        private Dictionary<string, IConstant> constants;
-        private SyscodeParser lexer;
+        private readonly Compilation compilation = null;
+        private readonly Dictionary<string, IConstant> constants;
+        private readonly SyscodeParser lexer;
         public AstBuilder(Dictionary<string, IConstant> constants, Reporter reporter, SyscodeParser lexer)
         {
             this.constants = constants;
@@ -79,7 +79,7 @@ namespace Syscode
         {
             return new Goto(context, this);
         }
-        private Label CreateLabel(AlabelContext context)
+        private static Label CreateLabel(AlabelContext context)
         {
             return new Label(context);
         }
@@ -184,13 +184,13 @@ namespace Syscode
 
         //    return expr;
         //}
-        private Operator GetOperator(ExprPrefixedContext context)
+        private static Operator GetOperator(ExprPrefixedContext context)
         {
             //var operation = context.GetExactNode<PrefixExpressionContext>().GetExactNode<PrefixOperatorContext>();
             var terminal = (TerminalNodeImpl)context.Prefixed.Op.children[0]; ;//  (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
             return (Operator)(terminal.Symbol.Type);
         }
-        private Operator GetOperator(ExprBinaryContext context)
+        private static Operator GetOperator(ExprBinaryContext context)
         {
             var operation = context.Operator.children.Where(c => c is not ExpressionContext).Cast<ParserRuleContext>().Single();
             var terminal = (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
@@ -203,7 +203,7 @@ namespace Syscode
         }
         internal BasicReference CreateBasicReference(BasicReferenceContext context)
         {
-            BasicReference basic = new BasicReference(context);
+            BasicReference basic = new(context);
 
             if (context.TryGetExactNode<StructureQualificationListContext>(out var qualification))
             {

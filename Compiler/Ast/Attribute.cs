@@ -72,7 +72,7 @@ namespace Syscode
 
     public class Initial : Attribute
     {
-        private Expression expression;
+        private readonly Expression expression;
         public Initial(ParserRuleContext context, Expression expression) : base(context)
         {
             this.expression = expression;

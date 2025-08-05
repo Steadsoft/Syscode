@@ -41,7 +41,7 @@ namespace Syscode
 
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new();
 
             if (By == null) 
                 builder.Append($"for {Ref} = {From} to {To}");

@@ -5,11 +5,11 @@ namespace Syscode
 {
     public class If : AstNode
     {
-        private Expression condition;
-        private List<AstNode> thenStatements = new List<AstNode>();
-        private List<AstNode> elseStatements = new List<AstNode>();
-        private List<Elif> elifStatements = new List<Elif>();
-        private string label = string.Empty;
+        private readonly Expression condition;
+        private List<AstNode> thenStatements = new();
+        private List<AstNode> elseStatements = new();
+        private List<Elif> elifStatements = new();
+        private readonly string label = string.Empty;
         public string Label => label;
         public Expression Condition { get => condition;}
         public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }

@@ -9,7 +9,7 @@ namespace Syscode
         private string typeName;
         private List<BoundsPair> bounds = new();
         private int length;
-        private bool pad;
+        private readonly bool pad;
         public string TypeName { get => typeName; set => typeName = value; }
         public List<BoundsPair> Bounds { get => bounds; set => bounds = value; }
         public int Length { get => length; set => length = value; }

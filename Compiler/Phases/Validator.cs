@@ -8,13 +8,13 @@ namespace Syscode
 {
     public class Validator
     {
-        private Reporter reporter;
+        private readonly Reporter reporter;
         public Validator(Reporter reporter)
         {
             this.reporter = reporter;
         }
 
-        public void Validate(Compilation root)
+        public static void Validate(Compilation root)
         {
 
         }
