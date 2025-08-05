@@ -1,4 +1,4 @@
-// Used to ensure the lexer sees what we expect
+﻿// Used to ensure the lexer sees what we expect
 
 z = 101.111 {b}
 a = +1

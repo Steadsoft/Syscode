@@ -1,4 +1,4 @@
-// any variable declared in the global scope MUST be explicitly declared as static
+﻿// any variable declared in the global scope MUST be explicitly declared as static
 // if it is not declared as external then it is internal, there is no 'internal' keyword.
 
 hex = 01F5 33DA 0F02 11B9 {h}
