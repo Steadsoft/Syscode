@@ -235,12 +235,7 @@ namespace Syscode
         }
         private Compilation CreateCompilation(CompilationContext context)
         {
-            if (compilation != null)
-                throw new InvalidOperationException("Internal error. There can only be a single 'compilation' when compiling a source file.");
-
-            compilation = new Compilation(context) { Statements = GenerateStatements(context._Statements) };
-
-            return compilation;
+            return new Compilation(context, this);
         }
         private Scope CreateScope(ScopeContext context)
         {
@@ -496,46 +491,19 @@ namespace Syscode
         }
         private Procedure CreateProcedure(ProcedureContext context)
         {
-            var node = new Procedure(currentContainer, context, this);
-
-            currentContainer = node;
-            node.Statements = [.. GenerateStatements(context._Statements)];
-            currentContainer = node.Container;
-
-            return node;
+            return new Procedure(ref currentContainer, context, this);
         }
         private Procedure CreateFunction(FunctionContext context)
         {
-            var node = new Procedure(currentContainer, context, this); // a func is so similar to a proc we use same class to represent them.
-
-            currentContainer = node;
-            node.Statements = [.. GenerateStatements(context._Statements)];
-            currentContainer = node.Container;
-
-            return node;
+            return new Procedure(ref currentContainer, context, this); // a func is so similar to a proc we use same class to represent them.
         }
-        private Elif CreateElif(ExprThenBlockContext context)
+        public Elif CreateElif(ExprThenBlockContext context)
         {
             return new Elif(context, this) { ThenStatements = GenerateStatements(context.Then._Statements)};
         }
         private If CreateIf(IfContext context)
         {
-            List<AstNode> else_stmts = new();
-            List<Elif> elifs = new();
-
-            var if_then_stmts = GenerateStatements(context.ExprThen.Then._Statements);
-
-            if (context.Else != null)
-            {
-                else_stmts.Load(GenerateStatements(context.Else.Then._Statements));
-            }
-
-            if (context.Elif != null)  // at least one 'elif' is present
-            {
-                elifs.Load(context.Elif._ExprThen.Select(CreateElif));
-            }
-
-            return new If(context, this) { ThenStatements = if_then_stmts, ElseStatements = else_stmts, ElifStatements = elifs };
+            return new If(context, this);
         }
         /// <summary>
         /// Reports if any of the supplied attributes are incompatible with the others.

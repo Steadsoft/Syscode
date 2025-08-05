@@ -18,9 +18,20 @@ namespace Syscode
         public If(IfContext context, AstBuilder builder) : base(context)
         {
             condition = builder.CreateExpression(context.ExprThen.Exp);
+            thenStatements = builder.GenerateStatements(context.ExprThen.Then._Statements);
+
+            if (context.Else != null)
+            {
+                elseStatements = builder.GenerateStatements(context.Else.Then._Statements);
+            }
+
+            if (context.Elif != null)  // at least one 'elif' is present
+            {
+                elifStatements = context.Elif._ExprThen.Select(builder.CreateElif).ToList();
+            }
 
             if (context.Name != null)
-                label = context.Name.GetText();
+                label = context.Name.Spelling.GetText();
         }
         public override string ToString()
         {

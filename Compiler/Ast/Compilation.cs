@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
@@ -7,8 +8,9 @@ namespace Syscode
         private List<AstNode> statements = new();
         private List<Symbol> symbols = new();
         private IContainer container;
-        public Compilation(ParserRuleContext context) : base(context)
+        public Compilation(CompilationContext context, AstBuilder builder) : base(context)
         {
+            statements = builder.GenerateStatements(context._Statements);
         }
 
         public List<AstNode> Statements { get => statements; set => statements = value; }

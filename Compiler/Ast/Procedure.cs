@@ -16,23 +16,31 @@ namespace Syscode
         private bool main;
         private StorageClass storageClass = StorageClass.Unspecified;
         private StorageScope storageScope = StorageScope.Unspecified;
-        public Procedure(IContainer? Container, ProcedureContext context, AstBuilder builder) : base(context)
+        public Procedure(ref IContainer? Container, ProcedureContext context, AstBuilder builder) : base(context)
         {
             container = Container;
             spelling = context.Spelling.GetText();
             parameters = context.Params == null? new List<string>() : context.Params._Params.Select(static i => i.GetText()).ToList();
             isFunction = false;
 
+            Container = this;
+            statements = builder.GenerateStatements(context._Statements);
+            Container = container;
+
             if (context.Options != null && context.Options.Main != null)
                 main = true;
         }
 
-        public Procedure(IContainer Container, FunctionContext context, AstBuilder builder) : base(context)
+        public Procedure(ref IContainer? Container, FunctionContext context, AstBuilder builder) : base(context)
         {
             container = Container;
             spelling = context.Spelling.GetText();
             parameters = context.Params == null ? new List<string>() : context.Params._Params.Select(static i => i.GetText()).ToList();
             isFunction = true;
+
+            Container = this;
+            statements = builder.GenerateStatements(context._Statements);
+            Container = container;
 
             if (context.Type != null)
                 @as = context.Type.GetText();
