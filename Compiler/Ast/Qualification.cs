@@ -7,10 +7,17 @@ namespace Syscode
     {
         public string Spelling;
         public Arguments Arguments;
-        public Qualification(ParserRuleContext context) : base(context)
-        {
-            Spelling = context.GetLabelText(nameof(StructureQualificationContext.Spelling));
+        private readonly bool isKeyword;
 
+        public Qualification(StructureQualificationContext context, AstBuilder builder) : base(context)
+        {
+            Spelling = context.Spelling.GetText();
+            isKeyword = context.children.OfType<IdentifierContext>().Single().children.OfType<KeywordContext>().Any();
+
+            if (context.Args is not null)
+            {
+                Arguments = new Arguments(context.Args, builder);
+            }
         }
 
         public override string ToString()

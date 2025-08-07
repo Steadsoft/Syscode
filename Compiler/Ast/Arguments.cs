@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using System.Text;
+using static SyscodeParser;
 
 namespace Syscode
 {
@@ -10,8 +11,9 @@ namespace Syscode
     {
         public List<Expression> ExpressionList = new();
 
-        public Arguments(ParserRuleContext context) : base(context)
+        public Arguments(ArgumentsContext context, AstBuilder builder) : base(context)
         {
+            ExpressionList = context.List.GetDerivedNodes<ExpressionContext>().Select(builder.CreateExpression).ToList();
         }
 
         public override string ToString()

@@ -7,20 +7,28 @@ namespace Syscode
     public class BasicReference : AstNode
     {
         public string Spelling;
-        private List<Qualification> qualifier = new();
+        private List<Qualification> qualifierList = new();
         private Symbol? symbol;
         private readonly bool isKeyword;
-        public BasicReference(ParserRuleContext context) : base(context)
+        public BasicReference(BasicReferenceContext context, AstBuilder builder) : base(context)
         {
             Spelling = context.GetLabelText(nameof(BasicReferenceContext.Spelling));
             isKeyword = context.children.OfType<IdentifierContext>().Single().children.OfType<KeywordContext>().Any();
-        }
 
+            if (context.Qualification is not null)
+            {
+                foreach (var qual in context.Qualification._Qualifiers)
+                {
+                    var qualifier = new Qualification(qual, builder);
+                    qualifierList.Add(qualifier);
+                }
+            }
+        }
 
         public bool IsQualified { get => Qualifier.Count != 0; }
         public bool IsntQualified { get => !IsQualified; }
         public Symbol? Symbol { get => symbol; internal set => symbol = value; }
-        public List<Qualification> Qualifier { get => qualifier; set => qualifier = value; }
+        public List<Qualification> Qualifier { get => qualifierList; set => qualifierList = value; }
         public bool IsKeyword { get => isKeyword;  }
         public bool IsntKeyword { get => !IsKeyword;  }
 

@@ -4571,6 +4571,7 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class BasicReferenceContext : ParserRuleContext {
+		public StructureQualificationListContext Qualification;
 		public IdentifierContext Spelling;
 		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
 			return GetRuleContext<IdentifierContext>(0);
@@ -4598,7 +4599,7 @@ public partial class SyscodeParser : Parser {
 			case 1:
 				{
 				State = 836;
-				structureQualificationList();
+				_localctx.Qualification = structureQualificationList();
 				}
 				break;
 			}
@@ -4676,6 +4677,8 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class StructureQualificationListContext : ParserRuleContext {
+		public StructureQualificationContext _structureQualification;
+		public IList<StructureQualificationContext> _Qualifiers = new List<StructureQualificationContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public StructureQualificationContext[] structureQualification() {
 			return GetRuleContexts<StructureQualificationContext>();
 		}
@@ -4706,7 +4709,8 @@ public partial class SyscodeParser : Parser {
 					{
 					{
 					State = 846;
-					structureQualification();
+					_localctx._structureQualification = structureQualification();
+					_localctx._Qualifiers.Add(_localctx._structureQualification);
 					}
 					}
 					break;
@@ -4732,6 +4736,7 @@ public partial class SyscodeParser : Parser {
 
 	public partial class StructureQualificationContext : ParserRuleContext {
 		public IdentifierContext Spelling;
+		public ArgumentsContext Args;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOT() { return GetToken(SyscodeParser.DOT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
 			return GetRuleContext<IdentifierContext>(0);
@@ -4762,7 +4767,7 @@ public partial class SyscodeParser : Parser {
 			if (_la==LPAR) {
 				{
 				State = 852;
-				arguments();
+				_localctx.Args = arguments();
 				}
 			}
 

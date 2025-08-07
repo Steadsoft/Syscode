@@ -184,18 +184,18 @@ reference
   ;
 
 basicReference
-  : structureQualificationList? Spelling=identifier
+  : Qualification=structureQualificationList? Spelling=identifier
   ;
 
 argumentsList
   : ArgsSet+=arguments+;
 
 structureQualificationList
-  : structureQualification+
+  : Qualifiers+=structureQualification+
   ;
 
 structureQualification
-  : Spelling=identifier arguments? DOT
+  : Spelling=identifier Args=arguments? DOT
   ;
 
 arguments

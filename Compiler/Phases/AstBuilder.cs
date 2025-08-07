@@ -203,31 +203,7 @@ namespace Syscode
         }
         internal BasicReference CreateBasicReference(BasicReferenceContext context)
         {
-            BasicReference basic = new(context);
-
-            if (context.TryGetExactNode<StructureQualificationListContext>(out var qualification))
-            {
-                var quals = qualification.GetExactNodes<StructureQualificationContext>();
-
-                foreach (var qual in quals)
-                {
-                    var qualifier = new Qualification(qual);
-
-                    if (qual.TryGetExactNode<ArgumentsContext>(out var arg))
-                    {
-                        var subs = arg.GetExactNode<SubscriptCommalistContext>();
-
-                        var expressions = subs.GetDerivedNodes<ExpressionContext>().Select(CreateExpression);
-
-                        qualifier.Arguments = new Arguments(subs) { ExpressionList = expressions.ToList() };
-
-                    }
-
-                    basic.Qualifier.Add(qualifier);
-                }
-            }
-
-            return basic;
+            return new(context, this);
         }
         public List<AstNode> GenerateStatements(IList<StatementContext> context)
         {
@@ -235,11 +211,11 @@ namespace Syscode
         }
         private Compilation CreateCompilation(CompilationContext context)
         {
-            return new Compilation(context, this);
+            return new (context, this);
         }
         private Scope CreateScope(ScopeContext context)
         {
-            return new Scope(context) { Spelling = context.GetExactNode<QualifiedNameContext>().GetText(), Statements = GenerateStatements(context._Statements) };
+            return new (context) { Spelling = context.GetExactNode<QualifiedNameContext>().GetText(), Statements = GenerateStatements(context._Statements) };
         }
         private Declare CreateDeclaration(DeclareContext context)
         {

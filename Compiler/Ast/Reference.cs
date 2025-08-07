@@ -22,21 +22,7 @@ namespace Syscode
 
             if (context.ArgsList != null)
             {
-                var argsList = context.ArgsList._ArgsSet; /* one or more 'arguments' always present */
-
-                foreach (var arguments in argsList)
-                {
-                    var argsast = new Arguments(arguments);
-
-                    if (arguments.TryGetExactNode<SubscriptCommalistContext>(out var subscriptCommalist))
-                    {
-                        var expressions = subscriptCommalist.GetDerivedNodes<ExpressionContext>().Select(builder.CreateExpression).ToList();
-
-                        argsast.ExpressionList.AddRange(expressions);
-                    }
-
-                    argumentsList.Add(argsast);
-                }
+                argumentsList = context.ArgsList._ArgsSet.Select(a => new Arguments(a, builder)).ToList();
             }
 
             // TODO: process the optional ArgList list..
