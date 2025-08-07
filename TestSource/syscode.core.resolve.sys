@@ -25,6 +25,12 @@ dcl goto bin16 aligned(1) bin(32) var
 
 dcl throw string(32) bin(16)
 
+dcl name string(16)
+dcl addr string(64, utf16)
+dcl state string(16, sbe)
+dcl region string(32, utf8)
+
+
 global_rate = -  100
 
 binar = -1001 0111 1101{b}

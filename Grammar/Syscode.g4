@@ -79,7 +79,7 @@ dataAttribute
     | Var=VARIABLE              #Variable
     | Integer=integerType       #Integer
     | Bit=bitType               #Bit
-    | String=stringType         #String
+    | String=stringType         #String // could support 'sbe' or 'utf8' or 'utf16'. The 'sbe' being "single byte encoding" or basically single 8 bit byte characters. e.g. dcl name string(32,sbe) or dcl addr string(64,utf8) etc
     | Entry=entryType           #Entry
     | As=asType                 #As
     | Builtin=builtinType       #Builtin
@@ -99,12 +99,11 @@ attribute
     | padAttribute           #Pad
     ;
 
-
 type: TYPE Body=structBody ;    
 
 leave: LEAVE Ref=reference statementSeparator;
 
-// literal: LIT customLiteral AS decLiteral statementSeparator ;
+// literal: LIT customLiteral AS decLiteral statementSeparator ; 
 loop
     : Always=loopLoop     #LoopAlways 
     | For=forLoop         #LoopFor
@@ -120,30 +119,11 @@ loopLoop: DO Name=labelName? LOOP Statements+=statement* emptyLines? END;
 whileCondition: WHILE Exp=expression ;
 untilCondition: UNTIL Exp=expression ;
 
-
-
 if:             IF Name=labelName? emptyLines? ExprThen=exprThenBlock emptyLines? Elif=elifBlock? emptyLines? Else=elseBlock? emptyLines? END;
 exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? Then=thenBlock;
 thenBlock :     Statements+=statement*;
 elseBlock :     (ELSE emptyLines? Then=thenBlock);
 elifBlock :     (ELIF emptyLines? ExprThen+=exprThenBlock)+;
-
-// typeSpecifier 
-//     : Code=typeCode Args=arguments? varying?
-//     | AS As=identifier
-//     ;
-
-// dataAttribute
-//     : Integer=integerType
-//     | Bit=bitType
-//     | String=stringType
-//     | Entry=entryType
-//     | Label=labelType
-//     | Pointer=pointerType
-//     | As=asType
-//     | Bytes=bytepadType
-//     | Builtin=builtinType
-//     ;
 
 asType: AS Typename=identifier ;    
 
@@ -167,7 +147,7 @@ builtinType: Typename=BUILTIN;
 bytepadType: BYTEPAD LPAR Len=decLiteral RPAR;
 
 stringType
-    : Typename=STRING LPAR Length=expression RPAR Varying=VARIABLE? ;
+    : Typename=STRING LPAR Length=expression (COMMA charset)? RPAR Varying=VARIABLE? ;
 
 entryType: Typename=ENTRY 
     (
@@ -180,6 +160,8 @@ entryType: Typename=ENTRY
     )
     ;
 
+charset: SBE | UTF8 | UTF16 ;    
+
 labelType: Typename=LABEL ;    
 
 pointerType: Typename=POINTER ;    
@@ -190,11 +172,9 @@ typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN 
 
 assignment 
     : Ref=reference comparer Exp=expression statementSeparator
-    ;
+    ;    
     
-    
-    // | LPAR reference COMMA reference RPAR comparer expression statementSeparator; this is too 'out there' for an initial language design. 
-    
+    // | LPAR reference COMMA reference RPAR comparer expression statementSeparator; this is too 'out there' for an initial language design.     
 
 comparer: EQUALS | COMPASSIGN;
 
@@ -226,33 +206,12 @@ subscriptCommalist
   : Exp+=expression (COMMA Exp+=expression)*
   ;
 
-//   expression
-//   : Primitive=primitiveExpression                                       # ExprPrimitive
-//   | Parenthesized=parenthesizedExpression                               # ExprParenthesized
-//   | Prefixed=prefixExpression                                           # ExprPrefixed
-
-//   | <assoc=right> 
-//     Left=expression emptyLines? power emptyLines? Rite=expression       # ExprBinary
-//   | Left=expression emptyLines? mulDiv emptyLines? Rite=expression      # ExprBinary
-//   | Left=expression emptyLines? addSub emptyLines? Rite=expression      # ExprBinary
-//   | Left=expression emptyLines? shiftRotate emptyLines? Rite=expression # ExprBinary
-//   | Left=expression emptyLines? concatenate emptyLines? Rite=expression # ExprBinary
-//   | Left=expression emptyLines? comparison emptyLines? Rite=expression  # ExprBinary
-//   | Left=expression emptyLines? boolAnd emptyLines? Rite=expression     # ExprBinary
-//   | Left=expression emptyLines? boolXor emptyLines? Rite=expression     # ExprBinary
-//   | Left=expression emptyLines? boolOr emptyLines? Rite=expression      # ExprBinary
-//   | Left=expression emptyLines? logand emptyLines?  Rite=expression     # ExprBinary
-//   | Left=expression emptyLines? logor emptyLines? Rite=expression       # ExprBinary
-//   ;
-
 expression
-  : Primitive=primitiveExpression                                       # ExprPrimitive
-  | Parenthesized=parenthesizedExpression                               # ExprParenthesized
-  | Prefixed=prefixExpression                                           # ExprPrefixed
-  | Left=expression emptyLines? Operator=binop emptyLines? Rite=expression     # ExprBinary
+  : Primitive=primitiveExpression                                               # ExprPrimitive
+  | Parenthesized=parenthesizedExpression                                       # ExprParenthesized
+  | Prefixed=prefixExpression                                                   # ExprPrefixed
+  | Left=expression emptyLines? Operator=binop emptyLines? Rite=expression      # ExprBinary
   ;
-
-
 
 primitiveExpression
   : Numeric=numericLiteral   #LiteralArithmetic
@@ -397,7 +356,6 @@ identifier: Key=keyword | IDENTIFIER;
 
 varying: VARIABLE ;
 
-
 //entryType: ENTRY (entryList);
 
 //entryList: LPAR typename (COMMA typename)* RPAR ;
@@ -428,12 +386,6 @@ unitType: UNIT;
 
 entryArgTypes: LPAR dataAttribute (COMMA dataAttribute)* RPAR;
 returnDescriptor: AS LPAR dataAttribute RPAR;
-
-// binaryCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN | UBIN arguments?) ;
-// decimalType:  ((DEC | UDEC) arguments) ;
-
-// stringType: STRING argumentsList? ; //'(' INTEGER ')';
-// bitstringType: BIT argumentsList? ;//'(' INTEGER ')';
 
 // Punctuation rules
 memberSeparator : COMMA;
@@ -491,6 +443,7 @@ keyword
     | POINTER
     | PROCEDURE
     | RETURN
+    | SBE
     | SINGLE
     | STACK
     | STATIC
@@ -507,10 +460,11 @@ keyword
     | UDEC
     | UNIT
     | UNTIL
+    | UTF8
+    | UTF16
     | VARIABLE
     | WHILE 
     ;
-
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
 COMMENT: (BCOM (COMMENT | .)*? ECOM) -> skip; //channel(HIDDEN);
@@ -615,8 +569,8 @@ PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROCEDURE:      'proc' | 'procedure';
 RETURN:         'return';
+SBE:            'sbe';
 SINGLE:         'single';
-SCOPE:          'scope';
 STACK:          'stack';
 STATIC:         'static';
 STRING:         'string';
@@ -632,6 +586,8 @@ UBIN:           'ubin';
 UDEC:           'udec';
 UNIT:           'unit';
 UNTIL:          'until';
+UTF8:           'utf8';
+UTF16:          'utf16';
 VARIABLE:       'var' | 'variable';
 WHILE:          'while';
 

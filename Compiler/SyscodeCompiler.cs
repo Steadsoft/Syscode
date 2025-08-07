@@ -13,7 +13,7 @@ namespace Syscode
         private ReferenceResolver resolver;
         public event EventHandler<DiagnosticEvent> diagnostics = delegate { };
         private readonly string errorMesagesPath;
-        private readonly ErrorFile messages;
+        private readonly ErrorFile? messages;
         private Reporter reporter;
         private string file;
         private string fileName;
@@ -34,6 +34,9 @@ namespace Syscode
             };
 
             messages = JsonSerializer.Deserialize<ErrorFile>(json, options);
+
+            if (messages == null)
+                throw new ArgumentNullException(nameof(messages));
 
             if (messages.Errors.GroupBy(m => m.Number).Where(g => g.Count() > 1).Any())
                 throw new InvalidOperationException("The error file contains a duplicate error number.");
