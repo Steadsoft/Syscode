@@ -49,17 +49,21 @@ namespace Syscode
                 GotoContext context => CreateGoto(context),
                 LoopContext context => CreateLoop(context),
                 LeaveContext context => CreateLeave(context),
+                ProceedContext context => CreateProceed(context),
                 _ => new AstNode(rule)
             };
         }
 
 
 
+        private Proceed CreateProceed(ProceedContext context)
+        {
+            return new(context, this);
+        }
 
         private Leave CreateLeave(LeaveContext context)
         {
-            // TODO: The ref on a leave stmt must be a simple identifier.
-            return new Leave(context,this);
+            return new (context,this);
         }
         private Loop CreateLoop(LoopContext context)
         {

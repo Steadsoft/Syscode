@@ -40,7 +40,7 @@ compilation: Statements+=statement* endOfFile;
 // One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
 // several source files with that namespace prefix, each of which contributes stuff to the namespace.
 
-statement:  preamble?  (call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | leave | assignment );
+statement:  preamble?  (call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | leave | proceed | assignment );
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttributes* statementSeparator emptyLines? ((Fields+=structField|Structs+=structBody) emptyLines?)* END ;
@@ -101,7 +101,8 @@ attribute
 
 type: TYPE Body=structBody ;    
 
-leave: LEAVE Ref=reference statementSeparator;
+leave: LEAVE Ref=reference? statementSeparator;
+proceed: PROCEED Ref=reference? statementSeparator;
 
 // literal: LIT customLiteral AS decLiteral statementSeparator ; 
 loop
@@ -442,6 +443,7 @@ keyword
     | PATH
     | POINTER
     | PROCEDURE
+    | PROCEED
     | RETURN
     | SBE
     | SINGLE
@@ -568,6 +570,7 @@ PAD:            'pad';
 PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROCEDURE:      'proc' | 'procedure';
+PROCEED:        'proceed';
 RETURN:         'return';
 SBE:            'sbe';
 SINGLE:         'single';

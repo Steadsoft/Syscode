@@ -317,6 +317,11 @@ namespace Syscode
                         Console.WriteLine($"{LineDepth(depth, Leave)} {Leave.GetType().Name} '{Leave}'");
                         break;
                     }
+                case Proceed Proceed:
+                    {
+                        Console.WriteLine($"{LineDepth(depth, Proceed)} {Proceed.GetType().Name} '{Proceed}'");
+                        break;
+                    }
                 case Return Return:
                     {
                         Console.WriteLine($"{LineDepth(depth, Return)} {Return.GetType().Name} '{Return.Expression?.ToString()}'");
