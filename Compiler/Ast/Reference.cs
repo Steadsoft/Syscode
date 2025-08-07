@@ -25,8 +25,6 @@ namespace Syscode
                 argumentsList = context.ArgsList._ArgsSet.Select(a => new Arguments(a, builder)).ToList();
             }
 
-            // TODO: process the optional ArgList list..
-
             basic = builder.CreateBasicReference(context.Basic);
         }
         /// <summary>

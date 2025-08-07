@@ -8,10 +8,10 @@ namespace Syscode
         private Expression? expression;
         public Return(ReturnContext context, AstBuilder builder) : base(context)
         {
-            context.Exp?.SafeCreate(builder.CreateExpression);
+            expression = context.Exp?.SafeCreate(builder.CreateExpression);
         }
 
-        public Expression? Expression { get => expression; set => expression = value; }
+        public Expression? Expression { get => expression; }
 
         public override string ToString()
         {

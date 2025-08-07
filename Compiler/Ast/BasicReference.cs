@@ -17,11 +17,7 @@ namespace Syscode
 
             if (context.Qualification is not null)
             {
-                foreach (var qual in context.Qualification._Qualifiers)
-                {
-                    var qualifier = new Qualification(qual, builder);
-                    qualifierList.Add(qualifier);
-                }
+                qualifierList = context.Qualification._Qualifiers.Select(q => new Qualification(q, builder)).ToList();
             }
         }
 
