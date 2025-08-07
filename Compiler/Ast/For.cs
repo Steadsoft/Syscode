@@ -1,5 +1,4 @@
-﻿using Antlr4.Runtime;
-using System.Text;
+﻿using System.Text;
 using static SyscodeParser;
 
 namespace Syscode

@@ -1,14 +1,7 @@
-﻿  using Antlr4.Runtime;
-using Antlr4.Runtime.Sharpen;
+﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
-using Syscode.Ast;
-using System.Collections.Generic;
-using System.Runtime.Versioning;
-using System.Linq;
-using static Syscode.LexerHelper;
 using static Syscode.Attributes;
 using static SyscodeParser;
-using System.Runtime.InteropServices;
 
 namespace Syscode
 {
