@@ -2,18 +2,18 @@
 
 namespace Syscode
 {
-        public class Leave : AstNode
+    public class Leave : AstNode
+    {
+        private Reference? reference = null;
+        public Leave(LeaveContext context, AstBuilder builder) : base(context)
         {
-            private Reference? reference = null;
-            public Leave(LeaveContext context, AstBuilder builder) : base(context)
-            {
-                if (context.Ref is not null)
-                    reference = builder.CreateReference(context.Ref);
-            }
-            public Reference? Reference { get => reference; }
-            public override string ToString()
-            {
-                return $"leave {Reference}";
-            }
+            if (context.Ref is not null)
+                reference = builder.CreateReference(context.Ref);
+        }
+        public Reference? Reference { get => reference; }
+        public override string ToString()
+        {
+            return $"leave {Reference}";
         }
     }
+}

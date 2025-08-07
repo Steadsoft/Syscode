@@ -22,8 +22,6 @@ namespace Syscode
             this.lexer = lexer;
         }
 
-
-
         public AstNode Generate(ParserRuleContext rule)
         {
             return rule switch
@@ -47,13 +45,10 @@ namespace Syscode
             };
         }
 
-
-
         private Proceed CreateProceed(ProceedContext context)
         {
             return new(context, this);
         }
-
         private Leave CreateLeave(LeaveContext context)
         {
             return new (context,this);
@@ -181,19 +176,6 @@ namespace Syscode
 
         //    return expr;
         //}
-        private static Operator GetOperator(ExprPrefixedContext context)
-        {
-            //var operation = context.GetExactNode<PrefixExpressionContext>().GetExactNode<PrefixOperatorContext>();
-            var terminal = (TerminalNodeImpl)context.Prefixed.Op.children[0]; ;//  (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
-            return (Operator)(terminal.Symbol.Type);
-        }
-        private static Operator GetOperator(ExprBinaryContext context)
-        {
-            var operation = context.Operator.children.Where(c => c is not ExpressionContext).Cast<ParserRuleContext>().Single();
-            var terminal = (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
-
-            return (Operator)(terminal.Symbol.Type);
-        }
         private Assignment CreateAssignment(AssignmentContext context)
         {
             return new Assignment(context,this);
@@ -477,6 +459,19 @@ namespace Syscode
         private If CreateIf(IfContext context)
         {
             return new If(context, this);
+        }
+        private static Operator GetOperator(ExprPrefixedContext context)
+        {
+            //var operation = context.GetExactNode<PrefixExpressionContext>().GetExactNode<PrefixOperatorContext>();
+            var terminal = (TerminalNodeImpl)context.Prefixed.Op.children[0]; ;//  (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
+            return (Operator)(terminal.Symbol.Type);
+        }
+        private static Operator GetOperator(ExprBinaryContext context)
+        {
+            var operation = context.Operator.children.Where(c => c is not ExpressionContext).Cast<ParserRuleContext>().Single();
+            var terminal = (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
+
+            return (Operator)(terminal.Symbol.Type);
         }
         /// <summary>
         /// Reports if any of the supplied attributes are incompatible with the others.
