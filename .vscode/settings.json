@@ -42,7 +42,7 @@
 
                 {
                     "patterns": [
-                        "call","proc", "procedure", "func","function","package","aligned","unaligned","end","goto","return"
+                        "call", "procedure", "func","function","package","aligned","unaligned","end","goto","return"
                     ],
                     "color":"BrightCyan",
                     "bold": true,
@@ -51,7 +51,7 @@
                 },
                 {
                     "patterns": [
-                        "do", "while","until", "for ", "to ","by ","loop"
+                        "do", "while","until", "for ", "to ","by ","loop","leave","proceed"
                     ],
                     "color":"BrightRed",
                     "bold": true,

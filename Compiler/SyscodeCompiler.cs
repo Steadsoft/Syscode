@@ -421,7 +421,7 @@ namespace Syscode
                             foreach (var child in children)
                             {
                                 depth++;
-                                PrintAbstractSyntaxTree(child, depth);
+                                PrintAbstractSyntaxTree(child, depth, Symtab);
                                 depth--;
                             }
                         }
@@ -444,7 +444,7 @@ namespace Syscode
                             foreach (var child in children)
                             {
                                 depth++;
-                                PrintAbstractSyntaxTree(child, depth);
+                                PrintAbstractSyntaxTree(child, depth, Symtab);
                                 depth--;
                             }
                         }
@@ -467,7 +467,7 @@ namespace Syscode
                             foreach (var child in children)
                             {
                                 depth++;
-                                PrintAbstractSyntaxTree(child, depth);
+                                PrintAbstractSyntaxTree(child, depth, Symtab);
                                 depth--;
                             }
                         }
@@ -486,7 +486,7 @@ namespace Syscode
                             foreach (var child in children)
                             {
                                 depth++;
-                                PrintAbstractSyntaxTree(child, depth);
+                                PrintAbstractSyntaxTree(child, depth, Symtab);
                                 depth--;
                             }
                         }

@@ -144,12 +144,12 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
         end
     end
 
-    master_ptr(10) -> pointer_table(x).rate_ptr -> counts = 23
+    master_ptr(10) -> pointer_table(x).rate_ptr.goto -> counts = 23
 
     if big < small then
-       goto done
+       goto finished
     elif big > small then
-       goto undone
+       goto unfinished
     elif big = small then
        return;
     end
