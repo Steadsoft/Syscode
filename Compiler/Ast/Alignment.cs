@@ -1,6 +1,6 @@
 ﻿namespace Syscode.Ast
 {
-    public class Alignment
+    public struct Alignment
     {
         private AlignmentUnits alignmentUnits;
         private int alignmentValue;

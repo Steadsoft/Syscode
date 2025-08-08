@@ -1,8 +1,9 @@
-﻿using static SyscodeParser;
+﻿using Syscode.Ast;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Procedure : AstNode, IContainer , ISpelling
+    public class Procedure : AstNode, IContainer , ISpelling, ISymbol
     {
         private readonly string spelling;
         private readonly bool isFunction;
@@ -57,6 +58,20 @@ namespace Syscode
         public bool Main { get => main;  }
         public StorageClass StorageClass { get => storageClass; set => storageClass = value; }
         public StorageScope StorageScope { get => storageScope; set => storageScope = value; }
+
+        string ISymbol.Spelling => spelling;
+
+        DataType ISymbol.Type => DataType.ENTRY;
+
+        StorageClass ISymbol.StorageClass => StorageClass.Static;
+
+        StorageScope ISymbol.StorageScope => throw new NotImplementedException();
+
+        Alignment ISymbol.Alignment => throw new NotImplementedException();
+
+        int ISymbol.Length => throw new NotImplementedException();
+
+        int ISymbol.Bytes => throw new NotImplementedException();
 
         public override string ToString()
         {

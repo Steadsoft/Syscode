@@ -1,8 +1,9 @@
-﻿using static SyscodeParser;
+﻿using Syscode.Ast;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public abstract class Loop : AstNode, IContainer
+    public abstract class Loop : AstNode, IContainer, ISymbol
     {
         private List<AstNode> statements;
         private List<Symbol> symbols;
@@ -14,6 +15,21 @@ namespace Syscode
         public List<AstNode> Statements { get => statements; protected set => statements = value; }
         public List<Symbol> Symbols { get => symbols; set => symbols = value; }
         public IContainer Container { get => null; set { } }
+
+        string ISymbol.Spelling => label;
+
+        DataType ISymbol.Type => DataType.LABEL;
+
+        StorageClass ISymbol.StorageClass => StorageClass.Static;
+
+        StorageScope ISymbol.StorageScope => StorageScope.Internal;
+
+        Alignment ISymbol.Alignment => throw new NotImplementedException();
+
+        int ISymbol.Length => throw new NotImplementedException();
+
+        int ISymbol.Bytes => throw new NotImplementedException();
+
         public override string ToString()
         {
             return "do loop";

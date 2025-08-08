@@ -275,11 +275,10 @@ namespace Syscode
         }
         private bool ValidateAligned(Declare declaration, Aligned Aligned, out Alignment alignment)
         {
-            alignment = null;
+            alignment = default;
 
             if (Aligned.Alignment.IsConstant && Aligned.Alignment?.Literal != null)
             {
-                alignment = new Alignment();
                 alignment.AlignmentValue = Convert.ToInt32(Aligned.Alignment.Literal.Value);
                 alignment.AlignmentUnits = AlignmentUnits.Bytes;
                 return true;

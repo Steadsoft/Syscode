@@ -1,4 +1,6 @@
 ﻿using Syscode.Ast;
+using System.Xml.Linq;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Syscode
 {
@@ -72,6 +74,37 @@ namespace Syscode
         {
             return Spelling;
         }
+    }
+
+    /*
+     * Symbols can be:
+     * 
+     * declared variables, arrays and structures.
+     * procedures (entry constants)
+     * labels
+     * 
+     * 
+     * 
+     * 
+     */
+
+    public interface ISymbol
+    {
+        string Spelling { get; }
+        DataType Type { get; }
+        StorageClass StorageClass { get; }
+        StorageScope StorageScope { get; }
+        Alignment Alignment { get; }
+        int Precision => 0;
+        bool Signed => false;
+        Base Base => Base.UNDEFINED;
+        Scale Scale => Scale.UNDEFINED;
+        int ScaleFactor => 0;
+        bool Invalid => false;
+        bool Varying => false;
+        int Length { get; }
+        int Bytes { get ; }
+        int? LabelSubscript => null;
     }
 
     public enum StorageClass

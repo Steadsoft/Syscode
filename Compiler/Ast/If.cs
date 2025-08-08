@@ -1,8 +1,9 @@
-﻿using static SyscodeParser;
+﻿using Syscode.Ast;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public class If : AstNode
+    public class If : AstNode, ISymbol
     {
         private readonly Expression condition;
         private List<AstNode> thenStatements = new();
@@ -14,6 +15,21 @@ namespace Syscode
         public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }
         public List<AstNode> ElseStatements { get => elseStatements; set => elseStatements = value; }
         public List<Elif> ElifStatements { get => elifStatements; set => elifStatements = value; }
+
+        public string Spelling => label;
+
+        public DataType Type => DataType.LABEL;
+
+        public StorageClass StorageClass => StorageClass.Static;
+
+        public StorageScope StorageScope => StorageScope.Internal;
+
+        public Alignment Alignment => throw new NotImplementedException();
+
+        public int Length => throw new NotImplementedException();
+
+        public int Bytes => throw new NotImplementedException();
+
         public If(IfContext context, AstBuilder builder) : base(context)
         {
             condition = builder.CreateExpression(context.ExprThen.Exp);
