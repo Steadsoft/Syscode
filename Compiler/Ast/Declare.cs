@@ -78,7 +78,7 @@ namespace Syscode
                         return;
                     }
 
-                    if (pair.Lower != null)
+                    if (pair.Lower is not null)
                         if (!pair.Lower.IsConstant)
                         {
                             constantSize = false;

@@ -227,7 +227,7 @@
             {
                 if (!(reference.IsResolved &&
                       reference.IsJustBasicReference &&
-                      reference.BasicReference.Symbol.CoreType == DataType.BUILTIN))
+                      reference.BasicReference.Symbol.DataType == DataType.BUILTIN))
                 {
                     reporter.Report(node, 1015, reference.BasicReference.Spelling); // do not warn about references to keywords when the reference is to a builtin function with the same name as a keyword
                 }

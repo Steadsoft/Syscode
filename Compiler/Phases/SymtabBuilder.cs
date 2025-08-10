@@ -37,25 +37,22 @@ namespace Syscode
 
             var symbol = new Symbol(declaration);
 
-            if (IsBinaryType(symbol.CoreType))
+            if (symbol.DataType == DataType.BIN || symbol.DataType == DataType.UBIN)
             {
-                if (ValidBinaryDeclaration(declaration, out var precision, out var scale, out var signed, out var bytes))
-                {
-                    symbol.Precision = precision;
-                    symbol.Scale = scale;
-                    symbol.Signed = signed;
-                    symbol.Invalid = false;
-                    symbol.Bytes = bytes;
+                symbol.Precision = declaration.BIN.precision;
+                symbol.Scale = declaration.BIN.scale;
+                symbol.Signed = declaration.BIN.signed;
+                symbol.Invalid = false;
+                symbol.Bytes = 100;
 
-                    if (declaration.Alignment.AlignmentUnits == AlignmentUnits.Unspecified)
-                        declaration.Alignment = GetDefaultAlignment(symbol);
+                if (declaration.Alignment.AlignmentUnits == AlignmentUnits.Unspecified)
+                    declaration.Alignment = GetDefaultAlignment(symbol);
 
-                    ApplyDefaults(symbol);
-                    return symbol;
-                }
+                ApplyDefaults(symbol);
+                return symbol;
             }
 
-            if (symbol.CoreType == DataType.STRING)
+            if (symbol.DataType == DataType.STRING)
             {
                 if (ValidStringDeclaration(declaration, out var length, out var varying))
                 {

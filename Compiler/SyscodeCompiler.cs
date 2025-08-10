@@ -497,17 +497,19 @@ namespace Syscode
 
         public void PrintSymbols(IEnumerable<Symbol> symbols, int depth, AstNode node)
         {
+            Console.WriteLine($"{LineDepth(depth, node)} SYMBOLS = {symbols.Count()}");
+
             foreach (var symbol in symbols)
             {
                 if (symbol.IsntStructure)
                 {
                     StringBuilder builder = new();
 
-                    if (symbol.CoreType != DataType.ENTRY)
+                    if (symbol.DataType != DataType.ENTRY)
                     {
                         builder.Append($"{LineDepth(depth, symbol.Node)}  ");
-                        builder.Append($"SYMBOL: '{symbol.ToString()}'");
-                        builder.Append($", TYPE: {symbol.CoreType}");
+                        builder.Append($"{symbol.DataType}");
+                        builder.Append($", NAME: '{symbol.Spelling}'");
                         builder.Append($"({symbol.Precision},{symbol.Scale})");
                         builder.Append($", BYTES: {symbol.Bytes}");
                         builder.Append($", ALIGN: {symbol.Alignment.AlignmentValue} {symbol.Alignment.AlignmentUnits}");
@@ -521,8 +523,9 @@ namespace Syscode
                     else
                     {
                         builder.Append($"{LineDepth(depth, symbol.Node)}  ");
-                        builder.Append($"SYMBOL: '{symbol.ToString()}'");
-                        builder.Append($", TYPE: {symbol.CoreType}");
+                        builder.Append($"{symbol.DataType}");
+                        builder.Append($", NAME: '{symbol.Spelling}'");
+                        builder.Append($", TYPE: {symbol.DataType}");
                         builder.Append($", CLASS: {symbol.StorageClass}");
                         builder.Append($", SCOPE: {symbol.StorageScope}");
                         Console.WriteLine(builder.ToString());
@@ -530,7 +533,7 @@ namespace Syscode
 
                 }
                 else
-                    Console.WriteLine($"{LineDepth(depth, symbol.Declaration)}  SYMBOL: '{symbol}' STRUCT");
+                    Console.WriteLine($"{LineDepth(depth, symbol.Declaration)}  {symbol.DataType}, NAME: {symbol.Spelling}");
 
             }
         }
