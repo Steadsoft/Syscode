@@ -103,13 +103,13 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
 
     outer.inner1.dont.age = -9
 
-    do @main_loop loop
+    do @process loop
         error_count += 1
 
         if error_count > 100 then
            leave 
         else
-           proceed main_loop
+           proceed processor
         end
     end
 
@@ -128,13 +128,13 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
     sat = 23 (+) 45    // saturated
     sum = 23 [+] 45    // overflow aware
 
-    if @main_if overflowed then
+    if @start_checks overflowed then
        if uptime > 1000 then
           if procs > 32 then
              if not_set then
                 not_set = false;
              else 
-                leave main_if
+                leave start_checks2
              end
            end
         end

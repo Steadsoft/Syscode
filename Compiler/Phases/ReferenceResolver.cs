@@ -48,6 +48,9 @@
             statements.OfType<Loop>().ForEach(l => Resolve(root, l));
             statements.OfType<Call>().ForEach(c => Resolve(root, c));
             statements.OfType<Return>().ForEach(r => Resolve(root, r));
+            statements.OfType<Leave>().ForEach(r => Resolve(root, r));
+            statements.OfType<Proceed>().ForEach(r => Resolve(root, r));
+
         }
         private static void ResolveQualifiedReference(Reference reference, Symbol symbol)
         {
@@ -192,6 +195,17 @@
             ResolveStatementReferences(container, ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));
             ifstmt.ElifStatements.Select(elif => elif.Condition).ForEach(exp => ResolveExpression (container, exp));
         }
+
+        private void Resolve(IContainer container, Proceed statement)
+        {
+            if (statement.Reference is not null)
+                ResolveReference(container, statement.Reference);
+        }
+        private void Resolve(IContainer container, Leave statement)
+        {
+            if (statement.Reference is not null)
+                ResolveReference(container, statement.Reference);
+        }
         private void Resolve(IContainer container, Goto statement)
         {
             ResolveReference(container, statement.Reference);
@@ -315,6 +329,18 @@
                     case Goto gotostmt:
                         {
                             ReportUnresolvedReference(gotostmt, gotostmt.Reference);
+                            break;
+                        }
+                    case Leave leavestmt:
+                        {
+                            if (leavestmt.Reference is not null)
+                                ReportUnresolvedReference(leavestmt, leavestmt.Reference);
+                            break;
+                        }
+                    case Proceed proceedstmt:
+                        {
+                            if (proceedstmt.Reference is not null)
+                                ReportUnresolvedReference(proceedstmt, proceedstmt.Reference);
                             break;
                         }
                     case If ifstmt: // this statements contains other statements
