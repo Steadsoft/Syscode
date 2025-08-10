@@ -16,6 +16,8 @@ namespace Syscode
             this.whileExp = context.Until.While?.Exp.SafeCreate(builder.CreateExpression);
             this.Statements = builder.GenerateStatements(context.Until._Statements);
             this.Label = context.Until.Name?.GetText().Replace("@", "");
+            if (context.Until.Name is not null)
+                haslabel = true;
 
         }
 

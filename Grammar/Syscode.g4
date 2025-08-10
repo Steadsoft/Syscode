@@ -186,7 +186,7 @@ reference
 
 basicReference
   : Qualification=structureQualificationList? Spelling=identifier
-  ;
+  ; 
 
 argumentsList
   : ArgsSet+=arguments+;

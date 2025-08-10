@@ -7,6 +7,8 @@ namespace Syscode
         private List<AstNode> statements;
         private List<Symbol> symbols;
         private string? label;
+        protected bool haslabel = false;
+        public bool HasLabel { get { return haslabel; } }
         public Loop(LoopContext context) : base(context)
         {
         }

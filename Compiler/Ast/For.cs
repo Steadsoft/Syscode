@@ -36,6 +36,10 @@ namespace Syscode
             this.Label = context.For.Name?.GetText().Replace("@", "");
 
             Statements = builder.GenerateStatements(context.For._Statements);
+
+            if (context.For.Name is not null)
+                haslabel = true;
+
         }
 
         public override string ToString()

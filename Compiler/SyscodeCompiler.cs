@@ -499,7 +499,7 @@ namespace Syscode
         {
             Console.WriteLine($"{LineDepth(depth, node)} SYMBOLS = {symbols.Count()}");
 
-            foreach (var symbol in symbols)
+            foreach (var symbol in symbols.OrderBy(s => s.Node.StartLine) )
             {
                 if (symbol.IsntStructure)
                 {
@@ -514,7 +514,7 @@ namespace Syscode
                         builder.Append($", BYTES: {symbol.Bytes}");
                         builder.Append($", ALIGN: {symbol.Alignment.AlignmentValue} {symbol.Alignment.AlignmentUnits}");
                         builder.Append($", IS FIXED SIZE: {symbol.ConstantSize}");
-                        builder.Append($", IS ARRAY: {symbol.Declaration.IsArray}");
+                        builder.Append($", IS ARRAY: {symbol.Declaration?.IsArray}");
                         builder.Append($", CLASS: {symbol.StorageClass}");
                         builder.Append($", SCOPE: {symbol.StorageScope}");
                         Console.WriteLine(builder.ToString());

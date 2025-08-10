@@ -18,6 +18,8 @@ namespace Syscode
         private StorageScope storageScope;
         private bool constantSize;
         private string spelling;
+        private AstNode node;
+        private Alignment alignment;
         public Symbol(Declare declaration) 
         {
             this.Declaration = declaration;
@@ -26,6 +28,8 @@ namespace Syscode
             this.storageScope = declaration.StorageScope;
             this.constantSize = declaration.ConstantSize;
             this.spelling = declaration.Spelling;
+            this.node = declaration;
+            this.alignment = declaration.Alignment;
         }
         public Symbol(Procedure procedure)
         {
@@ -36,17 +40,30 @@ namespace Syscode
             this.storageScope = procedure.StorageScope;
             this.constantSize = true;
             this.spelling += procedure.Spelling;
+            this.node = procedure;
+            this.alignment = new Alignment() { AlignmentUnits = AlignmentUnits.Bytes, AlignmentValue = 4 };
         }
         public Symbol (If If)
         {
             dataType = DataType.LABEL;
             spelling = If.Label;
-
+            node = If;
+            alignment = new Alignment() { AlignmentUnits = AlignmentUnits.Bytes, AlignmentValue = 4 };
         }
         public Symbol (Loop Loop)
         {
             dataType = DataType.LABEL;
             spelling = Loop.Label;
+            node = Loop;
+            alignment = new Alignment() { AlignmentUnits = AlignmentUnits.Bytes, AlignmentValue = 4 };
+        }
+        public Symbol (Label Label)
+        {
+            dataType = DataType.LABEL;
+            spelling = Label.spelling;
+            node = Label;
+            alignment = new Alignment() { AlignmentUnits = AlignmentUnits.Bytes, AlignmentValue = 4 };
+
         }
         public StructBody StructBody { get => Declaration.StructBody; }
         public List<BoundsPair> Bounds { get => Declaration.Bounds; }
@@ -58,10 +75,7 @@ namespace Syscode
         {
             get
             {
-                if (declaration != null)
-                    return declaration;
-                
-                return procedure;
+                return node;
             }
         }
         public bool ConstantSize => constantSize;
@@ -80,7 +94,7 @@ namespace Syscode
         /// <remarks>
         /// The alignment is zero for next bit alignment, then 1 for next byte and so on
         /// </remarks>
-        public Alignment Alignment { get => declaration.Alignment; }
+        public Alignment Alignment { get => alignment; }
         public Declare Declaration { get => declaration; set => declaration = value; }
         public StorageClass StorageClass { get => storageClass; set => storageClass = value; }
         public StorageScope StorageScope { get => storageScope; set => storageScope = value; }

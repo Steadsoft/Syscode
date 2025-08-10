@@ -14,6 +14,8 @@ namespace Syscode
         public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }
         public List<AstNode> ElseStatements { get => elseStatements; set => elseStatements = value; }
         public List<Elif> ElifStatements { get => elifStatements; set => elifStatements = value; }
+        private bool hasLabel = false;
+        public bool HasLabel => hasLabel;
         public If(IfContext context, AstBuilder builder) : base(context)
         {
             condition = builder.CreateExpression(context.ExprThen.Exp);
@@ -30,7 +32,10 @@ namespace Syscode
             }
 
             if (context.Name != null)
+            {
                 label = context.Name.Spelling.GetText();
+                 hasLabel = true;
+            }
         }
         public override string ToString()
         {

@@ -16,6 +16,9 @@ namespace Syscode
             this.untilExp = context.While.Until?.Exp.SafeCreate(builder.CreateExpression);
             this.Statements = builder.GenerateStatements(context.While._Statements);
             this.Label = context.While.Name?.GetText().Replace("@", "");
+
+            if (context.While.Name is not null)
+                haslabel    = true;
         }
 
         public override string ToString()
