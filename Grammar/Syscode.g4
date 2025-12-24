@@ -40,7 +40,7 @@ compilation: Statements+=statement* endOfFile;
 // One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
 // several source files with that namespace prefix, each of which contributes stuff to the namespace.
 
-statement:  preamble?  (call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | leave | proceed | assignment );
+statement:  preamble?  (call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | leave | proceed | assignment | comment);
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttributes* statementSeparator emptyLines? ((Fields+=structField|Structs+=structBody) emptyLines?)* END ;
@@ -220,6 +220,10 @@ primitiveExpression
   | Reference=reference      #Ref
   ;
 
+parenthesizedExpression
+  : LPAR Expr=expression RPAR
+  ;  
+
 stringLiteral
   : Text=STR_LITERAL
   ;
@@ -265,9 +269,7 @@ binop
     |logor
     ;
 
-parenthesizedExpression
-  : LPAR Expr=expression RPAR
-  ;
+
 
 prefixExpression
   : Op=prefixOperator Expr=expression
@@ -394,6 +396,8 @@ memberSeparator : COMMA;
 // Utility rules
 endOfFile: emptyLines? EOF;
 
+comment: BCOM (comment | .)*? ECOM;
+
 keyword
     : ALIGNED
     | AS
@@ -469,15 +473,15 @@ keyword
     ;
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
-COMMENT: (BCOM (COMMENT | .)*? ECOM) -> channel(HIDDEN);
+//COMMENT: (BCOM (COMMENT | .)*? ECOM) -> channel(HIDDEN);
 LINECOM: (LCOM ~[\r\n]*) -> skip;
 HYPERCOMMENT: ('/#' (.)*? '#/') -> skip;
 fragment BINCHARS:  [0-1];
 fragment OCTCHARS:  [0-7];
 fragment DECCHARS:  [0-9];
 fragment HEXCHARS:  [0-9a-fA-F];
-fragment BCOM:      ('/*');
-fragment ECOM:      ('*/');
+BCOM:      ('/*');
+ECOM:      ('*/');
 fragment FRAC_H:    ('.' [0-9a-fA-F]+);
 fragment BASE_H:    ('h' | 'H');
 fragment FRAC_D:    ('.' [0-9]+);
