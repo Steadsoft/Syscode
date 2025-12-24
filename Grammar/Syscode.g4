@@ -469,32 +469,32 @@ keyword
     ;
 
 // Allow comment blocks slash/star TEXT star/slash to be nested 
-COMMENT: (BCOM (COMMENT | .)*? ECOM) -> skip; //channel(HIDDEN);
+COMMENT: (BCOM (COMMENT | .)*? ECOM) -> channel(HIDDEN);
 LINECOM: (LCOM ~[\r\n]*) -> skip;
 HYPERCOMMENT: ('/#' (.)*? '#/') -> skip;
 fragment BINCHARS:  [0-1];
 fragment OCTCHARS:  [0-7];
 fragment DECCHARS:  [0-9];
 fragment HEXCHARS:  [0-9a-fA-F];
-fragment BCOM:    ('/*');
-fragment ECOM:    ('*/');
-fragment FRAC_H:  ('.' [0-9a-fA-F]+);
-fragment BASE_H:  ('h' | 'H');
-fragment FRAC_D:  ('.' [0-9]+);
-fragment BASE_D:  ('d' | 'D');
-fragment FRAC_O:  ('.' [0-7]+);
-fragment BASE_O:  ('o' | 'O');
-fragment FRAC_B:  ('.' [0-1]+);
-fragment BASE_B:  ('b' | 'B');
-fragment SIZE:    ('s' | 'd'); // single/double float
-fragment SEP:     (' ' | '_');
-fragment LHEX:     (HEXCHARS SEP*);
-fragment LOCT:     (OCTCHARS SEP*);
-fragment LBIN:     (BINCHARS SEP*);
-fragment LDEC:     (DECCHARS SEP*);
-fragment DEXP:     'e' (PLUS | MINUS)?;
-fragment HEXP:     'p' (PLUS | MINUS)?;
-fragment SPACE:    ' ';
+fragment BCOM:      ('/*');
+fragment ECOM:      ('*/');
+fragment FRAC_H:    ('.' [0-9a-fA-F]+);
+fragment BASE_H:    ('h' | 'H');
+fragment FRAC_D:    ('.' [0-9]+);
+fragment BASE_D:    ('d' | 'D');
+fragment FRAC_O:    ('.' [0-7]+);
+fragment BASE_O:    ('o' | 'O');
+fragment FRAC_B:    ('.' [0-1]+);
+fragment BASE_B:    ('b' | 'B');
+fragment SIZE:      ('s' | 'd'); // single/double float
+fragment SEP:       (' ' | '_');
+fragment LHEX:      (HEXCHARS SEP*);
+fragment LOCT:      (OCTCHARS SEP*);
+fragment LBIN:      (BINCHARS SEP*);
+fragment LDEC:      (DECCHARS SEP*);
+fragment DEXP:      'e' (PLUS | MINUS)?;
+fragment HEXP:      'p' (PLUS | MINUS)?;
+fragment SPACE:     ' ';
 fragment HEX_TRAIL: LBRACE ('h' | 'hs' | 'hd' | 'dh' | 'sh') RBRACE;
 fragment DEC_TRAIL: LBRACE ('s' | 'd') RBRACE;
 

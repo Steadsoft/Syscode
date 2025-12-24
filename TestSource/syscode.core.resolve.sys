@@ -158,7 +158,17 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
 
     return junk.trash(x)
 
+    a = b + c * d - e
+
 end
+
+/*
+
+/* a comment */
+
+/* another */
+
+*/
 
 goto reboot
 

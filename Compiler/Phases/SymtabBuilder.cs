@@ -52,22 +52,7 @@ namespace Syscode
             if (declaration.IsStructure)
                 ValidateStructure(declaration);
 
-            var symbol = new Symbol(declaration);
-
-            if (symbol.DataType == DataType.BIN || symbol.DataType == DataType.UBIN)
-            {
-                symbol.Precision = declaration.BIN.precision;
-                symbol.Scale = declaration.BIN.scale;
-                symbol.Signed = declaration.BIN.signed;
-                symbol.Invalid = false;
-                symbol.Bytes = 100;
-
-                if (declaration.Alignment.AlignmentUnits == AlignmentUnits.Unspecified)
-                    declaration.Alignment = GetDefaultAlignment(symbol);
-
-                ApplyDefaults(symbol);
-                return symbol;
-            }
+            var symbol = new Symbol(declaration,this);
 
             if (symbol.DataType == DataType.STRING)
             {
@@ -91,7 +76,7 @@ namespace Syscode
             return symbol;
         }
 
-        private void ApplyDefaults(Symbol symbol)
+        public void ApplyDefaults(Symbol symbol)
         {
             if (symbol.Container == null)  // declared in global namespace
             {
@@ -412,7 +397,7 @@ namespace Syscode
 
             return true;
         }
-        private static Alignment GetDefaultAlignment(Symbol symbol)
+        public  Alignment GetDefaultAlignment(Symbol symbol)
         {
             int byteLength = (symbol.Precision + 7) / 8;
             int value = 1 << (int)Math.Ceiling(Math.Log2(byteLength));

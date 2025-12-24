@@ -20,7 +20,7 @@ namespace Syscode
         private string spelling;
         private AstNode node;
         private Alignment alignment;
-        public Symbol(Declare declaration) 
+        public Symbol(Declare declaration, SymtabBuilder builder) 
         {
             this.Declaration = declaration;
             this.dataType = declaration.CoreType;
@@ -30,6 +30,28 @@ namespace Syscode
             this.spelling = declaration.Spelling;
             this.node = declaration;
             this.alignment = declaration.Alignment;
+
+            if (dataType == DataType.BIN || dataType == DataType.UBIN)
+            {
+                this.Precision = declaration.BIN.precision;
+                this.Scale = declaration.BIN.scale;
+                this.Signed = declaration.BIN.signed;
+                this.Invalid = false;
+                this.Bytes = 100;
+
+                if (declaration.Alignment.AlignmentUnits == AlignmentUnits.Unspecified)
+                    declaration.Alignment = builder.GetDefaultAlignment(this);
+
+                builder.ApplyDefaults(this);
+
+            }
+
+            if (dataType == DataType.STRING)
+            {
+
+            }
+
+
         }
         public Symbol(Procedure procedure)
         {
