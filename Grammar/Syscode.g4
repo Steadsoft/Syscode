@@ -101,8 +101,8 @@ attribute
 
 type: TYPE Body=structBody ;    
 
-leave: LEAVE Ref=reference? statementSeparator;
-proceed: PROCEED Ref=reference? statementSeparator;
+leave: EXIT Ref=reference? statementSeparator;
+proceed: JUMP Ref=reference? statementSeparator;
 
 // literal: LIT customLiteral AS decLiteral statementSeparator ; 
 loop
@@ -435,7 +435,7 @@ keyword
     | INTERNAL
     | IS
     | LABEL
-    | LEAVE
+    | EXIT
     | LIT
     | LOOP
     | MAIN
@@ -447,7 +447,7 @@ keyword
     | PATH
     | POINTER
     | PROCEDURE
-    | PROCEED
+    | JUMP
     | RETURN
     | SBE
     | SINGLE
@@ -552,6 +552,7 @@ ELSE:           'else';
 END:            'end';
 ENTRY:          'entry';
 ENUM:           'enum';
+EXIT:           'exit';
 EXTERNAL:       'ext' | 'external';
 FOR:            'for';
 FOREVER:        'forever';
@@ -561,8 +562,8 @@ IF:             'if';
 INIT:           'init';
 INTERNAL:       'internal';
 IS:             'is';
+JUMP:           'jump';
 LABEL:          'label';
-LEAVE:          'exit';
 LIT:            'lit' | 'literal';
 LOOP:           'loop';
 MAIN:           'main';
@@ -575,7 +576,6 @@ PAD:            'pad';
 PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROCEDURE:      'proc' | 'procedure';
-PROCEED:        'jump';
 RETURN:         'return';
 SBE:            'sbe';
 SINGLE:         'single';
