@@ -107,9 +107,9 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
         error_count += 1
 
         if error_count > 100 then
-           leave 
+           exit 
         else
-           proceed processor
+           jump process
         end
     end
 
@@ -134,7 +134,7 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
              if not_set then
                 not_set = false;
              else 
-                leave start_checks2
+                exit start_checks2
              end
            end
         end
@@ -161,6 +161,7 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
     a = b + c * d - e
 
 end
+
 
 /*
 
