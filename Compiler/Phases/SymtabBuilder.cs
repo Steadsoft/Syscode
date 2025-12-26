@@ -2,6 +2,9 @@
 
 namespace Syscode
 {
+    // TODO: Rework this, the symtab can and should be built from the CST and then the AST phase can resolve refs to that. The way 
+    // it is here is wrong!
+    
     public class SymtabBuilder
     {
         private readonly Reporter reporter;
