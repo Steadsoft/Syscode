@@ -1,4 +1,8 @@
-﻿using Syscode.Ast;
+﻿using Antlr4.Runtime;
+using Syscode.Ast;
+using System.Data;
+using System.Linq;
+using static SyscodeParser;
 
 namespace Syscode
 {
@@ -22,6 +26,263 @@ namespace Syscode
             root.Symbols.AddRange(procedures.Select(CreateSymbol));
 
         }
+
+        public void Generate(ParserRuleContext rule)
+        {
+            return rule switch
+            {
+                //CompilationContext context => CreateCompilation(context),
+                //ProcedureContext context => CreateProcedure(context),
+                //FunctionContext context => CreateFunction(context),
+                //TypeContext context => CreateType(context),
+                DeclareContext context => ProcessDeclaration(context),
+                AlabelContext context => CreateLabel(context),
+                _ => new AstNode(rule)
+            };
+
+        }
+
+
+        public Symbol ProcessDeclaration(DeclareContext context)
+        {
+            /*
+             *  The processing of a Syscode declaration involves the possible presence
+             *  of multiple or contradictory attributes. This is because the grammar
+             *  is permissive and avoids parse failures for this kind of error, it is
+             *  esier to apply these rules after parsing.
+             *  
+             *  A declaration has two categories of attributes, data-attributes and
+             *  attributes.
+             */
+
+            var dcl = new Declare(currentContainer, context);
+
+            try
+            {
+
+                #region Extract array bounds
+                if (context.Bounds != null)
+                {
+                    dcl.Bounds = context.Bounds.Pair._BoundPairs.Select(p => new BoundsPair(p, this)).ToList();
+                }
+
+                if (context.Struct != null)
+                {
+                    dcl.StructBody = CreateStructure(context.Struct);
+                    dcl.Spelling = dcl.StructBody.Spelling;  // copy the spelling for convenience in debugging.
+                }
+                else
+                {
+                    dcl.Spelling = context.Spelling.GetText();
+                    dcl.IsKeyword = context.Spelling.Key != null;
+                }
+                #endregion
+
+                var dataAttributesGroups = context._DataAttributes.GroupBy(d => d.GetType()).ToArray();
+
+                #region No data attribues
+
+                if (dataAttributesGroups.Any() == false)
+                {
+                    reporter.Report(dcl, 1030, dcl.Spelling);
+                    return dcl;
+                }
+                #endregion
+
+                #region Repeated data attributes
+
+                if (dataAttributesGroups.Where(g => g.Count() > 1).Any())
+                {
+                    var repeaters = dataAttributesGroups.Where(g => g.Count() > 1);
+
+                    foreach (var group in repeaters)
+                    {
+                        string attrtext = GetKeywordFromAttribute(group.First().GetType());
+                        reporter.Report(dcl, 1023, dcl.Spelling, attrtext);
+                    }
+
+                    return dcl;
+                }
+                #endregion
+
+                #region Incompatible attributes
+
+                ReportIncompatibleDataAttributes(dcl, dataAttributesGroups.Select(g => g.Key));
+
+                if (dcl.ReportedError > 0)
+                    return dcl;
+
+                #endregion
+
+                #region Apply attributes 
+
+                // At this point there are potentially several attributes present but they are all compatible
+
+                foreach (var attributeGroup in dataAttributesGroups)
+                {
+                    switch (attributeGroup.Single())  // We know at this point that no attribute occurs more than once, if this throws we have a bug.
+                    {
+                        case LabelContext attribute:
+                            {
+                                dcl.CoreType = DataType.LABEL;
+                                break;
+                            }
+                        case BitContext attribute:
+                            {
+                                dcl.CoreType = DataType.BIT;
+                                break;
+                            }
+                        case PointerContext attribute:
+                            {
+                                dcl.CoreType = DataType.POINTER;
+                                break;
+                            }
+                        case IntegerContext attribute:
+                            {
+                                int precision = 0;
+                                int scale = 0;
+
+                                dcl.CoreType = DataType.BIN;
+
+                                //var attr = context._DataAttributes.OfType<IntegerContext>().Single();
+
+                                if (attribute.Integer.Args == null) // this is predefined standard type
+                                {
+                                    dcl.BIN = (attribute.Integer.digits, 0, attribute.Integer.signed);
+                                }
+                                else
+                                {
+                                    // extract the details by examining the context further
+                                    if (attribute.Integer.Args.List._Exp.Count > 2)
+                                    {
+                                        reporter.Report(dcl, 1026);
+                                        return dcl;
+                                    }
+
+                                    var precexp = CreateExpression(attribute.Integer.Args.List._Exp[0]);
+
+                                    if (precexp.IsConstant)
+                                        precision = Convert.ToInt32(precexp.Literal.Value);
+                                    else
+                                    {
+                                        reporter.Report(dcl, 1027, "1", "64");
+                                        return dcl;
+                                    }
+
+                                    if (attribute.Integer.Args.List._Exp.Count == 2) // is there a scale factor?
+                                    {
+                                        var scaleexp = CreateExpression(attribute.Integer.Args.List._Exp[1]);
+
+                                        if (scaleexp.IsConstant)
+                                            scale = Convert.ToInt32(scaleexp.Literal.Value);
+                                        else
+                                        {
+                                            reporter.Report(dcl, 1028, "-60", "64");
+                                            return dcl;
+                                        }
+                                    }
+
+                                    if (precision < 1 || precision > 64)
+                                    {
+                                        reporter.Report(dcl, 1027, "1", "64");
+                                        return dcl;
+
+                                    }
+                                    if (scale < -60 || scale > 64)
+                                    {
+                                        reporter.Report(dcl, 1028, "-60", "64");
+                                        return dcl;
+                                    }
+
+                                    dcl.BIN = (precision, scale, attribute.Integer.signed);
+                                }
+                                break;
+                            }
+                        case EntryContext attribute:
+                            {
+                                dcl.CoreType = DataType.ENTRY;
+                                break;
+                            }
+                        case StringContext attribute:
+                            {
+                                dcl.CoreType = DataType.STRING;
+                                break;
+                            }
+                        case AsContext attribute:
+                            {
+                                dcl.CoreType = DataType.AS;
+                                break;
+                            }
+                        case AlignedContext attribute:
+                            {
+                                //dcl.CoreType = DataType.AS;
+                                break;
+                            }
+                        case VariableContext attribute:
+                            {
+                                break;
+                            }
+                        case BuiltinContext attribute:
+                            {
+                                dcl.CoreType = DataType.BUILTIN;
+                                break;
+                            }
+                        default:
+                            {
+                                reporter.Report(dcl, 1032, nameof(CreateDeclaration));
+                                throw new InvalidOperationException("Internal error");
+                            }
+                    }
+                }
+                #endregion
+
+                // Process remaining non-data attributes
+
+                var attributesGroups = context._Attributes.GroupBy(d => d.GetType()).ToArray();
+
+                #region Repeated attributes
+
+                if (attributesGroups.Where(g => g.Count() > 1).Any())
+                {
+                    var repeaters = attributesGroups.Where(g => g.Count() > 1);
+
+                    foreach (var group in repeaters)
+                    {
+                        string attrtext = GetKeywordFromAttribute(group.First().GetType());
+                        reporter.Report(dcl, 1029, dcl.Spelling, attrtext);
+                    }
+
+                    return dcl;
+                }
+                #endregion
+
+                #region Incompatible attributes
+
+                //TestCompatibility(dcl, dataAttributesGroups.Select(g => g.Key).OrderBy(g => g.Name));
+
+                //if (dcl.ReportedError > 0)
+                //    return dcl;
+
+                #endregion
+
+                dcl.Validated = true;
+                return dcl;
+
+            }
+            catch (Exception e)
+            {
+                reporter.Report(dcl, 1032, nameof(CreateDeclaration));
+                throw new InternalErrorException($"In '{nameof(CreateDeclaration)}' processing line {dcl.StartLine}.", e);
+            }
+
+        }
+
+        public StructBody CreateStructure(StructBodyContext context)
+        {
+            return new StructBody(context, this);
+        }
+
+
         public Symbol CreateSymbol(Procedure procedure)
         {
             var sym = new Symbol(procedure);

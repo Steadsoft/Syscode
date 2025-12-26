@@ -89,6 +89,12 @@ namespace Syscode
             symtabBuilder.Generate((Compilation)root);
         }
 
+        public void ProcessDeclarations(ParserRuleContext root)
+        {
+            symtabBuilder.Generate((Compilation)root);
+        }
+
+
         public void ResolveCompilationReferences(AstNode root)
         {
             resolver.ResolveContainedReferences((Compilation)root);
