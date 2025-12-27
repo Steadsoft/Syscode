@@ -50,7 +50,6 @@
             statements.OfType<Return>().ForEach(r => Resolve(root, r));
             statements.OfType<Leave>().ForEach(r => Resolve(root, r));
             statements.OfType<Proceed>().ForEach(r => Resolve(root, r));
-
         }
         private static void ResolveQualifiedReference(Reference reference, Symbol symbol)
         {
@@ -195,7 +194,6 @@
             ResolveStatementReferences(container, ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));
             ifstmt.ElifStatements.Select(elif => elif.Condition).ForEach(exp => ResolveExpression (container, exp));
         }
-
         private void Resolve(IContainer container, Proceed statement)
         {
             if (statement.Reference is not null)

@@ -29,7 +29,7 @@ namespace Syscode
 
             compiler.ProcessDeclarations(ast);
 
-            compiler.ResolveCompilationReferences(ast);
+            compiler.ResolveReferences(ast);
 
             compiler.PrintDiagnostics();
 

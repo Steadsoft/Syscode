@@ -39,17 +39,17 @@ namespace Syscode
                 AlabelContext context => CreateLabel(context),
                 GotoContext context => CreateGoto(context),
                 LoopContext context => CreateLoop(context),
-                LeaveContext context => CreateLeave(context),
-                ProceedContext context => CreateProceed(context),
+                ExitContext context => CreateLeave(context),
+                JumpContext context => CreateProceed(context),
                 _ => new AstNode(rule)
             };
         }
 
-        private Proceed CreateProceed(ProceedContext context)
+        private Proceed CreateProceed(JumpContext context)
         {
             return new(context, this);
         }
-        private Leave CreateLeave(LeaveContext context)
+        private Leave CreateLeave(ExitContext context)
         {
             return new (context,this);
         }
