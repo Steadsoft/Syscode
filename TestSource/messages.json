@@ -164,6 +164,11 @@
       "number": 1032,
       "message": "An internal error has ocurred in '{arg0}' compilation terminated",
       "severity": "Fatal"
+    },
+        {
+      "number": 1033,
+      "message": "Syntax error in preprocessor %include statement",
+      "severity": "Fatal"
     }
   ]
 }

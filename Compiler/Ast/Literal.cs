@@ -1,4 +1,5 @@
-﻿using Syscode.Ast;
+﻿using Antlr4.Runtime;
+using Syscode.Ast;
 using static SyscodeParser;
 
 namespace Syscode
@@ -68,7 +69,7 @@ namespace Syscode
             literalType = LiteralType.String;
         }
 
-        public Literal(LiteralType literalType) : base(null)
+        public Literal(LiteralType literalType) : base()
         {
             this.literalType = literalType;
         }

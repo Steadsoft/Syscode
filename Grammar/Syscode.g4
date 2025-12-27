@@ -40,11 +40,13 @@ compilation: Statements+=statement* endOfFile;
 // One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
 // several source files with that namespace prefix, each of which contributes stuff to the namespace.
 
-statement:  preamble?  (call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | leave | proceed | assignment);
+statement:  preamble?  (preprocess | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | exit | jump | assignment);
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttributes* statementSeparator emptyLines? ((Fields+=structField|Structs+=structBody) emptyLines?)* END ;
 structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
+
+preprocess : INCLUDE STR_LITERAL statementSeparator;
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;
@@ -101,8 +103,8 @@ attribute
 
 type: TYPE Body=structBody ;    
 
-leave: EXIT Ref=reference? statementSeparator;
-proceed: JUMP Ref=reference? statementSeparator;
+exit: EXIT Ref=reference? statementSeparator;
+jump: JUMP Ref=reference? statementSeparator;
 
 // literal: LIT customLiteral AS decLiteral statementSeparator ; 
 loop
@@ -425,6 +427,7 @@ keyword
     | END
     | ENTRY
     | ENUM
+    | EXIT
     | EXTERNAL
     | FOR
     | FOREVER
@@ -434,6 +437,7 @@ keyword
     | INIT
     | INTERNAL
     | IS
+    | JUMP
     | LABEL
     | EXIT
     | LIT
@@ -471,6 +475,8 @@ keyword
     | VARIABLE
     | WHILE 
     ;
+
+INCLUDE:            'INCLUDE' ;    
 
 BOM: '\uFEFF'  -> skip;
 // Allow comment blocks slash/star TEXT star/slash to be nested 
@@ -611,7 +617,7 @@ AND:            '&';
 OR:             '|';
 NAND:           '~&';
 NOR:            '~|';
-XOR:            '^';      // U+2295 excluisve bitwise OR
+XOR:            '^';     // U+2295 excluisve bitwise OR
 XNOR:           '~^';    // U+2295
 NOT:            '~';
 GT:             '>';
@@ -650,6 +656,7 @@ ASSIGN:         '<-';
 // comppund assignment
 
 COMPASSIGN:     '+='|'-='|'*='|'/='|'%='|'&='|'|='|'^='|'<<='|'>>='|'<@='|'@>=';
+
 DOT:            '.';
 ATSIGN:         '@';
 SEMICOLON:      ';'; 

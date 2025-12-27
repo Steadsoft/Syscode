@@ -1,6 +1,8 @@
 ﻿// any variable declared in the global scope MUST be explicitly declared as static
 // if it is not declared as external then it is internal, there is no 'internal' keyword.
 
+INCLUDE "test_header" ;
+
 hex = 01F5 33DA 0F02 11B9 {h}
 bin = +1001 1101 0010 0011 {b}
 
@@ -27,8 +29,8 @@ dcl throw string(32) bin(16)
 
 dcl name string(16)
 dcl addr string(64, utf16)
-dcl state string(16, sbe)
-dcl region string(32, utf8)
+dcl state string(16, sbe); dcl region string(32, utf8); dcl region string(32, utf8)
+
 
 
 global_rate = -  100
@@ -53,7 +55,7 @@ end
 
 // "packed" here, means align all contained elements on the next avaiable byte/bit 
 
-dcl struct RCC at (1200 4300 8A00 0010{h}) packed order (asc)
+dcl struct struct at (1200 4300 8A00 0010{h}) packed order (asc)
     SW              bit(3)
     SWS             bit(3)
     STOPWUCK        bit(1)
@@ -94,6 +96,7 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
             field2_2 bin8
         end
     end
+
  
     dcl a bin(10,4) static based (p) 
 
@@ -145,7 +148,9 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
 
         end
     end
+@lab(0)
 
+@lab(1)
     master_ptr(10) -> pointer_table(x).rate_ptr.goto -> counts = 23
 
     if big < small then

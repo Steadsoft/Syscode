@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using static SyscodeParser;
@@ -7,7 +8,6 @@ namespace Syscode
 {
     public class SyscodeCompiler
     {
-        private SyscodeLexer lexer;
         private AstBuilder builder;
         private SymtabBuilder symtabBuilder;
         private ReferenceResolver resolver;
@@ -46,21 +46,21 @@ namespace Syscode
 
         }
 
-        public void Report(AstNode node, int number, string arg)
-        {
-            var errormsg = messages.Errors.Where(e => e.Number == number).Single();
+        //public void Report(AstNode node, int number, string arg)
+        //{
+        //    var errormsg = messages.Errors.Where(e => e.Number == number).Single();
 
-            var message = errormsg.Message.Replace("{arg}", arg);
+        //    var message = errormsg.Message.Replace("{arg}", arg);
 
-            diagnostics(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
-        }
+        //    diagnostics(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
+        //}
 
         public CompilationContext ParseSourceFile(string SourceFile)
         {
             file = SourceFile;
 
             fileName = Path.GetFileNameWithoutExtension(file);
-
+            var folder = Path.GetFullPath(Path.GetDirectoryName(file));
             // extract any namespace components from the file's name
 
             namespaceparts = fileName.Split('.');
@@ -69,15 +69,69 @@ namespace Syscode
             Reporter = new Reporter(messages, diagnostics);
             var source = new StreamReader(SourceFile);
             var stream = new AntlrInputStream(source);
-            lexer = new SyscodeLexer(stream);
-            var tokens = new CommonTokenStream(lexer);
-            var parser = new SyscodeParser(tokens);
+            var lexer = new SyscodeLexer(stream);
+
+            var tokens = ProcessIncludeFiles(lexer, folder);
+
+            var preprocessed_source = new ListTokenSource(tokens);
+            var filtered_stream = new CommonTokenStream(preprocessed_source);
+            var parser = new SyscodeParser(filtered_stream);
             builder = new AstBuilder(constants, Reporter, parser);
             symtabBuilder = new SymtabBuilder(Reporter);
             resolver = new ReferenceResolver(Reporter);
 
             return parser.compilation();
         }
+
+        private List<IToken> ProcessIncludeFiles(SyscodeLexer Lexer, string Folder)
+        {
+            var tokens = new CommonTokenStream(Lexer);
+
+            tokens.Fill();
+
+            var token_list = new List<IToken>(tokens.GetTokens());
+
+            for (int T = 0; T < token_list.Count; T++)
+            {
+                switch (token_list[T].Type)
+                {
+                    case SyscodeLexer.INCLUDE:
+                        {
+                            if (token_list[T + 1].Type == SyscodeLexer.STR_LITERAL)
+                            {
+                                var include_file_name = token_list[T + 1].Text.Replace("\"", "");
+                                var inctokens = LexIncludeFile(Folder + "\\" + include_file_name);
+                                token_list.RemoveRange(T, 2);
+                                token_list.InsertRange(T, inctokens);
+                                T--;
+                                break;
+                            }
+
+                            // preprocerssor sytax error
+                            AstNode fake = new AstNode(token_list[T]);
+                            reporter.Report(fake, 1033);
+                            break;
+                        }
+                }
+            }
+
+            return token_list;
+        }
+
+        private List<IToken> LexIncludeFile(string path)
+        {
+            var text = File.ReadAllText(path);
+            var input = new AntlrInputStream(text);
+            var lexer = new SyscodeLexer(input);
+            var stream = new CommonTokenStream(lexer);
+            stream.Fill();
+
+            // Remove EOF so you don't get multiple EOF tokens in the final stream
+            return stream.GetTokens()
+                         .Where(t => t.Type != TokenConstants.EOF)
+                         .ToList();
+        }
+
 
         public AstNode GenerateAbstractSyntaxTree(ParserRuleContext context)
         {
@@ -89,7 +143,7 @@ namespace Syscode
             symtabBuilder.Generate((Compilation)root);
         }
 
-        public void ResolveCompilationReferences(AstNode root)
+        public void ResolveReferences(AstNode root)
         {
             resolver.ResolveContainedReferences((Compilation)root);
             resolver.ReportUnresolvedReferences(((Compilation)root).Statements);

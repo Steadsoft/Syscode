@@ -23,5 +23,22 @@ namespace Syscode
                 StopColumn = context.Stop.Column;
             }
         }
+
+        public AstNode(IToken context)
+        {
+            if (context != null)
+            {
+                StartLine = context.Line;
+                StartColumn = context.Column;
+                StopLine = context.Line;
+                StopColumn = context.Column;
+            }
+        }
+
+        public AstNode()
+        {
+
+        }
+
     }
 }
