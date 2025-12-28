@@ -14,7 +14,7 @@ namespace Syscode
         private readonly bool main;
         private StorageClass storageClass = StorageClass.Unspecified;
         private StorageScope storageScope = StorageScope.Unspecified;
-        public Procedure(ref IContainer? Container, ProcedureContext context, AstBuilder builder) : base(context)
+        public Procedure(ref IContainer? Container, ProcedureContext context, SyscodeAstBuilder builder) : base(context)
         {
             container = Container;
             spelling = context.Spelling.GetText();
@@ -29,7 +29,7 @@ namespace Syscode
                 main = true;
         }
 
-        public Procedure(ref IContainer? Container, FunctionContext context, AstBuilder builder) : base(context)
+        public Procedure(ref IContainer? Container, FunctionContext context, SyscodeAstBuilder builder) : base(context)
         {
             container = Container;
             spelling = context.Spelling.GetText();

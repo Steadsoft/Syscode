@@ -5,7 +5,7 @@ namespace Syscode
     public class Proceed : AstNode
     {
         private Reference? reference = null;
-        public Proceed(JumpContext context, AstBuilder builder) : base(context)
+        public Proceed(JumpContext context, SyscodeAstBuilder builder) : base(context)
         {
             if (context.Ref is not null)
                 reference = builder.CreateReference(context.Ref);

@@ -5,7 +5,7 @@ namespace Syscode
     public class Goto : AstNode
     {
         private Reference reference;
-        public Goto(GotoContext context, AstBuilder builder) : base(context)
+        public Goto(GotoContext context, SyscodeAstBuilder builder) : base(context)
         {
             reference = builder.CreateReference(context.Ref);
         }

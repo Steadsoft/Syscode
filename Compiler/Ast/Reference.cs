@@ -11,7 +11,7 @@ namespace Syscode
         private readonly BasicReference basic;
         private bool resolved = false;
         private Report? report = null;
-        public Reference(ReferenceContext context, AstBuilder builder) : base(context)
+        public Reference(ReferenceContext context, SyscodeAstBuilder builder) : base(context)
         {
             // A Reference might contain another Reference...
 

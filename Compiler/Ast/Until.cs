@@ -10,7 +10,7 @@ namespace Syscode
         public Expression UntilExp { get => untilExp; }
         public Expression? WhileExp { get => whileExp; set => whileExp = value; }
 
-        public Until(LoopUntilContext context, AstBuilder builder) : base(context)
+        public Until(LoopUntilContext context, SyscodeAstBuilder builder) : base(context)
         {
             this.untilExp = builder.CreateExpression(context.Until.Until.Exp);
             this.whileExp = context.Until.While?.Exp.SafeCreate(builder.CreateExpression);

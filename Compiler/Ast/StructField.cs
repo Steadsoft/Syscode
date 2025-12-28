@@ -14,7 +14,7 @@ namespace Syscode
         public List<BoundsPair> Bounds { get => bounds; set => bounds = value; }
         public int Length { get => length; set => length = value; }
         public bool Pad => pad;
-        public StructField(SyscodeParser.StructFieldContext context, AstBuilder builder) : base(context)
+        public StructField(SyscodeParser.StructFieldContext context, SyscodeAstBuilder builder) : base(context)
         {
             var bounds = new List<BoundsPair>();
 

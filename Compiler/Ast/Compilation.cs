@@ -7,7 +7,7 @@ namespace Syscode
         private List<AstNode> statements = new();
         private List<Symbol> symbols = new();
         private IContainer container;
-        public Compilation(CompilationContext context, AstBuilder builder) : base(context)
+        public Compilation(CompilationContext context, SyscodeAstBuilder builder) : base(context)
         {
             statements = builder.GenerateStatements(context._Statements);
         }

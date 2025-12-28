@@ -16,19 +16,19 @@ namespace Syscode
         public List<Elif> ElifStatements { get => elifStatements; set => elifStatements = value; }
         private bool hasLabel = false;
         public bool HasLabel => hasLabel;
-        public If(IfContext context, AstBuilder builder) : base(context)
+        public If(IfContext context, SyscodeAstBuilder builder) : base(context)
         {
             condition = builder.CreateExpression(context.ExprThen.Exp);
-            thenStatements = builder.GenerateStatements(context.ExprThen.Then._Statements);
+            thenStatements = builder.GenerateStatements(context.ExprThen.label_then._Statements);
 
-            if (context.Else != null)
+            if (context.label_else != null)
             {
-                elseStatements = builder.GenerateStatements(context.Else.Then._Statements);
+                elseStatements = builder.GenerateStatements(context.label_else.label_then._Statements);
             }
 
-            if (context.Elif != null)  // at least one 'elif' is present
+            if (context.label_elif != null)  // at least one 'elif' is present
             {
-                elifStatements = context.Elif._ExprThen.Select(builder.CreateElif).ToList();
+                elifStatements = context.label_elif._ExprThen.Select(builder.CreateElif).ToList();
             }
 
             if (context.Name != null)

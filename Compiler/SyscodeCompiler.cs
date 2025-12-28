@@ -8,7 +8,7 @@ namespace Syscode
 {
     public class SyscodeCompiler
     {
-        private AstBuilder builder;
+        private SyscodeAstBuilder builder;
         private SymtabBuilder symtabBuilder;
         private ReferenceResolver resolver;
         public event EventHandler<DiagnosticEvent> diagnostics = delegate { };
@@ -71,19 +71,19 @@ namespace Syscode
             var stream = new AntlrInputStream(source);
             var lexer = new SyscodeLexer(stream);
 
-            var tokens = ProcessIncludeFiles(lexer, folder);
+            var tokens = ProcessPreprocessorDirectives(lexer, folder);
 
             var preprocessed_source = new ListTokenSource(tokens);
             var filtered_stream = new CommonTokenStream(preprocessed_source);
             var parser = new SyscodeParser(filtered_stream);
-            builder = new AstBuilder(constants, Reporter, parser);
+            builder = new SyscodeAstBuilder(constants, Reporter, parser);
             symtabBuilder = new SymtabBuilder(Reporter);
             resolver = new ReferenceResolver(Reporter);
 
             return parser.compilation();
         }
 
-        private List<IToken> ProcessIncludeFiles(SyscodeLexer Lexer, string Folder)
+        private List<IToken> ProcessPreprocessorDirectives(SyscodeLexer Lexer, string Folder)
         {
             var tokens = new CommonTokenStream(Lexer);
 
@@ -111,6 +111,10 @@ namespace Syscode
                             AstNode fake = new AstNode(token_list[T]);
                             reporter.Report(fake, 1033);
                             break;
+                        }
+                    case SyscodeLexer.IF:
+                        {
+                            break; 
                         }
                 }
             }

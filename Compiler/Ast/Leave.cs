@@ -5,7 +5,7 @@ namespace Syscode
     public class Leave : AstNode
     {
         private Reference? reference = null;
-        public Leave(ExitContext context, AstBuilder builder) : base(context)
+        public Leave(ExitContext context, SyscodeAstBuilder builder) : base(context)
         {
             if (context.Ref is not null)
                 reference = builder.CreateReference(context.Ref);

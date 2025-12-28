@@ -8,14 +8,14 @@ namespace Syscode
     /// <summary>
     /// Transforms a Syscode Antlr4 CST into a Syscode AST
     /// </summary>
-    public class AstBuilder
+    public class SyscodeAstBuilder
     {
         private readonly Reporter reporter;
         private IContainer? currentContainer = null;
         private readonly Compilation compilation = null;
         private readonly Dictionary<string, IConstant> constants;
         private readonly SyscodeParser lexer;
-        public AstBuilder(Dictionary<string, IConstant> constants, Reporter reporter, SyscodeParser lexer)
+        public SyscodeAstBuilder(Dictionary<string, IConstant> constants, Reporter reporter, SyscodeParser lexer)
         {
             this.constants = constants;
             this.reporter = reporter;
@@ -454,7 +454,7 @@ namespace Syscode
         }
         public Elif CreateElif(ExprThenBlockContext context)
         {
-            return new Elif(context, this) { ThenStatements = GenerateStatements(context.Then._Statements)};
+            return new Elif(context, this) { ThenStatements = GenerateStatements(context.label_then._Statements)};
         }
         private If CreateIf(IfContext context)
         {

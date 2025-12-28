@@ -10,7 +10,7 @@ namespace Syscode
     {
         public List<Expression> ExpressionList = new();
 
-        public Arguments(ArgumentsContext context, AstBuilder builder) : base(context)
+        public Arguments(ArgumentsContext context, SyscodeAstBuilder builder) : base(context)
         {
             ExpressionList = context.List.GetDerivedNodes<ExpressionContext>().Select(builder.CreateExpression).ToList();
         }

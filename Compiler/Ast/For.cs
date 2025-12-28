@@ -21,7 +21,7 @@ namespace Syscode
         public Expression? UntilExp { get => untilExp; set => untilExp = value; }
         public Expression? WhileExp { get => whileExp; set => whileExp = value; }
 
-        public For(LoopForContext context, AstBuilder builder) : base(context)
+        public For(LoopForContext context, SyscodeAstBuilder builder) : base(context)
         {
             // Compulsory
             forRef = builder.CreateReference(context.For.For);

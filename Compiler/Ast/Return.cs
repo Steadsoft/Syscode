@@ -5,7 +5,7 @@ namespace Syscode
     public class Return : AstNode
     {
         private Expression? expression;
-        public Return(ReturnContext context, AstBuilder builder) : base(context)
+        public Return(ReturnContext context, SyscodeAstBuilder builder) : base(context)
         {
             expression = context.Exp?.SafeCreate(builder.CreateExpression);
         }

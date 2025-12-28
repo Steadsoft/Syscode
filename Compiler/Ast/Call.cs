@@ -5,7 +5,7 @@ namespace Syscode
     public class Call : AstNode
     {
         private Reference reference;
-        public Call(CallContext context, AstBuilder builder) : base(context)
+        public Call(CallContext context, SyscodeAstBuilder builder) : base(context)
         {
             reference = builder.CreateReference(context.Ref);
         }

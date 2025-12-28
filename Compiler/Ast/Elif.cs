@@ -10,7 +10,7 @@ namespace Syscode
         public Expression Condition { get => condition; set => condition = value; }
         public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }
 
-        public Elif(ExprThenBlockContext context, AstBuilder builder) : base(context)
+        public Elif(ExprThenBlockContext context, SyscodeAstBuilder builder) : base(context)
         {
             condition = builder.CreateExpression(context.Exp);
         }

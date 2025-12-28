@@ -15,7 +15,7 @@ namespace Syscode
         public bool IsKeyword { get => isKeyword;}
         public string Spelling => spelling;
 
-        public StructBody(StructBodyContext context, AstBuilder builder) : base(context)
+        public StructBody(StructBodyContext context, SyscodeAstBuilder builder) : base(context)
         {
             spelling = context.Spelling.GetText();
             isKeyword = context.Spelling.children.OfType<KeywordContext>().Any();

@@ -9,7 +9,7 @@ namespace Syscode
         private List<Qualification> qualifierList = new();
         private Symbol? symbol;
         private readonly bool isKeyword;
-        public BasicReference(BasicReferenceContext context, AstBuilder builder) : base(context)
+        public BasicReference(BasicReferenceContext context, SyscodeAstBuilder builder) : base(context)
         {
             Spelling = context.GetLabelText(nameof(BasicReferenceContext.Spelling));
             isKeyword = context.children.OfType<IdentifierContext>().Single().children.OfType<KeywordContext>().Any();

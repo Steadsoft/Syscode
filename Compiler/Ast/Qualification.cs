@@ -8,7 +8,7 @@ namespace Syscode
         public Arguments Arguments;
         private readonly bool isKeyword;
 
-        public Qualification(StructureQualificationContext context, AstBuilder builder) : base(context)
+        public Qualification(StructureQualificationContext context, SyscodeAstBuilder builder) : base(context)
         {
             Spelling = context.Spelling.GetText();
             isKeyword = context.children.OfType<IdentifierContext>().Single().children.OfType<KeywordContext>().Any();
