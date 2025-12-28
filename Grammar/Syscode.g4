@@ -43,10 +43,21 @@ compilation: Statements+=statement* endOfFile;
 statement:  preamble?  (preprocess | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | exit | jump | assignment);
 
 //struct: STRUCT structBody ;
-structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttributes* statementSeparator emptyLines? ((Fields+=structField|Structs+=structBody) emptyLines?)* END ;
+structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttributes* statementSeparator emptyLines? ((Fields+=structField|Structs+=structBody) emptyLines?)* End ;
 structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
 
-preprocess : INCLUDE STR_LITERAL statementSeparator;
+preprocess 
+    : prep_include
+    | prep_if
+    ;
+
+prep_include: INCLUDE STR_LITERAL statementSeparator; 
+
+prep_if:             IF Name=labelName? emptyLines? ExprThen=prep_exprThenBlock emptyLines? label_elif=prep_elifBlock? emptyLines? label_else=prep_elseBlock? emptyLines? END;
+prep_exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? label_then=prep_thenBlock;
+prep_thenBlock :     Statements+=statement*;
+prep_elseBlock :     (ELSE emptyLines? label_then=prep_thenBlock);
+prep_elifBlock :     (ELIF emptyLines? ExprThen+=prep_exprThenBlock)+;
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;
@@ -56,25 +67,25 @@ goto: GOTO Ref=reference statementSeparator;
 gotoSubscript: LPAR Expr=expression RPAR;
 
 //scope:  blockScope; // SEE: https://www.ibm.com/docs/en/epfz/6.2.0?topic=organization-packages
-scope: (PACKAGE emptyLines? Name=qualifiedName emptyLines? Statements+=statement* emptyLines? END)  ;
-procedure: PROCEDURE emptyLines? Spelling=identifier Params=paramList? Options=procOptions? Statements+=statement* emptyLines? END;
-function: FUNCTION emptyLines? Spelling=identifier Params=paramList? Options=procOptions? AS Type=returnDescriptor? Statements+=statement* emptyLines? END;
+scope: (PACKAGE emptyLines? Name=qualifiedName emptyLines? Statements+=statement* emptyLines? End)  ;
+procedure: PROCEDURE emptyLines? Spelling=identifier Params=paramList? Options=procOptions? Statements+=statement* emptyLines? End;
+function: FUNCTION emptyLines? Spelling=identifier Params=paramList? Options=procOptions? AS Type=returnDescriptor? Statements+=statement* emptyLines? End;
 
 procOptions: OPTIONS LPAR (Main=MAIN)+ RPAR;
 
-enum: ENUM emptyLines? Name=identifier emptyLines? dataAttribute? memberSeparator emptyLines? Members=enumMembers emptyLines? END;
+enum: ENUM emptyLines? Name=identifier emptyLines? dataAttribute? memberSeparator emptyLines? Members=enumMembers emptyLines? End;
 call: CALL emptyLines? Ref=reference statementSeparator;
 return: (RETURN (emptyLines? Exp=expression)?) statementSeparator ; //| (RETURN (emptyLines? expression)?)) statementSeparator;
 
 declare
-    : DCL Struct=structBody
-    | DCL emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? (DataAttributes+=dataAttribute | Attributes+=attribute)+ statementSeparator 
+    : Dcl Struct=structBody
+    | Dcl emptyLines? Spelling=identifier emptyLines? Bounds=dimensionSuffix? emptyLines? (DataAttributes+=dataAttribute | Attributes+=attribute)+ statementSeparator 
     ;
 
 // the organization of attributes is close to what's in the ANSI X3.74-1987 PL/I stanadard (basicaally why reinvent the wheel when we're so influneced by PL/I and its terminology)
 
 dataAttribute
-    : Aligned=alignedAttribute  #Aligned
+    : aligned=alignedAttribute  #aligned
     | Label=labelType           #Label
     | Pointer=pointerType       #Pointer
     | Packed=packedAttribute    #Packed
@@ -114,19 +125,19 @@ loop
     | Until=untilLoop     #LoopUntil
     ;
 
-forLoop : DO Name=labelName? For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  Statements+=statement* emptyLines? END ;
-whileLoop: DO Name=labelName? While=whileCondition Until=untilCondition?  Statements+=statement* emptyLines? END;
-untilLoop: DO Name=labelName? Until=untilCondition While=whileCondition?  Statements+=statement* emptyLines? END;
-loopLoop: DO Name=labelName? LOOP Statements+=statement* emptyLines? END;
+forLoop : Do Name=labelName? For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  Statements+=statement* emptyLines? End ;
+whileLoop: Do Name=labelName? While=whileCondition Until=untilCondition?  Statements+=statement* emptyLines? End;
+untilLoop: Do Name=labelName? Until=untilCondition While=whileCondition?  Statements+=statement* emptyLines? End;
+loopLoop: Do Name=labelName? LOOP Statements+=statement* emptyLines? End;
 
 whileCondition: WHILE Exp=expression ;
 untilCondition: UNTIL Exp=expression ;
 
-if:             IF Name=labelName? emptyLines? ExprThen=exprThenBlock emptyLines? Elif=elifBlock? emptyLines? Else=elseBlock? emptyLines? END;
-exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? Then=thenBlock;
+if:             If Name=labelName? emptyLines? ExprThen=exprThenBlock emptyLines? label_elif=elifBlock? emptyLines? label_else=elseBlock? emptyLines? End;
+exprThenBlock:  emptyLines? Exp=expression emptyLines? Then emptyLines? label_then=thenBlock;
 thenBlock :     Statements+=statement*;
-elseBlock :     (ELSE emptyLines? Then=thenBlock);
-elifBlock :     (ELIF emptyLines? ExprThen+=exprThenBlock)+;
+elseBlock :     (Else emptyLines? label_then=thenBlock);
+elifBlock :     (Elif emptyLines? ExprThen+=exprThenBlock)+;
 
 asType: AS Typename=identifier ;    
 
@@ -366,7 +377,7 @@ varying: VARIABLE ;
 //entryList: LPAR typename (COMMA typename)* RPAR ;
 
 structAttributes 
-    : ALIGNED 
+    : Aligned 
     | PACKED 
     | basedAttribute
     | AUTO
@@ -377,7 +388,7 @@ structAttributes
 atAttribute: AT (LPAR Address=expression RPAR);
 orderAttribute: ORDER LPAR (ASC | DESC) RPAR;
 constAttribute: CONST;
-alignedAttribute: ALIGNED (LPAR Alignment=expression RPAR)?;
+alignedAttribute: Aligned (LPAR Alignment=expression RPAR)?;
 offsetAttribute: OFFSET (LPAR Offset=expression RPAR);
 packedAttribute: PACKED;    
 padAttribute: PAD;
@@ -401,7 +412,7 @@ endOfFile: emptyLines? EOF;
 //comment: BCOM (comment | .)*? ECOM;
 
 keyword
-    : ALIGNED
+    : Aligned
     | AS
     | ATSIGN
     | AUTO
@@ -417,14 +428,14 @@ keyword
     | BYTEPAD
     | CALL
     | CONST
-    | DCL
+    | Dcl
     | DEC
     | DEF
-    | DO
+    | Do | DO
     | DOUBLE
-    | ELIF
-    | ELSE
-    | END
+    | Elif | ELIF
+    | Else | ELSE
+    | End  | END
     | ENTRY
     | ENUM
     | EXIT
@@ -433,7 +444,7 @@ keyword
     | FOREVER
     | FUNCTION
     | GOTO
-    | IF
+    | If | IF
     | INIT
     | INTERNAL
     | IS
@@ -459,7 +470,7 @@ keyword
     | STATIC
     | STRING
     | STRUCT
-    | THEN
+    | Then
     | TO
     | TYPE
     | UBIN16
@@ -476,7 +487,13 @@ keyword
     | WHILE 
     ;
 
+// preprocessor keywords
 INCLUDE:            'INCLUDE' ;    
+IF:                 'IF';
+THEN:               'THEN';
+ELIF:               'ELIF';
+ELSE:               'ELSE';
+END:                'END';
 
 BOM: '\uFEFF'  -> skip;
 // Allow comment blocks slash/star TEXT star/slash to be nested 
@@ -530,7 +547,7 @@ DEC_LITERAL
 
 // Keyword Tokens
 
-ALIGNED:        'aligned';
+Aligned:        'aligned';
 AS:             'as';
 ASC:            'asc' | 'ascending';
 AT:             'at';
@@ -547,15 +564,16 @@ BY:             'by';
 BYTEPAD:        'bytepad';
 CALL:           'call';
 CONST:          'const';
-DCL:            'dcl' | 'declare' ;
+Dcl:            'dcl' | 'declare' ;
 DEC:            'dec';
 DEF:            'def';
 DESC:           'desc' | 'descending';
-DO:             'do';   
+Do:             'do';   
+DO:             'DO';
 DOUBLE:         'double'      ;
-ELIF:           'elif';
-ELSE:           'else';
-END:            'end';
+Elif:           'elif';
+Else:           'else';
+End:            'end';
 ENTRY:          'entry';
 ENUM:           'enum';
 EXIT:           'exit';
@@ -564,7 +582,7 @@ FOR:            'for';
 FOREVER:        'forever';
 FUNCTION:       'func' | 'function';
 GOTO:           'goto';
-IF:             'if';
+If:             'if';
 INIT:           'init';
 INTERNAL:       'internal';
 IS:             'is';
@@ -589,7 +607,7 @@ STACK:          'stack';
 STATIC:         'static';
 STRING:         'string';
 STRUCT:         'struct' | 'structure';
-THEN:           'then';
+Then:           'then';
 TO:             'to';
 TYPE:           'type';
 UBIN16:         'ubin16';

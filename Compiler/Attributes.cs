@@ -9,7 +9,7 @@ namespace Syscode
             {
                 { typeof(PackedContext),    KeywordText(PACKED) },
                 { typeof(VariableContext),  KeywordText(VARIABLE) },
-                { typeof(AlignedContext),   KeywordText(ALIGNED) },
+                { typeof(AlignedContext),   KeywordText(SyscodeParser.Aligned) },
                 { typeof(LabelContext),     KeywordText(LABEL) },
                 { typeof(BitContext),       KeywordText(BIT) },
                 { typeof(PointerContext),   KeywordText(POINTER) },
