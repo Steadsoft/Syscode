@@ -49,11 +49,17 @@ structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=
 
 prep_include: INCLUDE STR_LITERAL statementSeparator; 
 
-prep_IF:             IF Name=labelName? emptyLines? ExprThen=prep_exprThenBlock emptyLines? label_elif=prep_elifBlock? emptyLines? label_else=prep_elseBlock? emptyLines? END;
-prep_exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? label_then=prep_thenBlock;
+prep_IF:             IF Name=labelName? emptyLines? ExprTHEN_block=prep_exprThenBlock emptyLines? ELIF_block=prep_elifBlock? emptyLines? ELSE_block=prep_elseBlock? emptyLines? END;
+prep_exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? THEN_block=prep_thenBlock;
 prep_thenBlock :     Statements+=statement*;
-prep_elseBlock :     (ELSE emptyLines? label_then=prep_thenBlock);
-prep_elifBlock :     (ELIF emptyLines? ExprThen+=prep_exprThenBlock)+;
+prep_elseBlock :     (ELSE emptyLines? THEN_block=prep_thenBlock);
+prep_elifBlock :     (ELIF emptyLines? ExprThenBlocks+=prep_exprThenBlock)+;
+
+if:             If Name=labelName? emptyLines? ExprThen=exprThenBlock emptyLines? elif_blocks=elifBlocks? emptyLines? else_block=elseBlock? emptyLines? End;
+exprThenBlock:  emptyLines? Exp=expression emptyLines? Then emptyLines? then_block=thenBlock;
+thenBlock :     Statements+=statement*;
+elseBlock :     (Else emptyLines? then_block=thenBlock);
+elifBlocks :    (Elif emptyLines? ExprThen+=exprThenBlock)+; // this need not be a collection, it only occurs once...
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;
@@ -129,11 +135,7 @@ loopLoop: Do Name=labelName? LOOP Statements+=statement* emptyLines? End;
 whileCondition: WHILE Exp=expression ;
 untilCondition: UNTIL Exp=expression ;
 
-if:             If Name=labelName? emptyLines? ExprThen=exprThenBlock emptyLines? label_elif=elifBlock? emptyLines? label_else=elseBlock? emptyLines? End;
-exprThenBlock:  emptyLines? Exp=expression emptyLines? Then emptyLines? label_then=thenBlock;
-thenBlock :     Statements+=statement*;
-elseBlock :     (Else emptyLines? label_then=thenBlock);
-elifBlock :     (Elif emptyLines? ExprThen+=exprThenBlock)+;
+
 
 asType: AS Typename=identifier ;    
 

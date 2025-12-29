@@ -19,16 +19,16 @@ namespace Syscode
         public If(IfContext context, SyscodeAstBuilder builder) : base(context)
         {
             condition = builder.CreateExpression(context.ExprThen.Exp);
-            thenStatements = builder.GenerateStatements(context.ExprThen.label_then._Statements);
+            thenStatements = builder.GenerateStatements(context.ExprThen.then_block._Statements);
 
-            if (context.label_else != null)
+            if (context.else_block != null)
             {
-                elseStatements = builder.GenerateStatements(context.label_else.label_then._Statements);
+                elseStatements = builder.GenerateStatements(context.else_block.then_block._Statements);
             }
 
-            if (context.label_elif != null)  // at least one 'elif' is present
+            if (context.elif_blocks != null)  // at least one 'elif' is present
             {
-                elifStatements = context.label_elif._ExprThen.Select(builder.CreateElif).ToList();
+                elifStatements = context.elif_blocks._ExprThen.Select(builder.CreateElif).ToList();
             }
 
             if (context.Name != null)
@@ -59,17 +59,17 @@ namespace Syscode
         public bool HasLabel => hasLabel;
         public IF(Prep_IFContext context, SyscodeAstBuilder builder) : base(context)
         {
-            condition = builder.CreateExpression(context.ExprThen.Exp);
-            thenStatements = builder.GenerateStatements(context.ExprThen.label_then._Statements);
+            condition = builder.CreateExpression(context.ExprTHEN_block.Exp);
+            thenStatements = builder.GenerateStatements(context.ExprTHEN_block.THEN_block._Statements);
 
-            if (context.label_else != null)
+            if (context.ELSE_block != null)
             {
-                elseStatements = builder.GenerateStatements(context.label_else.label_then._Statements);
+                elseStatements = builder.GenerateStatements(context.ELSE_block.THEN_block._Statements);
             }
 
-            if (context.label_elif != null)  // at least one 'elif' is present
+            if (context.ELIF_block != null)  // at least one 'elif' is present
             {
-                elifStatements = context.label_elif._ExprThen.Select(builder.CreateELIF).ToList();
+                elifStatements = context.ELIF_block._ExprThenBlocks.Select(builder.CreateELIF).ToList();
             }
 
             if (context.Name != null)

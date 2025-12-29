@@ -456,11 +456,11 @@ namespace Syscode
         }
         public Elif CreateElif(ExprThenBlockContext context)
         {
-            return new Elif(context, this) { ThenStatements = GenerateStatements(context.label_then._Statements)};
+            return new Elif(context, this) { ThenStatements = GenerateStatements(context.then_block._Statements)};
         }
         public ELIF CreateELIF(Prep_exprThenBlockContext context)
         {
-            return new ELIF(context, this) { ThenStatements = GenerateStatements(context.label_then._Statements) };
+            return new ELIF(context, this) { ThenStatements = GenerateStatements(context.THEN_block._Statements) };
         }
 
         private If CreateIf(IfContext context)

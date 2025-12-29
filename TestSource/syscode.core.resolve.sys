@@ -3,6 +3,16 @@
 
 // INCLUDE "test_header" ;
 
+if a > b then
+   a = b
+elif a > b then
+   a = b
+elif a > b then
+   a = b
+elif a > b then
+   a = b
+end   
+
 IF a > b THEN
   INCLUDE "test_header"
 END   
