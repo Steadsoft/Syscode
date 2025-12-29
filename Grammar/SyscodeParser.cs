@@ -60,7 +60,7 @@ public partial class SyscodeParser : Parser {
 	public const int
 		RULE_preamble = 0, RULE_statementSeparator = 1, RULE_emptyLines = 2, RULE_compilation = 3, 
 		RULE_statement = 4, RULE_statements = 5, RULE_structBody = 6, RULE_structField = 7, 
-		RULE_prep_include = 8, RULE_prep_IF = 9, RULE_prep_exprThenBlock = 10, 
+		RULE_prep_INCLUDE = 8, RULE_prep_IF = 9, RULE_prep_exprThenBlock = 10, 
 		RULE_prep_thenBlock = 11, RULE_prep_elseBlock = 12, RULE_prep_elifBlock = 13, 
 		RULE_if = 14, RULE_conditionalStatementsBlock = 15, RULE_elseBlock = 16, 
 		RULE_elifBlock = 17, RULE_alabel = 18, RULE_labelName = 19, RULE_labelSubscript = 20, 
@@ -94,7 +94,7 @@ public partial class SyscodeParser : Parser {
 		RULE_keyword = 117;
 	public static readonly string[] ruleNames = {
 		"preamble", "statementSeparator", "emptyLines", "compilation", "statement", 
-		"statements", "structBody", "structField", "prep_include", "prep_IF", 
+		"statements", "structBody", "structField", "prep_INCLUDE", "prep_IF", 
 		"prep_exprThenBlock", "prep_thenBlock", "prep_elseBlock", "prep_elifBlock", 
 		"if", "conditionalStatementsBlock", "elseBlock", "elifBlock", "alabel", 
 		"labelName", "labelSubscript", "goto", "gotoSubscript", "scope", "procedure", 
@@ -403,8 +403,8 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class StatementContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public Prep_includeContext prep_include() {
-			return GetRuleContext<Prep_includeContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Prep_INCLUDEContext prep_INCLUDE() {
+			return GetRuleContext<Prep_INCLUDEContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public Prep_IFContext prep_IF() {
 			return GetRuleContext<Prep_IFContext>(0);
@@ -485,7 +485,7 @@ public partial class SyscodeParser : Parser {
 			case 1:
 				{
 				State = 259;
-				prep_include();
+				prep_INCLUDE();
 				}
 				break;
 			case 2:
@@ -882,30 +882,31 @@ public partial class SyscodeParser : Parser {
 		return _localctx;
 	}
 
-	public partial class Prep_includeContext : ParserRuleContext {
+	public partial class Prep_INCLUDEContext : ParserRuleContext {
+		public IToken File;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INCLUDE() { return GetToken(SyscodeParser.INCLUDE, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STR_LITERAL() { return GetToken(SyscodeParser.STR_LITERAL, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
 		}
-		public Prep_includeContext(ParserRuleContext parent, int invokingState)
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STR_LITERAL() { return GetToken(SyscodeParser.STR_LITERAL, 0); }
+		public Prep_INCLUDEContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_prep_include; } }
+		public override int RuleIndex { get { return RULE_prep_INCLUDE; } }
 	}
 
 	[RuleVersion(0)]
-	public Prep_includeContext prep_include() {
-		Prep_includeContext _localctx = new Prep_includeContext(Context, State);
-		EnterRule(_localctx, 16, RULE_prep_include);
+	public Prep_INCLUDEContext prep_INCLUDE() {
+		Prep_INCLUDEContext _localctx = new Prep_INCLUDEContext(Context, State);
+		EnterRule(_localctx, 16, RULE_prep_INCLUDE);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 325;
 			Match(INCLUDE);
 			State = 326;
-			Match(STR_LITERAL);
+			_localctx.File = Match(STR_LITERAL);
 			State = 327;
 			statementSeparator();
 			}

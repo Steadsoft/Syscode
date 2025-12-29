@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using Syscode.Phases;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -11,6 +12,8 @@ namespace Syscode
         private SyscodeAstBuilder builder;
         private SymtabBuilder symtabBuilder;
         private ReferenceResolver resolver;
+        private Preprocessor preprocessor;
+        private List<IToken> original_tokens;
         public event EventHandler<DiagnosticEvent> diagnostics = delegate { };
         private readonly string errorMesagesPath;
         private readonly ErrorFile? messages;
@@ -68,15 +71,22 @@ namespace Syscode
 
             Reporter = new Reporter(messages, diagnostics);
             var source = new StreamReader(SourceFile);
-            var stream = new AntlrInputStream(source);
-            var lexer = new SyscodeLexer(stream);
+            var char_stream = new AntlrInputStream(source);
+            var lexer = new SyscodeLexer(char_stream);
+            var token_stream = new CommonTokenStream(lexer);
 
             //var tokens = ProcessPreprocessorDirectives(lexer, folder);
 
             //var preprocessed_source = new ListTokenSource(tokens);
-            var filtered_stream = new CommonTokenStream(lexer);
-            var parser = new SyscodeParser(filtered_stream);
+
+            token_stream.Fill();
+
+            original_tokens = new List<IToken>(token_stream.GetTokens());
+
+            var parser = new SyscodeParser(token_stream);
+
             builder = new SyscodeAstBuilder(constants, Reporter, parser);
+            preprocessor = new Preprocessor(original_tokens, folder);
             symtabBuilder = new SymtabBuilder(Reporter);
             resolver = new ReferenceResolver(Reporter);
 
@@ -140,6 +150,11 @@ namespace Syscode
         public AstNode GenerateAbstractSyntaxTree(ParserRuleContext context)
         {
             return builder.Generate(context);
+        }
+
+        public List<IToken> ApplyPreprocessing(AstNode root)
+        {
+            return preprocessor.Apply(root);
         }
 
         public void ProcessDeclarations(AstNode root)

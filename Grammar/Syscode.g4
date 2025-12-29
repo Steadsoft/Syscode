@@ -40,7 +40,7 @@ compilation: Statements+=statement* endOfFile;
 // One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
 // several source files with that namespace prefix, each of which contributes stuff to the namespace.
 
-statement:  preamble?  (prep_include | prep_IF | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | exit | jump | assignment);
+statement:  preamble?  (prep_INCLUDE | prep_IF | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | exit | jump | assignment);
 
 statements: statement* ;
 
@@ -49,7 +49,7 @@ structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttribu
 structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
 
 
-prep_include: INCLUDE STR_LITERAL statementSeparator; 
+prep_INCLUDE: INCLUDE File=STR_LITERAL statementSeparator; 
 
 prep_IF:             IF Name=labelName? emptyLines? ExprTHEN_block=prep_exprThenBlock emptyLines? ELIF_block=prep_elifBlock? emptyLines? ELSE_block=prep_elseBlock? emptyLines? END;
 prep_exprThenBlock:  emptyLines? Expression=expression emptyLines? THEN emptyLines? THEN_block=prep_thenBlock;

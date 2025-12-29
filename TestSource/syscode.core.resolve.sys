@@ -1,7 +1,7 @@
 ﻿// any variable declared in the global scope MUST be explicitly declared as static
 // if it is not declared as external then it is internal, there is no 'internal' keyword.
 
-// INCLUDE "test_header" ;
+INCLUDE "test_header" ;
 
 if a > b then
    a = b

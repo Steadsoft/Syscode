@@ -59,6 +59,7 @@ namespace Syscode
         public bool HasLabel => hasLabel;
         public IF(Prep_IFContext context, SyscodeAstBuilder builder) : base(context)
         {
+            preprocessor = true;
             condition = builder.CreateExpression(context.ExprTHEN_block.Expression);
             thenStatements = builder.GenerateStatements(context.ExprTHEN_block.THEN_block._Statements);
 
@@ -80,7 +81,7 @@ namespace Syscode
         }
         public override string ToString()
         {
-            return $"{nameof(If)} {label}: ";
+            return $"{nameof(IF)} {label}: ";
         }
     }
 

@@ -27,6 +27,8 @@ namespace Syscode
 
             ast = compiler.GenerateAbstractSyntaxTree(cst);
 
+            compiler.ApplyPreprocessing(ast);
+
             compiler.ProcessDeclarations(ast);
 
             compiler.ResolveReferences(ast);

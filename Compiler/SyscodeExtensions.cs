@@ -164,5 +164,10 @@ namespace Syscode
 
             return context.children.Where(c => (c is ParserRuleContext) && !excludedTypes.Contains(c.GetType())).Cast<ParserRuleContext>().ToList();
         }
+
+        public static string Strip(this string text, char C)
+        {
+            return text.Replace(C, '\0').Replace("\0", "");
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace Syscode
                 ExitContext context => CreateLeave(context),
                 JumpContext context => CreateProceed(context),
                 Prep_IFContext context => CreateIF(context),
-
+                Prep_INCLUDEContext context => CreateINCLUDE(context),
                 _ => new AstNode(rule)
             };
         }
@@ -470,6 +470,11 @@ namespace Syscode
         private IF CreateIF(Prep_IFContext context)
         {
             return new IF(context, this);
+        }
+
+        private INCLUDE CreateINCLUDE(Prep_INCLUDEContext context)
+        {
+            return new INCLUDE(context);
         }
 
         private static Operator GetOperator(ExprPrefixedContext context)
