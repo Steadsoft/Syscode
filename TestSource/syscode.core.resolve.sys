@@ -1,7 +1,13 @@
 ﻿// any variable declared in the global scope MUST be explicitly declared as static
 // if it is not declared as external then it is internal, there is no 'internal' keyword.
 
-INCLUDE "test_header" ;
+// INCLUDE "test_header" ;
+
+IF a > b THEN
+  INCLUDE "test_header"
+END   
+
+IF = if
 
 hex = 01F5 33DA 0F02 11B9 {h}
 bin = +1001 1101 0010 0011 {b}
