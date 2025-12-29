@@ -40,20 +40,16 @@ compilation: Statements+=statement* endOfFile;
 // One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
 // several source files with that namespace prefix, each of which contributes stuff to the namespace.
 
-statement:  preamble?  (preprocess | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | exit | jump | assignment);
+statement:  preamble?  (prep_include | prep_IF | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | exit | jump | assignment);
 
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttributes* statementSeparator emptyLines? ((Fields+=structField|Structs+=structBody) emptyLines?)* End ;
 structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
 
-preprocess 
-    : prep_include
-    | prep_if
-    ;
 
 prep_include: INCLUDE STR_LITERAL statementSeparator; 
 
-prep_if:             IF Name=labelName? emptyLines? ExprThen=prep_exprThenBlock emptyLines? label_elif=prep_elifBlock? emptyLines? label_else=prep_elseBlock? emptyLines? END;
+prep_IF:             IF Name=labelName? emptyLines? ExprThen=prep_exprThenBlock emptyLines? label_elif=prep_elifBlock? emptyLines? label_else=prep_elseBlock? emptyLines? END;
 prep_exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? label_then=prep_thenBlock;
 prep_thenBlock :     Statements+=statement*;
 prep_elseBlock :     (ELSE emptyLines? label_then=prep_thenBlock);

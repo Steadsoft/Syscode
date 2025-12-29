@@ -41,6 +41,8 @@ namespace Syscode
                 LoopContext context => CreateLoop(context),
                 ExitContext context => CreateLeave(context),
                 JumpContext context => CreateProceed(context),
+                Prep_IFContext context => CreateIF(context),
+
                 _ => new AstNode(rule)
             };
         }
@@ -456,10 +458,20 @@ namespace Syscode
         {
             return new Elif(context, this) { ThenStatements = GenerateStatements(context.label_then._Statements)};
         }
+        public ELIF CreateELIF(Prep_exprThenBlockContext context)
+        {
+            return new ELIF(context, this) { ThenStatements = GenerateStatements(context.label_then._Statements) };
+        }
+
         private If CreateIf(IfContext context)
         {
             return new If(context, this);
         }
+        private IF CreateIF(Prep_IFContext context)
+        {
+            return new IF(context, this);
+        }
+
         private static Operator GetOperator(ExprPrefixedContext context)
         {
             //var operation = context.GetExactNode<PrefixExpressionContext>().GetExactNode<PrefixOperatorContext>();

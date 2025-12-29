@@ -71,10 +71,10 @@ namespace Syscode
             var stream = new AntlrInputStream(source);
             var lexer = new SyscodeLexer(stream);
 
-            var tokens = ProcessPreprocessorDirectives(lexer, folder);
+            //var tokens = ProcessPreprocessorDirectives(lexer, folder);
 
-            var preprocessed_source = new ListTokenSource(tokens);
-            var filtered_stream = new CommonTokenStream(preprocessed_source);
+            //var preprocessed_source = new ListTokenSource(tokens);
+            var filtered_stream = new CommonTokenStream(lexer);
             var parser = new SyscodeParser(filtered_stream);
             builder = new SyscodeAstBuilder(constants, Reporter, parser);
             symtabBuilder = new SymtabBuilder(Reporter);
@@ -457,6 +457,45 @@ namespace Syscode
                             }
                         }
                         astlist.WriteLine($"{LineDepthEnd(depth, If)} End");
+                        break;
+                    }
+                case IF IF:
+                    {
+                        astlist.WriteLine($"{LineDepth(depth, IF)} {IF.GetType().Name} {IF.Condition} '{IF.Label}'");
+
+                        foreach (var child in IF.ThenStatements)
+                        {
+                            depth++;
+                            GenerateAbstractSyntaxTreeText(child, depth);
+                            depth--;
+                        }
+                        if (IF.ElifStatements.Count != 0)
+                        {
+
+                            foreach (var child in IF.ElifStatements)
+                            {
+                                astlist.WriteLine($"{LineDepth(depth, child)} ELIF {child.Condition}");
+
+                                foreach (var elif in child.ThenStatements)
+                                {
+                                    depth++;
+                                    GenerateAbstractSyntaxTreeText(elif, depth);
+                                    depth--;
+                                }
+                            }
+                        }
+                        if (IF.ElseStatements.Count != 0)
+                        {
+                            astlist.WriteLine($"{LineDepth(depth, node)} ELSE");
+
+                            foreach (var child in IF.ElseStatements)
+                            {
+                                depth++;
+                                GenerateAbstractSyntaxTreeText(child, depth);
+                                depth--;
+                            }
+                        }
+                        astlist.WriteLine($"{LineDepthEnd(depth, IF)} END");
                         break;
                     }
                 case StructBody Structure:
