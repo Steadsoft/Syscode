@@ -42,6 +42,8 @@ compilation: Statements+=statement* endOfFile;
 
 statement:  preamble?  (prep_include | prep_IF | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | exit | jump | assignment);
 
+statements: statement* ;
+
 //struct: STRUCT structBody ;
 structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttributes* statementSeparator emptyLines? ((Fields+=structField|Structs+=structBody) emptyLines?)* End ;
 structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
@@ -50,16 +52,15 @@ structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=
 prep_include: INCLUDE STR_LITERAL statementSeparator; 
 
 prep_IF:             IF Name=labelName? emptyLines? ExprTHEN_block=prep_exprThenBlock emptyLines? ELIF_block=prep_elifBlock? emptyLines? ELSE_block=prep_elseBlock? emptyLines? END;
-prep_exprThenBlock:  emptyLines? Exp=expression emptyLines? THEN emptyLines? THEN_block=prep_thenBlock;
+prep_exprThenBlock:  emptyLines? Expression=expression emptyLines? THEN emptyLines? THEN_block=prep_thenBlock;
 prep_thenBlock :     Statements+=statement*;
 prep_elseBlock :     (ELSE emptyLines? THEN_block=prep_thenBlock);
 prep_elifBlock :     (ELIF emptyLines? ExprThenBlocks+=prep_exprThenBlock)+;
 
-if:             If Name=labelName? emptyLines? ExprThen=exprThenBlock emptyLines? elif_blocks=elifBlocks? emptyLines? else_block=elseBlock? emptyLines? End;
-exprThenBlock:  emptyLines? Exp=expression emptyLines? Then emptyLines? then_block=thenBlock;
-thenBlock :     Statements+=statement*;
-elseBlock :     (Else emptyLines? then_block=thenBlock);
-elifBlocks :    (Elif emptyLines? ExprThen+=exprThenBlock)+; // this need not be a collection, it only occurs once...
+if:                         If Name=labelName? emptyLines? ConditionalStatements=conditionalStatementsBlock emptyLines? elif_blocks+=elifBlock* emptyLines? else_block=elseBlock? emptyLines? End;
+conditionalStatementsBlock: emptyLines? Condition=expression emptyLines? Then emptyLines? Statements+=statement*;
+elseBlock :                 (Else emptyLines? Statements+=statement*);
+elifBlock :                 (Elif emptyLines? ConditionalStatements=conditionalStatementsBlock); // this need not be a collection, it only occurs once...
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;

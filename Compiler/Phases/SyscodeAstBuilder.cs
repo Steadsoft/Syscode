@@ -454,13 +454,13 @@ namespace Syscode
         {
             return new Procedure(ref currentContainer, context, this); // a func is so similar to a proc we use same class to represent them.
         }
-        public Elif CreateElif(ExprThenBlockContext context)
+        public Elif CreateElif(ElifBlockContext context)
         {
-            return new Elif(context, this) { ThenStatements = GenerateStatements(context.then_block._Statements)};
+            return new Elif(context, this);
         }
         public ELIF CreateELIF(Prep_exprThenBlockContext context)
         {
-            return new ELIF(context, this) { ThenStatements = GenerateStatements(context.THEN_block._Statements) };
+            return new ELIF(context, this) { Statements = GenerateStatements(context.THEN_block._Statements) };
         }
 
         private If CreateIf(IfContext context)

@@ -7,28 +7,28 @@ namespace Syscode
         private readonly Expression condition;
         private List<AstNode> thenStatements = new();
         private List<AstNode> elseStatements = new();
-        private List<Elif> elifStatements = new();
+        private List<Elif> elifBlocks = new();
         private readonly string label = string.Empty;
         public string Label => label;
         public Expression Condition { get => condition;}
         public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }
         public List<AstNode> ElseStatements { get => elseStatements; set => elseStatements = value; }
-        public List<Elif> ElifStatements { get => elifStatements; set => elifStatements = value; }
+        public List<Elif> ElifBlocks { get => elifBlocks; set => elifBlocks = value; }
         private bool hasLabel = false;
         public bool HasLabel => hasLabel;
         public If(IfContext context, SyscodeAstBuilder builder) : base(context)
         {
-            condition = builder.CreateExpression(context.ExprThen.Exp);
-            thenStatements = builder.GenerateStatements(context.ExprThen.then_block._Statements);
+            condition = builder.CreateExpression(context.ConditionalStatements.Condition);
+            thenStatements = builder.GenerateStatements(context.ConditionalStatements._Statements);
 
             if (context.else_block != null)
             {
-                elseStatements = builder.GenerateStatements(context.else_block.then_block._Statements);
+                elseStatements = builder.GenerateStatements(context.else_block._Statements);
             }
 
-            if (context.elif_blocks != null)  // at least one 'elif' is present
+            if (context._elif_blocks.Any())  // at least one 'elif' is present
             {
-                elifStatements = context.elif_blocks._ExprThen.Select(builder.CreateElif).ToList();
+                elifBlocks = context._elif_blocks.Select(builder.CreateElif).ToList();
             }
 
             if (context.Name != null)
@@ -59,7 +59,7 @@ namespace Syscode
         public bool HasLabel => hasLabel;
         public IF(Prep_IFContext context, SyscodeAstBuilder builder) : base(context)
         {
-            condition = builder.CreateExpression(context.ExprTHEN_block.Exp);
+            condition = builder.CreateExpression(context.ExprTHEN_block.Expression);
             thenStatements = builder.GenerateStatements(context.ExprTHEN_block.THEN_block._Statements);
 
             if (context.ELSE_block != null)

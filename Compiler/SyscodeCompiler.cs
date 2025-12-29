@@ -430,14 +430,14 @@ namespace Syscode
                             GenerateAbstractSyntaxTreeText(child, depth);
                             depth--;
                         }
-                        if (If.ElifStatements.Count != 0)
+                        if (If.ElifBlocks.Count != 0)
                         {
 
-                            foreach (var child in If.ElifStatements)
+                            foreach (var child in If.ElifBlocks)
                             {
                                 astlist.WriteLine($"{LineDepth(depth, child)} Elif {child.Condition}");
 
-                                foreach (var elif in child.ThenStatements)
+                                foreach (var elif in child.Statements)
                                 {
                                     depth++;
                                     GenerateAbstractSyntaxTreeText(elif, depth);
@@ -476,7 +476,7 @@ namespace Syscode
                             {
                                 astlist.WriteLine($"{LineDepth(depth, child)} ELIF {child.Condition}");
 
-                                foreach (var elif in child.ThenStatements)
+                                foreach (var elif in child.Statements)
                                 {
                                     depth++;
                                     GenerateAbstractSyntaxTreeText(elif, depth);

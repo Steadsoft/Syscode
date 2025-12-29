@@ -191,8 +191,8 @@
             ResolveExpression(container, ifstmt.Condition);
             ResolveStatementReferences(container, ifstmt.ThenStatements);
             ResolveStatementReferences(container, ifstmt.ElseStatements);
-            ResolveStatementReferences(container, ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));
-            ifstmt.ElifStatements.Select(elif => elif.Condition).ForEach(exp => ResolveExpression (container, exp));
+            ResolveStatementReferences(container, ifstmt.ElifBlocks.SelectMany(elif => elif.Statements));
+            ifstmt.ElifBlocks.Select(elif => elif.Condition).ForEach(exp => ResolveExpression (container, exp));
         }
         private void Resolve(IContainer container, Proceed statement)
         {
@@ -346,7 +346,7 @@
                             ReportUnresolvedReferences(ifstmt, ifstmt.Condition);
                             ReportUnresolvedReferences(ifstmt.ThenStatements);
                             ReportUnresolvedReferences(ifstmt.ElseStatements);
-                            ReportUnresolvedReferences(ifstmt.ElifStatements.SelectMany(elif => elif.ThenStatements));
+                            ReportUnresolvedReferences(ifstmt.ElifBlocks.SelectMany(elif => elif.Statements));
                             break;
                         }
                     case Call call:
