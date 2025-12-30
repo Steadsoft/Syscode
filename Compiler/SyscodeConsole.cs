@@ -17,21 +17,13 @@ namespace Syscode
 
             compiler.diagnostics += onFileFound;
 
-            var cst = compiler.ParseSourceFile(@"..\..\..\..\TestSource\syscode.core.resolve.sys");
+            compiler.CompileSourceFile(@"..\..\..\..\TestSource\syscode.core.resolve.sys");
 
             //compiler.PrintConcreteSyntaxTree(cst);
 
             var clock = new Stopwatch();
 
             clock.Restart();
-
-            ast = compiler.GenerateAbstractSyntaxTree(cst);
-
-            compiler.ApplyPreprocessing(ast);
-
-            compiler.ProcessDeclarations(ast);
-
-            compiler.ResolveReferences(ast);
 
             compiler.PrintDiagnostics();
 

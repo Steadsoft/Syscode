@@ -1,5 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Syscode.Phases;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -9,6 +11,7 @@ namespace Syscode
 {
     public class SyscodeCompiler
     {
+        // SEE: https://www.ibm.com/docs/en/SSY2V3_6.2/pdf/pl_i_zos_6_2_language_reference.pdf
         private SyscodeAstBuilder builder;
         private SymtabBuilder symtabBuilder;
         private ReferenceResolver resolver;
@@ -58,39 +61,72 @@ namespace Syscode
         //    diagnostics(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
         //}
 
-        public CompilationContext ParseSourceFile(string SourceFile)
+        public void CompileSourceFile(string SourceFile)
         {
-            file = SourceFile;
+            var folder = Path.GetFullPath(Path.GetDirectoryName(SourceFile));
 
+            var list = GetTokenListFromFile(SourceFile);
+            var stream = GetStreamFromList(list);
+            var parser = new SyscodeParser(stream);
+            var cst = parser.compilation();
+
+            builder = new SyscodeAstBuilder(constants, Reporter);
+
+            var ast = builder.Generate(cst);
+
+            preprocessor = new Preprocessor(list, folder);
+
+            list = preprocessor.Apply(ast);
+
+            stream = GetStreamFromList(list);
+            parser = new SyscodeParser(stream);
+            cst = parser.compilation();
+
+            builder = new SyscodeAstBuilder(constants, Reporter);
+
+            ast = builder.Generate(cst);
+
+            symtabBuilder = new SymtabBuilder(Reporter);
+
+            symtabBuilder.Generate((Compilation)ast);
+
+            resolver = new ReferenceResolver(Reporter);
+
+            resolver.ResolveContainedReferences((Compilation)ast);
+            resolver.ReportUnresolvedReferences(((Compilation)ast).Statements);
+
+        }
+
+        private CommonTokenStream GetStreamFromList(List<IToken> list)
+        {
+            var source = new ListTokenSource(list);
+            var stream = new CommonTokenStream(source);
+            return stream;
+        }
+
+        private CommonTokenStream GetTokenStreamFromList(List<IToken> list)
+        {
+            var tokenSource = new ListTokenSource(list);
+            var tokenStream = new CommonTokenStream(tokenSource);
+            return tokenStream;
+        }
+
+        private List<IToken> GetTokenListFromFile(string file)
+        {
             fileName = Path.GetFileNameWithoutExtension(file);
-            var folder = Path.GetFullPath(Path.GetDirectoryName(file));
             // extract any namespace components from the file's name
 
             namespaceparts = fileName.Split('.');
             namespaceparts = namespaceparts.Take(namespaceparts.Length - 1).ToArray();
 
             Reporter = new Reporter(messages, diagnostics);
-            var source = new StreamReader(SourceFile);
+
+            var source = new StreamReader(file);
             var char_stream = new AntlrInputStream(source);
             var lexer = new SyscodeLexer(char_stream);
-            var token_stream = new CommonTokenStream(lexer);
-
-            //var tokens = ProcessPreprocessorDirectives(lexer, folder);
-
-            //var preprocessed_source = new ListTokenSource(tokens);
-
-            token_stream.Fill();
-
-            original_tokens = new List<IToken>(token_stream.GetTokens());
-
-            var parser = new SyscodeParser(token_stream);
-
-            builder = new SyscodeAstBuilder(constants, Reporter, parser);
-            preprocessor = new Preprocessor(original_tokens, folder);
-            symtabBuilder = new SymtabBuilder(Reporter);
-            resolver = new ReferenceResolver(Reporter);
-
-            return parser.compilation();
+            var stream = new CommonTokenStream(lexer);
+            stream.Fill();
+            return new List<IToken>(stream.GetTokens());
         }
 
         private List<IToken> ProcessPreprocessorDirectives(SyscodeLexer Lexer, string Folder)
@@ -147,26 +183,26 @@ namespace Syscode
         }
 
 
-        public AstNode GenerateAbstractSyntaxTree(ParserRuleContext context)
-        {
-            return builder.Generate(context);
-        }
+        //public AstNode GenerateAbstractSyntaxTree(ParserRuleContext context)
+        //{
+        //    return builder.Generate(context);
+        //}
 
-        public List<IToken> ApplyPreprocessing(AstNode root)
-        {
-            return preprocessor.Apply(root);
-        }
+        //public List<IToken> ApplyPreprocessing(AstNode root)
+        //{
+        //    return preprocessor.Apply(root);
+        //}
 
-        public void ProcessDeclarations(AstNode root)
-        {
-            symtabBuilder.Generate((Compilation)root);
-        }
+        //public void ProcessDeclarations(AstNode root)
+        //{
+        //    symtabBuilder.Generate((Compilation)root);
+        //}
 
-        public void ResolveReferences(AstNode root)
-        {
-            resolver.ResolveContainedReferences((Compilation)root);
-            resolver.ReportUnresolvedReferences(((Compilation)root).Statements);
-        }
+        //public void ResolveReferences(AstNode root)
+        //{
+        //    resolver.ResolveContainedReferences((Compilation)root);
+        //    resolver.ReportUnresolvedReferences(((Compilation)root).Statements);
+        //}
         private static string RemoveContext(string input)
         {
             return input.Replace("Context", "");

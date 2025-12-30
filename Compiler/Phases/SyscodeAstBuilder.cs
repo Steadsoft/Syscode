@@ -14,12 +14,10 @@ namespace Syscode
         private IContainer? currentContainer = null;
         private readonly Compilation compilation = null;
         private readonly Dictionary<string, IConstant> constants;
-        private readonly SyscodeParser lexer;
-        public SyscodeAstBuilder(Dictionary<string, IConstant> constants, Reporter reporter, SyscodeParser lexer)
+        public SyscodeAstBuilder(Dictionary<string, IConstant> constants, Reporter reporter)
         {
             this.constants = constants;
             this.reporter = reporter;
-            this.lexer = lexer;
         }
 
         public AstNode Generate(ParserRuleContext rule)
