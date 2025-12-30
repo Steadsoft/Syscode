@@ -184,7 +184,7 @@ typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN 
 // Consider also <- or == as an assignment opeator, which implicitly does an atomic assignment...
 
 assignment 
-    : Ref=reference comparer Exp=expression statementSeparator
+    : Ref=reference emptyLines? comparer emptyLines? Exp=expression statementSeparator
     ;    
     
     // | LPAR reference COMMA reference RPAR comparer expression statementSeparator; this is too 'out there' for an initial language design.     

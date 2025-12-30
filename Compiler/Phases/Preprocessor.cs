@@ -1,6 +1,9 @@
 ﻿using Antlr4.Runtime;
+using Microsoft.VisualBasic;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,10 +15,12 @@ namespace Syscode.Phases
     {
         private List<IToken> tokens;
         private string folder;
-        public Preprocessor(List<IToken> tokens, string folder  )
+        private Reporter reporter;
+        public Preprocessor(List<IToken> tokens, string folder, Reporter reporter  )
         {
             this.tokens = tokens;
             this.folder = folder;
+            this.reporter = reporter;
         }
 
         public List<IToken> Apply(AstNode root)
@@ -24,41 +29,46 @@ namespace Syscode.Phases
             switch (root)
             {
                 case Compilation context:
-                    ProcessCompilation(context); 
+                    ProcessCompilation(tokens, context, folder); 
                     break;
             }
 
             return tokens;
         }
 
-        private void ProcessCompilation(Compilation context)
+        private void ProcessCompilation(List<IToken> tokens, AstNode context, string folder)
         {
-            foreach (var stmt in context.Statements)
+            foreach (var statement in ((Compilation)context).Statements)
             {
-                if (stmt is IF)
+                if (statement is IF if_statement)
                 {
                     ;
                 }
 
-                if (stmt is INCLUDE inc)
+                if (statement is INCLUDE include_statement)
                 {
-                    ProcessInclude(inc);
+                    ProcessInclude(tokens, include_statement, folder);
                 }
             }
         }
-
-        private void ProcessInclude(INCLUDE stmt)
+        private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder)
         {
-            ProcessPreprocessorDirectives(stmt, folder);
-        }
+            var token_list = LexIncludeFile(Folder + "\\" + include.Filename);
+            var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
+            var parser = new SyscodeParser(token_stream);
+            var cst = parser.compilation();
 
-        private void ProcessPreprocessorDirectives(INCLUDE stmt, string Folder)
-        {
-            var inctokens = LexIncludeFile(Folder + "\\" + stmt.Filename);
-            tokens.RemoveRange(stmt.StartToken, stmt.EndToken - stmt.StartToken);
-            tokens.InsertRange(stmt.StartToken, inctokens);
-        }
+            Dictionary<string, IConstant> constants = new();
 
+            var builder = new SyscodeAstBuilder(constants,reporter);
+
+            var ast = builder.Generate(cst);
+
+            ProcessCompilation(token_list, ast, folder);
+
+            tokens.RemoveRange(include.StartToken, (include.EndToken - include.StartToken)+1);
+            tokens.InsertRange(include.StartToken, token_list);
+        }
         private List<IToken> LexIncludeFile(string path)
         {
             var text = File.ReadAllText(path);

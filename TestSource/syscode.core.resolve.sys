@@ -20,9 +20,22 @@ END
 IF = if
 
 hex = 01F5 33DA 0F02 11B9 {h}
-bin = +1001 1101 0010 0011 {b}
+bin = +1001 1101_0010 0011 {b}
 
-targ = x + y * z - (d * k)
+targ
+=
+1
+2
+
+
+targ 
+= 
+x +
+
+ y * 
+ z - (d
+ 
+  * k)
 
 dcl global_count(32) bin16 static          // this defaults to internal
 dcl global_rate  bin16 static external // this is only legal in the global scope nn inside a proc
@@ -153,7 +166,7 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
              if not_set then
                 not_set = false;
              else 
-                exit start_checks2
+                exit start_checks
              end
            end
         end

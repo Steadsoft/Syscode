@@ -74,7 +74,7 @@ namespace Syscode
 
             var ast = builder.Generate(cst);
 
-            preprocessor = new Preprocessor(list, folder);
+            preprocessor = new Preprocessor(list, folder, Reporter);
 
             list = preprocessor.Apply(ast);
 
@@ -97,7 +97,7 @@ namespace Syscode
 
         }
 
-        private CommonTokenStream GetStreamFromList(List<IToken> list)
+        internal static CommonTokenStream GetStreamFromList(List<IToken> list)
         {
             var source = new ListTokenSource(list);
             var stream = new CommonTokenStream(source);
