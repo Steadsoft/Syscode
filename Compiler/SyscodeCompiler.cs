@@ -79,6 +79,19 @@ namespace Syscode
             list = preprocessor.Apply(ast);
 
             stream = GetStreamFromList(list);
+
+            // Now we convert the stream to text and retokenize that
+            // this ensures that the parser now see a set of tokens 
+            // that have valid, consistent line number, columns etc.
+            // after the stuff we did during preprocessing.
+
+            var src = stream.GetText();
+
+            var char_stream = new AntlrInputStream(src);
+            var lexer = new SyscodeLexer(char_stream);
+            stream = new CommonTokenStream(lexer);
+
+
             parser = new SyscodeParser(stream);
             cst = parser.compilation();
 

@@ -701,5 +701,5 @@ IDENTIFIER:     ([a-zA-Z_] [a-zA-Z0-9_]*);
 //CUSTOM_LITERAL: ('-' | '+')? ((DECIMAL (' ' DECIMAL)*)+ FRAC_D?) COLON IDENTIFIER;
 
 NEWLINE:        ('\r' '\n'); 
-WS:             [ \t]+ -> skip;
+WS:             [ \t]+ -> channel(HIDDEN); //skip;
 //COMMENT: '/*' .*? '*/' -> channel(HIDDEN);

@@ -40,12 +40,14 @@ namespace Syscode.Phases
                 token.TokenIndex = index++;
             }
 
+            // Note that token line numbers are now potentially inaccurate.
+
             return token_list;
         }
 
         private void ProcessCompilation(List<IToken> tokens, AstNode context, string folder)
         {
-            int prior_lines = 0;
+            int prior_tokens = 0;
 
             foreach (var statement in ((Compilation)context).Statements)
             {
@@ -56,7 +58,7 @@ namespace Syscode.Phases
 
                 if (statement is INCLUDE include_statement)
                 {
-                    ProcessInclude(tokens, include_statement, folder, ref prior_lines);
+                    ProcessInclude(tokens, include_statement, folder, ref prior_tokens);
                 }
 
                 if (statement is REPLACE replace_statement)
@@ -66,10 +68,10 @@ namespace Syscode.Phases
 
             }
         }
-        private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder, ref int PriorLines)
+        private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder, ref int PriorTokens)
         {
-            include.StartToken += PriorLines;
-            include.EndToken += PriorLines; 
+            include.StartToken += PriorTokens;
+            include.EndToken += PriorTokens; 
 
             var token_list = LexIncludeFile(Folder + "\\" + include.Filename);
             var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
@@ -90,7 +92,10 @@ namespace Syscode.Phases
             tokens.RemoveRange(include.StartToken, remove_count);
             tokens.InsertRange(include.StartToken, token_list);
 
-            PriorLines += (insert_count - remove_count);
+            int added_tokens = insert_count - remove_count;
+            int added_lines = (token_list.Last().Line - token_list.First().Line) + 1;
+
+            PriorTokens += added_tokens;
         }
         private List<IToken> LexIncludeFile(string path)
         {
