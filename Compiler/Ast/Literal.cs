@@ -29,7 +29,7 @@ namespace Syscode
                 _ => throw new InvalidOperationException("No valid literal found")
             };
 
-            value = context.GetText();
+            value = context.GetText().Trim();
 
             switch (literalType)
             {

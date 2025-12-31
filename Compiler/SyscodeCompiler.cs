@@ -26,6 +26,7 @@ namespace Syscode
         private string[] namespaceparts;
         private readonly Dictionary<string, IConstant> constants = new();
         private AstListing astlist = new();
+        private AstNode ast;
         public Reporter Reporter { get => reporter; set => reporter = value; }
 
         public SyscodeCompiler(string ErrorMessagesPath)
@@ -74,9 +75,9 @@ namespace Syscode
 
             var ast = builder.Generate(cst);
 
-            preprocessor = new Preprocessor(list, folder, Reporter);
+            preprocessor = new Preprocessor(ast, list, folder, Reporter);
 
-            list = preprocessor.Apply(ast);
+            list = preprocessor.Apply();
 
             stream = GetStreamFromList(list);
 
@@ -108,6 +109,7 @@ namespace Syscode
             resolver.ResolveContainedReferences((Compilation)ast);
             resolver.ReportUnresolvedReferences(((Compilation)ast).Statements);
 
+            this.ast = ast;
         }
 
         internal static CommonTokenStream GetStreamFromList(List<IToken> list)
@@ -341,9 +343,9 @@ namespace Syscode
             Reporter.PrintReport();
         }
 
-        public void PrintAbstractSyntaxTree(AstNode node, int depth = 0, bool Symtab = false)
+        public void PrintAbstractSyntaxTree(int depth = 0, bool Symtab = false)
         {
-            GenerateAbstractSyntaxTreeText(node, depth, Symtab);
+            GenerateAbstractSyntaxTreeText(ast, depth, Symtab);
 
             foreach (var line in astlist.list.Take(4))
             {
@@ -486,7 +488,7 @@ namespace Syscode
                     }
                 case If If:
                     {
-                        astlist.WriteLine($"{LineDepth(depth, If)} {If.GetType().Name} {If.Condition} '{If.Label}'");
+                        astlist.WriteLine($"{LineDepth(depth, If)} {If.GetType().Name} {If.Condition} {(!String.IsNullOrEmpty(If.Label) ? $" @{If.Label}" : "")}");
 
                         foreach (var child in If.ThenStatements)
                         {
@@ -525,7 +527,7 @@ namespace Syscode
                     }
                 case IF IF:
                     {
-                        astlist.WriteLine($"{LineDepth(depth, IF)} {IF.GetType().Name} {IF.Condition} '{IF.Label}'");
+                        astlist.WriteLine($"{LineDepth(depth, IF)} {IF.GetType().Name} {IF.Condition} {(!String.IsNullOrEmpty(IF.Label) ? $" @{IF.Label}" : "")}");
 
                         foreach (var child in IF.ThenStatements)
                         {

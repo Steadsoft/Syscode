@@ -32,7 +32,7 @@ namespace Syscode
 
             clock.Stop();
 
-            compiler.PrintAbstractSyntaxTree(ast,0,true);
+            compiler.PrintAbstractSyntaxTree(0,true);
 
             //var types = compiler.GetLLVMStructTypes(ast);
 

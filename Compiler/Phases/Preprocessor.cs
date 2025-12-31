@@ -16,14 +16,19 @@ namespace Syscode.Phases
         private List<IToken> token_list;
         private string folder;
         private Reporter reporter;
-        public Preprocessor(List<IToken> tokens, string folder, Reporter reporter  )
+        private AstNode root;
+        private int total_added_tokens = 0;
+        private int initial_token_count = 0;
+        public Preprocessor(AstNode root, List<IToken> tokens, string folder, Reporter reporter  )
         {
             this.token_list = tokens;
             this.folder = folder;
             this.reporter = reporter;
+            this.root = root;
+            this.initial_token_count = tokens.Count;
         }
 
-        public List<IToken> Apply(AstNode root)
+        public List<IToken> Apply()
         {
 
             switch (root)
@@ -63,11 +68,53 @@ namespace Syscode.Phases
 
                 if (statement is REPLACE replace_statement)
                 {
-                    ;//ProcessInclude(tokens, include_statement, folder);
+                    ProcessReplace(tokens, replace_statement);
                 }
 
             }
         }
+
+        private void ProcessReplace(List<IToken> tokens, REPLACE include)
+        {
+            switch (root)
+            {
+                case Compilation context:
+                    {
+                        foreach (var statement in ((Compilation)context).Statements)
+                        {
+                            switch (statement)
+                            {
+                                case If stmt:
+                                    {
+                                        var leftref = stmt.Condition.Left.Reference;
+                                        var rightref = stmt.Condition.Right.Reference;
+
+                                        if (leftref.IsSimpleIdenitifer)
+                                        {
+                                            if (leftref.BasicReference.Spelling == include.Name)
+                                            {
+                                                int repname_token_id = leftref.BasicReference.StartToken + (tokens.Count - initial_token_count);
+                                                ((CommonToken)tokens[repname_token_id]).Text = include.Expression.ToString();
+                                            }
+                                        }
+                                        if (rightref.IsSimpleIdenitifer)
+                                        {
+                                            if (rightref.BasicReference.Spelling == include.Name)
+                                            {
+                                                int repname_token_id =  rightref.BasicReference.StartToken + (tokens.Count - initial_token_count);
+                                                ((CommonToken)tokens[repname_token_id]).Text = include.Expression.ToString().Trim();
+                                            }
+                                        }
+
+                                        break;
+                                    }
+                            }
+                        }
+                        break;
+                    }
+            }
+        }
+
         private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder, ref int PriorTokens)
         {
             include.StartToken += PriorTokens;
@@ -94,6 +141,8 @@ namespace Syscode.Phases
 
             int added_tokens = insert_count - remove_count;
             int added_lines = (token_list.Last().Line - token_list.First().Line) + 1;
+
+            total_added_tokens += added_tokens;
 
             PriorTokens += added_tokens;
         }

@@ -3,9 +3,9 @@
 
 INCLUDE "test_header_1"
 
-//REPLACE MAIN_ID WITH 123 * 45 
+REPLACE MAIN_ID WITH 123 * 45 
 
-if a > b then
+if a > MAIN_ID then
    a = b
 elif a > b then
    a = b

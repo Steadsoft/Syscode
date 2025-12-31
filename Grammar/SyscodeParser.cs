@@ -1684,16 +1684,17 @@ public partial class SyscodeParser : Parser {
 	}
 
 	public partial class Prep_REPLACEContext : ParserRuleContext {
+		public IdentifierContext Name;
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode REPLACE() { return GetToken(SyscodeParser.REPLACE, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
-			return GetRuleContext<IdentifierContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WITH() { return GetToken(SyscodeParser.WITH, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public StatementSeparatorContext statementSeparator() {
 			return GetRuleContext<StatementSeparatorContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public IdentifierContext identifier() {
+			return GetRuleContext<IdentifierContext>(0);
 		}
 		public Prep_REPLACEContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1712,7 +1713,7 @@ public partial class SyscodeParser : Parser {
 			State = 452;
 			Match(REPLACE);
 			State = 453;
-			identifier();
+			_localctx.Name = identifier();
 			State = 454;
 			Match(WITH);
 			State = 455;

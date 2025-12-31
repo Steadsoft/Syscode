@@ -62,7 +62,7 @@ conditionalStatementsBlock: emptyLines? Condition=expression emptyLines? Then em
 elseBlock :                 (Else emptyLines? Statements+=statement*);
 elifBlock :                 (Elif emptyLines? ConditionalStatements=conditionalStatementsBlock); // this need not be a collection, it only occurs once...
 
-prep_REPLACE: REPLACE identifier WITH expression statementSeparator ;
+prep_REPLACE: REPLACE Name=identifier WITH expression statementSeparator ;
 
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;

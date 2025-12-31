@@ -27,6 +27,19 @@ namespace Syscode
 
             basic = builder.CreateBasicReference(context.Basic);
         }
+        public bool IsSimpleIdenitifer
+        {
+            get
+            {
+                if (preceding == null && argumentsList.Count == 0)
+                {
+                    if (basic.IsntQualified)
+                        return true;
+                }
+
+                return false;
+            }
+        }
         /// <summary>
         /// Indicates whether the reference has a preceding 'pointer' qualifier.
         /// </summary>
