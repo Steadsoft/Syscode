@@ -10,9 +10,18 @@ namespace Syscode
     public class INCLUDE : AstNode
     {
         public readonly string Filename;
-        public INCLUDE(Prep_INCLUDEContext context):base(context)
+        public INCLUDE(Prep_INCLUDEContext context, SyscodeAstBuilder builder):base(context)
         {
             Filename = context.File.Text.Strip('"');
+        }
+    }
+
+    public class REPLACE : AstNode
+    {
+        public readonly Expression Expression;
+        public REPLACE(Prep_REPLACEContext context, SyscodeAstBuilder builder) : base(context)
+        {
+            Expression = builder.CreateExpression(context.expression());
         }
     }
 }

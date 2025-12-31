@@ -8,8 +8,8 @@ namespace Syscode
         public readonly int StartColumn;
         public readonly int StopLine;
         public readonly int StopColumn;
-        public readonly int StartToken;
-        public readonly int EndToken;
+        public  int StartToken;
+        public  int EndToken;
         public bool preprocessor;
         /// <summary>
         /// Indicates what the last reported diagnostic was when processing a node. 

@@ -41,6 +41,7 @@ namespace Syscode
                 JumpContext context => CreateProceed(context),
                 Prep_IFContext context => CreateIF(context),
                 Prep_INCLUDEContext context => CreateINCLUDE(context),
+                Prep_REPLACEContext context => CreateREPLACE(context),
                 _ => new AstNode(rule)
             };
         }
@@ -472,8 +473,14 @@ namespace Syscode
 
         private INCLUDE CreateINCLUDE(Prep_INCLUDEContext context)
         {
-            return new INCLUDE(context);
+            return new INCLUDE(context, this);
         }
+
+        private REPLACE CreateREPLACE(Prep_REPLACEContext context)
+        {
+            return new REPLACE(context, this);
+        }
+
 
         private static Operator GetOperator(ExprPrefixedContext context)
         {

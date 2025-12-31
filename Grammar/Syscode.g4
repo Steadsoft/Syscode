@@ -40,7 +40,7 @@ compilation: Statements+=statement* endOfFile;
 // One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
 // several source files with that namespace prefix, each of which contributes stuff to the namespace.
 
-statement:  preamble?  (prep_INCLUDE | prep_IF | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | exit | jump | assignment);
+statement:  preamble?  (prep_INCLUDE | prep_IF | prep_REPLACE | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | exit | jump | assignment);
 
 statements: statement* ;
 
@@ -61,6 +61,9 @@ if:                         If Name=labelName? emptyLines? ConditionalStatements
 conditionalStatementsBlock: emptyLines? Condition=expression emptyLines? Then emptyLines? Statements+=statement*;
 elseBlock :                 (Else emptyLines? Statements+=statement*);
 elifBlock :                 (Elif emptyLines? ConditionalStatements=conditionalStatementsBlock); // this need not be a collection, it only occurs once...
+
+prep_REPLACE: REPLACE identifier WITH expression statementSeparator ;
+
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;
@@ -462,6 +465,7 @@ keyword
     | POINTER
     | PROCEDURE
     | JUMP
+    | REPLACE
     | RETURN
     | SBE
     | SINGLE
@@ -484,6 +488,7 @@ keyword
     | UTF16
     | VARIABLE
     | WHILE 
+    | WITH
     ;
 
 // preprocessor keywords
@@ -599,6 +604,7 @@ PAD:            'pad';
 PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROCEDURE:      'proc' | 'procedure';
+REPLACE:        'REP' | 'REPLACE';
 RETURN:         'return';
 SBE:            'sbe';
 SINGLE:         'single';
@@ -621,6 +627,7 @@ UTF8:           'utf8';
 UTF16:          'utf16';
 VARIABLE:       'var' | 'variable';
 WHILE:          'while';
+WITH:           'WITH';
 
 // Symbol tokens
 

@@ -13,12 +13,12 @@ namespace Syscode.Phases
 {
     internal class Preprocessor
     {
-        private List<IToken> tokens;
+        private List<IToken> token_list;
         private string folder;
         private Reporter reporter;
         public Preprocessor(List<IToken> tokens, string folder, Reporter reporter  )
         {
-            this.tokens = tokens;
+            this.token_list = tokens;
             this.folder = folder;
             this.reporter = reporter;
         }
@@ -29,15 +29,24 @@ namespace Syscode.Phases
             switch (root)
             {
                 case Compilation context:
-                    ProcessCompilation(tokens, context, folder); 
+                    ProcessCompilation(token_list, context, folder); 
                     break;
             }
 
-            return tokens;
+            int index = 0;
+
+            foreach (CommonToken token in token_list)
+            {
+                token.TokenIndex = index++;
+            }
+
+            return token_list;
         }
 
         private void ProcessCompilation(List<IToken> tokens, AstNode context, string folder)
         {
+            int prior_lines = 0;
+
             foreach (var statement in ((Compilation)context).Statements)
             {
                 if (statement is IF if_statement)
@@ -47,12 +56,21 @@ namespace Syscode.Phases
 
                 if (statement is INCLUDE include_statement)
                 {
-                    ProcessInclude(tokens, include_statement, folder);
+                    ProcessInclude(tokens, include_statement, folder, ref prior_lines);
                 }
+
+                if (statement is REPLACE replace_statement)
+                {
+                    ;//ProcessInclude(tokens, include_statement, folder);
+                }
+
             }
         }
-        private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder)
+        private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder, ref int PriorLines)
         {
+            include.StartToken += PriorLines;
+            include.EndToken += PriorLines; 
+
             var token_list = LexIncludeFile(Folder + "\\" + include.Filename);
             var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
             var parser = new SyscodeParser(token_stream);
@@ -66,8 +84,13 @@ namespace Syscode.Phases
 
             ProcessCompilation(token_list, ast, folder);
 
-            tokens.RemoveRange(include.StartToken, (include.EndToken - include.StartToken)+1);
+            int remove_count = (include.EndToken - include.StartToken) + 1;
+            int insert_count = token_list.Count;
+
+            tokens.RemoveRange(include.StartToken, remove_count);
             tokens.InsertRange(include.StartToken, token_list);
+
+            PriorLines += (insert_count - remove_count);
         }
         private List<IToken> LexIncludeFile(string path)
         {
