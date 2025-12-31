@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using static SyscodeParser;
@@ -34,7 +36,33 @@ namespace Syscode.Phases
             switch (root)
             {
                 case Compilation context:
-                    ProcessCompilation(token_list, context, folder); 
+                    ProcessIncludes(token_list, context, folder);
+
+                    var stream = GetStreamFromList(token_list);
+
+                    // Now we convert the stream to text and retokenize that
+                    // this ensures that the parser now see a set of tokens 
+                    // that have valid, consistent line number, columns etc.
+                    // after the stuff we did during preprocessing.
+
+                    var src = stream.GetText();
+
+                    var char_stream = new AntlrInputStream(src);
+                    var lexer = new SyscodeLexer(char_stream);
+                    stream = new CommonTokenStream(lexer);
+                    stream.Fill();
+                    token_list = new List<IToken>(stream.GetTokens());
+
+                    var parser = new SyscodeParser(stream);
+                    var cst = parser.compilation();
+
+                    Dictionary<string, IConstant> constants = new();
+
+                    var builder = new SyscodeAstBuilder(constants, reporter);
+
+                    root = builder.Generate(cst);
+
+                    ProcessCompilation(token_list, root, folder); 
                     break;
             }
 
@@ -50,10 +78,29 @@ namespace Syscode.Phases
             return token_list;
         }
 
-        private void ProcessCompilation(List<IToken> tokens, AstNode context, string folder)
+        internal static CommonTokenStream GetStreamFromList(List<IToken> list)
+        {
+            var source = new ListTokenSource(list);
+            var stream = new CommonTokenStream(source);
+            return stream;
+        }
+
+
+        private void ProcessIncludes(List<IToken> tokens, AstNode context, string folder)
         {
             int prior_tokens = 0;
 
+            foreach (var statement in ((Compilation)context).Statements)
+            {
+                if (statement is INCLUDE include_statement)
+                {
+                    ProcessInclude(tokens, include_statement, folder, ref prior_tokens);
+                }
+            }
+        }
+
+        private void ProcessCompilation(List<IToken> tokens, AstNode context, string folder)
+        { 
             foreach (var statement in ((Compilation)context).Statements)
             {
                 if (statement is IF if_statement)
@@ -61,16 +108,10 @@ namespace Syscode.Phases
                     ;
                 }
 
-                if (statement is INCLUDE include_statement)
-                {
-                    ProcessInclude(tokens, include_statement, folder, ref prior_tokens);
-                }
-
                 if (statement is REPLACE replace_statement)
                 {
                     ProcessReplace(tokens, replace_statement);
                 }
-
             }
         }
 
@@ -89,20 +130,18 @@ namespace Syscode.Phases
                                         var leftref = stmt.Condition.Left.Reference;
                                         var rightref = stmt.Condition.Right.Reference;
 
-                                        if (leftref.IsSimpleIdenitifer)
+                                        if (leftref != null && leftref.IsSimpleIdenitifer)
                                         {
                                             if (leftref.BasicReference.Spelling == include.Name)
                                             {
-                                                int repname_token_id = leftref.BasicReference.StartToken + (tokens.Count - initial_token_count);
-                                                ((CommonToken)tokens[repname_token_id]).Text = include.Expression.ToString();
+                                                GetTokenById(tokens, leftref.BasicReference.StartToken).Text = include.Expression.ToString().Trim();
                                             }
                                         }
-                                        if (rightref.IsSimpleIdenitifer)
+                                        if (rightref != null && rightref.IsSimpleIdenitifer)
                                         {
                                             if (rightref.BasicReference.Spelling == include.Name)
                                             {
-                                                int repname_token_id =  rightref.BasicReference.StartToken + (tokens.Count - initial_token_count);
-                                                ((CommonToken)tokens[repname_token_id]).Text = include.Expression.ToString().Trim();
+                                                GetTokenById(tokens, rightref.BasicReference.StartToken).Text = include.Expression.ToString().Trim();
                                             }
                                         }
 
@@ -113,6 +152,11 @@ namespace Syscode.Phases
                         break;
                     }
             }
+        }
+
+        private static CommonToken GetTokenById(List<IToken> tokens, int id)
+        {
+            return (CommonToken)tokens.Where(t => t.TokenIndex == id).Single();
         }
 
         private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder, ref int PriorTokens)
@@ -131,7 +175,7 @@ namespace Syscode.Phases
 
             var ast = builder.Generate(cst);
 
-            ProcessCompilation(token_list, ast, folder);
+            ProcessIncludes(token_list, ast, folder);
 
             int remove_count = (include.EndToken - include.StartToken) + 1;
             int insert_count = token_list.Count;

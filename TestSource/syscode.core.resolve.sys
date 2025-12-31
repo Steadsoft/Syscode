@@ -9,7 +9,7 @@ if a > MAIN_ID then
    a = b
 elif a > b then
    a = b
-elif a > b then
+elif XYZ > b then
    a = b
 elif a > b then
    a = b
@@ -20,6 +20,11 @@ IF a > b THEN
 END   
 
 IF = if
+
+
+if XYZ > 100 then
+   return
+end
 
 hex = 01F5 33DA 0F02 11B9 {h}
 bin = +1001 1101_0010 0011 {b}
