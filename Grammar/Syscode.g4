@@ -502,7 +502,7 @@ END:                'END';
 BOM: '\uFEFF'  -> skip;
 // Allow comment blocks slash/star TEXT star/slash to be nested 
 COMMENT: (BCOM (COMMENT | .)*? ECOM) -> channel(HIDDEN);
-LINECOM: (LCOM ~[\r\n]*) -> skip;
+LINECOM: (LCOM ~[\r\n]*) -> channel(HIDDEN);
 HYPERCOMMENT: ('/#' (.)*? '#/') -> skip;
 fragment BINCHARS:  [0-1];
 fragment OCTCHARS:  [0-7];

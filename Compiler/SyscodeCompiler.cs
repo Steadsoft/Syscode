@@ -139,7 +139,7 @@ namespace Syscode
             var source = new StreamReader(file);
             var char_stream = new AntlrInputStream(source);
             var lexer = new SyscodeLexer(char_stream);
-            var stream = new CommonTokenStream(lexer);
+            var stream = new CommonTokenStream(lexer); 
             stream.Fill();
             return new List<IToken>(stream.GetTokens());
         }

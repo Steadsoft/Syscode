@@ -16,7 +16,7 @@ elif a > b then
 end   
 
 IF a > b THEN
-  INCLUDE "test_header"
+  //INCLUDE "test_header"
 END   
 
 IF = if

@@ -9,12 +9,19 @@ using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using static SyscodeParser;
 
 namespace Syscode.Phases
 {
     internal class Preprocessor
     {
+        // The strategy here is as follows. The AST will contain every preprocessor statement that was in the source file.
+        // We walk the AST in two passes, the first is concerned only with INCLUDE statements, these add text to the source.
+        // Once all includes are processeed we transform the updated token stream to text and then lex and parse that text
+        // Then we take that CST and build a fresh AST from it. 
+        // At that stage we have a single source text, no INCLUDES and potentially other pre-processing statements. 
+
         private List<IToken> token_list;
         private string folder;
         private Reporter reporter;
@@ -62,20 +69,11 @@ namespace Syscode.Phases
 
                     root = builder.Generate(cst);
 
-                    ProcessCompilation(token_list, root, folder); 
+                    ProcessNonIncludes(token_list, root, folder); 
                     break;
             }
 
-            int index = 0;
-
-            foreach (CommonToken token in token_list)
-            {
-                token.TokenIndex = index++;
-            }
-
-            // Note that token line numbers are now potentially inaccurate.
-
-            return token_list;
+            return new List<IToken>(token_list);
         }
 
         internal static CommonTokenStream GetStreamFromList(List<IToken> list)
@@ -99,7 +97,7 @@ namespace Syscode.Phases
             }
         }
 
-        private void ProcessCompilation(List<IToken> tokens, AstNode context, string folder)
+        private void ProcessNonIncludes(List<IToken> tokens, AstNode context, string folder)
         { 
             foreach (var statement in ((Compilation)context).Statements)
             {
@@ -115,7 +113,7 @@ namespace Syscode.Phases
             }
         }
 
-        private void ProcessReplace(List<IToken> tokens, REPLACE include)
+        private void ProcessReplace(List<IToken> tokens, REPLACE replace)
         {
             switch (root)
             {
@@ -127,28 +125,12 @@ namespace Syscode.Phases
                             {
                                 case If stmt:
                                     {
-                                        var leftref = stmt.Condition.Left.Reference;
-                                        var rightref = stmt.Condition.Right.Reference;
-
-                                        if (leftref != null && leftref.IsSimpleIdenitifer)
-                                        {
-                                            if (leftref.BasicReference.Spelling == include.Name)
-                                            {
-                                                GetTokenById(tokens, leftref.BasicReference.StartToken).Text = include.Expression.ToString().Trim();
-                                            }
-                                        }
-                                        if (rightref != null && rightref.IsSimpleIdenitifer)
-                                        {
-                                            if (rightref.BasicReference.Spelling == include.Name)
-                                            {
-                                                GetTokenById(tokens, rightref.BasicReference.StartToken).Text = include.Expression.ToString().Trim();
-                                            }
-                                        }
-
+                                        stmt.ApplyPreprocessorReplace(tokens, replace);
                                         break;
                                     }
                             }
                         }
+
                         break;
                     }
             }
@@ -193,15 +175,24 @@ namespace Syscode.Phases
         private List<IToken> LexIncludeFile(string path)
         {
             var text = File.ReadAllText(path);
+
+            text = $"// BEGIN INCLUDE: {path}" + Environment.NewLine + text + Environment.NewLine + $"// END INCLUDE: {path}";
+
+            // We must ensure a newline is present at the end of the file.
+            // If we dont do this then the last character in the file 
+            // will appear right before the first character
+            // of whatever follows it.
+
+            if (text.EndsWith(Environment.NewLine) == false)
+                text += Environment.NewLine;
+
             var input = new AntlrInputStream(text);
             var lexer = new SyscodeLexer(input);
             var stream = new CommonTokenStream(lexer);
             stream.Fill();
 
             // Remove EOF so you don't get multiple EOF tokens in the final stream
-            return stream.GetTokens()
-                         .Where(t => t.Type != TokenConstants.EOF)
-                         .ToList();
+            return stream.GetTokens().Where(t => t.Type != TokenConstants.EOF).ToList();
         }
 
     }

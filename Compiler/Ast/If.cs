@@ -1,4 +1,5 @@
-﻿using static SyscodeParser;
+﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
@@ -35,6 +36,38 @@ namespace Syscode
             {
                 label = context.Name.Spelling.GetText();
                  hasLabel = true;
+            }
+        }
+        /// <summary>
+        /// Examines the expression in the statement to ascertain whether it is
+        /// an identifier that is referred to in a preprocessor REPLACE statement 
+        /// and if so, modifies the token referred to by the expression with its
+        /// replace value. 
+        /// </summary>
+        /// <param name="tokens"></param>
+        /// <param name="replace"></param>
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            var leftExpr = Condition.Left;
+            var rightExpr = Condition.Right;
+
+            var leftref = leftExpr != null ? leftExpr.Reference : null;
+            var rightref = rightExpr != null ? rightExpr.Reference : null;
+
+            if (leftref != null && leftref.IsSimpleIdenitifer)
+            {
+                if (leftref.BasicReference.Spelling == replace.Name)
+                {
+                    ((CommonToken)tokens[leftref.BasicReference.StartToken]).Text = replace.Expression.ToString().Trim();
+                }
+            }
+
+            if (rightref != null && rightref.IsSimpleIdenitifer)
+            {
+                if (rightref.BasicReference.Spelling == replace.Name)
+                {
+                    ((CommonToken)tokens[rightref.BasicReference.StartToken]).Text = replace.Expression.ToString().Trim();
+                }
             }
         }
         public override string ToString()
