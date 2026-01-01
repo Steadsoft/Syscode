@@ -3,9 +3,9 @@
 
 INCLUDE "test_header_1"
 
-REPLACE MAIN_ID WITH 123 * 45 
+REPLACE MAIN_ID WITH (123 * 45) 
 
-if a > MAIN_ID then
+if a > MAIN_ID / 50 then
    a = b
 elif a > b then
    a = b
@@ -19,7 +19,7 @@ IF a > b THEN
   //INCLUDE "test_header"
 END   
 
-IF = if
+IF = 75 + MAIN_ID / 100
 
 
 if XYZ > 100 then

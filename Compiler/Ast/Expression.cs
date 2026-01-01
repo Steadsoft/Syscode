@@ -41,6 +41,31 @@ namespace Syscode
             Type = ExpressionType.None;
         }
 
+        public bool IsSimpleIdentifier => Reference != null && Reference.IsSimpleIdenitifer;
+        public string SimpleIdentifier => Reference.SimpleIdentifer;
+        /// <summary>
+        /// Examines the expression to ascertain whether it is
+        /// an identifier that is referred to in a preprocessor REPLACE statement 
+        /// and if so, modifies the token referred to by the expression with its
+        /// replace value, it goes recursive if the expression has sub left/right nodes.
+        /// </summary>
+        /// <param name="tokens"></param>
+        /// <param name="replace"></param>
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            // Apply to this node
+            if (IsSimpleIdentifier && SimpleIdentifier == replace.Name)
+            {
+                ((CommonToken)tokens[Reference.BasicReference.StartToken]).Text =
+                    replace.Expression.ToString().Trim();
+            }
+
+            // Recurse
+            Left?.ApplyPreprocessorReplace(tokens, replace);
+            Right?.ApplyPreprocessorReplace(tokens, replace);
+        }
+
         public bool IsConstant
         {
             get
@@ -73,5 +98,10 @@ namespace Syscode
             return text;
         }
 
+    }
+
+    public interface IReplaceCandidate
+    {
+        void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace);
     }
 }

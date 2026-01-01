@@ -40,6 +40,17 @@ namespace Syscode
                 return false;
             }
         }
+
+        public string SimpleIdentifer
+        {
+            get
+            {
+                if (!IsSimpleIdenitifer)
+                    throw new InvalidOperationException("This operation is not possible on this reference");
+
+                return BasicReference.Spelling;
+            }
+        }
         /// <summary>
         /// Indicates whether the reference has a preceding 'pointer' qualifier.
         /// </summary>

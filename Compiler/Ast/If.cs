@@ -3,7 +3,7 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class If : AstNode
+    public class If : AstNode, IReplaceCandidate
     {
         private readonly Expression condition;
         private List<AstNode> thenStatements = new();
@@ -48,27 +48,7 @@ namespace Syscode
         /// <param name="replace"></param>
         public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
         {
-            var leftExpr = Condition.Left;
-            var rightExpr = Condition.Right;
-
-            var leftref = leftExpr != null ? leftExpr.Reference : null;
-            var rightref = rightExpr != null ? rightExpr.Reference : null;
-
-            if (leftref != null && leftref.IsSimpleIdenitifer)
-            {
-                if (leftref.BasicReference.Spelling == replace.Name)
-                {
-                    ((CommonToken)tokens[leftref.BasicReference.StartToken]).Text = replace.Expression.ToString().Trim();
-                }
-            }
-
-            if (rightref != null && rightref.IsSimpleIdenitifer)
-            {
-                if (rightref.BasicReference.Spelling == replace.Name)
-                {
-                    ((CommonToken)tokens[rightref.BasicReference.StartToken]).Text = replace.Expression.ToString().Trim();
-                }
-            }
+            Condition.ApplyPreprocessorReplace(tokens, replace);
         }
         public override string ToString()
         {

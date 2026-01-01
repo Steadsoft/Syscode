@@ -119,16 +119,9 @@ namespace Syscode.Phases
             {
                 case Compilation context:
                     {
-                        foreach (var statement in ((Compilation)context).Statements)
+                        foreach (var statement in context.Statements.OfType<IReplaceCandidate>())
                         {
-                            switch (statement)
-                            {
-                                case If stmt:
-                                    {
-                                        stmt.ApplyPreprocessorReplace(tokens, replace);
-                                        break;
-                                    }
-                            }
+                            statement.ApplyPreprocessorReplace(tokens, replace);
                         }
 
                         break;
