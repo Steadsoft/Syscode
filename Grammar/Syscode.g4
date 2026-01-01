@@ -131,10 +131,10 @@ loop
     | Until=untilLoop     #LoopUntil
     ;
 
-forLoop : Do Name=labelName? For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  Statements+=statement* emptyLines? End ;
-whileLoop: Do Name=labelName? While=whileCondition Until=untilCondition?  Statements+=statement* emptyLines? End;
-untilLoop: Do Name=labelName? Until=untilCondition While=whileCondition?  Statements+=statement* emptyLines? End;
-loopLoop: Do Name=labelName? LOOP Statements+=statement* emptyLines? End;
+forLoop : Do Name=labelName? For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  Statements+=statement* emptyLines? End statementSeparator;
+whileLoop: Do Name=labelName? While=whileCondition Until=untilCondition?  Statements+=statement* emptyLines? End statementSeparator;
+untilLoop: Do Name=labelName? Until=untilCondition While=whileCondition?  Statements+=statement* emptyLines? End statementSeparator;
+loopLoop: Do Name=labelName? LOOP Statements+=statement* emptyLines? End statementSeparator;
 
 whileCondition: WHILE Exp=expression ;
 untilCondition: UNTIL Exp=expression ;

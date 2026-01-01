@@ -1,8 +1,9 @@
-﻿using static SyscodeParser;
+﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Elif : AstNode
+    public class Elif : AstNode, IReplaceCandidate
     {
         private Expression condition;
         private List<AstNode> statements = new();
@@ -19,6 +20,16 @@ namespace Syscode
         public override string ToString()
         {
             return $"{nameof(If)}: ";
+        }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            Condition.ApplyPreprocessorReplace(tokens, replace);
+
+            foreach (var stmt in statements.OfType<IReplaceCandidate>())
+            {
+                stmt.ApplyPreprocessorReplace(tokens, replace);
+            }
         }
     }
 

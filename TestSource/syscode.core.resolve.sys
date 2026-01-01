@@ -4,6 +4,7 @@
 INCLUDE "test_header_1"
 
 REPLACE MAIN_ID WITH (123 * 45) 
+REPLACE MAX_LOOPS WITH 100 * 10
 
 if a > MAIN_ID / 50 then
    a = b
@@ -25,6 +26,18 @@ IF = 75 + MAIN_ID / 100
 if XYZ > 100 then
    return
 end
+
+do a = 10 to MAX_LOOPS
+    do while (c < x)
+       count = effoff(s)
+    end;
+end ; 
+
+do a = 10 to MAX_LOOPS / 10 while (c < x)
+       count = effoff(s)
+end   
+
+a = 10
 
 hex = 01F5 33DA 0F02 11B9 {h}
 bin = +1001 1101_0010 0011 {b}
@@ -140,6 +153,7 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
         error_count += 1
 
         if error_count > 100 then
+           rate = MAIN_ID + 50
            exit 
         else
            jump process

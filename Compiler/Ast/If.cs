@@ -49,6 +49,21 @@ namespace Syscode
         public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
         {
             Condition.ApplyPreprocessorReplace(tokens, replace);
+
+            foreach (var eb in elifBlocks)
+            {
+                eb.ApplyPreprocessorReplace(tokens, replace);
+            }
+
+            foreach (var stmt in thenStatements.OfType<IReplaceCandidate>())
+            {
+                stmt.ApplyPreprocessorReplace(tokens, replace);
+            }
+
+            foreach (var stmt in elseStatements.OfType<IReplaceCandidate>())
+            {
+                stmt.ApplyPreprocessorReplace(tokens, replace);
+            }
         }
         public override string ToString()
         {

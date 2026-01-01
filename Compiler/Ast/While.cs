@@ -1,8 +1,9 @@
-﻿using static SyscodeParser;
+﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public class While : Loop
+    public class While : Loop, IReplaceCandidate
     {
         private readonly Expression whileExp;
         private Expression? untilExp;   // optional
@@ -19,6 +20,12 @@ namespace Syscode
 
             if (context.While.Name is not null)
                 haslabel    = true;
+        }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            WhileExp.ApplyPreprocessorReplace(tokens, replace);
+            UntilExp?.ApplyPreprocessorReplace(tokens, replace);
         }
 
         public override string ToString()

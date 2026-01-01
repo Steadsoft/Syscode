@@ -1,8 +1,9 @@
-﻿using static SyscodeParser;
+﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Return : AstNode
+    public class Return : AstNode, IReplaceCandidate
     {
         private Expression? expression;
         public Return(ReturnContext context, SyscodeAstBuilder builder) : base(context)
@@ -11,6 +12,11 @@ namespace Syscode
         }
 
         public Expression? Expression { get => expression; }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            expression?.ApplyPreprocessorReplace(tokens, replace);
+        }
 
         public override string ToString()
         {

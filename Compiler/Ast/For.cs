@@ -1,9 +1,10 @@
-﻿using System.Text;
+﻿using Antlr4.Runtime;
+using System.Text;
 using static SyscodeParser;
 
 namespace Syscode
 {
-    public class For : Loop
+    public class For : Loop, IReplaceCandidate
     {
         // Compulsory
         private Reference forRef;
@@ -58,6 +59,15 @@ namespace Syscode
                 builder.Append($" until {UntilExp}");
 
             return builder.ToString();
+        }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            from.ApplyPreprocessorReplace(tokens, replace);
+            to.ApplyPreprocessorReplace(tokens, replace);
+            by?.ApplyPreprocessorReplace(tokens, replace);
+            untilExp?.ApplyPreprocessorReplace(tokens, replace);
+            whileExp?.ApplyPreprocessorReplace(tokens, replace);
         }
     }
 }

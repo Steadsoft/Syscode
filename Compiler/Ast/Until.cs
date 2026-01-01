@@ -1,8 +1,9 @@
-﻿using static SyscodeParser;
+﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Until : Loop
+    public class Until : Loop, IReplaceCandidate
     {
         private readonly Expression untilExp;
         private Expression? whileExp;   // optional
@@ -27,6 +28,12 @@ namespace Syscode
                return $"until {UntilExp} while {WhileExp}";
 
             return $"until {UntilExp}";
+        }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            UntilExp.ApplyPreprocessorReplace(tokens, replace);
+            WhileExp?.ApplyPreprocessorReplace(tokens, replace);
         }
     }
 }
