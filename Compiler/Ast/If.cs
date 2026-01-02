@@ -3,10 +3,11 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class If : AstNode, IReplaceCandidate
+    public class If : AstNode, IReplaceContainer
     {
         private readonly Expression condition;
         private List<AstNode> thenStatements = new();
+        // TODO perhaps we need an Else node for structural consistency
         private List<AstNode> elseStatements = new();
         private List<Elif> elifBlocks = new();
         private readonly string label = string.Empty;
@@ -55,12 +56,12 @@ namespace Syscode
                 eb.ApplyPreprocessorReplace(tokens, replace);
             }
 
-            foreach (var stmt in thenStatements.OfType<IReplaceCandidate>())
+            foreach (var stmt in thenStatements.OfType<IReplaceContainer>())
             {
                 stmt.ApplyPreprocessorReplace(tokens, replace);
             }
 
-            foreach (var stmt in elseStatements.OfType<IReplaceCandidate>())
+            foreach (var stmt in elseStatements.OfType<IReplaceContainer>())
             {
                 stmt.ApplyPreprocessorReplace(tokens, replace);
             }

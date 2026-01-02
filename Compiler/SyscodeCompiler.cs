@@ -27,6 +27,8 @@ namespace Syscode
         private readonly Dictionary<string, IConstant> constants = new();
         private AstListing astlist = new();
         private AstNode ast;
+        private Random random = new(12345);
+        private string compile_id;
         public Reporter Reporter { get => reporter; set => reporter = value; }
 
         public SyscodeCompiler(string ErrorMessagesPath)
@@ -64,6 +66,8 @@ namespace Syscode
 
         public void CompileSourceFile(string SourceFile)
         {
+            compile_id = random.Next().ToString();
+
             var folder = Path.GetFullPath(Path.GetDirectoryName(SourceFile));
 
             var list = GetTokenListFromFile(SourceFile);

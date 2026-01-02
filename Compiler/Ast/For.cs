@@ -4,7 +4,7 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class For : Loop, IReplaceCandidate
+    public class For : Loop, IReplaceContainer
     {
         // Compulsory
         private Reference forRef;
@@ -68,6 +68,7 @@ namespace Syscode
             by?.ApplyPreprocessorReplace(tokens, replace);
             untilExp?.ApplyPreprocessorReplace(tokens, replace);
             whileExp?.ApplyPreprocessorReplace(tokens, replace);
+            base.ApplyPreprocessorReplace(tokens, replace);
         }
     }
 }

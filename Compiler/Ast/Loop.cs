@@ -1,8 +1,9 @@
-﻿using static SyscodeParser;
+﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public abstract class Loop : AstNode, IContainer
+    public abstract class Loop : AstNode, IContainer, IReplaceContainer
     {
         private List<AstNode> statements;
         private List<Symbol> symbols;
@@ -19,6 +20,14 @@ namespace Syscode
         public override string ToString()
         {
             return "do loop";
+        }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            foreach (var stmt in Statements.OfType<IReplaceContainer>())
+            {
+                stmt.ApplyPreprocessorReplace(tokens, replace);
+            }
         }
     }
 }

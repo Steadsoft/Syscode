@@ -3,7 +3,7 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Elif : AstNode, IReplaceCandidate
+    public class Elif : AstNode, IReplaceContainer
     {
         private Expression condition;
         private List<AstNode> statements = new();
@@ -26,7 +26,7 @@ namespace Syscode
         {
             Condition.ApplyPreprocessorReplace(tokens, replace);
 
-            foreach (var stmt in statements.OfType<IReplaceCandidate>())
+            foreach (var stmt in statements.OfType<IReplaceContainer>())
             {
                 stmt.ApplyPreprocessorReplace(tokens, replace);
             }

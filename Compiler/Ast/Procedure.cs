@@ -1,8 +1,9 @@
-﻿using static SyscodeParser;
+﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Procedure : AstNode, IContainer , ISpelling
+    public class Procedure : AstNode, IContainer , ISpelling, IReplaceContainer
     {
         private readonly string spelling;
         private readonly bool isFunction;
@@ -61,6 +62,14 @@ namespace Syscode
         public override string ToString()
         {
             return $"procedure {Spelling}";
+        }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            foreach (var stmt in Statements.OfType<IReplaceContainer>())
+            {
+                stmt.ApplyPreprocessorReplace(tokens, replace);
+            }
         }
     }
 }

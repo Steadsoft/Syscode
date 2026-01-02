@@ -28,6 +28,8 @@ namespace Syscode.Phases
         private AstNode root;
         private int total_added_tokens = 0;
         private int initial_token_count = 0;
+        private List<string> included = new();
+        private Dictionary<string, string> replacements = new();
         public Preprocessor(AstNode root, List<IToken> tokens, string folder, Reporter reporter  )
         {
             this.token_list = tokens;
@@ -73,7 +75,7 @@ namespace Syscode.Phases
                     break;
             }
 
-            return new List<IToken>(token_list);
+             return new List<IToken>(token_list);
         }
 
         internal static CommonTokenStream GetStreamFromList(List<IToken> list)
@@ -90,9 +92,10 @@ namespace Syscode.Phases
 
             foreach (var statement in ((Compilation)context).Statements)
             {
-                if (statement is INCLUDE include_statement)
+                if (statement is INCLUDE include_statement && !included.Contains(include_statement.Filename))
                 {
                     ProcessInclude(tokens, include_statement, folder, ref prior_tokens);
+                    included.Add(include_statement.Filename);
                 }
             }
         }
@@ -106,9 +109,24 @@ namespace Syscode.Phases
                     ;
                 }
 
-                if (statement is REPLACE replace_statement)
+                if (statement is REPLACE replace)
                 {
-                    ProcessReplace(tokens, replace_statement);
+                    if (replacements.ContainsKey(replace.Name))
+                    {
+                        if (replacements[replace.Name] == replace.Expression.ToString())
+                        {
+                            ;// warning multiple replaces for 'Name' 
+                        }
+                        else
+                        {
+                            ;// error conflicting replaces
+                        }
+
+                        continue;
+                    }
+
+                    ProcessReplace(tokens, replace);
+                    replacements.Add(replace.Name, replace.Expression.ToString());
                 }
             }
         }
@@ -119,7 +137,7 @@ namespace Syscode.Phases
             {
                 case Compilation context:
                     {
-                        foreach (var statement in context.Statements.OfType<IReplaceCandidate>())
+                        foreach (var statement in context.Statements.OfType<IReplaceContainer>())
                         {
                             statement.ApplyPreprocessorReplace(tokens, replace);
                         }
@@ -169,7 +187,9 @@ namespace Syscode.Phases
         {
             var text = File.ReadAllText(path);
 
-            text = $"// BEGIN INCLUDE: {path}" + Environment.NewLine + text + Environment.NewLine + $"// END INCLUDE: {path}";
+            var line_count = text.Split('\n').Length;
+
+            text = $"// BEGIN INCLUDE: {line_count} lines from file: {path}" + Environment.NewLine + text + Environment.NewLine + $"// END INCLUDE: {path}";
 
             // We must ensure a newline is present at the end of the file.
             // If we dont do this then the last character in the file 

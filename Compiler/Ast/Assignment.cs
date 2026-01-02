@@ -3,7 +3,7 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Assignment : AstNode, IReplaceCandidate
+    public class Assignment : AstNode, IReplaceContainer
     {
         private readonly Reference reference;
         private readonly Expression expression;

@@ -34,7 +34,7 @@ do a = 10 to MAX_LOOPS
 end ; 
 
 do a = 10 to MAX_LOOPS / 10 while (c < x)
-       count = effoff(s)
+   count = effoff(s)
 end   
 
 a = 10
@@ -51,7 +51,7 @@ x +
  
   * k)
 
-dcl global_count(32) bin16 static          // this defaults to internal
+dcl global_count(32) bin16 static      // this defaults to internal
 dcl global_rate  bin16 static external // this is only legal in the global scope nn inside a proc
 
 // we must not accept a scope inside of a proc/func 

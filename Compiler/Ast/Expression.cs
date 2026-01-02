@@ -99,9 +99,4 @@ namespace Syscode
         }
 
     }
-
-    public interface IReplaceCandidate
-    {
-        void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace);
-    }
 }

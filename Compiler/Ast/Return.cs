@@ -3,7 +3,7 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Return : AstNode, IReplaceCandidate
+    public class Return : AstNode, IReplaceContainer
     {
         private Expression? expression;
         public Return(ReturnContext context, SyscodeAstBuilder builder) : base(context)

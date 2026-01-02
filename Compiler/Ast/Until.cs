@@ -3,7 +3,7 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Until : Loop, IReplaceCandidate
+    public class Until : Loop, IReplaceContainer
     {
         private readonly Expression untilExp;
         private Expression? whileExp;   // optional
@@ -34,6 +34,7 @@ namespace Syscode
         {
             UntilExp.ApplyPreprocessorReplace(tokens, replace);
             WhileExp?.ApplyPreprocessorReplace(tokens, replace);
+            base.ApplyPreprocessorReplace(tokens, replace);
         }
     }
 }
