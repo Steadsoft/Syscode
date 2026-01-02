@@ -102,13 +102,13 @@ namespace Syscode.Phases
 
         private void ProcessIncludes(List<IToken> tokens, AstNode context, string folder)
         {
-            int prior_tokens = 0;
+            int inserted_count = 0;
 
             foreach (var statement in ((Compilation)context).Statements)
             {
                 if (statement is INCLUDE include_statement && !included.Contains(include_statement.Filename))
                 {
-                    ProcessInclude(tokens, include_statement, folder, ref prior_tokens);
+                    ProcessInclude(tokens, include_statement, folder, ref inserted_count);
                     included.Add(include_statement.Filename);
                 }
             }
@@ -125,22 +125,7 @@ namespace Syscode.Phases
 
                 if (statement is REPLACE replace)
                 {
-                    if (replacements.ContainsKey(replace.Name))
-                    {
-                        if (replacements[replace.Name] == replace.Expression.ToString())
-                        {
-                            ;// warning multiple replaces for 'Name' 
-                        }
-                        else
-                        {
-                            ;// error conflicting replaces
-                        }
-
-                        continue;
-                    }
-
                     ProcessReplace(tokens, replace);
-                    replacements.Add(replace.Name, replace.Expression.ToString());
                 }
             }
         }
@@ -166,10 +151,13 @@ namespace Syscode.Phases
             return (CommonToken)tokens.Where(t => t.TokenIndex == id).Single();
         }
 
-        private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder, ref int PriorTokens)
+        private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder, ref int inserted_count)
         {
-            include.StartToken += PriorTokens;
-            include.EndToken += PriorTokens;
+            var insertion_point = include.StartToken + inserted_count;
+            var statement_length = (include.EndToken - include.StartToken) + 1; // the length of the INCLUDE directive itself
+
+            //include.StartToken += insertion_point;
+            //include.EndToken += insertion_point;
 
             var token_list = LexIncludeFile(include, Folder);
 
@@ -190,18 +178,12 @@ namespace Syscode.Phases
 
             ProcessIncludes(token_list, ast, folder);
 
-            int remove_count = (include.EndToken - include.StartToken) + 1;
-            int insert_count = token_list.Count;
+            tokens.RemoveRange(insertion_point, statement_length);
+            tokens.InsertRange(insertion_point, token_list);
 
-            tokens.RemoveRange(include.StartToken, remove_count);
-            tokens.InsertRange(include.StartToken, token_list);
+            int added_tokens = token_list.Count - statement_length;
 
-            int added_tokens = insert_count - remove_count;
-            int added_lines = (token_list.Last().Line - token_list.First().Line) + 1;
-
-            total_added_tokens += added_tokens;
-
-            PriorTokens += added_tokens;
+            inserted_count += added_tokens;
         }
         private List<IToken> LexIncludeFile(INCLUDE include, string Folder)
         {
@@ -228,21 +210,21 @@ namespace Syscode.Phases
 
             var path = Folder + "\\" + include.Filename;
 
-            var text = File.ReadAllText(path);
+            var file_content = File.ReadAllText(path);
 
-            var line_count = text.Split('\n').Length;
+            var line_count = file_content.Split('\n').Length;
 
-            text = $"// BEGIN INCLUDE No {include_file_count} WITH {line_count} LINES FROM{(include.Name is null ? " " : $" '{include.Name}' ")}{path}" + Environment.NewLine + text + Environment.NewLine + $"// END INCLUDE {include_file_count}";
+            file_content = $"// BEGIN INCLUDE No {include_file_count} WITH {line_count} LINES FROM{(include.Name is null ? " " : $" '{include.Name}' ")}{path}" + Environment.NewLine + file_content + Environment.NewLine + $"// END INCLUDE {include_file_count}";
 
             // We must ensure a newline is present at the end of the file.
             // If we dont do this then the last character in the file 
             // will appear right before the first character
             // of whatever follows it.
 
-            if (text.EndsWith(Environment.NewLine) == false)
-                text += Environment.NewLine;
+            if (file_content.EndsWith(Environment.NewLine) == false)
+                file_content += Environment.NewLine;
 
-            var input = new AntlrInputStream(text);
+            var input = new AntlrInputStream(file_content);
             var lexer = new SyscodeLexer(input);
             var stream = new CommonTokenStream(lexer);
             stream.Fill();
