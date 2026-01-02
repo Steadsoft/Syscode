@@ -64,7 +64,7 @@ namespace Syscode
         //    diagnostics(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
         //}
 
-        public void CompileSourceFile(string SourceFile)
+        public void CompileSourceFile(string SourceFile, bool print_listing = true)
         {
             compile_id = random.Next().ToString();
 
@@ -91,6 +91,11 @@ namespace Syscode
             // after the stuff we did during preprocessing.
 
             var src = stream.GetText();
+
+            if (print_listing)
+            {
+                Console.Write(src);
+            }
 
             var char_stream = new AntlrInputStream(src);
             var lexer = new SyscodeLexer(char_stream);

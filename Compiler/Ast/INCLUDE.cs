@@ -9,10 +9,12 @@ namespace Syscode
 {
     public class INCLUDE : AstNode
     {
-        public readonly string Filename;
+        public  string? Filename;
+        public  readonly string? Name;
         public INCLUDE(Prep_INCLUDEContext context, SyscodeAstBuilder builder):base(context)
         {
-            Filename = context.File.Text.Strip('"');
+            Filename = context.File?.Text.Strip('"');
+            Name = context.Name?.GetText();
         }
     }
 }

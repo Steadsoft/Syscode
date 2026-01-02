@@ -30,6 +30,7 @@ namespace Syscode.Phases
         private int initial_token_count = 0;
         private List<string> included = new();
         private Dictionary<string, string> replacements = new();
+        private int include_file_count = 0;
         public Preprocessor(AstNode root, List<IToken> tokens, string folder, Reporter reporter  )
         {
             this.token_list = tokens;
@@ -45,6 +46,8 @@ namespace Syscode.Phases
             switch (root)
             {
                 case Compilation context:
+
+                    StoreReplacements(context);
                     ProcessIncludes(token_list, context, folder);
 
                     var stream = GetStreamFromList(token_list);
@@ -83,6 +86,17 @@ namespace Syscode.Phases
             var source = new ListTokenSource(list);
             var stream = new CommonTokenStream(source);
             return stream;
+        }
+
+        private void StoreReplacements(AstNode context)
+        {
+            foreach (var statement in ((Compilation)context).Statements)
+            {
+                if (statement is REPLACE replace && !replacements.ContainsKey(replace.Name))
+                {
+                    replacements.Add(replace.Name, replace.Expression.ToString());
+                }
+            }
         }
 
 
@@ -155,9 +169,13 @@ namespace Syscode.Phases
         private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder, ref int PriorTokens)
         {
             include.StartToken += PriorTokens;
-            include.EndToken += PriorTokens; 
+            include.EndToken += PriorTokens;
 
-            var token_list = LexIncludeFile(Folder + "\\" + include.Filename);
+            var token_list = LexIncludeFile(include, Folder);
+
+            if (token_list == null)
+                return;
+
             var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
             var parser = new SyscodeParser(token_stream);
             var cst = parser.compilation();
@@ -167,6 +185,8 @@ namespace Syscode.Phases
             var builder = new SyscodeAstBuilder(constants,reporter);
 
             var ast = builder.Generate(cst);
+
+            StoreReplacements(ast);
 
             ProcessIncludes(token_list, ast, folder);
 
@@ -183,13 +203,36 @@ namespace Syscode.Phases
 
             PriorTokens += added_tokens;
         }
-        private List<IToken> LexIncludeFile(string path)
+        private List<IToken> LexIncludeFile(INCLUDE include, string Folder)
         {
+            include_file_count++;
+
+            if (include.Name != null)
+            {
+                if (replacements.ContainsKey(include.Name))
+                {
+                    if (replacements[include.Name].StartsWith('"') && replacements[include.Name].EndsWith('"'))
+                        include.Filename = replacements[include.Name].Strip('"');
+                    else
+                    {
+                        ; // error
+                        return null;
+                    }
+                }
+                else
+                {
+                    ; // error
+                    return null;
+                }
+            }
+
+            var path = Folder + "\\" + include.Filename;
+
             var text = File.ReadAllText(path);
 
             var line_count = text.Split('\n').Length;
 
-            text = $"// BEGIN INCLUDE: {line_count} lines from file: {path}" + Environment.NewLine + text + Environment.NewLine + $"// END INCLUDE: {path}";
+            text = $"// BEGIN INCLUDE No {include_file_count} WITH {line_count} LINES FROM{(include.Name is null ? " " : $" '{include.Name}' ")}{path}" + Environment.NewLine + text + Environment.NewLine + $"// END INCLUDE {include_file_count}";
 
             // We must ensure a newline is present at the end of the file.
             // If we dont do this then the last character in the file 

@@ -49,7 +49,7 @@ structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttribu
 structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
 
 
-prep_INCLUDE: INCLUDE File=STR_LITERAL statementSeparator; 
+prep_INCLUDE: INCLUDE (File=STR_LITERAL | Name=identifier) statementSeparator; 
 
 prep_IF:             IF Name=labelName? emptyLines? ExprTHEN_block=prep_exprThenBlock emptyLines? ELIF_block=prep_elifBlock? emptyLines? ELSE_block=prep_elseBlock? emptyLines? END;
 prep_exprThenBlock:  emptyLines? Expression=expression emptyLines? THEN emptyLines? THEN_block=prep_thenBlock;
