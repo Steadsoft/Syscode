@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.1.11312.151 d18.0
+VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syscode", "Syscode.csproj", "{15B70DB6-2B7E-4757-82F0-0CBC5ECB2DC3}"
 EndProject
@@ -25,7 +25,6 @@ Global
 		{FB39ECFC-7B4D-C3F2-E126-A34B968BDE59}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1139AEB9-4010-4D8B-8725-72029EE47BB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1139AEB9-4010-4D8B-8725-72029EE47BB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1139AEB9-4010-4D8B-8725-72029EE47BB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

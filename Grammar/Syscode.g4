@@ -62,8 +62,10 @@ conditionalStatementsBlock: emptyLines? Condition=expression emptyLines? Then em
 elseBlock :                 (Else emptyLines? Statements+=statement*);
 elifBlock :                 (Elif emptyLines? ConditionalStatements=conditionalStatementsBlock); // this need not be a collection, it only occurs once...
 
-prep_REPLACE: REPLACE Name=identifier WITH expression statementSeparator ;
-
+prep_REPLACE
+    : REPLACE Name=identifier WITH expression statementSeparator 
+    | REPLACE Name=identifier WITH FILE expression statementSeparator 
+    ;
 
 alabel: Name=labelName Subscript=labelSubscript? statementSeparator;
 labelName: ATSIGN Spelling=identifier;
@@ -442,6 +444,7 @@ keyword
     | ENUM
     | EXIT
     | EXTERNAL
+    | FILE
     | FOR
     | FOREVER
     | FUNCTION
@@ -492,12 +495,15 @@ keyword
     ;
 
 // preprocessor keywords
-INCLUDE:            'INCLUDE' ;    
-IF:                 'IF';
-THEN:               'THEN';
-ELIF:               'ELIF';
-ELSE:               'ELSE';
-END:                'END';
+INCLUDE:    'INCLUDE' ;   
+REPLACE:    'REPLACE'; 
+FILE:       'FILE';
+IF:         'IF';
+THEN:       'THEN';
+ELIF:       'ELIF';
+ELSE:       'ELSE';
+END:        'END';
+WITH:       'WITH';
 
 BOM: '\uFEFF'  -> skip;
 // Allow comment blocks slash/star TEXT star/slash to be nested 
@@ -604,7 +610,6 @@ PAD:            'pad';
 PATH:           'path';
 POINTER:        'ptr' | 'pointer';
 PROCEDURE:      'proc' | 'procedure';
-REPLACE:        'REP' | 'REPLACE';
 RETURN:         'return';
 SBE:            'sbe';
 SINGLE:         'single';
@@ -627,7 +632,7 @@ UTF8:           'utf8';
 UTF16:          'utf16';
 VARIABLE:       'var' | 'variable';
 WHILE:          'while';
-WITH:           'WITH';
+
 
 // Symbol tokens
 

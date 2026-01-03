@@ -119,11 +119,13 @@ namespace Syscode
 
         private void PrintListing(string text)
         {
-            var lines = text.Split(Environment.NewLine);
+            var lines = text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-            int orig_line =0;
-            int real_line =0;
-            int inc_level = 0;
+            int real_line = 0;
+
+            // Stack of "current file line numbers"
+            Stack<int> fileLines = new Stack<int>();
+            fileLines.Push(0);   // main file starts at line 0
 
             Console.WriteLine("PREPOCESSED LISTING");
             Console.WriteLine("REAL FILE SOURCE TEXT");
@@ -134,17 +136,23 @@ namespace Syscode
 
                 if (line.StartsWith("// BEGIN INCLUDE"))
                 {
-                    inc_level++;
-                    Console.WriteLine($"          {line}");
+                    // Start a new include file → push a fresh counter
+                    fileLines.Push(0);
+                    Console.WriteLine($"{real_line,-5}     {line}");
                 }
                 else if (line.StartsWith("// END INCLUDE"))
                 {
-                    inc_level--;
-                    Console.WriteLine($"          {line}");
+                    // End include → pop back to parent file
+                    fileLines.Pop();
+                    Console.WriteLine($"{real_line,-5}     {line}");
                 }
                 else
                 {
-                    Console.WriteLine($"{real_line, -5}{orig_line,-5}{line}");
+                    // Increment the current file's line number
+                    int newFileLine = fileLines.Pop() + 1;
+                    fileLines.Push(newFileLine);
+
+                    Console.WriteLine($"{real_line,-5}{newFileLine,-5}{line}");
                 }
             }
         }
