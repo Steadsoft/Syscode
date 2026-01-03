@@ -1,11 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Syscode.Phases;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using static SyscodeParser;
 
 namespace Syscode
 {

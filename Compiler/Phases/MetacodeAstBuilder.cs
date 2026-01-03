@@ -1,9 +1,4 @@
-﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
-using static Syscode.Attributes;
-using static SyscodeParser;
-
-namespace Syscode
+﻿namespace Syscode
 {
     /// <summary>
     /// Transforms a Syscode Antlr4 CST into a Syscode AST
