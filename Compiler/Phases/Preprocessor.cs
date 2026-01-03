@@ -106,10 +106,13 @@ namespace Syscode.Phases
 
             foreach (var statement in ((Compilation)context).Statements)
             {
-                if (statement is INCLUDE include_statement && !included.Contains(include_statement.Filename))
+                if (statement is INCLUDE include && !included.Contains(include.Filename))
                 {
-                    ProcessInclude(tokens, include_statement, folder, ref inserted_count);
-                    included.Add(include_statement.Filename);
+                    var insertion_point = include.StartToken + inserted_count;
+                    var statement_length = (include.EndToken - include.StartToken) + 1; // the length of the INCLUDE directive itself
+                    tokens.RemoveRange(insertion_point, statement_length);
+                    ProcessInclude(tokens, include, folder, ref inserted_count);
+                    included.Add(include.Filename);
                 }
             }
         }
@@ -153,11 +156,11 @@ namespace Syscode.Phases
 
         private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder, ref int inserted_count)
         {
-            var insertion_point = include.StartToken + inserted_count;
-            var statement_length = (include.EndToken - include.StartToken) + 1; // the length of the INCLUDE directive itself
+            int insertion_point;
+            int statement_length;
 
-            //include.StartToken += insertion_point;
-            //include.EndToken += insertion_point;
+            insertion_point = include.StartToken + inserted_count;
+            statement_length = (include.EndToken - include.StartToken) + 1;
 
             var token_list = LexIncludeFile(include, Folder);
 
@@ -178,7 +181,6 @@ namespace Syscode.Phases
 
             ProcessIncludes(token_list, ast, folder);
 
-            tokens.RemoveRange(insertion_point, statement_length);
             tokens.InsertRange(insertion_point, token_list);
 
             int added_tokens = token_list.Count - statement_length;
