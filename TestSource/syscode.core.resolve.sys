@@ -1,11 +1,11 @@
 ﻿// any variable declared in the global scope MUST be explicitly declared as static
 // if it is not declared as external then it is internal, there is no 'internal' keyword.
 
-//INCLUDE "sys_header*.sys"
+INCLUDE "sys_header*.sys"
 
 REPLACE PROCESSOR WITH "test_header_3"
 
-INCLUDE "test_header_1"
+INCLUDE "test_header_1.sys"
 
 REPLACE MAIN_ID WITH (123 * 45) 
 REPLACE MAX_LOOPS WITH 100 * 10

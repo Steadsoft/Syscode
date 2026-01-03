@@ -1,1 +1,2 @@
-dcl sys$reboot
+dcl sys$reboot  bin(15)
+

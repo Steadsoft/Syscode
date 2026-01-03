@@ -38,7 +38,7 @@ namespace Syscode
                 }
             }
 
-            return Directory.GetFiles(Folder,Filename);
+            return Directory.GetFiles(Folder,Filename).OrderBy(f => f).ToArray();
         }
     }
 }

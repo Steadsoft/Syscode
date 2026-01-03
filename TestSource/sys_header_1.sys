@@ -1,1 +1,1 @@
-dcl sys$restart
+dcl sys$restart bin(15)

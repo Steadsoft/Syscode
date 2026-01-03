@@ -110,13 +110,14 @@ namespace Syscode.Phases
                 var statement_length = (include.EndToken - include.StartToken) + 1;
                 var insertion_point = include.StartToken + inserted_count;
                 tokens.RemoveRange(insertion_point, statement_length);
+                inserted_count -= statement_length;
 
                 foreach (var file in include.GetFiles(replacements, folder))
                 {
                     var token_list = TokenizeIncludeFile(include, file, folder);
 
                     if (token_list == null)
-                        return;
+                        continue;
 
                     var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
                     var parser = new SyscodeParser(token_stream);
@@ -130,8 +131,8 @@ namespace Syscode.Phases
                     ProcessContainedIncludes(token_list, ast, folder);
                     tokens.InsertRange(insertion_point, token_list);
 
-                    inserted_count += token_list.Count - statement_length;
-
+                    inserted_count += token_list.Count;
+                    insertion_point += token_list.Count;
                 }
             }
         }

@@ -1,2 +1,2 @@
-dcl sys$reset
+dcl sys$reset bin(15)
 
