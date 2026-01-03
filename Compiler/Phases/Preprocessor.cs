@@ -158,38 +158,7 @@ namespace Syscode.Phases
         {
             int insertion_point;
             int statement_length;
-
-            insertion_point = include.StartToken + inserted_count;
-            statement_length = (include.EndToken - include.StartToken) + 1;
-
-            var token_list = LexIncludeFile(include, Folder);
-
-            if (token_list == null)
-                return;
-
-            var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
-            var parser = new SyscodeParser(token_stream);
-            var cst = parser.compilation();
-
-            Dictionary<string, IConstant> constants = new();
-
-            var builder = new SyscodeAstBuilder(constants,reporter);
-
-            var ast = builder.Generate(cst);
-
-            StoreReplacements(ast);
-
-            ProcessIncludes(token_list, ast, folder);
-
-            tokens.InsertRange(insertion_point, token_list);
-
-            int added_tokens = token_list.Count - statement_length;
-
-            inserted_count += added_tokens;
-        }
-        private List<IToken> LexIncludeFile(INCLUDE include, string Folder)
-        {
-            include_file_count++;
+            bool first = true;
 
             if (include.Name != null)
             {
@@ -200,15 +169,67 @@ namespace Syscode.Phases
                     else
                     {
                         ; // error
-                        return null;
+                        return;
                     }
                 }
                 else
                 {
                     ; // error
-                    return null;
+                    return;
                 }
             }
+
+
+            // get all files from any * name
+
+            var files = Directory.GetFiles(Folder, include.Filename);
+
+            foreach (var file in files)
+
+            {
+                insertion_point = include.StartToken + inserted_count;
+
+                if (first)
+                {
+                    statement_length = (include.EndToken - include.StartToken) + 1;
+                    first = false;
+                }
+                else
+                {
+                    statement_length = 0;
+                }
+
+                var token_list = LexIncludeFile(include, Folder);
+
+                if (token_list == null)
+                    return;
+
+                var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
+                var parser = new SyscodeParser(token_stream);
+                var cst = parser.compilation();
+
+                Dictionary<string, IConstant> constants = new();
+
+                var builder = new SyscodeAstBuilder(constants, reporter);
+
+                var ast = builder.Generate(cst);
+
+                StoreReplacements(ast);
+
+                ProcessIncludes(token_list, ast, folder);
+
+                tokens.InsertRange(insertion_point, token_list);
+
+                int added_tokens = token_list.Count - statement_length;
+
+                inserted_count += added_tokens;
+            }
+
+        }
+        private List<IToken> LexIncludeFile(INCLUDE include, string Folder)
+        {
+            include_file_count++;
+
 
             var path = Folder + "\\" + include.Filename;
 
