@@ -20,6 +20,10 @@ namespace Syscode
             this.reporter = reporter;
         }
 
+        public Compilation Generate(CompilationContext rule)
+        {
+            return (Compilation)Generate((ParserRuleContext)rule);
+        }
         public AstNode Generate(ParserRuleContext rule)
         {
             return rule switch

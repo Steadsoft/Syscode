@@ -111,12 +111,12 @@ namespace Syscode
 
             symtabBuilder = new SymtabBuilder(Reporter);
 
-            symtabBuilder.Generate((Compilation)ast);
+            symtabBuilder.Generate(ast);
 
             resolver = new ReferenceResolver(Reporter);
 
-            resolver.ResolveContainedReferences((Compilation)ast);
-            resolver.ReportUnresolvedReferences(((Compilation)ast).Statements);
+            resolver.ResolveContainedReferences(ast);
+            resolver.ReportUnresolvedReferences(ast.Statements);
 
             this.ast = ast;
         }

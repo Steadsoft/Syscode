@@ -25,13 +25,13 @@ namespace Syscode.Phases
         private List<IToken> token_list;
         private string folder;
         private Reporter reporter;
-        private AstNode root;
+        private Compilation root;
         private int total_added_tokens = 0;
         private int initial_token_count = 0;
         private List<string> included = new();
         private Dictionary<string, string> replacements = new();
         private int include_file_count = 0;
-        public Preprocessor(AstNode root, List<IToken> tokens, string folder, Reporter reporter  )
+        public Preprocessor(Compilation root, List<IToken> tokens, string folder, Reporter reporter  )
         {
             this.token_list = tokens;
             this.folder = folder;
@@ -88,9 +88,9 @@ namespace Syscode.Phases
             return stream;
         }
 
-        private void StoreReplacements(AstNode context)
+        private void StoreReplacements(Compilation context)
         {
-            foreach (var statement in ((Compilation)context).Statements)
+            foreach (var statement in context.Statements)
             {
                 if (statement is REPLACE replace && !replacements.ContainsKey(replace.Name))
                 {
@@ -99,11 +99,11 @@ namespace Syscode.Phases
             }
         }
 
-        private void ProcessContainedIncludes(List<IToken> tokens, AstNode context, string folder)
+        private void ProcessContainedIncludes(List<IToken> tokens, Compilation context, string folder)
         {
             int inserted_count = 0;
 
-            foreach (var include in ((Compilation)context).Statements.OfType<INCLUDE>())
+            foreach (var include in context.Statements.OfType<INCLUDE>())
             {
                 // remove the INCLUDE statement's tokens
 
@@ -114,10 +114,13 @@ namespace Syscode.Phases
 
                 foreach (var file in include.GetFiles(replacements, folder))
                 {
-                    var token_list = TokenizeIncludeFile(include, file, folder);
+                    include_file_count++;
+
+                    var token_list = TokenizeIncludeFile(include, file, folder, include_file_count);
 
                     if (token_list == null)
                         continue;
+
 
                     var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
                     var parser = new SyscodeParser(token_stream);
@@ -137,9 +140,9 @@ namespace Syscode.Phases
             }
         }
 
-        private void ProcessNonIncludes(List<IToken> tokens, AstNode context, string folder)
+        private void ProcessNonIncludes(List<IToken> tokens, Compilation context, string folder)
         { 
-            foreach (var statement in ((Compilation)context).Statements)
+            foreach (var statement in context.Statements)
             {
                 if (statement is IF if_statement)
                 {
@@ -169,91 +172,12 @@ namespace Syscode.Phases
             }
         }
 
-        private static CommonToken GetTokenById(List<IToken> tokens, int id)
+        private static List<IToken> TokenizeIncludeFile(INCLUDE include, string file, string Folder, int include_file_count)
         {
-            return (CommonToken)tokens.Where(t => t.TokenIndex == id).Single();
-        }
-
-        private void ProcessInclude(List<IToken> tokens, INCLUDE include, string Folder, ref int inserted_count)
-        {
-            int insertion_point;
-            int statement_length;
-            bool first = true;
-
-            if (include.Name != null)
-            {
-                if (replacements.ContainsKey(include.Name))
-                {
-                    if (replacements[include.Name].StartsWith('"') && replacements[include.Name].EndsWith('"'))
-                        include.Filename = replacements[include.Name].Strip('"');
-                    else
-                    {
-                        ; // error
-                        return;
-                    }
-                }
-                else
-                {
-                    ; // error
-                    return;
-                }
-            }
-
-
-            // get all files from any * name
-
-            var files = Directory.GetFiles(Folder, include.Filename);
-
-            foreach (var file in files)
-
-            {
-                insertion_point = include.StartToken + inserted_count;
-
-                if (first)
-                {
-                    statement_length = (include.EndToken - include.StartToken) + 1;
-                    first = false;
-                }
-                else
-                {
-                    statement_length = 0;
-                }
-
-                var token_list = TokenizeIncludeFile(include, file, Folder);
-
-                if (token_list == null)
-                    return;
-
-                var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
-                var parser = new SyscodeParser(token_stream);
-                var cst = parser.compilation();
-
-                Dictionary<string, IConstant> constants = new();
-
-                var builder = new SyscodeAstBuilder(constants, reporter);
-
-                var ast = builder.Generate(cst);
-
-                StoreReplacements(ast);
-
-                ProcessContainedIncludes(token_list, ast, folder);
-
-                tokens.InsertRange(insertion_point, token_list);
-
-                int added_tokens = token_list.Count - statement_length;
-
-                inserted_count += added_tokens;
-            }
-
-        }
-        private List<IToken> TokenizeIncludeFile(INCLUDE include, string file, string Folder)
-        {
-            include_file_count++;
-
             var file_content = File.ReadAllText(file);
             var line_count = file_content.Split('\n').Length;
 
-            file_content = $"// BEGIN INCLUDE No {include_file_count} WITH {line_count} LINES FROM{(include.Name is null ? " " : $" '{include.Name}' ")}{file}" + Environment.NewLine + file_content + Environment.NewLine + $"// END INCLUDE {include_file_count}";
+            file_content = $"// BEGIN INCLUDE No {include_file_count} WITH {line_count} LINES FROM{(include.Name is null ? " " : $" '{include.Name}' ")}{file}{Environment.NewLine}{file_content}{Environment.NewLine}// END INCLUDE No {include_file_count}";
 
             // We must ensure a newline is present at the end of the file.
             // If we dont do this then the last character in the file 
@@ -271,6 +195,5 @@ namespace Syscode.Phases
             // Remove EOF so you don't get multiple EOF tokens in the final stream
             return stream.GetTokens().Where(t => t.Type != TokenConstants.EOF).ToList();
         }
-
     }
 }
