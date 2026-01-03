@@ -126,7 +126,7 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
     dcl b ubin16
     dcl bits bit(128)
 
-    then = bin(100,16) + bin(75,16); 
+    then = bin(100,16) + bin(75,MAIN_ID); 
 
     dcl c bin(32) aligned(2 * 23) static internal external
     dcl d bin(32) static aligned(2 * 23) external internal

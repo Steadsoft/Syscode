@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Antlr4.Runtime;
+using System.Text;
 using static SyscodeParser;
 
 namespace Syscode
@@ -6,13 +7,21 @@ namespace Syscode
     /// <summary>
     /// Represents a paranthesized commalist of expression which might be array subscripts or func/proc arguments.
     /// </summary>
-    public class Arguments : AstNode
+    public class Arguments : AstNode, IReplaceContainer
     {
         public List<Expression> ExpressionList = new();
 
         public Arguments(ArgumentsContext context, SyscodeAstBuilder builder) : base(context)
         {
             ExpressionList = context.List.GetDerivedNodes<ExpressionContext>().Select(builder.CreateExpression).ToList();
+        }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            foreach (var exp in ExpressionList)
+            {
+                exp.ApplyPreprocessorReplace(tokens, replace);
+            }
         }
 
         public override string ToString()

@@ -1,8 +1,9 @@
-﻿using static SyscodeParser;
+﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Qualification : AstNode
+    public class Qualification : AstNode, IReplaceContainer
     {
         public string Spelling;
         public Arguments Arguments;
@@ -22,6 +23,11 @@ namespace Syscode
         public override string ToString()
         {
             return Spelling + Arguments?.ToString();
+        }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            Arguments?.ApplyPreprocessorReplace(tokens, replace);
         }
     }
 }

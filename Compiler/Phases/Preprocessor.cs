@@ -109,7 +109,6 @@ namespace Syscode.Phases
                     if (token_list == null)
                         continue;
 
-
                     var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
                     var parser = new SyscodeParser(token_stream);
                     var cst = parser.compilation();

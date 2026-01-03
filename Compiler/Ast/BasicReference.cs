@@ -1,9 +1,10 @@
-﻿using System.Text;
+﻿using Antlr4.Runtime;
+using System.Text;
 using static SyscodeParser;
 
 namespace Syscode
 {
-    public class BasicReference : AstNode
+    public class BasicReference : AstNode, IReplaceContainer
     {
         public string Spelling;
         private List<Qualification> qualifierList = new();
@@ -39,6 +40,14 @@ namespace Syscode
             builder.Append(Spelling);
 
             return builder.ToString();
+        }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            foreach (var qual in qualifierList)
+            {
+                qual.ApplyPreprocessorReplace(tokens, replace);
+            }
         }
     }
 }

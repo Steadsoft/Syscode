@@ -61,6 +61,8 @@ namespace Syscode
                     replace.Expression.ToString().Trim();
             }
 
+            Reference?.ApplyPreprocessorReplace(tokens, replace);
+
             // Recurse
             Left?.ApplyPreprocessorReplace(tokens, replace);
             Right?.ApplyPreprocessorReplace(tokens, replace);

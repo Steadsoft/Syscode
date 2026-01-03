@@ -1,10 +1,11 @@
-﻿using System.Text;
+﻿using Antlr4.Runtime;
+using System.Text;
 using static SyscodeParser;
 
 namespace Syscode
 {
 
-    public class Reference : AstNode
+    public class Reference : AstNode, IReplaceContainer
     {
         private readonly Reference? preceding = null; // only populated if this ref is the left of ref -> ref
         private readonly List<Arguments> argumentsList = new();
@@ -66,8 +67,20 @@ namespace Syscode
         public IReadOnlyList<Arguments> ArgumentsList { get => argumentsList;  }
         /// <summary>
         /// This is a diagnostic that must be reported if present, it is only ever present on qualified references. 
-        /// </summary>
+        /// </summary> 
         public Report? Report { get => report; set => report = value; }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            foreach (var args in argumentsList)
+            {
+                args.ApplyPreprocessorReplace(tokens, replace);
+            }
+
+            preceding?.ApplyPreprocessorReplace(tokens, replace);
+            basic.ApplyPreprocessorReplace(tokens, replace);
+        }
+
         public override string ToString()
         {
             StringBuilder builder = new();
