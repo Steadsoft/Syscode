@@ -48,7 +48,7 @@ namespace Syscode.Phases
                 case Compilation context:
 
                     StoreReplacements(context);
-                    ProcessIncludes(token_list, context, folder);
+                    ProcessContainedIncludes(token_list, context, folder);
 
                     var stream = GetStreamFromList(token_list);
 
@@ -99,20 +99,39 @@ namespace Syscode.Phases
             }
         }
 
-
-        private void ProcessIncludes(List<IToken> tokens, AstNode context, string folder)
+        private void ProcessContainedIncludes(List<IToken> tokens, AstNode context, string folder)
         {
             int inserted_count = 0;
 
-            foreach (var statement in ((Compilation)context).Statements)
+            foreach (var include in ((Compilation)context).Statements.OfType<INCLUDE>())
             {
-                if (statement is INCLUDE include && !included.Contains(include.Filename))
+                // remove the INCLUDE statement's tokens
+
+                var statement_length = (include.EndToken - include.StartToken) + 1;
+                var insertion_point = include.StartToken + inserted_count;
+                tokens.RemoveRange(insertion_point, statement_length);
+
+                foreach (var file in include.GetFiles(replacements, folder))
                 {
-                    var insertion_point = include.StartToken + inserted_count;
-                    var statement_length = (include.EndToken - include.StartToken) + 1; // the length of the INCLUDE directive itself
-                    tokens.RemoveRange(insertion_point, statement_length);
-                    ProcessInclude(tokens, include, folder, ref inserted_count);
-                    included.Add(include.Filename);
+                    var token_list = TokenizeIncludeFile(include, file, folder);
+
+                    if (token_list == null)
+                        return;
+
+                    var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
+                    var parser = new SyscodeParser(token_stream);
+                    var cst = parser.compilation();
+
+                    Dictionary<string, IConstant> constants = new();
+
+                    var builder = new SyscodeAstBuilder(constants, reporter);
+                    var ast = builder.Generate(cst);
+                    StoreReplacements(ast);
+                    ProcessContainedIncludes(token_list, ast, folder);
+                    tokens.InsertRange(insertion_point, token_list);
+
+                    inserted_count += token_list.Count - statement_length;
+
                 }
             }
         }
@@ -199,7 +218,7 @@ namespace Syscode.Phases
                     statement_length = 0;
                 }
 
-                var token_list = LexIncludeFile(include, Folder);
+                var token_list = TokenizeIncludeFile(include, file, Folder);
 
                 if (token_list == null)
                     return;
@@ -216,7 +235,7 @@ namespace Syscode.Phases
 
                 StoreReplacements(ast);
 
-                ProcessIncludes(token_list, ast, folder);
+                ProcessContainedIncludes(token_list, ast, folder);
 
                 tokens.InsertRange(insertion_point, token_list);
 
@@ -226,18 +245,14 @@ namespace Syscode.Phases
             }
 
         }
-        private List<IToken> LexIncludeFile(INCLUDE include, string Folder)
+        private List<IToken> TokenizeIncludeFile(INCLUDE include, string file, string Folder)
         {
             include_file_count++;
 
-
-            var path = Folder + "\\" + include.Filename;
-
-            var file_content = File.ReadAllText(path);
-
+            var file_content = File.ReadAllText(file);
             var line_count = file_content.Split('\n').Length;
 
-            file_content = $"// BEGIN INCLUDE No {include_file_count} WITH {line_count} LINES FROM{(include.Name is null ? " " : $" '{include.Name}' ")}{path}" + Environment.NewLine + file_content + Environment.NewLine + $"// END INCLUDE {include_file_count}";
+            file_content = $"// BEGIN INCLUDE No {include_file_count} WITH {line_count} LINES FROM{(include.Name is null ? " " : $" '{include.Name}' ")}{file}" + Environment.NewLine + file_content + Environment.NewLine + $"// END INCLUDE {include_file_count}";
 
             // We must ensure a newline is present at the end of the file.
             // If we dont do this then the last character in the file 
