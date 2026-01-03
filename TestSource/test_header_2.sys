@@ -1,5 +1,2 @@
-
 dcl from_header_2 string(64)
-
 REPLACE XYZ WITH 1234
-
