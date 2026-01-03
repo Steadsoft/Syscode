@@ -90,7 +90,7 @@ namespace Syscode
 
             if (print_listing)
             {
-                Console.Write(src);
+                PrintListing(src);
             }
 
             var char_stream = new AntlrInputStream(src);
@@ -117,6 +117,37 @@ namespace Syscode
             this.ast = ast;
         }
 
+        private void PrintListing(string text)
+        {
+            var lines = text.Split(Environment.NewLine);
+
+            int orig_line =0;
+            int real_line =0;
+            int inc_level = 0;
+
+            Console.WriteLine("PREPOCESSED LISTING");
+            Console.WriteLine("REAL FILE SOURCE TEXT");
+
+            foreach (var line in lines)
+            {
+                real_line++;
+
+                if (line.StartsWith("// BEGIN INCLUDE"))
+                {
+                    inc_level++;
+                    Console.WriteLine($"          {line}");
+                }
+                else if (line.StartsWith("// END INCLUDE"))
+                {
+                    inc_level--;
+                    Console.WriteLine($"          {line}");
+                }
+                else
+                {
+                    Console.WriteLine($"{real_line, -5}{orig_line,-5}{line}");
+                }
+            }
+        }
         internal static CommonTokenStream GetStreamFromList(List<IToken> list)
         {
             var source = new ListTokenSource(list);
