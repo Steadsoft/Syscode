@@ -13,10 +13,9 @@ namespace Syscode
         private readonly Reporter reporter;
         private IContainer? currentContainer = null;
         private readonly Compilation compilation = null;
-        public readonly Dictionary<string, IConstant> Constants;
-        public SyscodeAstBuilder(Dictionary<string, IConstant> constants, Reporter reporter)
+        public readonly Dictionary<string, IConstant> Constants = new();
+        public SyscodeAstBuilder(Reporter reporter)
         {
-            this.Constants = constants;
             this.reporter = reporter;
         }
 

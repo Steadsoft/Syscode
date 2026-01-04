@@ -6,7 +6,7 @@ namespace Syscode.Phases
     {
         // The strategy here is as follows. The AST will contain every preprocessor statement that was in the source file.
         // We walk the AST in two passes, the first is concerned only with INCLUDE statements, these add text to the source.
-        // Once all includes are processeed we transform the updated token stream to text and then lex and parse that text
+        // Once all includes are processed we transform the updated token stream to text and then lex and parse that text
         // Then we take that CST and build a fresh AST from it. 
         // At that stage we have a single source text, no INCLUDES and potentially other pre-processing statements. 
 
@@ -19,7 +19,7 @@ namespace Syscode.Phases
         private List<string> included = new();
         private Dictionary<string, string> replacements = new();
         private int abs_include_file_count = 0;
-        public Preprocessor(Compilation root, List<IToken> tokens, string folder, Reporter reporter  )
+        public Preprocessor(Compilation root, List<IToken> tokens, string folder, Reporter reporter)
         {
             this.token_list = tokens;
             this.folder = folder;
@@ -30,43 +30,35 @@ namespace Syscode.Phases
 
         public List<IToken> Apply()
         {
+            int inserted_count = 0;
+            StoreReplacements(root);
+            ProcessContainedIncludes(token_list, root, folder, ref inserted_count);
 
-            switch (root)
-            {
-                case Compilation context:
-                    int inserted_count = 0;
-                    StoreReplacements(context);
-                    ProcessContainedIncludes(token_list, context, folder, ref inserted_count);
+            var stream = GetStreamFromList(token_list);
 
-                    var stream = GetStreamFromList(token_list);
+            // Now we convert the stream to text and retokenize that
+            // this ensures that the parser now see a set of tokens 
+            // that have valid, consistent line number, columns etc.
+            // after the stuff we did during preprocessing.
 
-                    // Now we convert the stream to text and retokenize that
-                    // this ensures that the parser now see a set of tokens 
-                    // that have valid, consistent line number, columns etc.
-                    // after the stuff we did during preprocessing.
+            var src = stream.GetText();
 
-                    var src = stream.GetText();
+            var char_stream = new AntlrInputStream(src);
+            var lexer = new SyscodeLexer(char_stream);
+            stream = new CommonTokenStream(lexer);
+            stream.Fill();
+            token_list = new List<IToken>(stream.GetTokens());
 
-                    var char_stream = new AntlrInputStream(src);
-                    var lexer = new SyscodeLexer(char_stream);
-                    stream = new CommonTokenStream(lexer);
-                    stream.Fill();
-                    token_list = new List<IToken>(stream.GetTokens());
+            var parser = new SyscodeParser(stream);
+            var cst = parser.compilation();
 
-                    var parser = new SyscodeParser(stream);
-                    var cst = parser.compilation();
+            var builder = new SyscodeAstBuilder(reporter);
 
-                    Dictionary<string, IConstant> constants = new();
+            root = builder.Generate(cst);
 
-                    var builder = new SyscodeAstBuilder(constants, reporter);
+            ProcessNonIncludes(token_list, root, folder);
 
-                    root = builder.Generate(cst);
-
-                    ProcessNonIncludes(token_list, root, folder); 
-                    break;
-            }
-
-             return new List<IToken>(token_list);
+            return new List<IToken>(token_list);
         }
 
         internal static CommonTokenStream GetStreamFromList(List<IToken> list)
@@ -94,11 +86,8 @@ namespace Syscode.Phases
             foreach (var include in context.Statements.OfType<INCLUDE>())
             {
                 var insertion_point = include.EndToken + 1 + inserted_count;
-
                 var files = include.GetFiles(replacements, folder);
-
                 var matches = files.Count();
-
                 int rel_include_file_count = 0;
 
                 foreach (var file in files)
@@ -115,9 +104,7 @@ namespace Syscode.Phases
                     var parser = new SyscodeParser(token_stream);
                     var cst = parser.compilation();
 
-                    Dictionary<string, IConstant> constants = new();
-
-                    var builder = new SyscodeAstBuilder(constants, reporter);
+                    var builder = new SyscodeAstBuilder(reporter);
                     var ast = builder.Generate(cst);
                     StoreReplacements(ast);
                     ProcessContainedIncludes(token_list, ast, folder, ref inserted_count);
@@ -130,7 +117,7 @@ namespace Syscode.Phases
         }
 
         private void ProcessNonIncludes(List<IToken> tokens, Compilation context, string folder)
-        { 
+        {
             foreach (var statement in context.Statements)
             {
                 if (statement is IF if_statement)

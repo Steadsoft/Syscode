@@ -20,7 +20,6 @@ namespace Syscode
         private string file;
         private string fileName;
         private string[] namespaceparts;
-        private readonly Dictionary<string, IConstant> constants = new();
         private AstListing astlist = new();
         private AstNode ast;
         private Random random = new(12345);
@@ -73,7 +72,7 @@ namespace Syscode
             var parser = new SyscodeParser(stream);
             var cst = parser.compilation();
 
-            builder = new SyscodeAstBuilder(constants, Reporter);
+            builder = new SyscodeAstBuilder(Reporter);
 
             var ast = builder.Generate(cst);
 
@@ -103,7 +102,7 @@ namespace Syscode
             parser = new SyscodeParser(stream);
             cst = parser.compilation();
 
-            builder = new SyscodeAstBuilder(constants, Reporter);
+            builder = new SyscodeAstBuilder(Reporter);
 
             ast = builder.Generate(cst);
 
