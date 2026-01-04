@@ -96,9 +96,9 @@ namespace Syscode.Phases
                 // remove the INCLUDE statement's tokens
 
                 var statement_length = (include.EndToken - include.StartToken) + 1;
-                var insertion_point = include.StartToken + inserted_count;
-                tokens.RemoveRange(insertion_point, statement_length);
-                inserted_count -= statement_length;
+                var insertion_point = include.StartToken + statement_length;
+                //tokens.RemoveRange(insertion_point, statement_length);
+                //inserted_count -= statement_length;
 
                 foreach (var file in include.GetFiles(replacements, folder))
                 {
