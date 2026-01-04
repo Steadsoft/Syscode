@@ -3,14 +3,16 @@
 
 INCLUDE "sys_header*.sys"
 
-INCLUDE "sys_header*.sys"
-
-REPLACE PROCESSOR WITH "test_header_3"
+REPLACE PROCESSOR WITH "test_header_3.sys"
 
 INCLUDE "test_header_1.sys"
 
 REPLACE MAIN_ID WITH (123 * 45) 
 REPLACE MAX_LOOPS WITH 100 * 10
+
+INCLUDE PROCESSOR
+
+INCLUDE "recursive.sys"
 
 if a > MAIN_ID / 50 then
    a = b

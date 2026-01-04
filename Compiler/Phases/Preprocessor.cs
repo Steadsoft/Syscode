@@ -18,6 +18,7 @@ namespace Syscode.Phases
         private int initial_token_count = 0;
         private List<string> included = new();
         private Dictionary<string, string> replacements = new();
+        private List<string> included_files = new();
         private int abs_include_file_count = 0;
         public Preprocessor(Compilation root, List<IToken> tokens, string folder, Reporter reporter)
         {
@@ -70,9 +71,9 @@ namespace Syscode.Phases
 
         private void StoreReplacements(Compilation context)
         {
-            foreach (var statement in context.Statements)
+            foreach (var replace in context.Statements.OfType<REPLACE>())
             {
-                if (statement is REPLACE replace && !replacements.ContainsKey(replace.Name))
+                if (!replacements.ContainsKey(replace.Name))
                 {
                     replacements.Add(replace.Name, replace.Expression.ToString());
                 }
@@ -92,26 +93,33 @@ namespace Syscode.Phases
 
                 foreach (var file in files)
                 {
-                    abs_include_file_count++;
-                    rel_include_file_count++;
+                    // We never include a file more than once.
 
-                    var token_list = TokenizeIncludeFile(include, file, folder, abs_include_file_count, rel_include_file_count, matches);
-
-                    if (token_list == null)
+                    if (included_files.Contains(file))
                         continue;
 
-                    var token_stream = SyscodeCompiler.GetStreamFromList(token_list);
+                    included_files.Add(file);
+                    
+                    abs_include_file_count++;
+                    rel_include_file_count++;
+                    
+                    var included_tokens = TokenizeIncludeFile(include, file, folder, abs_include_file_count, rel_include_file_count, matches);
+
+                    if (included_tokens == null)
+                        continue;
+
+                    var token_stream = SyscodeCompiler.GetStreamFromList(included_tokens);
                     var parser = new SyscodeParser(token_stream);
                     var cst = parser.compilation();
 
                     var builder = new SyscodeAstBuilder(reporter);
                     var ast = builder.Generate(cst);
                     StoreReplacements(ast);
-                    ProcessContainedIncludes(token_list, ast, folder, ref inserted_count);
-                    tokens.InsertRange(insertion_point, token_list);
+                    ProcessContainedIncludes(included_tokens, ast, folder, ref inserted_count);
+                    tokens.InsertRange(insertion_point, included_tokens);
 
-                    inserted_count += token_list.Count;
-                    insertion_point += token_list.Count;
+                    inserted_count += included_tokens.Count;
+                    insertion_point += included_tokens.Count;
                 }
             }
         }

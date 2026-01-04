@@ -133,10 +133,10 @@ loop
     | Until=untilLoop     #LoopUntil
     ;
 
-forLoop : Do Name=labelName? For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  Statements+=statement* emptyLines? End statementSeparator;
-whileLoop: Do Name=labelName? While=whileCondition Until=untilCondition?  Statements+=statement* emptyLines? End statementSeparator;
-untilLoop: Do Name=labelName? Until=untilCondition While=whileCondition?  Statements+=statement* emptyLines? End statementSeparator;
-loopLoop: Do Name=labelName? LOOP Statements+=statement* emptyLines? End statementSeparator;
+forLoop : Do Name=labelName? For=reference EQUALS From=expression TO To=expression (BY By=expression)? emptyLines? (While=whileCondition emptyLines? Until=untilCondition? | Until=untilCondition emptyLines? While=whileCondition? | While=whileCondition | Until=untilCondition)?  Statements+=statement* emptyLines? End ;
+whileLoop: Do Name=labelName? While=whileCondition Until=untilCondition?  Statements+=statement* emptyLines? End ;
+untilLoop: Do Name=labelName? Until=untilCondition While=whileCondition?  Statements+=statement* emptyLines? End ;
+loopLoop: Do Name=labelName? LOOP Statements+=statement* emptyLines? End ;
 
 whileCondition: WHILE Exp=expression ;
 untilCondition: UNTIL Exp=expression ;
@@ -189,7 +189,7 @@ typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN 
 // Consider also <- or == as an assignment opeator, which implicitly does an atomic assignment...
 
 assignment 
-    : Ref=reference emptyLines? comparer emptyLines? Exp=expression statementSeparator
+    : Ref=reference emptyLines? Mode=comparer emptyLines? Exp=expression statementSeparator
     ;    
     
     // | LPAR reference COMMA reference RPAR comparer expression statementSeparator; this is too 'out there' for an initial language design.     
@@ -285,8 +285,6 @@ binop
     |logand
     |logor
     ;
-
-
 
 prefixExpression
   : Op=prefixOperator Expr=expression
@@ -660,13 +658,13 @@ POWER:          '**' ;   // U+1F815
 STR_LITERAL:    (QUOTE (.)*? QUOTE);
 PLUS:           '+';
 OPLUS:          '[+]';
-SPLUS:          '(+)';
+SPLUS:          '<+>';
 MINUS:          '-';
 OMINUS:         '[-]';
-SMINUS:         '(-)';
+SMINUS:         '<->';
 TIMES:          '*';
 OTIMES:         '[*]';
-STIMES:         '(*)';
+STIMES:         '<*>';
 LCOM:           '//';
 DIVIDE:         '/' ;    // U+00F7
 PCNT:           '%';

@@ -6,7 +6,7 @@ namespace Syscode
     {
         public bool Wilcard = false;
         public  string? Filename;
-        public  readonly string? Name;
+        public  string? Name;
         public INCLUDE(Prep_INCLUDEContext context, SyscodeAstBuilder builder):base(context)
         {
             Filename = context.File?.Text.Strip('"');
@@ -39,6 +39,9 @@ namespace Syscode
                 }
             }
 
+            if (Filename.ToLower().EndsWith(".sys") == false)
+                Filename += ".sys";
+            
             return Directory.GetFiles(Folder,Filename).OrderBy(f => f).ToArray();
         }
     }
