@@ -1,4 +1,6 @@
 ﻿using Antlr4.Runtime;
+using Microsoft.VisualBasic;
+using static SyscodeParser;
 
 namespace Syscode
 {
@@ -31,7 +33,7 @@ namespace Syscode
         public Operator Operator;
         public ExpressionType Type;
         public bool Parenthesized;
-        public Expression(ParserRuleContext context) : base(context)
+        public Expression(ParserRuleContext context, SyscodeAstBuilder builder) : base(context)
         {
             Literal = null;
             Reference = null;
@@ -39,6 +41,55 @@ namespace Syscode
             Right = null;
             Operator = Operator.UNDEFINED;
             Type = ExpressionType.None;
+
+            switch (context)
+            {
+                case ExprPrimitiveContext primitive when primitive.Primitive is RefContext reference:
+                    {
+                        Reference = builder.CreateReference(reference.Reference);
+                        Type = ExpressionType.Primitive;
+                        break;
+                    }
+                case ExprPrimitiveContext primitive when primitive.Primitive is LiteralArithmeticContext literal:
+                    {
+                        Literal = new Literal(literal.Numeric, Operator.UNDEFINED, builder.Constants);
+                        Type = ExpressionType.Literal;
+                        break;
+                    }
+                case ExprPrimitiveContext primitive when primitive.Primitive is LiteralStringContext strng:
+                    {
+                        Literal = new Literal(strng.String);
+                        Type = ExpressionType.Literal;
+                        break;
+                    }
+                case ExprPrefixedContext prefix when prefix.Prefixed.Expr is ExprPrimitiveContext prim && prim.Primitive is LiteralArithmeticContext literal:
+                    {
+                        Literal = new Literal(literal.Numeric, SyscodeAstBuilder.GetOperator(prefix), builder.Constants);
+                        Type = ExpressionType.Literal;
+                        break;
+                    }
+                case ExprPrefixedContext prefixed:
+                    {
+                        Right = builder.CreateExpression(prefixed.Prefixed.Expr);
+                        Operator = SyscodeAstBuilder.GetOperator(prefixed);
+                        Type = ExpressionType.Prefix;
+                        break;
+                    }
+                case ExprBinaryContext binary:
+                    {
+                        Left = builder.CreateExpression(binary.Left);
+                        Right = builder.CreateExpression(binary.Rite);
+                        Operator = SyscodeAstBuilder.GetOperator(binary);
+                        Type = ExpressionType.Binary;
+                        break;
+                    }
+                default:  // every other case always contains an operator and a left/right expression. 
+                    {
+                        throw new InvalidOperationException("Unexpected expression class encountered.");
+                    }
+            }
+
+
         }
 
         public bool IsSimpleIdentifier => Reference != null && Reference.IsSimpleIdenitifer;

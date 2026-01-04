@@ -13,10 +13,10 @@ namespace Syscode
         private readonly Reporter reporter;
         private IContainer? currentContainer = null;
         private readonly Compilation compilation = null;
-        private readonly Dictionary<string, IConstant> constants;
+        public readonly Dictionary<string, IConstant> Constants;
         public SyscodeAstBuilder(Dictionary<string, IConstant> constants, Reporter reporter)
         {
-            this.constants = constants;
+            this.Constants = constants;
             this.reporter = reporter;
         }
 
@@ -486,13 +486,13 @@ namespace Syscode
         }
 
 
-        private static Operator GetOperator(ExprPrefixedContext context)
+        internal static Operator GetOperator(ExprPrefixedContext context)
         {
             //var operation = context.GetExactNode<PrefixExpressionContext>().GetExactNode<PrefixOperatorContext>();
             var terminal = (TerminalNodeImpl)context.Prefixed.Op.children[0]; ;//  (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
             return (Operator)(terminal.Symbol.Type);
         }
-        private static Operator GetOperator(ExprBinaryContext context)
+        internal static Operator GetOperator(ExprBinaryContext context)
         {
             var operation = context.Operator.children.Where(c => c is not ExpressionContext).Cast<ParserRuleContext>().Single();
             var terminal = (TerminalNodeImpl)operation.children.Where(c => c is TerminalNodeImpl).Single();
@@ -528,60 +528,14 @@ namespace Syscode
         }
         internal Expression CreateExpression(ExpressionContext context)
         {
-            Expression expr = new(context);
-
-            switch (context)
+            if (context is ExprParenthesizedContext parenthesized)
             {
-                case ExprPrimitiveContext primitive when primitive.Primitive is RefContext reference:
-                    {
-                        expr.Reference = CreateReference(reference.Reference);
-                        expr.Type = ExpressionType.Primitive;
-                        return expr;
-                    }
-                case ExprPrimitiveContext primitive when primitive.Primitive is LiteralArithmeticContext literal:
-                    {
-                        expr.Literal = new Literal(literal.Numeric, Operator.UNDEFINED, constants);
-                        expr.Type = ExpressionType.Literal;
-                        return expr;
-                    }
-                case ExprPrimitiveContext primitive when primitive.Primitive is LiteralStringContext strng:
-                    {
-                        expr.Literal = new Literal(strng.String);
-                        expr.Type = ExpressionType.Literal;
-                        return (expr);
-                    }
-                case ExprParenthesizedContext parenthesized:
-                    {
-                        var result = CreateExpression(parenthesized.Parenthesized.Expr);
-                        result.Parenthesized = true;    // NOT we almost certainly don' care about this, it's only relevant to parser. 
-                        return result;
-                    }
-                case ExprPrefixedContext prefix when prefix.Prefixed.Expr is ExprPrimitiveContext prim && prim.Primitive is LiteralArithmeticContext literal:
-                    {
-                        expr.Literal = new Literal(literal.Numeric, GetOperator(prefix), constants);
-                        expr.Type = ExpressionType.Literal;
-                        return expr;
-                    }
-                case ExprPrefixedContext prefixed:
-                    {
-                        expr.Right = CreateExpression(prefixed.Prefixed.Expr);  
-                        expr.Operator = GetOperator(prefixed);
-                        expr.Type = ExpressionType.Prefix;
-                        break;
-                    }
-                case ExprBinaryContext binary:
-                    {
-                        expr.Left = CreateExpression(binary.Left);
-                        expr.Right = CreateExpression(binary.Rite);
-                        expr.Operator = GetOperator(binary);
-                        expr.Type = ExpressionType.Binary;
-                        return expr;
-                    }
-                default:  // every other case always contains an operator and a left/right expression. 
-                    {
-                        throw new InvalidOperationException("Unexpected expression class encountered.");
-                    }
+                var result = CreateExpression(parenthesized.Parenthesized.Expr);
+                result.Parenthesized = true;    // NOT we almost certainly don' care about this, it's only relevant to parser. 
+                return result;
             }
+
+            Expression expr = new(context, this);
 
             // If the expression is composed wholly of literal constants, we should fold it and make a new literal constant
 
