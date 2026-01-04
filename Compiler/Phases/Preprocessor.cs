@@ -18,7 +18,7 @@ namespace Syscode.Phases
         private int initial_token_count = 0;
         private List<string> included = new();
         private Dictionary<string, string> replacements = new();
-        private int include_file_count = 0;
+        private int abs_include_file_count = 0;
         public Preprocessor(Compilation root, List<IToken> tokens, string folder, Reporter reporter  )
         {
             this.token_list = tokens;
@@ -34,9 +34,9 @@ namespace Syscode.Phases
             switch (root)
             {
                 case Compilation context:
-
+                    int inserted_count = 0;
                     StoreReplacements(context);
-                    ProcessContainedIncludes(token_list, context, folder);
+                    ProcessContainedIncludes(token_list, context, folder, ref inserted_count);
 
                     var stream = GetStreamFromList(token_list);
 
@@ -87,24 +87,26 @@ namespace Syscode.Phases
             }
         }
 
-        private void ProcessContainedIncludes(List<IToken> tokens, Compilation context, string folder)
+        private void ProcessContainedIncludes(List<IToken> tokens, Compilation context, string folder, ref int inserted_count)
         {
-            int inserted_count = 0;
+            //int inserted_count = 0;
 
             foreach (var include in context.Statements.OfType<INCLUDE>())
             {
-                // remove the INCLUDE statement's tokens
+                var insertion_point = include.EndToken + 1 + inserted_count;
 
-                var statement_length = (include.EndToken - include.StartToken) + 1;
-                var insertion_point = include.StartToken + statement_length;
-                //tokens.RemoveRange(insertion_point, statement_length);
-                //inserted_count -= statement_length;
+                var files = include.GetFiles(replacements, folder);
 
-                foreach (var file in include.GetFiles(replacements, folder))
+                var matches = files.Count();
+
+                int rel_include_file_count = 0;
+
+                foreach (var file in files)
                 {
-                    include_file_count++;
+                    abs_include_file_count++;
+                    rel_include_file_count++;
 
-                    var token_list = TokenizeIncludeFile(include, file, folder, include_file_count);
+                    var token_list = TokenizeIncludeFile(include, file, folder, abs_include_file_count, rel_include_file_count, matches);
 
                     if (token_list == null)
                         continue;
@@ -118,7 +120,7 @@ namespace Syscode.Phases
                     var builder = new SyscodeAstBuilder(constants, reporter);
                     var ast = builder.Generate(cst);
                     StoreReplacements(ast);
-                    ProcessContainedIncludes(token_list, ast, folder);
+                    ProcessContainedIncludes(token_list, ast, folder, ref inserted_count);
                     tokens.InsertRange(insertion_point, token_list);
 
                     inserted_count += token_list.Count;
@@ -159,12 +161,15 @@ namespace Syscode.Phases
             }
         }
 
-        private static List<IToken> TokenizeIncludeFile(INCLUDE include, string file, string Folder, int include_file_count)
+        private static List<IToken> TokenizeIncludeFile(INCLUDE include, string file, string Folder, int abs_include_file_count, int rel_include_file_count, int wildcard_count)
         {
             var file_content = File.ReadAllText(file);
             var line_count = file_content.Split('\n').Length;
 
-            file_content = $"// BEGIN INCLUDE No {include_file_count} WITH {line_count} LINES FROM{(include.Name is null ? " " : $" '{include.Name}' ")}{file}{Environment.NewLine}{file_content}{Environment.NewLine}// END INCLUDE No {include_file_count}";
+            if (include.Wilcard)
+                file_content = $"// BEGIN INCLUDE No {abs_include_file_count} ({rel_include_file_count} OF {wildcard_count}) WITH {line_count} LINES FROM{(include.Name is null ? " " : $" '{include.Name}' ")}{file}{Environment.NewLine}{file_content}{Environment.NewLine}// END INCLUDE No {abs_include_file_count}";
+            else
+                file_content = $"// BEGIN INCLUDE No {abs_include_file_count} WITH {line_count} LINES FROM{(include.Name is null ? " " : $" '{include.Name}' ")}{file}{Environment.NewLine}{file_content}{Environment.NewLine}// END INCLUDE No {abs_include_file_count}";
 
             // We must ensure a newline is present at the end of the file.
             // If we dont do this then the last character in the file 

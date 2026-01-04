@@ -3,6 +3,8 @@
 
 INCLUDE "sys_header*.sys"
 
+INCLUDE "sys_header*.sys"
+
 REPLACE PROCESSOR WITH "test_header_3"
 
 INCLUDE "test_header_1.sys"

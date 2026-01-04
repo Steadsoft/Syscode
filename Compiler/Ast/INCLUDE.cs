@@ -4,11 +4,17 @@ namespace Syscode
 {
     public class INCLUDE : AstNode
     {
+        public bool Wilcard = false;
         public  string? Filename;
         public  readonly string? Name;
         public INCLUDE(Prep_INCLUDEContext context, SyscodeAstBuilder builder):base(context)
         {
             Filename = context.File?.Text.Strip('"');
+
+            if (Filename != null)
+                if (Filename.Contains('*'))
+                    Wilcard = true;
+
             Name = context.Name?.GetText();
         }
 

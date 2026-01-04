@@ -64,6 +64,8 @@ namespace Syscode
         {
             compile_id = random.Next().ToString();
 
+            SourceFile = Path.GetFullPath(SourceFile);
+
             var folder = Path.GetFullPath(Path.GetDirectoryName(SourceFile));
 
             var list = GetTokenListFromFile(SourceFile);
@@ -90,7 +92,7 @@ namespace Syscode
 
             if (print_listing)
             {
-                PrintListing(src);
+                PrintListing(src, SourceFile);
             }
 
             var char_stream = new AntlrInputStream(src);
@@ -117,8 +119,10 @@ namespace Syscode
             this.ast = ast;
         }
 
-        private void PrintListing(string text)
+        private void PrintListing(string text, string path)
         {
+            Console.ForegroundColor = ConsoleColor.White;
+
             var lines = text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
             int real_line = 0;
@@ -127,24 +131,31 @@ namespace Syscode
             Stack<int> fileLines = new Stack<int>();
             fileLines.Push(0);   // main file starts at line 0
 
-            Console.WriteLine("PREPOCESSED LISTING");
+            Console.WriteLine($"SYSCODE COMPILER v0.6.2 PREPROCESSOR LISTING FOR SOURCE FILE {path}");
             Console.WriteLine("REAL FILE SOURCE TEXT");
 
             foreach (var line in lines)
             {
                 real_line++;
 
-                if (line.StartsWith("// BEGIN INCLUDE"))
+                if (line.StartsWith("// BEGIN "))
                 {
                     // Start a new include file → push a fresh counter
                     fileLines.Push(0);
-                    Console.WriteLine($"{real_line,-5}     {line}");
+                    Console.Write($"{real_line,-5}     ");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"{line}");
+                    Console.ForegroundColor = ConsoleColor.White;
+
                 }
-                else if (line.StartsWith("// END INCLUDE"))
+                else if (line.StartsWith("// END "))
                 {
                     // End include → pop back to parent file
                     fileLines.Pop();
-                    Console.WriteLine($"{real_line,-5}     {line}");
+                    Console.Write($"{real_line,-5}     ");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"{line}");
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
                 else
                 {
