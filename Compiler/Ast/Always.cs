@@ -8,9 +8,6 @@ namespace Syscode
         {
             this.Statements = builder.GenerateStatements(context.Always._Statements);
             this.Label = context.Always.Name?.GetText().Replace("@", "");
-
-            if (context.Always.Name is not null)
-                haslabel = true;
         }
 
         public override string ToString()

@@ -189,10 +189,13 @@
         private void Resolve(IContainer container, If ifstmt)
         {
             ResolveExpression(container, ifstmt.Condition);
-            ResolveStatementReferences(container, ifstmt.ThenStatements);
-            ResolveStatementReferences(container, ifstmt.ElseStatements);
-            ResolveStatementReferences(container, ifstmt.ElifBlocks.SelectMany(elif => elif.Statements));
-            ifstmt.ElifBlocks.Select(elif => elif.Condition).ForEach(exp => ResolveExpression (container, exp));
+            ResolveStatementReferences(container, ifstmt.Statements);
+            
+            if (ifstmt.Else != null)
+               ResolveStatementReferences(container, ifstmt.Else.Statements);
+
+            ResolveStatementReferences(container, ifstmt.Elifs.SelectMany(elif => elif.Statements));
+            ifstmt.Elifs.Select(elif => elif.Condition).ForEach(exp => ResolveExpression (container, exp));
         }
         private void Resolve(IContainer container, Proceed statement)
         {
@@ -344,9 +347,10 @@
                     case If ifstmt: // this statements contains other statements
                         {
                             ReportUnresolvedReferences(ifstmt, ifstmt.Condition);
-                            ReportUnresolvedReferences(ifstmt.ThenStatements);
-                            ReportUnresolvedReferences(ifstmt.ElseStatements);
-                            ReportUnresolvedReferences(ifstmt.ElifBlocks.SelectMany(elif => elif.Statements));
+                            ReportUnresolvedReferences(ifstmt.Statements);
+                            if (ifstmt.Else != null)
+                                ReportUnresolvedReferences(ifstmt.Else.Statements);
+                            ReportUnresolvedReferences(ifstmt.Elifs.SelectMany(elif => elif.Statements));
                             break;
                         }
                     case Call call:

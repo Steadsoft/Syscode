@@ -7,10 +7,12 @@ namespace Syscode
     {
         private readonly Reference reference;
         private readonly Expression expression;
+        private readonly IToken? mode;
         public Assignment(AssignmentContext context, SyscodeAstBuilder builder) : base(context)
         {
             this.reference = builder.CreateReference(context.Ref);
             this.expression = builder.CreateExpression(context.Exp);
+            this.mode = context.Mode?.Start;
         }
 
         public Reference Reference { get => reference; }

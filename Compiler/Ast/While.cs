@@ -5,36 +5,27 @@ namespace Syscode
 {
     public class While : Loop, IReplaceContainer
     {
-        private readonly Expression whileExp;
-        private Expression? untilExp;   // optional
-
-        public Expression WhileExp { get => whileExp; }
-        public Expression? UntilExp { get => untilExp; set => untilExp = value; }
-
+        public Expression WhileCondition { get; private set; }
+        public Expression? UntilCondition { get; private set; }
         public While(LoopWhileContext context, SyscodeAstBuilder builder) : base(context)
         {
-            this.whileExp = builder.CreateExpression(context.While.While.Exp);
-            this.untilExp = context.While.Until?.Exp.SafeCreate(builder.CreateExpression);
-            this.Statements = builder.GenerateStatements(context.While._Statements);
-            this.Label = context.While.Name?.GetText().Replace("@", "");
-
-            if (context.While.Name is not null)
-                haslabel    = true;
+            WhileCondition = builder.CreateExpression(context.While.While.Exp);
+            UntilCondition = context.While.Until?.Exp.SafeCreate(builder.CreateExpression);
+            Statements = builder.GenerateStatements(context.While._Statements);
+            Label = context.While.Name?.GetText().Replace("@", "");
         }
-
-        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        public override void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
         {
-            WhileExp.ApplyPreprocessorReplace(tokens, replace);
-            UntilExp?.ApplyPreprocessorReplace(tokens, replace);
+            WhileCondition.ApplyPreprocessorReplace(tokens, replace);
+            UntilCondition?.ApplyPreprocessorReplace(tokens, replace);
             base.ApplyPreprocessorReplace(tokens, replace);
         }
-
         public override string ToString()
         {
-            if (UntilExp != null)
-                return $"while {WhileExp} until {UntilExp}";
+            if (UntilCondition != null)
+                return $"while {WhileCondition} until {UntilCondition}";
 
-            return $"while {WhileExp}";
+            return $"while {WhileCondition}";
         }
     }
 }

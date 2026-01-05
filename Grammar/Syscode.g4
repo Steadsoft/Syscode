@@ -49,7 +49,7 @@ structBody: STRUCT Spelling=identifier Dims=dimensionSuffix? Attr+=structAttribu
 structField: Spelling=identifier Dims=dimensionSuffix? Type=dataAttribute Attr+=attribute* statementSeparator;
 
 
-prep_INCLUDE: INCLUDE (File=STR_LITERAL | Name=identifier) statementSeparator; 
+prep_INCLUDE: INCLUDE DIRECTORY? (File=STR_LITERAL | Name=identifier) statementSeparator; 
 
 prep_IF:             IF Name=labelName? emptyLines? ExprTHEN_block=prep_exprThenBlock emptyLines? ELIF_block=prep_elifBlock? emptyLines? ELSE_block=prep_elseBlock? emptyLines? END;
 prep_exprThenBlock:  emptyLines? Expression=expression emptyLines? THEN emptyLines? THEN_block=prep_thenBlock;
@@ -57,10 +57,14 @@ prep_thenBlock :     Statements+=statement*;
 prep_elseBlock :     (ELSE emptyLines? THEN_block=prep_thenBlock);
 prep_elifBlock :     (ELIF emptyLines? ExprThenBlocks+=prep_exprThenBlock)+;
 
-if:                         If Name=labelName? emptyLines? ConditionalStatements=conditionalStatementsBlock emptyLines? elif_blocks+=elifBlock* emptyLines? else_block=elseBlock? emptyLines? End;
-conditionalStatementsBlock: emptyLines? Condition=expression emptyLines? Then emptyLines? Statements+=statement*;
-elseBlock :                 (Else emptyLines? Statements+=statement*);
-elifBlock :                 (Elif emptyLines? ConditionalStatements=conditionalStatementsBlock); // this need not be a collection, it only occurs once...
+if:         If Name=labelName? emptyLines? block=then emptyLines? elif_blocks+=elif* emptyLines? else_block=else? emptyLines? End;
+then:       emptyLines? Condition=expression emptyLines? Then emptyLines? Statements+=statement*;
+elif :      (Elif emptyLines? block=then); 
+else :      (Else emptyLines? Statements+=statement*);
+
+
+
+// this need not be a collection, it only occurs once...
 
 prep_REPLACE
     : REPLACE Name=identifier WITH expression statementSeparator 
@@ -502,6 +506,7 @@ ELIF:       'ELIF';
 ELSE:       'ELSE';
 END:        'END';
 WITH:       'WITH';
+DIRECTORY:  'DIR' | 'DIRECTORY';
 
 BOM: '\uFEFF'  -> skip;
 // Allow comment blocks slash/star TEXT star/slash to be nested 

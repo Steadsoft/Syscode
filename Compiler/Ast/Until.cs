@@ -5,36 +5,27 @@ namespace Syscode
 {
     public class Until : Loop, IReplaceContainer
     {
-        private readonly Expression untilExp;
-        private Expression? whileExp;   // optional
-
-        public Expression UntilExp { get => untilExp; }
-        public Expression? WhileExp { get => whileExp; set => whileExp = value; }
-
+        public Expression UntilCondition { get; private set; }
+        public Expression? WhileCondition { get; private set; }
         public Until(LoopUntilContext context, SyscodeAstBuilder builder) : base(context)
         {
-            this.untilExp = builder.CreateExpression(context.Until.Until.Exp);
-            this.whileExp = context.Until.While?.Exp.SafeCreate(builder.CreateExpression);
-            this.Statements = builder.GenerateStatements(context.Until._Statements);
-            this.Label = context.Until.Name?.GetText().Replace("@", "");
-            if (context.Until.Name is not null)
-                haslabel = true;
-
+            UntilCondition = builder.CreateExpression(context.Until.Until.Exp);
+            WhileCondition = context.Until.While?.Exp.SafeCreate(builder.CreateExpression);
+            Statements = builder.GenerateStatements(context.Until._Statements);
+            Label = context.Until.Name?.GetText().Replace("@", "");
         }
-
+        public override void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            UntilCondition.ApplyPreprocessorReplace(tokens, replace);
+            WhileCondition?.ApplyPreprocessorReplace(tokens, replace);
+            base.ApplyPreprocessorReplace(tokens, replace);
+        }
         public override string ToString()
         {
-            if (WhileExp != null) 
-               return $"until {UntilExp} while {WhileExp}";
+            if (WhileCondition != null) 
+               return $"until {UntilCondition} while {WhileCondition}";
 
-            return $"until {UntilExp}";
-        }
-
-        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
-        {
-            UntilExp.ApplyPreprocessorReplace(tokens, replace);
-            WhileExp?.ApplyPreprocessorReplace(tokens, replace);
-            base.ApplyPreprocessorReplace(tokens, replace);
+            return $"until {UntilCondition}";
         }
     }
 }

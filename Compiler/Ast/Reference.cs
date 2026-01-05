@@ -7,9 +7,9 @@ namespace Syscode
 
     public class Reference : AstNode, IReplaceContainer
     {
-        private readonly Reference? preceding = null; // only populated if this ref is the left of ref -> ref
+        //private readonly Reference? pointer = null; // only populated if this ref is the left of ref -> ref
         private readonly List<Arguments> argumentsList = new();
-        private readonly BasicReference basic;
+        //private readonly BasicReference basic;
         private bool resolved = false;
         private Report? report = null;
         public Reference(ReferenceContext context, SyscodeAstBuilder builder) : base(context)
@@ -18,7 +18,7 @@ namespace Syscode
 
             if (context.Pointer != null)
             {
-                preceding = builder.CreateReference(context.Pointer);
+                Pointer = builder.CreateReference(context.Pointer);
             }
 
             if (context.ArgsList != null)
@@ -26,15 +26,15 @@ namespace Syscode
                 argumentsList = context.ArgsList._ArgsSet.Select(a => new Arguments(a, builder)).ToList();
             }
 
-            basic = builder.CreateBasicReference(context.Basic);
+            BasicReference = builder.CreateBasicReference(context.Basic);
         }
-        public bool IsSimpleIdenitifer
+        public bool IsSimpleIdentifier
         {
             get
             {
-                if (preceding == null && argumentsList.Count == 0)
+                if (Pointer == null && argumentsList.Count == 0)
                 {
-                    if (basic.IsntQualified)
+                    if (BasicReference.IsntQualified)
                         return true;
                 }
 
@@ -42,11 +42,11 @@ namespace Syscode
             }
         }
 
-        public string SimpleIdentifer
+        public string SimpleIdentifier
         {
             get
             {
-                if (!IsSimpleIdenitifer)
+                if (!IsSimpleIdentifier)
                     throw new InvalidOperationException("This operation is not possible on this reference");
 
                 return BasicReference.Spelling;
@@ -62,8 +62,8 @@ namespace Syscode
         public bool IsResolved { get => resolved; internal set => resolved = value; }
         public bool IsntResolved { get => !resolved; }
         public bool IsntJustBasicReference { get => !IsJustBasicReference; }
-        public BasicReference BasicReference { get => basic;  }
-        public Reference Pointer { get => preceding; }
+        public BasicReference BasicReference { get; internal set; }
+        public Reference? Pointer { get; internal set; }
         public IReadOnlyList<Arguments> ArgumentsList { get => argumentsList;  }
         /// <summary>
         /// This is a diagnostic that must be reported if present, it is only ever present on qualified references. 
@@ -77,8 +77,8 @@ namespace Syscode
                 args.ApplyPreprocessorReplace(tokens, replace);
             }
 
-            preceding?.ApplyPreprocessorReplace(tokens, replace);
-            basic.ApplyPreprocessorReplace(tokens, replace);
+            Pointer?.ApplyPreprocessorReplace(tokens, replace);
+            BasicReference.ApplyPreprocessorReplace(tokens, replace);
         }
 
         public override string ToString()
@@ -87,15 +87,15 @@ namespace Syscode
 
             if (Pointer != null)
             {
-                builder.Append(Pointer.ToString());
+                builder.Append($"[POINTER<{Pointer.ToString()}>]");
                 builder.Append(" -> ");
             }
 
-           builder.Append(BasicReference.ToString());
+           builder.Append($"[BASIC<{BasicReference.ToString()}>]");
 
            foreach (var arg in ArgumentsList)
             {
-                builder.Append(arg.ToString());
+                builder.Append($"[ARG<{arg.ToString()}>]");
             }
 
            return builder.ToString();

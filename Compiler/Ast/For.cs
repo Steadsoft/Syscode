@@ -6,41 +6,26 @@ namespace Syscode
 {
     public class For : Loop, IReplaceContainer
     {
-        // Compulsory
-        private Reference forRef;
-        private Expression from;
-        private Expression to;
-        // Optional
-        private Expression? by;
-        private Expression? untilExp;
-        private Expression? whileExp;
-
-        public Reference Ref { get => forRef; set => forRef = value; }
-        public Expression From { get => from; set => from = value; }
-        public Expression To { get => to; set => to = value; }
-        public Expression? By { get => by; set => by = value; }
-        public Expression? UntilExp { get => untilExp; set => untilExp = value; }
-        public Expression? WhileExp { get => whileExp; set => whileExp = value; }
+        public Reference Ref { get; private set; }
+        public Expression From { get; private set; }
+        public Expression To { get; private set; }
+        public Expression? By { get; private set; }
+        public Expression? UntilCondition { get; private set; }
+        public Expression? WhileCondition { get; private set; }
 
         public For(LoopForContext context, SyscodeAstBuilder builder) : base(context)
         {
             // Compulsory
-            forRef = builder.CreateReference(context.For.For);
-            from = builder.CreateExpression(context.For.From);
-            to = builder.CreateExpression(context.For.To);
-
-            // Optional
-            by = context.For.By?.SafeCreate(builder.CreateExpression);
-            whileExp = context.For.While?.Exp.SafeCreate(builder.CreateExpression);
-            untilExp = context.For.Until?.Exp.SafeCreate(builder.CreateExpression);
-
-            this.Label = context.For.Name?.GetText().Replace("@", "");
-
+            Ref = builder.CreateReference(context.For.For);
+            From = builder.CreateExpression(context.For.From);
+            To = builder.CreateExpression(context.For.To);
             Statements = builder.GenerateStatements(context.For._Statements);
 
-            if (context.For.Name is not null)
-                haslabel = true;
-
+            // Optional
+            By = context.For.By?.SafeCreate(builder.CreateExpression);
+            WhileCondition = context.For.While?.Exp.SafeCreate(builder.CreateExpression);
+            UntilCondition = context.For.Until?.Exp.SafeCreate(builder.CreateExpression);
+            this.Label = context.For.Name?.GetText().Replace("@", "");
         }
 
         public override string ToString()
@@ -52,22 +37,22 @@ namespace Syscode
             else
                 builder.Append($"for {Ref} = {From} to {To} by {By}");
 
-            if (WhileExp != null)
-                builder.Append($" while {WhileExp}");
+            if (WhileCondition != null)
+                builder.Append($" while {WhileCondition}");
             
-            if (UntilExp != null)
-                builder.Append($" until {UntilExp}");
+            if (UntilCondition != null)
+                builder.Append($" until {UntilCondition}");
 
             return builder.ToString();
         }
 
-        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        public override void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
         {
-            from.ApplyPreprocessorReplace(tokens, replace);
-            to.ApplyPreprocessorReplace(tokens, replace);
-            by?.ApplyPreprocessorReplace(tokens, replace);
-            untilExp?.ApplyPreprocessorReplace(tokens, replace);
-            whileExp?.ApplyPreprocessorReplace(tokens, replace);
+            From.ApplyPreprocessorReplace(tokens, replace);
+            To.ApplyPreprocessorReplace(tokens, replace);
+            By?.ApplyPreprocessorReplace(tokens, replace);
+            UntilCondition?.ApplyPreprocessorReplace(tokens, replace);
+            WhileCondition?.ApplyPreprocessorReplace(tokens, replace);
             base.ApplyPreprocessorReplace(tokens, replace);
         }
     }

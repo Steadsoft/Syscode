@@ -4,26 +4,6 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    //public class ExpressionBase : AstNode
-    //{
-    //    public ExpressionBase(ExpressionContext expr) : base(expr)
-    //    {
-
-    //    }
-
-
-    //}
-    //public class BinaryExpression : ExpressionBase
-    //{
-    //    public Expression Left;
-    //    public Expression Right;
-    //    public Operator Operator;
-
-    //    public BinaryExpression(ExprBinaryContext expr) : base(expr)
-    //    {
-    //    }
-    //}
-
     public class Expression : AstNode
     {
         public Literal? Literal;
@@ -92,8 +72,8 @@ namespace Syscode
 
         }
 
-        public bool IsSimpleIdentifier => Reference != null && Reference.IsSimpleIdenitifer;
-        public string SimpleIdentifier => Reference.SimpleIdentifer;
+        public bool IsSimpleIdentifier => Reference != null && Reference.IsSimpleIdentifier;
+        public string SimpleIdentifier => Reference.SimpleIdentifier;
         /// <summary>
         /// Examines the expression to ascertain whether it is
         /// an identifier that is referred to in a preprocessor REPLACE statement 

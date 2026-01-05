@@ -5,33 +5,29 @@ namespace Syscode
 {
     public class Elif : AstNode, IReplaceContainer
     {
-        private Expression condition;
-        private List<AstNode> statements = new();
-
-        public Expression Condition { get => condition; set => condition = value; }
-        public List<AstNode> Statements { get => statements; set => statements = value; }
-
-        public Elif(ElifBlockContext context, SyscodeAstBuilder builder) : base(context)
+        public Expression Condition { get; private set; }
+        public List<AstNode> Statements { get; set; } = new();
+        public Elif(ElifContext context, SyscodeAstBuilder builder) : base(context)
         {
-            condition = builder.CreateExpression(context.ConditionalStatements.Condition);
-            statements = builder.GenerateStatements(context.ConditionalStatements._Statements);
+            Condition = builder.CreateExpression(context.block.Condition);
+            Statements = builder.GenerateStatements(context.block._Statements);
         }
-
         public override string ToString()
         {
             return $"{nameof(If)}: ";
         }
-
         public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
         {
             Condition.ApplyPreprocessorReplace(tokens, replace);
 
-            foreach (var stmt in statements.OfType<IReplaceContainer>())
+            foreach (var statement in Statements.OfType<IReplaceContainer>())
             {
-                stmt.ApplyPreprocessorReplace(tokens, replace);
+                statement.ApplyPreprocessorReplace(tokens, replace);
             }
         }
     }
+
+    
 
     public class ELIF : AstNode
     {

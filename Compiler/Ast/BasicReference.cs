@@ -34,7 +34,7 @@ namespace Syscode
 
             foreach (var qual in Qualifier)
             {
-                builder.Append($"{qual.ToString()}.");
+                builder.Append($"[QUAL<{qual.ToString()}>].");
             }
 
             builder.Append(Spelling);

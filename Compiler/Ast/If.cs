@@ -1,42 +1,35 @@
 ﻿using Antlr4.Runtime;
+using System.Runtime.CompilerServices;
 using static SyscodeParser;
 
 namespace Syscode
 {
     public class If : AstNode, IReplaceContainer
     {
-        private readonly Expression condition;
-        private List<AstNode> thenStatements = new();
-        // TODO perhaps we need an Else node for structural consistency
-        private List<AstNode> elseStatements = new();
-        private List<Elif> elifBlocks = new();
-        private readonly string label = string.Empty;
-        public string Label => label;
-        public Expression Condition { get => condition;}
-        public List<AstNode> ThenStatements { get => thenStatements; set => thenStatements = value; }
-        public List<AstNode> ElseStatements { get => elseStatements; set => elseStatements = value; }
-        public List<Elif> ElifBlocks { get => elifBlocks; set => elifBlocks = value; }
-        private bool hasLabel = false;
-        public bool HasLabel => hasLabel;
+        public string Label { get; private set; }
+        public Expression Condition { get; private set; }
+        public List<AstNode> Statements { get; private set; } = new();
+        public List<Elif> Elifs { get; private set; } = new();
+        public Else? Else  {get;private set;}
+        public bool HasLabel => Label != null;
         public If(IfContext context, SyscodeAstBuilder builder) : base(context)
         {
-            condition = builder.CreateExpression(context.ConditionalStatements.Condition);
-            thenStatements = builder.GenerateStatements(context.ConditionalStatements._Statements);
+            Condition = builder.CreateExpression(context.block.Condition);
+            Statements = builder.GenerateStatements(context.block._Statements);
 
             if (context.else_block != null)
             {
-                elseStatements = builder.GenerateStatements(context.else_block._Statements);
+                Else = new Else(context.else_block, builder);
             }
 
             if (context._elif_blocks.Any())  // at least one 'elif' is present
             {
-                elifBlocks = context._elif_blocks.Select(builder.CreateElif).ToList();
+                Elifs = context._elif_blocks.Select(builder.CreateElif).ToList();
             }
 
             if (context.Name != null)
             {
-                label = context.Name.Spelling.GetText();
-                 hasLabel = true;
+                Label = context.Name.Spelling.GetText();
             }
         }
         /// <summary>
@@ -51,24 +44,21 @@ namespace Syscode
         {
             Condition.ApplyPreprocessorReplace(tokens, replace);
 
-            foreach (var eb in elifBlocks)
+            foreach (var elif in Elifs)
             {
-                eb.ApplyPreprocessorReplace(tokens, replace);
+                elif.ApplyPreprocessorReplace(tokens, replace);
             }
 
-            foreach (var stmt in thenStatements.OfType<IReplaceContainer>())
+            foreach (var statement in Statements.OfType<IReplaceContainer>())
             {
-                stmt.ApplyPreprocessorReplace(tokens, replace);
+                statement.ApplyPreprocessorReplace(tokens, replace);
             }
 
-            foreach (var stmt in elseStatements.OfType<IReplaceContainer>())
-            {
-                stmt.ApplyPreprocessorReplace(tokens, replace);
-            }
+            Else?.ApplyPreprocessorReplace(tokens, replace);
         }
         public override string ToString()
         {
-            return $"{nameof(If)} {label}: ";
+            return $"{nameof(If)} {Label}: ";
         }
     }
 

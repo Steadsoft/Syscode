@@ -36,10 +36,10 @@ if XYZ > 100 then
 end
 
 do a = 10 to MAX_LOOPS
-    do while (c < x)
+    do while (c < MAIN_ID)
        count = effoff(s)
-    end;
-end ; 
+    end
+end 
 
 do a = 10 to MAX_LOOPS / 10 while (c < x)
    count = effoff(s)
@@ -180,7 +180,7 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
     call reset_database(x,y,z)
 
     ord = 23  +  45    // ordinary
-    sat = 23 (+) 45    // saturated
+    sat = 23 <+> 45    // saturated
     sum = 23 [+] 45    // overflow aware
 
     if @start_checks overflowed then

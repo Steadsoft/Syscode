@@ -456,7 +456,7 @@ namespace Syscode
         {
             return new Procedure(ref currentContainer, context, this); // a func is so similar to a proc we use same class to represent them.
         }
-        public Elif CreateElif(ElifBlockContext context)
+        public Elif CreateElif(ElifContext context)
         {
             return new Elif(context, this);
         }

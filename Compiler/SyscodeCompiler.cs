@@ -142,17 +142,16 @@ namespace Syscode
                     // Start a new include file → push a fresh counter
                     fileLines.Push(0);
                     Console.Write($"{real_line,-5}     ");
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"{line}");
                     Console.ForegroundColor = ConsoleColor.White;
-
                 }
                 else if (line.StartsWith("// END "))
                 {
                     // End include → pop back to parent file
                     fileLines.Pop();
                     Console.Write($"{real_line,-5}     ");
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"{line}");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
@@ -161,12 +160,11 @@ namespace Syscode
                     // Increment the current file's line number
                     int newFileLine = fileLines.Pop() + 1;
                     fileLines.Push(newFileLine);
-
                     Console.WriteLine($"{real_line,-5}{newFileLine,-5}{line}");
                 }
             }
         }
-        internal static CommonTokenStream GetStreamFromList(List<IToken> list)
+        internal static CommonTokenStream GetStreamFromList(List<IToken> list)  
         {
             var source = new ListTokenSource(list);
             var stream = new CommonTokenStream(source);
@@ -544,16 +542,16 @@ namespace Syscode
                     {
                         astlist.WriteLine($"{LineDepth(depth, If)} {If.GetType().Name} {If.Condition} {(!String.IsNullOrEmpty(If.Label) ? $" @{If.Label}" : "")}");
 
-                        foreach (var child in If.ThenStatements)
+                        foreach (var child in If.Statements)
                         {
                             depth++;
                             GenerateAbstractSyntaxTreeText(child, depth);
                             depth--;
                         }
-                        if (If.ElifBlocks.Count != 0)
+                        if (If.Elifs.Count != 0)
                         {
 
-                            foreach (var child in If.ElifBlocks)
+                            foreach (var child in If.Elifs)
                             {
                                 astlist.WriteLine($"{LineDepth(depth, child)} Elif {child.Condition}");
 
@@ -565,11 +563,11 @@ namespace Syscode
                                 }
                             }
                         }
-                        if (If.ElseStatements.Count != 0)
+                        if (If.Else?.Statements.Count != 0)
                         {
                             astlist.WriteLine($"{LineDepth(depth, node)} Else");
 
-                            foreach (var child in If.ElseStatements)
+                            foreach (var child in If.Statements)
                             {
                                 depth++;
                                 GenerateAbstractSyntaxTreeText(child, depth);

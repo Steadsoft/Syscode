@@ -7,6 +7,7 @@ namespace Syscode
         public bool Wilcard = false;
         public  string? Filename;
         public  string? Name;
+        //public 
         public INCLUDE(Prep_INCLUDEContext context, SyscodeAstBuilder builder):base(context)
         {
             Filename = context.File?.Text.Strip('"');
