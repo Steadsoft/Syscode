@@ -57,7 +57,7 @@ prep_thenBlock :     Statements+=statement*;
 prep_elseBlock :     (ELSE emptyLines? THEN_block=prep_thenBlock);
 prep_elifBlock :     (ELIF emptyLines? ExprThenBlocks+=prep_exprThenBlock)+;
 
-if:         If Name=labelName? emptyLines? block=then emptyLines? elif_blocks+=elif* emptyLines? else_block=else? emptyLines? End;
+if:         If Name=labelName? emptyLines? block=then emptyLines? elifs+=elif* emptyLines? else_block=else? emptyLines? End;
 then:       emptyLines? Condition=expression emptyLines? Then emptyLines? Statements+=statement*;
 elif :      (Elif emptyLines? block=then); 
 else :      (Else emptyLines? Statements+=statement*);
@@ -86,8 +86,8 @@ function: FUNCTION emptyLines? Spelling=identifier Params=paramList? Options=pro
 procOptions: OPTIONS LPAR (Main=MAIN)+ RPAR;
 
 enum: ENUM emptyLines? Name=identifier emptyLines? dataAttribute? memberSeparator emptyLines? Members=enumMembers emptyLines? End;
-call: CALL emptyLines? Ref=reference statementSeparator;
-return: (RETURN (emptyLines? Exp=expression)?) statementSeparator ; //| (RETURN (emptyLines? expression)?)) statementSeparator;
+call: Ref=reference arguments statementSeparator;
+return: (RETURN (emptyLines? Exp=primitiveExpression)?) statementSeparator ; //| (RETURN (emptyLines? expression)?)) statementSeparator;
 
 declare
     : Dcl Struct=structBody
@@ -193,7 +193,7 @@ typeCode: BIN8 | BIN16 | BIN32 | BIN64 | UBIN8 | UBIN16 | UBIN32 | UBIN64 | BIN 
 // Consider also <- or == as an assignment opeator, which implicitly does an atomic assignment...
 
 assignment 
-    : Ref=reference emptyLines? Mode=comparer emptyLines? Exp=expression statementSeparator
+    : Ref=reference Mode=comparer emptyLines? Exp=expression statementSeparator
     ;    
     
     // | LPAR reference COMMA reference RPAR comparer expression statementSeparator; this is too 'out there' for an initial language design.     

@@ -13,7 +13,7 @@ namespace Syscode
         public Operator Operator;
         public ExpressionType Type;
         public bool Parenthesized;
-        public Expression(ParserRuleContext context, SyscodeAstBuilder builder) : base(context)
+        public Expression(ExpressionContext context, SyscodeAstBuilder builder) : base(context)
         {
             Literal = null;
             Reference = null;
@@ -70,6 +70,41 @@ namespace Syscode
             }
 
 
+        }
+
+        public Expression(PrimitiveExpressionContext context, SyscodeAstBuilder builder) : base(context)
+        {
+            Literal = null;
+            Reference = null;
+            Left = null;
+            Right = null;
+            Operator = Operator.UNDEFINED;
+            Type = ExpressionType.None;
+            switch (context)
+            {
+                case LiteralArithmeticContext literalContext:
+                    {
+                        Literal = new Literal(literalContext.Numeric, Operator.UNDEFINED, builder.Constants);
+                        Type = ExpressionType.Literal;
+                        break;
+                    }
+                case LiteralStringContext stringContext:
+                    {
+                        Literal = new Literal(stringContext.String);
+                        Type = ExpressionType.Literal;
+                        break;
+                    }
+                case RefContext referenceContext:
+                    {
+                        Reference = builder.CreateReference(referenceContext.Reference);
+                        Type = ExpressionType.Primitive;
+                        break;
+                    }
+                default:
+                    {
+                        throw new InvalidOperationException("Unexpected primitive expression class encountered.");
+                    }
+            }
         }
 
         public bool IsSimpleIdentifier => Reference != null && Reference.IsSimpleIdentifier;

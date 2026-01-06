@@ -8,7 +8,7 @@ namespace Syscode
         private Expression? expression;
         public Return(ReturnContext context, SyscodeAstBuilder builder) : base(context)
         {
-            expression = context.Exp?.SafeCreate(builder.CreateExpression);
+            expression = context.Exp == null ? null : builder.CreateExpression(context.Exp);
         }
 
         public Expression? Expression { get => expression; }

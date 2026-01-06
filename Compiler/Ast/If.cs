@@ -22,9 +22,9 @@ namespace Syscode
                 Else = new Else(context.else_block, builder);
             }
 
-            if (context._elif_blocks.Any())  // at least one 'elif' is present
+            if (context._elifs.Any())  // at least one 'elif' is present
             {
-                Elifs = context._elif_blocks.Select(builder.CreateElif).ToList();
+                Elifs = context._elifs.Select(builder.CreateElif).ToList();
             }
 
             if (context.Name != null)

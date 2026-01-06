@@ -525,6 +525,11 @@ namespace Syscode
         {
             return new Reference(context,this);
         }
+
+        internal Expression CreateExpression(PrimitiveExpressionContext context)
+        {
+            return new Expression(context, this);
+        }
         internal Expression CreateExpression(ExpressionContext context)
         {
             if (context is ExprParenthesizedContext parenthesized)
