@@ -4,7 +4,7 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class For : Loop, IReplaceContainer
+    public class For : LoopBase, IReplaceContainer
     {
         public Reference Ref { get; private set; }
         public Expression From { get; private set; }

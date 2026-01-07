@@ -72,7 +72,7 @@ namespace Syscode
             node = If;
             alignment = new Alignment() { AlignmentUnits = AlignmentUnits.Bytes, AlignmentValue = 4 };
         }
-        public Symbol (Loop Loop)
+        public Symbol (LoopBase Loop)
         {
             dataType = DataType.LABEL;
             spelling = Loop.Label;

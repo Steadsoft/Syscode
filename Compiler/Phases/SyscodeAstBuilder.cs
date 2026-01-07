@@ -39,9 +39,9 @@ namespace Syscode
                 ReturnContext context => CreateReturn(context),
                 AlabelContext context => CreateLabel(context),
                 GotoContext context => CreateGoto(context),
-                LoopContext context => CreateLoop(context),
+                LoopsContext context => CreateLoops(context),
                 ExitContext context => CreateLeave(context),
-                JumpContext context => CreateProceed(context),
+                LoopContext context => CreateLoop(context),
                 Prep_IFContext context => CreateIF(context),
                 Prep_INCLUDEContext context => CreateINCLUDE(context),
                 Prep_REPLACEContext context => CreateREPLACE(context),
@@ -49,7 +49,7 @@ namespace Syscode
             };
         }
 
-        private Proceed CreateProceed(JumpContext context)
+        private Loop CreateLoop(LoopContext context)
         {
             return new(context, this);
         }
@@ -57,7 +57,7 @@ namespace Syscode
         {
             return new (context,this);
         }
-        private Loop CreateLoop(LoopContext context)
+        private LoopBase CreateLoops(LoopsContext context)
         {
             if (context == null) throw new ArgumentNullException("context");
 

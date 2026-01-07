@@ -1,29 +1,19 @@
-﻿using Antlr4.Runtime;
-using static SyscodeParser;
+﻿using static SyscodeParser;
 
 namespace Syscode
 {
-    public abstract class Loop : AstNode, IContainer, IReplaceContainer
+    public class Loop : AstNode
     {
-        public string? Label;
-        public bool HasLabel => Label != null;
-        public List<AstNode> Statements { get; protected set; }
-        public List<Symbol> Symbols { get; set; }
-        public IContainer Container { get; set; }
-        public Loop(LoopContext context) : base(context)
+        private Reference? reference = null;
+        public Loop(LoopContext context, SyscodeAstBuilder builder) : base(context)
         {
+            if (context.Ref is not null)
+                reference = builder.CreateReference(context.Ref);
         }
+        public Reference? Reference { get => reference; }
         public override string ToString()
         {
-            return "do loop";
-        }
-
-        public virtual void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
-        {
-            foreach (var stmt in Statements.OfType<IReplaceContainer>())
-            {
-                stmt.ApplyPreprocessorReplace(tokens, replace);
-            }
+            return $"proceed {Reference}";
         }
     }
 }

@@ -3,7 +3,7 @@ using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Until : Loop, IReplaceContainer
+    public class Until : LoopBase, IReplaceContainer
     {
         public Expression UntilCondition { get; private set; }
         public Expression? WhileCondition { get; private set; }

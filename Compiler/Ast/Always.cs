@@ -2,7 +2,7 @@
 
 namespace Syscode
 {
-    public class Always : Loop
+    public class Always : LoopBase
     {
         public Always(LoopAlwaysContext context, SyscodeAstBuilder builder) : base(context)
         {

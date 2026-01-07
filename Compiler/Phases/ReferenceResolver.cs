@@ -24,9 +24,9 @@
 
             if (root is Scope)
             {
-                if (root.Statements.Any(s => s is Assignment || s is Goto || s is If || s is Loop || s is Call || s is Return)) 
+                if (root.Statements.Any(s => s is Assignment || s is Goto || s is If || s is LoopBase || s is Call || s is Return)) 
                 {
-                    foreach (var stmt in root.Statements.Where(s => s is Assignment || s is Goto || s is If || s is Loop || s is Call || s is Return))
+                    foreach (var stmt in root.Statements.Where(s => s is Assignment || s is Goto || s is If || s is LoopBase || s is Call || s is Return))
                     {
                         reporter.Report(stmt, 1014, stmt.GetType().Name.ToLower());
                     }
@@ -45,11 +45,11 @@
             statements.OfType<Assignment>().ForEach(a => Resolve(root, a));
             statements.OfType<Goto>().ForEach(a => Resolve(root, a));
             statements.OfType<If>().ForEach(a => Resolve(root, a));
-            statements.OfType<Loop>().ForEach(l => Resolve(root, l));
+            statements.OfType<LoopBase>().ForEach(l => Resolve(root, l));
             statements.OfType<Call>().ForEach(c => Resolve(root, c));
             statements.OfType<Return>().ForEach(r => Resolve(root, r));
             statements.OfType<Leave>().ForEach(r => Resolve(root, r));
-            statements.OfType<Proceed>().ForEach(r => Resolve(root, r));
+            statements.OfType<Loop>().ForEach(r => Resolve(root, r));
         }
         private static void ResolveQualifiedReference(Reference reference, Symbol symbol)
         {
@@ -182,7 +182,7 @@
 
             }
         }
-        private void Resolve (IContainer container, Loop loop)
+        private void Resolve (IContainer container, LoopBase loop)
         {
             ResolveStatementReferences (container, loop.Statements);
         }
@@ -197,7 +197,7 @@
             ResolveStatementReferences(container, ifstmt.Elifs.SelectMany(elif => elif.Statements));
             ifstmt.Elifs.Select(elif => elif.Condition).ForEach(exp => ResolveExpression (container, exp));
         }
-        private void Resolve(IContainer container, Proceed statement)
+        private void Resolve(IContainer container, Loop statement)
         {
             if (statement.Reference is not null)
                 ResolveReference(container, statement.Reference);
@@ -322,7 +322,7 @@
                             ReportUnresolvedReferences(assign, assign.Expression);
                             break;
                         }
-                    case Loop loop: // this statements contains other statements
+                    case LoopBase loop: // this statements contains other statements
                         {
                             ReportUnresolvedReferences(loop.Statements);
                             break;
@@ -338,7 +338,7 @@
                                 ReportUnresolvedReference(leavestmt, leavestmt.Reference);
                             break;
                         }
-                    case Proceed proceedstmt:
+                    case Loop proceedstmt:
                         {
                             if (proceedstmt.Reference is not null)
                                 ReportUnresolvedReference(proceedstmt, proceedstmt.Reference);

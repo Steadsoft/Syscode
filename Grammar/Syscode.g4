@@ -40,7 +40,7 @@ compilation: Statements+=statement* endOfFile;
 // One way to handle namespace is to name source code as a namespace: system.utils.io.sys wraps all contained items in the namespace system.utils and there could be 
 // several source files with that namespace prefix, each of which contributes stuff to the namespace.
 
-statement:  preamble?  (prep_INCLUDE | prep_IF | prep_REPLACE | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loop | goto | exit | jump | assignment);
+statement:  preamble?  (prep_INCLUDE | prep_IF | prep_REPLACE | call | return | alabel | /* scope | */  enum | if | declare | type | /* literal | */ procedure | function | loops | goto | exit | loop | assignment);
 
 statements: statement* ;
 
@@ -87,7 +87,7 @@ procOptions: OPTIONS LPAR (Main=MAIN)+ RPAR;
 
 enum: ENUM emptyLines? Name=identifier emptyLines? dataAttribute? memberSeparator emptyLines? Members=enumMembers emptyLines? End;
 call: Ref=reference arguments statementSeparator;
-return: (RETURN (emptyLines? Exp=primitiveExpression)?) statementSeparator ; //| (RETURN (emptyLines? expression)?)) statementSeparator;
+return: (RETURN (emptyLines? Exp=primitiveExpression)?) statementSeparator ; // we dont want to reserve 'return' so we distingiosh between a "real" return and a call to a proc named 'return'
 
 declare
     : Dcl Struct=structBody
@@ -127,10 +127,10 @@ attribute
 type: TYPE Body=structBody ;    
 
 exit: EXIT Ref=reference? statementSeparator;
-jump: JUMP Ref=reference? statementSeparator;
+loop: LOOP Ref=reference? statementSeparator;
 
 // literal: LIT customLiteral AS decLiteral statementSeparator ; 
-loop
+loops
     : Always=loopLoop     #LoopAlways 
     | For=forLoop         #LoopFor
     | While=whileLoop     #LoopWhile
@@ -455,7 +455,6 @@ keyword
     | INIT
     | INTERNAL
     | IS
-    | JUMP
     | LABEL
     | EXIT
     | LIT
@@ -469,7 +468,6 @@ keyword
     | PATH
     | POINTER
     | PROCEDURE
-    | JUMP
     | REPLACE
     | RETURN
     | SBE
@@ -599,7 +597,6 @@ If:             'if';
 INIT:           'init';
 INTERNAL:       'internal';
 IS:             'is';
-JUMP:           'jump';
 LABEL:          'label';
 LIT:            'lit' | 'literal';
 LOOP:           'loop';

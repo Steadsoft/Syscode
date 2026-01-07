@@ -509,7 +509,7 @@ namespace Syscode
                         astlist.WriteLine($"{LineDepth(depth, Leave)} {Leave.GetType().Name} '{Leave}'");
                         break;
                     }
-                case Proceed Proceed:
+                case Loop Proceed:
                     {
                         astlist.WriteLine($"{LineDepth(depth, Proceed)} {Proceed.GetType().Name} '{Proceed}'");
                         break;

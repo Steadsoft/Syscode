@@ -24,7 +24,7 @@ namespace Syscode
             var sym = new Symbol(procedure);
             procedure.Symbols.Load(procedure.Statements.OfType<Declare>().Select(CreateSymbol));
             procedure.Symbols.AddRange(procedure.Statements.OfType<If>().Where(s => s.HasLabel).Select(CreateSymbol));
-            procedure.Symbols.AddRange(procedure.Statements.OfType<Loop>().Where(s => s.HasLabel).Select(CreateSymbol));
+            procedure.Symbols.AddRange(procedure.Statements.OfType<LoopBase>().Where(s => s.HasLabel).Select(CreateSymbol));
             procedure.Symbols.AddRange(procedure.Statements.OfType<Label>().Select(CreateSymbol));
             sym.Invalid = false;
             return sym;
@@ -33,7 +33,7 @@ namespace Syscode
         {
             return new Symbol(If);
         }
-        public Symbol CreateSymbol(Loop Loop)
+        public Symbol CreateSymbol(LoopBase Loop)
         {
             return new Symbol(Loop);
         }

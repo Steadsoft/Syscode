@@ -163,7 +163,7 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
            rate = MAIN_ID + 50
            exit 
         else
-           jump process
+           loop process
         end
     end
 
