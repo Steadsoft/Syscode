@@ -190,7 +190,7 @@ namespace Syscode
         }
         public List<AstNode> GenerateStatements(IList<StatementContext> context)
         {
-            return context.Select(s => s.GetDerivedNode<ParserRuleContext>()).Select(Generate).ToList();
+            return context.Where(s => s.exception == null).Select(s => s.GetDerivedNode<ParserRuleContext>()).Select(Generate).ToList();
         }
         private Compilation CreateCompilation(CompilationContext context)
         {

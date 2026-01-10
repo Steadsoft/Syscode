@@ -14,7 +14,7 @@ INCLUDE PROCESSOR
 
 INCLUDE "recursive.sys"
 
-if a > MAIN_ID / 50 then
+iff a > MAIN_ID / 50 then
    a = b
 elif a > b then
    a = b

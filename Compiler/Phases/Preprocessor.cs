@@ -50,7 +50,8 @@ namespace Syscode.Phases
             stream.Fill();
             token_list = new List<IToken>(stream.GetTokens());
 
-            var parser = new SyscodeParser(stream);
+            var parser = SyscodeCompiler.CreateParser(stream);// new SyscodeParser(stream);
+
             var cst = parser.compilation();
 
             var builder = new SyscodeAstBuilder(reporter);
@@ -109,7 +110,7 @@ namespace Syscode.Phases
                         continue;
 
                     var token_stream = SyscodeCompiler.GetStreamFromList(included_tokens);
-                    var parser = new SyscodeParser(token_stream);
+                    var parser = SyscodeCompiler.CreateParser(token_stream); // new SyscodeParser(token_stream);
                     var cst = parser.compilation();
 
                     var builder = new SyscodeAstBuilder(reporter);

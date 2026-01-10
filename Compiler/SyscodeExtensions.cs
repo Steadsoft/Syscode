@@ -169,5 +169,33 @@ namespace Syscode
         {
             return text.Replace(C, '\0').Replace("\0", "");
         }
+
+        public static string Strip(this string text, string T)
+        {
+            if (string.IsNullOrEmpty(T))
+                return text;
+
+            while (text.EndsWith(T))
+                text = text.Substring(0, text.Length - T.Length);
+
+            return text;
+        }
+
+        public static bool Matches(this List<RuleContext> chain, params System.Type[] types)
+        {
+            if (chain.Count < types.Length)
+                return false;
+
+            for (int i = 0; i < types.Length; i++)
+            {
+                if (types[i] != chain[i].GetType())
+                    return false;
+            }
+
+            return true;
+        }
+
+
+
     }
 }

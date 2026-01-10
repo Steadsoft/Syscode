@@ -1,10 +1,233 @@
 ﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Atn;
 using Syscode.Phases;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text;
 using System.Text.Json;
+using static SyscodeParser;
 
 namespace Syscode
 {
+    public delegate string DiagnosticHandler(SyntaxNode node);
+
+
+    public class SyntaxNode 
+    {
+        public RuleContext Rule;
+        public SyntaxNode Child;
+
+        public SyntaxNode(RuleContext Context)
+        {
+            Rule = Context;
+        }
+    }
+
+public class MyErrorListener : BaseErrorListener
+    {
+        public override void SyntaxError(
+            TextWriter output,
+            IRecognizer recognizer,
+            IToken offendingSymbol,
+            int line,
+            int charPositionInLine,
+            string msg,
+            RecognitionException e)
+        {
+            
+            if (e is NoViableAltException)
+            {
+                var parts = msg.Split('\'');
+                Console.WriteLine($"Line {line} Column {charPositionInLine}. Unrecognized syntax beginning '{parts[1].Strip(@"\n").Strip(@"\r")}'");
+                return;
+            }
+            else
+            {
+                Console.WriteLine($"Lexical error at {line}:{charPositionInLine}: {msg}");
+                return;
+            }
+
+            Console.WriteLine($"Syntax error at {line}:{charPositionInLine}: {msg}");
+        }
+    }
+
+
+
+
+    public class SkipToEndErrorStrategy : DefaultErrorStrategy
+    {
+
+        private static readonly Dictionary<System.Type, DiagnosticHandler> _handlers =
+            new Dictionary<System.Type, DiagnosticHandler>
+            {
+                { typeof(IfContext),   DiagnoseIf },
+                { typeof(LoopContext),   DiagnoseLoop },
+                { typeof(WhileConditionContext),   DiagnoseWhileCondition },
+                { typeof(LoopWhileContext),   DiagnoseWhileLoop },
+                { typeof(WhileLoopContext),   DiagnoseWhileLoop },
+                { typeof(LoopsContext),   DiagnoseLoops },
+                { typeof(ElifContext),   DiagnoseElif },
+                { typeof(ThenContext), DiagnoseThen },
+                { typeof(StatementContext), DiagnoseStatement },
+                { typeof(ExprBinaryContext), DiagnoseExprBinary }
+            };
+
+        private static string DiagnoseIf(SyntaxNode node)
+        {
+            return node.Child != null
+                ? Diagnose(node.Child)
+                : "Bad 'if'";
+        }
+        private static string DiagnoseLoop(SyntaxNode node)
+        {
+            return node.Child != null
+                ? Diagnose(node.Child)
+                : "Bad 'loop'";
+        }
+        private static string DiagnoseWhileCondition(SyntaxNode node)
+        {
+            return node.Child != null
+                ? Diagnose(node.Child)
+                : "Bad 'while condition'";
+        }
+
+        private static string DiagnoseWhileLoop(SyntaxNode node)
+        {
+            return node.Child != null
+                ? Diagnose(node.Child)
+                : "Bad 'while loop'";
+        }
+
+
+        private static string DiagnoseLoops(SyntaxNode node)
+        {
+            return node.Child != null
+                ? Diagnose(node.Child)
+                : "Bad 'loops'";
+        }
+
+        private static string DiagnoseThen(SyntaxNode node)
+        {
+            return node.Child != null
+                ? Diagnose(node.Child)
+                : "Bad 'then'";
+        }
+        private static string DiagnoseElif(SyntaxNode node)
+        {
+            return node.Child != null
+                ? Diagnose(node.Child)
+                : "Bad 'elif'";
+        }
+
+        private static string DiagnoseStatement(SyntaxNode node)
+        {
+            return node.Child != null
+                ? Diagnose(node.Child)
+                : "Bad statement";
+        }
+
+        private static string DiagnoseExprBinary(SyntaxNode node)
+        {
+            var context = node.Rule.Parent;
+
+            return (context) switch
+            {
+                ThenContext when context.Parent is IfContext =>  $"Syntax error: Invalid expression encountered within the 'if' statement on line {Line(context.Parent)}",
+                ThenContext when context.Parent is ElifContext => $"Syntax error: Invalid expression encountered within the 'elif' clause on line {Line(context.Parent)}",
+                WhileConditionContext when context.Parent is WhileLoopContext => $"Syntax error: Invalid conditional expression encountered within the 'do while' loop on line {Line(context.Parent)}",
+                _ => "Undefined Diagnostic Scenario!"
+            };
+        }
+
+        private static int Line(RuleContext rule)
+        {
+            return ((ParserRuleContext)(rule)).Start.Line;
+        }
+
+
+        public static string Diagnose(SyntaxNode node)
+        {
+            var type = node.Rule.GetType();
+
+            if (_handlers.TryGetValue(type, out var handler))
+                return handler(node);
+
+            return "Unknown construct";
+        }
+        public override void Recover(Parser recognizer, RecognitionException e)
+        {
+            recognizer.Context.exception = e;
+
+            var chain = GetParseChain(recognizer.Context);
+
+            var m = Diagnose(chain);
+
+            var tokens = recognizer.InputStream;
+            int ttype = tokens.LA(1);
+
+            if (recognizer.Context is IfContext || recognizer.Context is LoopsContext)
+            {
+                while (ttype != SyscodeParser.End && ttype != SyscodeParser.Eof)
+                {
+                    recognizer.Consume();
+                    ttype = tokens.LA(1);
+                }
+
+                if (ttype == SyscodeParser.End || ttype == SyscodeParser.Eof)
+                    recognizer.Consume();
+
+            }
+            else
+            {
+                while (ttype != SyscodeParser.SEMICOLON && ttype != SyscodeParser.NEWLINE)
+                {
+                    recognizer.Consume();
+                    ttype = tokens.LA(1);
+                }
+
+            if (ttype == SyscodeParser.SEMICOLON || ttype == SyscodeParser.NEWLINE)
+                recognizer.Consume();
+
+            }
+        }
+
+        public override void Sync(Parser recognizer)
+        {
+            ;// Disable default sync behavior
+        }
+
+        private SyntaxNode GetParseChain(ParserRuleContext Node)
+        {
+            var stack = new Stack<RuleContext>();
+
+            stack.Push(Node);
+
+            while (stack.Peek() is not StatementContext)
+                stack.Push(stack.Peek().Parent);
+
+            var list = stack.ToList();
+
+            SyntaxNode root = new SyntaxNode(list[0]);
+
+            var curr = root;
+
+            for (int I = 1; I < list.Count; I++)
+            {
+                var next = new SyntaxNode(list[I]);
+                curr.Child = next;
+                curr = next;
+            }
+
+            return root;
+
+        }
+
+    }
+
+
+
+
     public class SyscodeCompiler
     {
         // SEE: https://www.ibm.com/docs/en/SSY2V3_6.2/pdf/pl_i_zos_6_2_language_reference.pdf
@@ -59,6 +282,20 @@ namespace Syscode
         //    diagnostics(this, new DiagnosticEvent(node, errormsg.Number, errormsg.Severity, message));
         //}
 
+        public static SyscodeParser CreateParser(CommonTokenStream Stream)
+        {
+            var parser = new SyscodeParser(Stream);
+            parser.RemoveErrorListeners();
+            parser.AddErrorListener(new MyErrorListener());
+            parser.ErrorHandler = new SkipToEndErrorStrategy();
+            //parser.AddParseListener(new ParserTraceListener());
+            parser.Interpreter.PredictionMode = PredictionMode.LL_EXACT_AMBIG_DETECTION;
+            parser.Trace = true;
+
+
+            return parser;
+        }
+
         public void CompileSourceFile(string SourceFile, bool print_listing = true)
         {
             compile_id = random.Next().ToString();
@@ -69,8 +306,11 @@ namespace Syscode
 
             var list = GetTokenListFromFile(SourceFile);
             var stream = GetStreamFromList(list);
-            var parser = new SyscodeParser(stream);
+            var parser = SyscodeCompiler.CreateParser(stream);
+
             var cst = parser.compilation();
+
+            PrintConcreteSyntaxTree(cst);
 
             builder = new SyscodeAstBuilder(Reporter);
 
@@ -99,7 +339,7 @@ namespace Syscode
             stream = new CommonTokenStream(lexer);
 
 
-            parser = new SyscodeParser(stream);
+            parser = SyscodeCompiler.CreateParser(stream);
             cst = parser.compilation();
 
             builder = new SyscodeAstBuilder(Reporter);
@@ -702,7 +942,7 @@ namespace Syscode
                                 depth--;
                             }
                         }
-                        astlist.WriteLine($"{LineDepthEnd(depth, Compilation)} End");
+                        astlist.WriteLine($"{LineDepthEnd(depth, Compilation)} End Compilation");
                         break;
 
                     }

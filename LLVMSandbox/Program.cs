@@ -21,9 +21,6 @@ namespace LLVMSandbox
             using var format = new MarshaledString("Value: %d\n");
             using var fmt = new MarshaledString("fmt");
 
-
-            
-
             int op1 = 3;
             int op2 = 4;
 
