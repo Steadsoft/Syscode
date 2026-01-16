@@ -147,7 +147,15 @@ untilCondition: UNTIL Exp=expression ;
 
 
 
-asType: AS Typename=identifier ;    
+asType: AS Typename=identifier ; 
+
+// integerType
+//     : BIN arguments 
+//     | DEC arguments 
+//    // | INT arguments
+//     ;
+
+//we should consider byte(n) as well so a 16 bit int would be byte(2) rather than bin16 or bin(16)
 
 integerType locals [int digits, String typename, Boolean signed]
 : ((
@@ -288,6 +296,7 @@ binop
     |boolOr
     |logand
     |logor
+    |USEROP
     ;
 
 prefixExpression
@@ -682,6 +691,7 @@ R_ROTATE:       '@>';    // U+29C1 rotate: rite bit rotated out left bit becomes
 EQUALS:         '=' ;
 ASSIGN:         '<-';
 
+
 // comppund assignment
 
 COMPASSIGN:     '+='|'-='|'*='|'/='|'%='|'&='|'|='|'^='|'<<='|'>>='|'<@='|'@>=';
@@ -708,3 +718,7 @@ IDENTIFIER:     ([a-zA-Z_] [a-zA-Z0-9_$]*);
 NEWLINE:        ('\r' '\n'); 
 WS:             [ \t]+ -> channel(HIDDEN); //skip;
 //COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
+
+USEROP
+    : [+\-*/<>=!@#$%\\^&|~:?]+
+    ;

@@ -20,6 +20,7 @@ namespace Syscode
 
         public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
         {
+            reference.ApplyPreprocessorReplace(tokens, replace);
             expression.ApplyPreprocessorReplace(tokens, replace);
         }
 
