@@ -81,7 +81,7 @@ dcl name string(16)
 dcl addr string(64, utf16)
 dcl state string(16, sbe); dcl region string(32, utf8); dcl region string(32, utf8)
 
-count = arg1 <&> count2 
+// count = arg1 <&> count2 
 
 global_rate = -  MAIN_ID
 
