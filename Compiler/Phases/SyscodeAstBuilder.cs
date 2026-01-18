@@ -25,39 +25,17 @@ namespace Syscode
         }
         public AstNode Generate(ParserRuleContext rule)
         {
-            return rule switch
-            {
-                CompilationContext context => CreateCompilation(context),
-                ScopeContext context => CreateScope(context),
-                ProcedureContext context => CreateProcedure(context),
-                FunctionContext context => CreateFunction(context),
-                TypeContext context => CreateType(context),
-                IfContext context => CreateIf(context),
-                AssignmentContext context => CreateAssignment(context),
-                DeclareContext context => CreateDeclaration(context),
-                CallContext context => CreateCall(context),
-                ReturnContext context => CreateReturn(context),
-                AlabelContext context => CreateLabel(context),
-                GotoContext context => CreateGoto(context),
-                LoopsContext context => CreateLoops(context),
-                ExitContext context => CreateLeave(context),
-                LoopContext context => CreateLoop(context),
-                Prep_IFContext context => CreateIF(context),
-                Prep_INCLUDEContext context => CreateINCLUDE(context),
-                Prep_REPLACEContext context => CreateREPLACE(context),
-                _ => new AstNode(rule)
-            };
+            return Create((dynamic)rule);
         }
-
-        private Loop CreateLoop(LoopContext context)
+        private Loop Create(LoopContext context)
         {
             return new(context, this);
         }
-        private Leave CreateLeave(ExitContext context)
+        private Leave Create(ExitContext context)
         {
             return new (context,this);
         }
-        private LoopBase CreateLoops(LoopsContext context)
+        private LoopBase Create(LoopsContext context)
         {
             if (context == null) throw new ArgumentNullException("context");
 
@@ -71,19 +49,19 @@ namespace Syscode
 
             throw new InternalErrorException($"Unrecognized loop syntax on line {context.Start.Line}");
         }
-        private Goto CreateGoto(GotoContext context)
+        private Goto Create(GotoContext context)
         {
             return new Goto(context, this);
         }
-        private static Label CreateLabel(AlabelContext context)
+        private static Label Create(AlabelContext context)
         {
             return new Label(context);
         }
-        private Return CreateReturn(ReturnContext context)
+        private Return Create(ReturnContext context)
         {
             return new Return(context, this);
         }
-        private Call CreateCall(CallContext context)
+        private Call Create(CallContext context)
         {
             return new Call(context, this);
         }
@@ -180,7 +158,7 @@ namespace Syscode
 
         //    return expr;
         //}
-        private Assignment CreateAssignment(AssignmentContext context)
+        private Assignment Create(AssignmentContext context)
         {
             return new Assignment(context,this);
         }
@@ -192,15 +170,15 @@ namespace Syscode
         {
             return context.Select(s => s.GetDerivedNode<ParserRuleContext>()).Select(Generate).ToList();
         }
-        private Compilation CreateCompilation(CompilationContext context)
+        private Compilation Create(CompilationContext context)
         {
             return new (context, this);
         }
-        private Scope CreateScope(ScopeContext context)
+        private Scope Create(ScopeContext context)
         {
             return new (context) { Spelling = context.GetExactNode<QualifiedNameContext>().GetText(), Statements = GenerateStatements(context._Statements) };
         }
-        private Declare CreateDeclaration(DeclareContext context)
+        private Declare Create(DeclareContext context)
         {
             /*
              *  The processing of a Syscode declaration involves the possible presence
@@ -386,7 +364,7 @@ namespace Syscode
                             }
                         default:
                             {
-                                reporter.Report(dcl, 1032, nameof(CreateDeclaration));
+                                reporter.Report(dcl, 1032, nameof(Create));
                                 throw new InvalidOperationException("Internal error");
                             }
                     }
@@ -428,11 +406,11 @@ namespace Syscode
             }
             catch (Exception e)
             {
-                reporter.Report(dcl, 1032, nameof(CreateDeclaration));
-                throw new InternalErrorException($"In '{nameof(CreateDeclaration)}' processing line {dcl.StartLine}.", e);
+                reporter.Report(dcl, 1032, nameof(Create));
+                throw new InternalErrorException($"In '{nameof(Create)}' processing line {dcl.StartLine}.", e);
             }
         }
-        private Type CreateType(TypeContext context)
+        private Type Create(TypeContext context)
         {
             return new Type(context) { Body = CreateStructure(context.Body) };
         }
@@ -448,11 +426,11 @@ namespace Syscode
         {
             return context.Pair._BoundPairs.Select(p => new BoundsPair(p,this)).ToList();
         }
-        private Procedure CreateProcedure(ProcedureContext context)
+        private Procedure Create(ProcedureContext context)
         {
             return new Procedure(ref currentContainer, context, this);
         }
-        private Procedure CreateFunction(FunctionContext context)
+        private Procedure Create(FunctionContext context)
         {
             return new Procedure(ref currentContainer, context, this); // a func is so similar to a proc we use same class to represent them.
         }
@@ -465,21 +443,21 @@ namespace Syscode
             return new ELIF(context, this) { Statements = GenerateStatements(context.THEN_block._Statements) };
         }
 
-        private If CreateIf(IfContext context)
+        private If Create(IfContext context)
         {
             return new If(context, this);
         }
-        private IF CreateIF(Prep_IFContext context)
+        private IF Create(Prep_IFContext context)
         {
             return new IF(context, this);
         }
 
-        private INCLUDE CreateINCLUDE(Prep_INCLUDEContext context)
+        private INCLUDE Create(Prep_INCLUDEContext context)
         {
             return new INCLUDE(context, this);
         }
 
-        private REPLACE CreateREPLACE(Prep_REPLACEContext context)
+        private REPLACE Create(Prep_REPLACEContext context)
         {
             return new REPLACE(context, this);
         }
