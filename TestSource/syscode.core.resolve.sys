@@ -14,13 +14,13 @@ INCLUDE PROCESSOR
 
 INCLUDE "recursive.sys"
 
-if a > MAIN_ID / 50 then
+if a > MAIN_ID / 50 //then
    a = b
-elif a > b then
+elif a > b //then
    a = b
-elif XYZ > b then
+elif XYZ > b //then
    a = b
-elif a > b then
+elif a > b //then
    a = b
 end   
 
@@ -31,7 +31,7 @@ END
 IF = 75 + MAIN_ID / 100
 
 
-if XYZ > 100 then
+if XYZ > 100 //then
    return
 end
 
@@ -159,8 +159,9 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
     do @process loop
         error_count += 1
 
-        if error_count > 100 then
-           rate = MAIN_ID + 50
+        if error_count > 100 //then
+           //rate = MAIN_ID + 50
+           execute(123)
            exit 
         else
            loop process
@@ -182,10 +183,10 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
     sat = 23 <+> 45    // saturated
     sum = 23 [+] 45    // overflow aware
 
-    if @start_checks overflowed then
-       if uptime > 1000 then
-          if procs > 32 then
-             if not_set then
+    if @start_checks overflowed //then
+       if uptime > 1000 //then
+          if procs > 32 //then
+             if not_set //then
                 not_set = false;
              else 
                 exit start_checks
@@ -193,7 +194,7 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
            end
         end
           
-        if retries = 0 then
+        if retries = 0 //then
 
         logic = arc <@ b << k & <& H
 
@@ -204,11 +205,11 @@ proc main (a,b,c) options(main) // outermost, therefore has external scope, full
 @lab(1)
     master_ptr(10) -> pointer_table(x).rate_ptr.goto -> counts = 23
 
-    if big < small then
+    if big < small //then
        goto finished
-    elif big > small then
+    elif big > small //then
        goto unfinished
-    elif big = small then
+    elif big = small //then
        return;
     end
 

@@ -58,7 +58,9 @@ prep_elseBlock :     (ELSE emptyLines? THEN_block=prep_thenBlock);
 prep_elifBlock :     (ELIF emptyLines? ExprThenBlocks+=prep_exprThenBlock)+;
 
 if:         If Name=labelName? emptyLines? block=then emptyLines? elifs+=elif* emptyLines? else_block=else? emptyLines? End;
-then:       emptyLines? Condition=expression emptyLines? Then emptyLines? Statements+=statement*;
+
+then:       emptyLines? Condition=expression emptyLines? Statements+=statement*;
+
 elif :      (Elif emptyLines? block=then); 
 else :      (Else emptyLines? Statements+=statement*);
 
@@ -296,7 +298,7 @@ binop
     |boolOr
     |logand
     |logor
-    |USEROP
+    //|USEROP
     ;
 
 prefixExpression
