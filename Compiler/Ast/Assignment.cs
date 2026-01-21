@@ -5,23 +5,21 @@ namespace Syscode
 {
     public class Assignment : AstNode, IReplaceContainer
     {
-        private readonly Reference reference;
-        private readonly Expression expression;
         private readonly IToken? mode;
         public Assignment(AssignmentContext context, SyscodeAstBuilder builder) : base(context)
         {
-            this.reference = builder.CreateReference(context.Ref);
-            this.expression = builder.CreateExpression(context.Exp);
+            this.Reference = builder.CreateReference(context.Ref);
+            this.Expression = builder.CreateExpression(context.Exp);
             this.mode = context.Mode?.Start;
         }
 
-        public Reference Reference { get => reference; }
-        public Expression Expression { get => expression;  }
+        public Reference Reference { get; private set; }
+        public Expression Expression { get; private set; }
 
         public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
         {
-            reference.ApplyPreprocessorReplace(tokens, replace);
-            expression.ApplyPreprocessorReplace(tokens, replace);
+            Reference.ApplyPreprocessorReplace(tokens, replace);
+            Expression.ApplyPreprocessorReplace(tokens, replace);
         }
 
         public override string ToString()

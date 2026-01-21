@@ -6,26 +6,24 @@ namespace Syscode
 {
     public class BasicReference : AstNode, IReplaceContainer
     {
-        public string Spelling;
-        private List<Qualification> qualifierList = new();
-        private Symbol? symbol;
-        private readonly bool isKeyword;
         public BasicReference(BasicReferenceContext context, SyscodeAstBuilder builder) : base(context)
         {
             Spelling = context.GetLabelText(nameof(BasicReferenceContext.Spelling));
-            isKeyword = context.children.OfType<IdentifierContext>().Single().children.OfType<KeywordContext>().Any();
+            IsKeyword = context.children.OfType<IdentifierContext>().Single().children.OfType<KeywordContext>().Any();
 
             if (context.Qualification is not null)
             {
-                qualifierList = context.Qualification._Qualifiers.Select(q => new Qualification(q, builder)).ToList();
+                Qualifier = context.Qualification._Qualifiers.Select(q => new Qualification(q, builder)).ToList();
             }
         }
 
+        private Symbol? symbol;
+        public string Spelling { get; private set; } = String.Empty;
         public bool IsQualified { get => Qualifier.Count != 0; }
         public bool IsntQualified { get => !IsQualified; }
         public Symbol? Symbol { get => symbol; internal set => symbol = value; }
-        public List<Qualification> Qualifier { get => qualifierList; set => qualifierList = value; }
-        public bool IsKeyword { get => isKeyword;  }
+        public List<Qualification> Qualifier { get; private set; } = [];
+        public bool IsKeyword { get; private set; }
         public bool IsntKeyword { get => !IsKeyword;  }
 
         public override string ToString()
@@ -44,7 +42,7 @@ namespace Syscode
 
         public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
         {
-            foreach (var qual in qualifierList)
+            foreach (var qual in Qualifier)
             {
                 qual.ApplyPreprocessorReplace(tokens, replace);
             }

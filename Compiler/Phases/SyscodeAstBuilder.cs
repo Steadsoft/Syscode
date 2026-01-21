@@ -440,7 +440,7 @@ namespace Syscode
         }
         public ELIF CreateELIF(Prep_exprThenBlockContext context)
         {
-            return new ELIF(context, this) { Statements = GenerateStatements(context.THEN_block._Statements) };
+            return new ELIF(context, this);
         }
 
         private If Create(IfContext context)

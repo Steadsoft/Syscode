@@ -9,7 +9,7 @@ namespace Syscode
     /// </summary>
     public class Arguments : AstNode, IReplaceContainer
     {
-        public List<Expression> ExpressionList = new();
+        public List<Expression> ExpressionList { get; private set; } = [];
 
         public Arguments(ArgumentsContext context, SyscodeAstBuilder builder) : base(context)
         {

@@ -1,20 +1,23 @@
-﻿using static SyscodeParser;
+﻿using Antlr4.Runtime;
+using static SyscodeParser;
 
 namespace Syscode
 {
-    public class Goto : AstNode
+    public class Goto : AstNode, IReplaceContainer
     {
-        private Reference reference;
+        public Reference Reference { get; private set; }
         public Goto(GotoContext context, SyscodeAstBuilder builder) : base(context)
         {
-            reference = builder.CreateReference(context.Ref);
+            Reference = builder.CreateReference(context.Ref);
         }
-
-        public Reference Reference { get => reference; internal set => reference = value; }
-
         public override string ToString()
         {
             return $"goto {Reference}";
+        }
+
+        public void ApplyPreprocessorReplace(List<IToken> tokens, REPLACE replace)
+        {
+            Reference.ApplyPreprocessorReplace(tokens, replace);
         }
     }
 }

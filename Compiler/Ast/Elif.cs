@@ -31,15 +31,14 @@ namespace Syscode
 
     public class ELIF : AstNode
     {
-        private Expression condition;
-        private List<AstNode> statements = new();
 
-        public Expression Condition { get => condition; set => condition = value; }
-        public List<AstNode> Statements { get => statements; set => statements = value; }
+        public Expression Condition { get; private set; }
+        public List<AstNode> Statements { get; private set; }
 
         public ELIF(Prep_exprThenBlockContext context, SyscodeAstBuilder builder) : base(context)
         {
-            condition = builder.CreateExpression(context.Expression);
+            Condition = builder.CreateExpression(context.Expression);
+            Statements = builder.GenerateStatements(context.THEN_block._Statements);
         }
 
         public override string ToString()

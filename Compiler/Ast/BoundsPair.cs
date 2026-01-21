@@ -4,16 +4,13 @@ namespace Syscode
 {
     public class BoundsPair : AstNode
     {
-        private Expression upper;
-        private Expression? lower;
-
-        public Expression Upper { get => upper; set => upper = value; }
-        public Expression? Lower { get => lower; set => lower = value; }
+        public Expression Upper { get; private set; }
+        public Expression? Lower { get; private set; }
 
         public BoundsPair(BoundPairContext context, SyscodeAstBuilder builder) : base(context)
         {
-            this.upper = builder.CreateExpression(context.Upper);
-            this.lower = context.Lower?.SafeCreate(builder.CreateExpression);
+            Upper = builder.CreateExpression(context.Upper);
+            Lower = context.Lower?.SafeCreate(builder.CreateExpression);
         }
     }
 }

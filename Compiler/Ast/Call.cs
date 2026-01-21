@@ -4,13 +4,12 @@ namespace Syscode
 {
     public class Call : AstNode
     {
-        private Reference reference;
         public Call(CallContext context, SyscodeAstBuilder builder) : base(context)
         {
-            reference = builder.CreateReference(context.Ref);
+            Reference = builder.CreateReference(context.Ref);
         }
 
-        public Reference Reference { get => reference; set => reference = value; }
+        public Reference Reference { get; private set; }
 
         public override string ToString()
         {

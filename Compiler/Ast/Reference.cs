@@ -7,17 +7,16 @@ namespace Syscode
 
     public class Reference : AstNode, IReplaceContainer
     {
-        //private readonly Reference? pointer = null; // only populated if this ref is the left of ref -> ref
         private readonly List<Arguments> argumentsList = new();
-        //private readonly BasicReference basic;
         private bool resolved = false;
         private Report? report = null;
         public Reference(ReferenceContext context, SyscodeAstBuilder builder) : base(context)
         {
-            // A Reference might contain another Reference...
+            // Every reference contains a basic reference, optionally preceded by a pointer reference and followed by zero or more argument sets.
 
             if (context.Pointer != null)
             {
+                // This reference appears to the left of a -> operator and the 'Pointer' property represents ref to the right of the ->
                 Pointer = builder.CreateReference(context.Pointer);
             }
 
