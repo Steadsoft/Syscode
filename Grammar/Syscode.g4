@@ -255,6 +255,12 @@ parenthesizedExpression
   : LPAR Expr=expression RPAR
   ;  
 
+prefixExpression
+  : Op=prefixOperator Expr=expression
+  ;  
+
+
+
 stringLiteral
   : Text=STR_LITERAL
   ;
@@ -301,9 +307,7 @@ binop
     //|USEROP
     ;
 
-prefixExpression
-  : Op=prefixOperator Expr=expression
-  ;
+
 
 dimensionSuffix
   : LPAR Pair=boundPairCommalist RPAR
@@ -538,10 +542,10 @@ fragment FRAC_B:    ('.' [0-1]+);
 fragment BASE_B:    ('b' | 'B');
 fragment SIZE:      ('s' | 'd'); // single/double float
 fragment SEP:       (' ' | '_');
-fragment LHEX:      (HEXCHARS SEP*);
-fragment LOCT:      (OCTCHARS SEP*);
-fragment LBIN:      (BINCHARS SEP*);
-fragment LDEC:      (DECCHARS SEP*);
+fragment LHEX:      (HEXCHARS SEP?);
+fragment LOCT:      (OCTCHARS SEP?);
+fragment LBIN:      (BINCHARS SEP?);
+fragment LDEC:      (DECCHARS SEP?);
 fragment DEXP:      'e' (PLUS | MINUS)?;
 fragment HEXP:      'p' (PLUS | MINUS)?;
 fragment SPACE:     ' ';
